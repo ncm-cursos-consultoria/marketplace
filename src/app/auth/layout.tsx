@@ -12,9 +12,9 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
         <Image
           src={authLogo}
           alt="Imagem de fundo"
-          fill
+          unoptimized
           className="object-cover"
-          priority
+          fill
         />
       </div>
       <div className="w-1/2 h-full flex items-center justify-center p-10 bg-white">
