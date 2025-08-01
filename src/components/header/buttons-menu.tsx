@@ -12,7 +12,7 @@ export function ButtonsMenu() {
           </Button>
         </Link>
         <Link href={"/auth/sign-up"}>
-          <Button className="bg-[#008000] cursor-pointer">Cadastre-se</Button>
+          <Button className="bg-[#008000] cursor-pointer text-white">Cadastre-se</Button>
         </Link>
       </div>
       <div>
