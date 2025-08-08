@@ -30,10 +30,12 @@ export default function SignIn() {
           </div>
         </div>
         <div className="flex flex-col items-center gap-3">
-          <Button className="bg-[#008000] w-full cursor-pointer p-5">
-            Entrar
-          </Button>
-          <Link href={'/auth/forgot-password'}>
+          <Link href={'/home'} className="w-full">
+            <Button className="bg-[#008000] w-full cursor-pointer p-5">
+              Entrar
+            </Button>
+          </Link>
+          <Link href={"/auth/forgot-password"}>
             <span className="text-neutral-500 text-[14px]">
               Esqueci a senha
             </span>
