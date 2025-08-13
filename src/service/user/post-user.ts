@@ -11,7 +11,11 @@ export const postUser = async (data: postUserProps) => {
   try {
     const res = await api.post(`/autenticacao/backend_criar_conta`, data);
     return res.data;
-  } catch (err: any) {
-    console.log(err);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(err.message);
+    } else {
+      console.error(err);
+    }
   }
 };
