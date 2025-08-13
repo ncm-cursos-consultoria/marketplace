@@ -10,9 +10,9 @@ export default function Home() {
       <aside className="w-64 bg-blue-900 text-white p-6 space-y-6">
         <h2 className="text-2xl font-bold">Menu</h2>
         <ul className="space-y-4">
-          <li><a href="#" className="hover:underline">Início</a></li>
-          <li><a href="#" className="hover:underline">Cursos</a></li>
-          <li><a href="#" className="hover:underline">Vagas</a></li>
+          <li><a href="/home" className="hover:underline">Início</a></li>
+          <li><a href="/courses" className="hover:underline">Cursos</a></li>
+          <li><a href="/jobs" className="hover:underline">Vagas</a></li>
           <li><a href="#" className="hover:underline">Sobre</a></li>
         </ul>
       </aside>

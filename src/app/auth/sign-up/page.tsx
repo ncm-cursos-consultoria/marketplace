@@ -37,6 +37,7 @@ export default function SignUp() {
               placeholder="Digite seu nome"
               {...register("nome")}
             />
+            {}
           </div>
           <div className="flex flex-col gap-1">
             <Label>Email</Label>
