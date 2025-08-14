@@ -3,8 +3,10 @@
 import { motion } from "framer-motion";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Header } from "@/components/header/__header";
-import computerLp from "@/assets/landing-page-oportunidades.jpeg"
+import computerLp from "@/assets/landing-page-oportunidades.jpeg";
 import Image from "next/image";
+import fabricaDeProgramadores from "@/assets/fabrica-de-programadores.png";
+import santanaDeParnaiba from "@/assets/santa-parnaiba.png";
 
 const MotionImage = motion(Image);
 
@@ -129,6 +131,44 @@ export default function Home() {
             </li>
           </motion.ul>
         </div>
+      </section>
+
+      {/* Parceiros */}
+      <section className="py-16 bg-gray-50 px-4">
+        <div className="text-center mb-10">
+          <h2 className="text-4xl font-medium text-blue-600">
+            Nossas parcerias com empresas e prefeituras
+          </h2>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          viewport={{ once: true }}
+          className="flex flex-col md:flex-row justify-center items-center gap-10 md:gap-40 px-4 md:px-0"
+        >
+          <Image
+            src={fabricaDeProgramadores}
+            alt="Fábrica de Programadores"
+            width={200}
+            height={90}
+            unoptimized
+          />
+
+          <div className="flex flex-col items-center mt-6 md:mt-0">
+            <Image
+              src={santanaDeParnaiba}
+              alt="Prefeitura de Santana de Parnaíba"
+              width={130}
+              height={90}
+              unoptimized
+            />
+            <span className="mt-2 text-center text-sm md:text-base">
+              Prefeitura de Santana de Parnaíba
+            </span>
+          </div>
+        </motion.div>
       </section>
 
       {/* CTA Final */}
