@@ -7,6 +7,7 @@ import computerLp from "@/assets/landing-page-oportunidades.jpeg";
 import Image from "next/image";
 import fabricaDeProgramadores from "@/assets/fabrica-de-programadores.png";
 import santanaDeParnaiba from "@/assets/santa-parnaiba.png";
+import logo from "@/assets/logo-ncm-horizontal.svg";
 
 const MotionImage = motion(Image);
 
@@ -193,18 +194,14 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="text-center text-gray-500 text-sm py-6 border-t bg-white">
-        <p>
-          © {new Date().getFullYear()} Marketplace das oportunidades.
-          Desenvolvido por{" "}
-          <a
-            href="https://ncmconsultoria.com.br"
-            target="_blank"
-            className="text-blue-600 underline"
-          >
-            NCM consultoria
-          </a>
-        </p>
+      <footer className="text-center text-gray-500 text-sm py-6 border-t bg-white flex items-center justify-center">
+        <div className="flex items-center gap-2">
+          <p>
+            © {new Date().getFullYear()} Marketplace das oportunidades.
+            Desenvolvido por{" "}
+          </p>
+          <Image src={logo} alt="Logo ncm" width={50} />
+        </div>
       </footer>
     </main>
   );
