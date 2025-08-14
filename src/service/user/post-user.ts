@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { api } from "../api";
 
 interface postUserProps {
@@ -13,9 +14,10 @@ export const postUser = async (data: postUserProps) => {
     return res.data;
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error(err.message);
+            toast.success("Conta criada com sucesso")
     } else {
       console.error(err);
+            toast.success("Conta criada com sucesso")
     }
   }
 };
