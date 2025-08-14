@@ -44,7 +44,7 @@ export default function Home() {
           className="max-w-2xl mx-auto"
         >
           <h2 className="text-4xl font-bold mb-4">Sobre o projeto</h2>
-          <p className="text-gray-600 text-[25px]">
+          <p className="text-gray-600 text-[20px]">
             Uma plataforma feita para conectar pessoas a oportunidades reais de
             crescimento profissional e social. Empresas, prefeituras e talentos
             se encontram aqui para mudar realidades.

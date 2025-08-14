@@ -43,7 +43,7 @@ export default function CoursesPage() {
         {/* Tema 1: Tecnologia */}
 
         <section>
-          <h2 className="text-2xl font-semibold mb-6">Marketing</h2>
+          <h2 className="text-2xl font-semibold mb-6">Comportamento Empreendedor para Startups</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             <iframe
               width="100%"

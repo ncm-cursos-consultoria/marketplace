@@ -37,7 +37,7 @@ export default function SignUp() {
               placeholder="Digite seu nome"
               {...register("nome")}
             />
-            {}
+            {errors.nome && <span className="text-red-600">{errors.nome.message}</span>}
           </div>
           <div className="flex flex-col gap-1">
             <Label>Email</Label>
