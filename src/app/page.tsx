@@ -3,6 +3,10 @@
 import { motion } from "framer-motion";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Header } from "@/components/header/__header";
+import computerLp from "@/assets/landing-page-oportunidades.jpeg"
+import Image from "next/image";
+
+const MotionImage = motion(Image);
 
 export default function Home() {
   return (
@@ -93,8 +97,8 @@ export default function Home() {
       {/* Como funciona */}
       <section className="py-16 bg-white px-4">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
-          <motion.img
-            src="/assets/images/landing-page-oportunidades"
+          <MotionImage
+            src={computerLp}
             alt="Ilustração"
             className="rounded-lg shadow-md"
             initial={{ opacity: 0, scale: 0.9 }}
