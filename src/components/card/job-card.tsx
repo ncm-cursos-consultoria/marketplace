@@ -16,12 +16,15 @@ interface JobCardProps {
 }
 
 export function JobCard({ jobs }: JobCardProps) {
-  const { setCandidate } = useSimulateCandidate();
+  const { candidate,setCandidate } = useSimulateCandidate();
 
   const onClickCandidate = (job: Job) => {
     setCandidate((prev) => [...(prev || []), job]);
     toast.success(`Sucesso ao canditar a vaga`);
   };
+
+  console.log(candidate);
+  
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -48,6 +48,18 @@ export function Aside() {
             Vagas
           </Link>
         </li>
+                <li>
+          <Link
+            href="/oportunidades/user"
+            className={`block rounded-md hover:bg-neutral-600 hover:p-2 cursor-pointer text-[20px] ${
+              path === "/oportunidades/user"
+                ? "bg-neutral-800 p-2 w-full font-semibold text-[20px]"
+                : ""
+            }`}
+          >
+            Minhas Candidaturas
+          </Link>
+        </li>
       </ul>
     </aside>
   );
