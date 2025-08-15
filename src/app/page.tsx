@@ -8,38 +8,44 @@ import Image from "next/image";
 import fabricaDeProgramadores from "@/assets/fabrica-de-programadores.png";
 import santanaDeParnaiba from "@/assets/santa-parnaiba.png";
 import logo from "@/assets/logo-ncm-horizontal.svg";
+import { HeaderResponsive } from "@/components/header/header-responsive/header-responsive";
 
 const MotionImage = motion(Image);
 
 export default function Home() {
   return (
     <main className="bg-white text-gray-900">
-      {/* Navbar */}
-      <Header />
+      <div>
+        <div className="lg:block hidden">
+          <Header />
+        </div>
+        <div className="lg:hidden">
+          <HeaderResponsive />
+        </div>
+      </div>
 
       {/* Hero */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-400 text-white text-center py-24 px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-3xl mx-auto"
-        >
-          <h1 className="text-4xl md:text-[50px] font-bold mb-4">
-            Marketplace das Oportunidades
-          </h1>
-          <p className="text-[25px] mb-6">
-            Conectando talentos, empresas e prefeituras de forma simples e
-            eficaz
-          </p>
-          <a
-            href="/cadastro"
-            className="bg-white text-black font-semibold px-6 py-3 rounded-md shadow hover:bg-gray-100 transition"
-          >
-            Crie sua conta agora
-          </a>
-        </motion.div>
-      </section>
+<section className="bg-gradient-to-r from-blue-600 to-blue-400 text-white text-center py-16 md:py-24 px-4">
+  <motion.div
+    initial={{ opacity: 0, y: 40 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.8 }}
+    className="max-w-3xl mx-auto"
+  >
+    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
+      Marketplace das Oportunidades
+    </h1>
+    <p className="text-lg sm:text-xl md:text-2xl mb-6 leading-relaxed">
+      Conectando talentos, empresas e prefeituras de forma simples e eficaz
+    </p>
+    <a
+      href="/auth/sign-up"
+      className="bg-white text-black font-semibold px-6 py-3 rounded-md shadow hover:bg-gray-100 transition"
+    >
+      Crie sua conta agora
+    </a>
+  </motion.div>
+</section>
 
       {/* Sobre o projeto */}
       <section className="py-16 bg-white text-center px-4">
@@ -185,7 +191,7 @@ export default function Home() {
             Comece agora mesmo sua jornada profissional com o apoio certo
           </p>
           <a
-            href="/cadastro"
+            href="/auth/sign-up"
             className="bg-white text-blue-600 font-semibold px-6 py-3 rounded-full shadow hover:bg-gray-100 transition"
           >
             Criar Conta Gratuita
