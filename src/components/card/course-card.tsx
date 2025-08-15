@@ -17,7 +17,6 @@ export function CourseCard({
       {image && (
         <img src={image} alt={title} className="w-full h-40 object-cover" />
       )}
-
       {video && (
         <iframe
           width="100%"
@@ -30,7 +29,6 @@ export function CourseCard({
           className="rounded shadow"
         ></iframe>
       )}
-
       <div className="p-4">
         <h3 className="text-lg font-semibold">{title}</h3>
         <p className="text-sm text-gray-600">{description}</p>

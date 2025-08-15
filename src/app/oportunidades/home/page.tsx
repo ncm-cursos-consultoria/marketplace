@@ -1,37 +1,11 @@
 "use client";
 
-import { CourseCard } from "@/components/Course-Card/course-card";
+import { CourseCard } from "@/components/card/course-card";
 import { jobs } from "@/utils/jobs-simulate";
 
 export default function Home() {
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="w-64 bg-blue-900 text-white p-6 space-y-6">
-        <h2 className="text-2xl font-bold">Menu</h2>
-        <ul className="space-y-4">
-          <li>
-            <a href="/home" className="hover:underline">
-              Início
-            </a>
-          </li>
-          <li>
-            <a href="/courses" className="hover:underline">
-              Cursos
-            </a>
-          </li>
-          <li>
-            <a href="/jobs" className="hover:underline">
-              Vagas
-            </a>
-          </li>
-          <li>
-            <a href="#" className="hover:underline">
-              Sobre
-            </a>
-          </li>
-        </ul>
-      </aside>
 
       {/* Conteúdo principal */}
       <main className="flex-1 bg-gray-100 p-8 space-y-16">

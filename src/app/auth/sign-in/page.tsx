@@ -42,7 +42,7 @@ export default function SignIn() {
 
         {/* Ações */}
         <div className="flex flex-col gap-4 items-center">
-          <Link href="/home" className="w-full">
+          <Link href="/oportunidades/home" className="w-full cursor-pointer">
             <Button className="bg-[#008000] w-full py-3 text-white font-semibold rounded-md hover:bg-green-700 transition">
               Entrar
             </Button>
