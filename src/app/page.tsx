@@ -25,27 +25,28 @@ export default function Home() {
       </div>
 
       {/* Hero */}
-<section className="bg-gradient-to-r from-blue-600 to-blue-400 text-white text-center py-16 md:py-24 px-4">
-  <motion.div
-    initial={{ opacity: 0, y: 40 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8 }}
-    className="max-w-3xl mx-auto"
-  >
-    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
-      Marketplace das Oportunidades
-    </h1>
-    <p className="text-lg sm:text-xl md:text-2xl mb-6 leading-relaxed">
-      Conectando talentos, empresas e prefeituras de forma simples e eficaz
-    </p>
-    <a
-      href="/auth/sign-up"
-      className="bg-white text-black font-semibold px-6 py-3 rounded-md shadow hover:bg-gray-100 transition"
-    >
-      Crie sua conta agora
-    </a>
-  </motion.div>
-</section>
+      <section className="bg-gradient-to-r from-blue-600 to-blue-400 text-white text-center py-16 md:py-24 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-3xl mx-auto"
+        >
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
+            Marketplace das Oportunidades
+          </h1>
+          <p className="text-lg sm:text-xl md:text-2xl mb-6 leading-relaxed">
+            Conectando talentos, empresas e prefeituras de forma simples e
+            eficaz
+          </p>
+          <a
+            href="/auth/sign-up"
+            className="bg-white text-black font-semibold px-6 py-3 rounded-md shadow hover:bg-gray-100 transition"
+          >
+            Crie sua conta agora
+          </a>
+        </motion.div>
+      </section>
 
       {/* Sobre o projeto */}
       <section className="py-16 bg-white text-center px-4">

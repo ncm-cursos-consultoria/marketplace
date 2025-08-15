@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
 import { CourseCard } from "@/components/Course-Card/course-card";
-
+import { jobs } from "@/utils/jobs-simulate";
 
 export default function Home() {
   return (
@@ -10,10 +10,26 @@ export default function Home() {
       <aside className="w-64 bg-blue-900 text-white p-6 space-y-6">
         <h2 className="text-2xl font-bold">Menu</h2>
         <ul className="space-y-4">
-          <li><a href="/home" className="hover:underline">Início</a></li>
-          <li><a href="/courses" className="hover:underline">Cursos</a></li>
-          <li><a href="/jobs" className="hover:underline">Vagas</a></li>
-          <li><a href="#" className="hover:underline">Sobre</a></li>
+          <li>
+            <a href="/home" className="hover:underline">
+              Início
+            </a>
+          </li>
+          <li>
+            <a href="/courses" className="hover:underline">
+              Cursos
+            </a>
+          </li>
+          <li>
+            <a href="/jobs" className="hover:underline">
+              Vagas
+            </a>
+          </li>
+          <li>
+            <a href="#" className="hover:underline">
+              Sobre
+            </a>
+          </li>
         </ul>
       </aside>
 
@@ -21,9 +37,12 @@ export default function Home() {
       <main className="flex-1 bg-gray-100 p-8 space-y-16">
         {/* Section 1: Boas-vindas */}
         <section>
-          <h1 className="text-3xl font-bold mb-4">Bem-vindo ao Marketplace das Oportunidades</h1>
+          <h1 className="text-3xl font-bold mb-4">
+            Bem-vindo ao Marketplace das Oportunidades
+          </h1>
           <p className="text-gray-700 text-lg">
-            Encontre cursos, vagas e informações para transformar sua vida profissional.
+            Encontre cursos, vagas e informações para transformar sua vida
+            profissional.
           </p>
         </section>
 
@@ -32,19 +51,19 @@ export default function Home() {
           <h2 className="text-2xl font-semibold mb-6">Cursos disponíveis</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             <CourseCard
-              title="Curso de Programação"
-              description="Aprenda lógica e programação do zero."
-              image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc-gvg0WjYVtXhQnbfQf-Y_-QRIuyYWrPa-A&s"
+              title="Módulo 1"
+              description="Introdução"
+              video="https://www.youtube.com/embed/3YyWO-lO4rM"
             />
             <CourseCard
-              title="Marketing Digital"
-              description="Domine estratégias de marketing nas redes."
-              image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc-gvg0WjYVtXhQnbfQf-Y_-QRIuyYWrPa-A&s"
+              title="Módulo 2"
+              description="Nossos serviços"
+              video="https://www.youtube.com/embed/UlH6-T7xwEw"
             />
             <CourseCard
-              title="Empreendedorismo"
-              description="Torne-se seu próprio chefe com esse curso."
-              image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc-gvg0WjYVtXhQnbfQf-Y_-QRIuyYWrPa-A&s"
+              title="Módulo 3"
+              description="Comportamento Empreendedor para Startups"
+              video="https://www.youtube.com/embed/Cfh0weATucA"
             />
           </div>
         </section>
@@ -53,35 +72,33 @@ export default function Home() {
         <section>
           <h2 className="text-2xl font-semibold mb-6">Vagas de emprego</h2>
           <ul className="space-y-4">
-            <li className="bg-white p-4 rounded shadow">
-              <h3 className="font-semibold">Assistente Administrativo</h3>
-              <p className="text-sm text-gray-600">Empresa XPTO — Fortaleza, CE</p>
-            </li>
-            <li className="bg-white p-4 rounded shadow">
-              <h3 className="font-semibold">Desenvolvedor Front-end Júnior</h3>
-              <p className="text-sm text-gray-600">TechDev — São Paulo, SP</p>
-            </li>
-            <li className="bg-white p-4 rounded shadow">
-              <h3 className="font-semibold">Atendente de Loja</h3>
-              <p className="text-sm text-gray-600">Loja Tal — Recife, PE</p>
-            </li>
+            {jobs.slice(0, 3).map((job) => (
+              <li className="bg-white p-4 rounded shadow" key={job.id}>
+                <h3 className="font-semibold">{job.title}</h3>
+                <p className="text-[14px]">{job.location}</p>
+                <p className="text-[14px]">{job.salary}</p>
+              </li>
+            ))}
           </ul>
         </section>
 
         {/* Section 4: Informações gerais */}
         <section className="bg-white p-6 rounded shadow">
-          <h2 className="text-xl font-semibold mb-2">Informações importantes</h2>
+          <h2 className="text-xl font-semibold mb-2">
+            Informações importantes
+          </h2>
           <p className="text-gray-700">
-            Nosso sistema conecta talentos com oportunidades reais. Aproveite todos os recursos disponíveis:
-            capacitação, apoio e muito mais.
+            Nosso sistema conecta talentos com oportunidades reais. Aproveite
+            todos os recursos disponíveis: capacitação, apoio e muito mais.
           </p>
         </section>
 
         {/* Footer */}
         <footer className="text-center text-gray-500 text-sm pt-6 border-t mt-10">
-          &copy; {new Date().getFullYear()} Marketplace das Oportunidades. Todos os direitos reservados.
+          &copy; {new Date().getFullYear()} Marketplace das Oportunidades. Todos
+          os direitos reservados.
         </footer>
       </main>
     </div>
-  )
+  );
 }
