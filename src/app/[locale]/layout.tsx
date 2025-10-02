@@ -1,4 +1,3 @@
-// src/app/[locale]/layout.tsx
 import type { ReactNode } from "react";
 import { DEFAULT_LOCALE, isSupportedLocale } from "../locales";
 
@@ -10,8 +9,7 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale: raw } = await params;
-  const locale = isSupportedLocale(raw) ? raw : DEFAULT_LOCALE;
+  const _locale = isSupportedLocale(raw) ? raw : DEFAULT_LOCALE; // se não usar, tudo bem
 
-  // NADA de <html>/<body> aqui. Só envolva os filhos.
   return <>{children}</>;
 }

@@ -12,16 +12,23 @@ const LANGS = [
 export function LanguageToggle() {
   const pathname = usePathname() || '/';
 
-
+  // remove o prefixo de locale (pt-BR|es) do pathname
   const basePath = useMemo(() => {
-    const rx = /^\/(pt-BR|es)(\/|$)/;
-    return pathname.replace(rx, '/');
+    // remove só o prefixo de locale, sem adicionar barras extras
+    let p = pathname.replace(/^\/(pt-BR|es)(?=\/|$)/, '');
+    if (p === '') p = '/';
+    return p;
   }, [pathname]);
 
-  const current = useMemo(() => {
-    const m = pathname.match(/^\/(pt-BR|es)(\/|$)/);
-    return m?.[1] ?? 'pt-BR';
+  // idioma atual: se começar com /es -> es, senão pt-BR (root)
+  const current = useMemo<'pt-BR' | 'es'>(() => {
+    return /^\/es(\/|$)/.test(pathname) ? 'es' : 'pt-BR';
   }, [pathname]);
+
+  const hrefFor = (code: 'pt-BR' | 'es') =>
+    code === 'pt-BR'
+      ? basePath // PT-BR SEM prefixo (root)
+      : `/es${basePath === '/' ? '' : basePath}`; // ES COM prefixo
 
   return (
     <div
@@ -33,7 +40,7 @@ export function LanguageToggle() {
         return (
           <Link
             key={l.code}
-            href={`/${l.code}${basePath === '/' ? '' : basePath}`}
+            href={hrefFor(l.code)}
             className={`flex items-center gap-2 rounded-full px-3 py-1 text-sm transition
               ${active ? 'bg-neutral-200 font-semibold' : 'hover:bg-neutral-100'}`}
           >
