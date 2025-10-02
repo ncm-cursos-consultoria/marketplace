@@ -23,10 +23,9 @@ export function useCreateUser() {
       toast.success("Conta criada com sucesso")
       router.push(`/auth/sign-in`)
     },
-    onError: () => {
-      console.log("Erro");
-      toast.success("Conta criada com sucesso")
-      router.push(`/auth/sign-in`)
+    onError: (err) => {
+     console.log("Erro",err);
+     toast.error("Erro ao criar conta" )
     },
   });
 

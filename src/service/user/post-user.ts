@@ -10,14 +10,14 @@ interface postUserProps {
 
 export const postUser = async (data: postUserProps) => {
   try {
-    const res = await api.post(`/autenticacao/backend_criar_conta`, data);
+    const res = await api.post(`/autenticacao/backend_criar_conta.php`, data);
     return res.data;
   } catch (err: unknown) {
     if (err instanceof Error) {
-            toast.success("Conta criada com sucesso")
+      console.log(err);
+      throw new Error();
     } else {
       console.error(err);
-            toast.success("Conta criada com sucesso")
     }
   }
 };

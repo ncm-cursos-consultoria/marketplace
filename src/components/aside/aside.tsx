@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import logo from "@/assets/ncm-logo.png"
+import logo from "@/assets/ncm-logo.png";
 import Image from "next/image";
 
 export function Aside() {
   const path = usePathname();
 
   return (
-    <aside className="w-[300px] p-6 bg-blue-900 text-white space-y-6">
-      <Image src={logo} alt="Logo ncm" width={200}/>
+    <aside className="w-[350px] p-6 bg-blue-900 text-white space-y-6">
+      <Image src={logo} alt="Logo ncm" width={200} />
       <ul className="flex flex-col gap-4">
         <li>
           <Link
@@ -48,7 +48,7 @@ export function Aside() {
             Vagas
           </Link>
         </li>
-                <li>
+        <li>
           <Link
             href="/oportunidades/user"
             className={`block rounded-md hover:bg-neutral-600 hover:p-2 cursor-pointer text-[20px] ${
