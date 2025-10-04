@@ -16,7 +16,6 @@ export default function SignIn() {
         </h2>
       </div>
 
-      {/* Formulário */}
       <form className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           {/* Email */}

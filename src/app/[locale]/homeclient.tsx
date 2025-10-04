@@ -15,7 +15,7 @@ import logo from "@/assets/logo-ncm-horizontal.svg";
 const MotionImage = motion(Image);
 
 type Props = {
-  t: any;                 // JSON de mensagens (pt-BR / es)
+  t: any;        
   locale: "pt-BR" | "es";
 };
 

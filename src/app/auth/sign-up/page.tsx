@@ -80,7 +80,6 @@ export default function SignUp() {
             </div>
           </div>
 
-          {/* Actions */}
           <div className="flex flex-col gap-3 items-center">
             <Button
               className="bg-[#008000] w-full py-3 text-white font-semibold rounded-md hover:bg-green-700 transition"
