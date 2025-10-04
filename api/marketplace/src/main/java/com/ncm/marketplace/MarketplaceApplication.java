@@ -21,9 +21,18 @@ public class MarketplaceApplication {
 	}
 	// TODO
 	//  domains ✅
+	//  repositories ✅
 	//  dtos
+	//    requests ✅
+	//    responses ✅
+	//  mappers
+	//  services
+	//    command
+	//    query
 	//  usecases
 	//  controllers
+	//  swagger
+	//  deploy digitalOcean
 	//  services
 	//    login
 	//    view job opening

@@ -1,17 +1,16 @@
 package com.ncm.marketplace.domains;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.ncm.marketplace.domains.relationship.partners.PartnerEnterprise;
-import com.ncm.marketplace.domains.relationship.partners.PartnerUserCandidate;
-import com.ncm.marketplace.domains.user.user.UserPartner;
+import com.ncm.marketplace.domains.relationship.partner.PartnerEnterprise;
+import com.ncm.marketplace.domains.relationship.partner.PartnerUserCandidate;
+import com.ncm.marketplace.domains.users.user.UserPartner;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,8 +31,8 @@ public class Partner {
     private Instant updatedAt;
     private String token;
     @Builder.Default
-    private Boolean subsides = Boolean.FALSE;
-    private Date subsidizedEndDate;
+    private Boolean subsidized = Boolean.FALSE;
+    private LocalDate subsidizedEndDate;
 
     @OneToOne(mappedBy = "partner")
     @JsonBackReference("user_partner-partner")

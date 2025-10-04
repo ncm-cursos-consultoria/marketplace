@@ -1,10 +1,10 @@
 package com.ncm.marketplace.domains;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.ncm.marketplace.domains.enterprise.Enterprise;
+import com.ncm.marketplace.domains.enterprises.Enterprise;
 import com.ncm.marketplace.domains.enums.FileTypeEnum;
-import com.ncm.marketplace.domains.user.user.User;
-import com.ncm.marketplace.domains.user.user.UserCandidate;
+import com.ncm.marketplace.domains.users.user.User;
+import com.ncm.marketplace.domains.users.user.UserCandidate;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

@@ -2,8 +2,7 @@ package com.ncm.marketplace.domains.courses;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.ncm.marketplace.domains.relationship.users.UserCandidateCourse;
-import com.ncm.marketplace.domains.relationship.users.UserCandidateModule;
+import com.ncm.marketplace.domains.relationship.user.candidate.UserCandidateCourse;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

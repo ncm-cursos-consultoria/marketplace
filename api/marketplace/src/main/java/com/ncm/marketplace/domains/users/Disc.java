@@ -1,6 +1,8 @@
-package com.ncm.marketplace.domains.courses;
+package com.ncm.marketplace.domains.users;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ncm.marketplace.domains.enums.DiscEnum;
+import com.ncm.marketplace.domains.users.user.UserCandidate;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,7 +16,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Video {
+public class Disc {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -23,14 +25,11 @@ public class Video {
     private Instant createdAt;
     @UpdateTimestamp
     private Instant updatedAt;
-    @Builder.Default
-    private Boolean isActive = Boolean.TRUE;
-    private String title;
-    private Integer duration;
-    private String url;
+    @Enumerated(EnumType.STRING)
+    private DiscEnum main;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "courseId", referencedColumnName = "id", nullable = false)
-    @JsonManagedReference("videos-course")
-    private Course course;
+    @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
+    @JsonManagedReference("discs-user_candidate")
+    private UserCandidate userCandidate;
 }
