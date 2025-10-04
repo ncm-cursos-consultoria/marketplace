@@ -1,6 +1,6 @@
 "use client";
 
-import { useSimulateCandidate } from "@/context/simulate-candidate-context";
+import { useSimulateCandidate } from "@/context/candidate.context";
 
 export default function UserPage() {
   const { candidate } = useSimulateCandidate();

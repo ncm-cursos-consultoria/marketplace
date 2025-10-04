@@ -2,10 +2,11 @@ import { toast } from "sonner";
 import { api } from "../api";
 
 interface postUserProps {
-  nome: string;
-  email: string;
-  senha: string;
-  tipo: string;
+  firstName: string,
+  lastName: string,
+  cpf: string,
+  email: string,
+  password: string
 }
 
 export const postUser = async (data: postUserProps) => {

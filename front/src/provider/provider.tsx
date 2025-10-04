@@ -1,5 +1,6 @@
 "use client";
-import { SimulateCandidateProvider } from "@/context/simulate-candidate-context";
+import { CandidateProvider } from "@/context/candidate.context";
+import { UserCandidateProvider } from "@/context/user-candidate.context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 
@@ -17,10 +18,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SimulateCandidateProvider>
+      <UserCandidateProvider>
         <Toaster richColors closeButton expand={false} className="w-[20vw]" />
         {children}
-      </SimulateCandidateProvider>
+      </UserCandidateProvider>
     </QueryClientProvider>
   );
 }

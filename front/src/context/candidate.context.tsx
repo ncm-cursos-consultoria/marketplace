@@ -10,7 +10,7 @@ const SimulateCandidateContext = createContext<
   simulateCandidateProps | undefined
 >(undefined);
 
-export function SimulateCandidateProvider({
+export function CandidateProvider({
   children,
 }: {
   children: React.ReactNode;
