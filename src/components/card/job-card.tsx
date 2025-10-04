@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { Button } from "../ui/button";
-import { useSimulateCandidate } from "@/context/simulate-candidate-context";
+import { useSimulateCandidate } from "@/context/candidate.context";
 
 interface Job {
   id: number;

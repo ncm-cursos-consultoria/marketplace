@@ -1,10 +1,11 @@
 import z from "zod";
 
 export const createUserFormSchema = z.object({
-  nome: z.string().nonempty("Nome é obrigatório"),
+  firstName: z.string().nonempty("Nome é obrigatório"),
+  lastName: z.string().nonempty("Sobrenome é obrigatório"),
+  cpf: z.string().nonempty("cpf não pode ser vazio"),
   email: z.string().email().nonempty("Obrigatório"),
-  senha: z.string().nonempty("Obrigatório"),
-  tipo: z.string().nonempty("Obrigatório"),
+  password: z.string().nonempty("Obrigatório"),
 })
 
 export type CreateUserFormSchema = z.infer<typeof createUserFormSchema>
