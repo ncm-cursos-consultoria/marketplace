@@ -1,8 +1,10 @@
 package com.ncm.marketplace.gateways.controller.impl.domains.user.candidate;
 
 import com.ncm.marketplace.gateways.controller.interfaces.domains.user.candidate.UserCandidateController;
+import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.CreateDiscRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -45,6 +48,38 @@ public class UserCandidateControllerImpl implements UserCandidateController {
     @Override
     public ResponseEntity<UserCandidateResponse> update(@PathVariable String id, @Valid @RequestBody UpdateUserCandidateRequest request) {
         return ResponseEntity.ok(crudUserCandidate.update(id, request));
+    }
+
+    @PatchMapping("/{id}/profile-picture")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Função off")
+    @Override
+    public ResponseEntity<UserCandidateResponse> uploadProfilePicture(@PathVariable String id, MultipartFile file) {
+        return null;
+    }
+
+    @PatchMapping("/{id}/curriculum-vitae")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Função off")
+    @Override
+    public ResponseEntity<UserCandidateResponse> uploadCurriculumVitae(@PathVariable String id, @RequestPart(value = "file") MultipartFile file) {
+        return null;
+    }
+
+    @PatchMapping("/{id}/address")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Função off")
+    @Override
+    public ResponseEntity<UserCandidateResponse> addAddress(@PathVariable String id, @Valid @RequestBody CreateAddressRequest request) {
+        return null;
+    }
+
+    @PatchMapping("/{id}/disc")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Função off")
+    @Override
+    public ResponseEntity<UserCandidateResponse> addDisc(@PathVariable String id, @Valid @RequestBody CreateDiscRequest request) {
+        return null;
     }
 
     @GetMapping("/{id}")

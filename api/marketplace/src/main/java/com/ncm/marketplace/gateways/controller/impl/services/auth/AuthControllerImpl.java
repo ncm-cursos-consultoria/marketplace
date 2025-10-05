@@ -22,7 +22,7 @@ public class AuthControllerImpl implements AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    @Operation(summary = "Login with any user")
+    @Operation(summary = "Login with any user using cookie")
     @ResponseStatus(HttpStatus.OK)
     @Override
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
@@ -30,6 +30,17 @@ public class AuthControllerImpl implements AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body("Login efetuado com sucesso");
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "Logs out the current user by clearing the auth cookie")
+    @ResponseStatus(HttpStatus.OK)
+    @Override
+    public ResponseEntity<?> logout() {
+        ResponseCookie cookie = authService.logout();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body("Logout efetuado com sucesso");
     }
 
     @GetMapping("/me")

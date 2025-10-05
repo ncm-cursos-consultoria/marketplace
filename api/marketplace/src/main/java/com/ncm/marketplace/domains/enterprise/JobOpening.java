@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.Currency;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,6 +32,7 @@ public class JobOpening {
     private Instant updatedAt;
     private String title;
     private Double salary;
+    private Currency currency;
     @Column(length = 1000)
     private String description;
     @Builder.Default

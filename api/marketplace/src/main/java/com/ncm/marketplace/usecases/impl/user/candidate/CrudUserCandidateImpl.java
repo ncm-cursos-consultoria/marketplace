@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,6 +28,7 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserQueryService userQueryService;
 
+    @Transactional
     @Override
     public UserCandidateResponse save(CreateUserCandidateRequest request) {
         UserCandidate user = toEntityCreate(request);
@@ -35,11 +37,13 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
         return toResponse(userCandidateCommandService.save(user));
     }
 
+    @Transactional
     @Override
     public void deleteById(String id) {
         userCandidateCommandService.deleteById(id);
     }
 
+    @Transactional
     @Override
     public UserCandidateResponse update(String id, UpdateUserCandidateRequest request) {
         UserCandidate user = userCandidateQueryService.findByIdOrThrow(id);
@@ -63,9 +67,10 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
         return toResponse(userCandidateQueryService.findAll());
     }
 
+    @Transactional
     @Override
     public void init() {
-        if (!userCandidateQueryService.existByCpf("538.902.490-78")
+        if (!userCandidateQueryService.existsByCpf("538.902.490-78")
                 || !userQueryService.existByEmail("user.candidate@email.com")) {;
             save(CreateUserCandidateRequest.builder()
                     .cpf("538.902.490-78")

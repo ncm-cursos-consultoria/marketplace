@@ -32,6 +32,7 @@ public class CreatePartnerAndEnterpriseAndUserPartnerRequest {
     @Email
     @NotEmpty
     private String email;
+    private LocalDate birthday;
     @NotEmpty
     @Size(min = 8)
     private String password;

@@ -1,6 +1,7 @@
 package com.ncm.marketplace.domains.user;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.domains.others.File;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,4 +46,6 @@ public abstract class User {
     public String getFullName() {
         return String.format("%s %s", this.firstName != null ? this.firstName : "", this.lastName != null ? this.lastName : "").trim();
     }
+
+    public abstract UserTypeEnum getType();
 }

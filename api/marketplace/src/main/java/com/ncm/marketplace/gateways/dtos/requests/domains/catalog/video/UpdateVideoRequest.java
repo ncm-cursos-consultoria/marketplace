@@ -16,6 +16,4 @@ public class UpdateVideoRequest {
     private Integer duration;
     @NotEmpty
     private String url;
-    @NotEmpty
-    private String courseId;
 }

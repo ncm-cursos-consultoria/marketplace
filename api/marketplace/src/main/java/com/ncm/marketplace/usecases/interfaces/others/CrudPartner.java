@@ -1,16 +1,19 @@
 package com.ncm.marketplace.usecases.interfaces.others;
 
-import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseRequest;
-import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.UpdateEnterpriseRequest;
-import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.enterprise.EnterpriseResponse;
+
+import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.CreatePartnerAndEnterpriseAndUserPartnerRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.CreatePartnerRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.UpdatePartnerRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.others.partner.PartnerResponse;
 
 import java.util.List;
 
 public interface CrudPartner {
-    EnterpriseResponse save(CreateEnterpriseRequest request);
+    PartnerResponse save(CreatePartnerRequest request);
+    PartnerResponse saveWithEnterpriseAndUserPartner(CreatePartnerAndEnterpriseAndUserPartnerRequest request);
     void deleteById(String id);
-    EnterpriseResponse update(String id, UpdateEnterpriseRequest request);
-    EnterpriseResponse findById(String id);
-    List<EnterpriseResponse> findAll();
-    void init();
+    PartnerResponse update(String id, UpdatePartnerRequest request);
+    PartnerResponse findById(String id);
+    List<PartnerResponse> findAll();
+    void init(String enterpriseId);
 }

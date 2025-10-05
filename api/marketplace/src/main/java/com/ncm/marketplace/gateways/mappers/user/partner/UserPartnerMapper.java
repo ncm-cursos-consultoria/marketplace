@@ -17,7 +17,7 @@ public class UserPartnerMapper {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
-                .cnpj(request.getCnpj())
+                .birthday(request.getBirthday())
                 .build();
     }
 
@@ -30,7 +30,7 @@ public class UserPartnerMapper {
                 .firstName(firstName)
                 .lastName(lastName)
                 .email(request.getEmail())
-                .cnpj(request.getCnpj())
+                .birthday(request.getBirthday())
                 .build();
     }
 

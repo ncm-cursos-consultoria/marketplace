@@ -29,4 +29,12 @@ public class UserPartnerQueryService {
     public Page<UserPartner> findAll(Pageable pageable) {
         return userPartnerRepository.findAll(pageable);
     }
+
+    public Boolean existsByPartnerId(String partnerId) {
+        return userPartnerRepository.existsByPartner_Id(partnerId);
+    }
+
+    public Boolean existsByEmail(String email) {
+        return userPartnerRepository.existsByEmail(email);
+    }
 }

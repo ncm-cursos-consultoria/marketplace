@@ -29,4 +29,12 @@ public class UserEnterpriseQueryService {
     public Page<UserEnterprise> findAll(Pageable pageable) {
         return userEnterpriseRepository.findAll(pageable);
     }
+
+    public Boolean existsByEnterpriseId(String enterpriseId) {
+        return userEnterpriseRepository.existsByEnterprise_Id(enterpriseId);
+    }
+
+    public Boolean existsByEmail(String email) {
+        return userEnterpriseRepository.existsByEmail(email);
+    }
 }

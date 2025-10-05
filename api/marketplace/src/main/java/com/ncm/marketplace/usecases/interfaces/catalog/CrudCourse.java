@@ -12,5 +12,5 @@ public interface CrudCourse {
     CourseResponse update(String id, UpdateCourseRequest request);
     CourseResponse findById(String id);
     List<CourseResponse> findAll();
-    void init();
+    void init(String moduleId);
 }

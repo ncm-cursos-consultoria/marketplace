@@ -29,4 +29,8 @@ public class JobOpeningQueryService {
     public Page<JobOpening> findAll(Pageable pageable) {
         return jobOpeningRepository.findAll(pageable);
     }
+
+    public Boolean existsByTitle(String jobOpeningTest) {
+        return jobOpeningRepository.existsByTitle(jobOpeningTest);
+    }
 }

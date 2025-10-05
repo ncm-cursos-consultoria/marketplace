@@ -12,5 +12,5 @@ public interface CrudJobOpening {
     JobOpeningResponse update(String id, UpdateJobOpeningRequest request);
     JobOpeningResponse findById(String id);
     List<JobOpeningResponse> findAll();
-    void init();
+    void init(String enterpriseId);
 }

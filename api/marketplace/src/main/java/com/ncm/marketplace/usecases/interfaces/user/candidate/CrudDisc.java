@@ -13,5 +13,5 @@ public interface CrudDisc {
     DiscResponse update(String id, UpdateDiscRequest request);
     DiscResponse findById(String id);
     List<DiscResponse> findAll();
-    void init();
+    void init(String userId);
 }
