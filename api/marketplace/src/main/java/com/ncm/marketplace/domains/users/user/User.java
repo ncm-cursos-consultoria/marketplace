@@ -17,6 +17,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @SuperBuilder
 @Entity(name = "APP_USER")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

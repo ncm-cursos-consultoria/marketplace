@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.dtos.responses.services.auth;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,4 +21,5 @@ public class MeResponse {
     private String email;
     private LocalDate birthday;
     private String profilePictureUrl;
+    private UserTypeEnum type;
 }

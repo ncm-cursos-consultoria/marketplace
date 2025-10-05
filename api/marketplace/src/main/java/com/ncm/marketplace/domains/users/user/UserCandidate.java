@@ -24,6 +24,7 @@ import java.util.Set;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
+@DiscriminatorValue("CANDIDATE")
 public class UserCandidate extends User {
     @Enumerated(EnumType.STRING)
     private DiscEnum discTag;

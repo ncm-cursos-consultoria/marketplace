@@ -5,7 +5,6 @@ import com.ncm.marketplace.domains.users.user.UserEnterprise;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.enterprise.CreateEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.enterprise.UpdateEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.enterprise.EnterpriseResponse;
-import com.ncm.marketplace.gateways.mappers.enterprises.enterprise.EnterpriseMapper;
 import com.ncm.marketplace.gateways.mappers.user.enterprise.UserEnterpriseMapper;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
 import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseCommandService;
@@ -34,6 +33,8 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         Enterprise enterprise = enterpriseCommandService.save(toEntityCreate(request));
         UserEnterprise user = UserEnterpriseMapper.toEntityCreate(request);
         user.setEnterprise(enterprise);
+        String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(encryptedRandomPassword);
         userEnterpriseCommandService.save(user);
         return toResponse(enterprise);
     }
@@ -79,5 +80,16 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     @Override
     public List<EnterpriseResponse> findAll() {
         return toResponse(enterpriseQueryService.findAll());
+    }
+
+    @Override
+    public void init() {
+        save(CreateEnterpriseRequest.builder()
+                .legalName("Enterprise Test LTDA")
+                .tradeName("Enterprise Test")
+                .cnpj("58.902.096/0001-63")
+                .email("enterprise.test@email.com")
+                .password("SafePassword@001")
+                .build());
     }
 }

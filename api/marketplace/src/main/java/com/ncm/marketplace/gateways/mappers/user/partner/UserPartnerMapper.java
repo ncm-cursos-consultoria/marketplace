@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.mappers.user.partner;
 
+import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.domains.users.user.UserPartner;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.partner.CreateUserPartnerRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.partner.UserPartnerResponse;
@@ -35,6 +36,7 @@ public class UserPartnerMapper {
                 .partnerId(userPartner.getPartner() != null
                         ? userPartner.getPartner().getId()
                         : null)
+                .type(UserTypeEnum.PARTNER)
                 .build();
     }
 

@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.mappers.user.enterprise;
 
+import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.domains.users.user.UserEnterprise;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.enterprise.CreateEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.enterprise.UserEnterpriseResponse;
@@ -38,6 +39,7 @@ public class UserEnterpriseMapper {
                 .enterpriseId(userEnterprise.getEnterprise() != null
                         ? userEnterprise.getEnterprise().getId()
                         : null)
+                .type(UserTypeEnum.ENTERPRISE)
                 .build();
     }
 

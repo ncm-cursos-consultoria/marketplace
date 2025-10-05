@@ -1,6 +1,10 @@
 package com.ncm.marketplace.usecases.services.security;
 
+import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.domains.users.user.User;
+import com.ncm.marketplace.domains.users.user.UserCandidate;
+import com.ncm.marketplace.domains.users.user.UserEnterprise;
+import com.ncm.marketplace.domains.users.user.UserPartner;
 import com.ncm.marketplace.exceptions.InvalidCredentialsException;
 import com.ncm.marketplace.exceptions.UserBlockedException;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
@@ -60,6 +64,7 @@ public class AuthService {
                     .email("desconhecido")
                     .birthday(LocalDate.now())
                     .profilePictureUrl("desconhecido")
+                    .type(UserTypeEnum.UNKNOWN)
                     .build();
         }
 
@@ -68,6 +73,7 @@ public class AuthService {
         String id = "desconhecido";
         String firstname = null;
         String lastName = null;
+        UserTypeEnum type = UserTypeEnum.UNKNOWN;
 
         Object details = auth.getDetails();
         if (details instanceof java.util.Map<?,?> map) {
@@ -80,11 +86,20 @@ public class AuthService {
         firstname = user.getFirstName();
         lastName = user.getLastName();
 
+        if (user instanceof UserCandidate) {
+            type = UserTypeEnum.CANDIDATE;
+        } else if (user instanceof UserEnterprise) {
+            type = UserTypeEnum.ENTERPRISE;
+        } else if (user instanceof UserPartner) {
+            type = UserTypeEnum.PARTNER;
+        }
+
         return MeResponse.builder()
                 .id(id)
                 .email(email)
                 .firstName(firstname)
                 .lastName(lastName)
+                .type(type)
                 .build();
     }
 

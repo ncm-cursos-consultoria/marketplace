@@ -2,10 +2,7 @@ package com.ncm.marketplace.domains.users.user;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ncm.marketplace.domains.Partner;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.br.CNPJ;
@@ -16,6 +13,7 @@ import org.hibernate.validator.constraints.br.CNPJ;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
+@DiscriminatorValue("PARTNER")
 public class UserPartner extends User {
     @CNPJ
     @Column(unique = true, nullable = false)

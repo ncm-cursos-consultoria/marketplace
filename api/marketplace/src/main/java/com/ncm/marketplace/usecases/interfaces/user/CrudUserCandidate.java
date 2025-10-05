@@ -13,4 +13,5 @@ public interface CrudUserCandidate {
     UserCandidateResponse update(String id, UpdateUserCandidateRequest request);
     UserCandidateResponse findById(String id);
     List<UserCandidateResponse> findAll();
+    void init();
 }
