@@ -43,7 +43,7 @@ public class EnterpriseControllerImpl implements EnterpriseController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete an enterprise")
     @Override
-    public ResponseEntity<Void> delete(@PathVariable String id) {
+    public ResponseEntity<Void> deleteById(@PathVariable String id) {
         crudEnterprise.deleteById(id);
         return ResponseEntity.noContent().build();
     }
