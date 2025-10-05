@@ -4,20 +4,26 @@ import com.ncm.marketplace.gateways.controller.interfaces.services.auth.AuthCont
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
 import com.ncm.marketplace.gateways.dtos.responses.services.auth.MeResponse;
 import com.ncm.marketplace.usecases.services.security.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
 @RequiredArgsConstructor
+@RequestMapping("/auth")
+@Tag(name = "Authorization")
 public class AuthControllerImpl implements AuthController {
 
     private final AuthService authService;
 
     @PostMapping("/login")
+    @Operation(summary = "Login with any user")
+    @ResponseStatus(HttpStatus.OK)
     @Override
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         ResponseCookie cookie = authService.login(request);
@@ -27,6 +33,8 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @GetMapping("/me")
+    @Operation(summary = "Get logged user basic infos")
+    @ResponseStatus(HttpStatus.OK)
     @Override
     public ResponseEntity<MeResponse> me() {
         return ResponseEntity.ok(authService.me());
