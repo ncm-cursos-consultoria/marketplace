@@ -22,7 +22,4 @@ public class UpdateUserPartnerRequest {
     @NotEmpty
     private String email;
     private LocalDate birthday;
-    @CNPJ
-    @NotEmpty
-    private String cnpj;
 }

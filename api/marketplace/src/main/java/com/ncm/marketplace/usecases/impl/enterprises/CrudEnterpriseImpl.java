@@ -32,15 +32,15 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     private final EnterpriseQueryService enterpriseQueryService;
     private final RandomPasswordService randomPasswordService;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final UserQueryService userQueryService;
 
+    @Transactional
     @Override
     public EnterpriseResponse save(CreateEnterpriseRequest request) {
         return toResponse(enterpriseCommandService.save(toEntityCreate(request)));
     }
 
-    @Override
     @Transactional
+    @Override
     public EnterpriseResponse saveWithUser(CreateEnterpriseAndUserEnterpriseRequest request) {
         Enterprise enterprise = enterpriseCommandService.save(toEntityCreate(request));
 
@@ -53,13 +53,14 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         return toResponse(enterprise);
     }
 
+    @Transactional
     @Override
     public void deleteById(String id) {
         userEnterpriseCommandService.deleteById(id);
     }
 
-    @Override
     @Transactional
+    @Override
     public EnterpriseResponse update(String id, UpdateEnterpriseRequest request) {
         Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(id);
         UserEnterprise user = enterprise.getUserEnterprise();
@@ -97,6 +98,7 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         return toResponse(enterpriseQueryService.findAll());
     }
 
+    @Transactional
     @Override
     public void init() {
         if (!enterpriseQueryService.existsByCnpj("58.902.096/0001-63")) {

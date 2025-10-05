@@ -29,4 +29,8 @@ public class PartnerQueryService {
     public Page<Partner> findAll(Pageable pageable) {
         return partnerRepository.findAll(pageable);
     }
+
+    public Boolean existsByEnterpriseId(String enterpriseId) {
+        return partnerRepository.existsByEnterprise_Id(enterpriseId);
+    }
 }

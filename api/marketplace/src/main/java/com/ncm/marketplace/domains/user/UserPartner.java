@@ -15,10 +15,6 @@ import org.hibernate.validator.constraints.br.CNPJ;
 @Entity
 @DiscriminatorValue("PARTNER")
 public class UserPartner extends User {
-    @CNPJ
-    @Column(unique = true, nullable = false)
-    private String cnpj;
-
     @OneToOne
     @JoinColumn(name = "partnerId", referencedColumnName = "id")
     @JsonManagedReference("user_partner-partner")

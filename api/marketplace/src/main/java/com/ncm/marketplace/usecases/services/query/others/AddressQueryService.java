@@ -29,4 +29,12 @@ public class AddressQueryService {
     public Page<Address> findAll(Pageable pageable) {
         return addressRepository.findAll(pageable);
     }
+
+    public Boolean existsByUserCandidateId(String userid) {
+        return addressRepository.existsByUserCandidate_Id(userid);
+    }
+
+    public Boolean existsByEnterpriseId(String enterpriseId) {
+        return addressRepository.existsByEnterprise_Id(enterpriseId);
+    }
 }

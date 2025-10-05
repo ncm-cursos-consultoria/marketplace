@@ -29,4 +29,8 @@ public class DiscQueryService {
     public Page<Disc> findAll(Pageable pageable) {
         return discRepository.findAll(pageable);
     }
+
+    public Boolean existsByUserCandidateId(String userId) {
+        return discRepository.existsByUserCandidate_Id(userId);
+    }
 }

@@ -9,8 +9,8 @@ import java.util.List;
 public interface CrudAddress {
     AddressResponse save(CreateAddressRequest request);
     void deleteById(String id);
-    AddressResponse update(String userId, UpdateAddressRequest request);
+    AddressResponse update(String id, UpdateAddressRequest request);
     AddressResponse findById(String id);
     List<AddressResponse> findAll();
-    void init();
+    void init(String userId, String enterpriseId);
 }

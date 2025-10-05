@@ -30,7 +30,7 @@ public class UserCandidateQueryService {
         return userCandidateRepository.findAll(pageable);
     }
 
-    public Boolean existByCpf(String cpf) {
+    public Boolean existsByCpf(String cpf) {
         return userCandidateRepository.existsByCpf(cpf);
     }
 }

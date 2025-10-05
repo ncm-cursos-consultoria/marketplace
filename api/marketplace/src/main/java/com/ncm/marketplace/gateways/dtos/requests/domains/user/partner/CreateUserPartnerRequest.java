@@ -22,10 +22,8 @@ public class CreateUserPartnerRequest {
     @Email
     @NotEmpty
     private String email;
+    private LocalDate birthday;
     @NotEmpty
     @Size(min = 8)
     private String password;
-    @CNPJ
-    @NotEmpty
-    private String cnpj;
 }

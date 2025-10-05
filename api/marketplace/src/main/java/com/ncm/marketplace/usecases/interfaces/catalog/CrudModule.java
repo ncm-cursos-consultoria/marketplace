@@ -12,5 +12,5 @@ public interface CrudModule {
     ModuleResponse update(String id, UpdateModuleRequest request);
     ModuleResponse findById(String id);
     List<ModuleResponse> findAll();
-    void init();
+    void init(String enterpriseId);
 }

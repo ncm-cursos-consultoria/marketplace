@@ -29,4 +29,8 @@ public class ModuleQueryService {
     public Page<Module> findAll(Pageable pageable) {
         return moduleRepository.findAll(pageable);
     }
+
+    public Boolean existsByEnterpriseId(String enterpriseId) {
+        return moduleRepository.existsByEnterprise_Id(enterpriseId);
+    }
 }

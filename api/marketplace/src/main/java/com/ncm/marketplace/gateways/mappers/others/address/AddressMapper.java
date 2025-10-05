@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.mappers.others.address;
 
 import com.ncm.marketplace.domains.others.Address;
+import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.UpdateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.others.address.AddressResponse;
 import org.springframework.data.domain.Page;
@@ -10,7 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AddressMapper {
-    public static Address toEntityCreate(UpdateAddressRequest request) {
+    public static Address toEntityCreate(CreateAddressRequest request) {
         return Address.builder()
                 .country(request.getCountry())
                 .state(request.getState())

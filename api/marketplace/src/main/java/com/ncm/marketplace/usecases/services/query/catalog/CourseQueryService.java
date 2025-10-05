@@ -30,4 +30,8 @@ public class CourseQueryService {
     public Page<Course> findAll(Pageable pageable) {
         return courseRepository.findAll(pageable);
     }
+
+    public Boolean existsByModuleId(String moduleId) {
+        return courseRepository.existsByModule_Id(moduleId);
+    }
 }
