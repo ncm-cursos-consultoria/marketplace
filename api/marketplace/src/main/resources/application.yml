@@ -1,0 +1,62 @@
+spring:
+  profiles:
+    active: ${ENVIRONMENT:dev}
+  session:
+    jdbc:
+      initialize-schema: always
+  datasource:
+    url: jdbc:mysql://${MYSQL_DATASOURCE_HOST}:${MYSQL_DATASOURCE_PORT}/${MYSQL_DATASOURCE_DATABASE}
+    username: ${MYSQL_DATASOURCE_USERNAME}
+    password: ${MYSQL_DATASOURCE_PASSWORD}
+    hikari:
+      pool-name: MarketplaceNCMPool
+      auto-commit: false
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 600000      # 10 min
+      max-lifetime: 1800000     # 30 min
+      keepalive-time: 300000    # 5 min
+      connection-timeout: 30000
+  security:
+    user:
+      name: ${SECURITY_USER}
+      password: ${SECURITY_PASSWORD}
+  jackson:
+    time-zone: UTC
+    serialization:
+      write-dates-as-timestamps: false  # ISO-8601
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        connection:
+          provider_disables_autocommit: false
+        jdbc:
+          time_zone: UTC
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+    show-sql: false
+logging:
+  level:
+    org.springdoc: DEBUG
+    org.springframework.web: DEBUG
+jwt:
+  secret: ${SECRET_KEY}
+  expiration: ${EXPIRATION_TIME}
+server:
+  port: 8080
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    version: 0.0.1
+meta:
+  credentials-key-b64: WC+JNalt5w6hkgPM+kVTX6qcAq8EOuy+rcMyCYhaXng=

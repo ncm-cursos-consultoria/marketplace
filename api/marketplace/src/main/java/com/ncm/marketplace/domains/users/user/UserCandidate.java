@@ -32,7 +32,7 @@ public class UserCandidate extends User {
     private String cpf;
 
     @OneToOne
-    @JoinColumn(name = "fileId", referencedColumnName = "id")
+    @JoinColumn(name = "curriculumVitaeId", referencedColumnName = "id")
     @JsonManagedReference("user_candidate-file")
     private File curriculumVitae;
 

@@ -31,13 +31,14 @@ public class MarketplaceApplication {
 	//    query
 	//  usecases
 	//  controllers
-	//  swagger
-	//  create SQL DB in CLoud
-	//  create bucket in CLoud
-	//  deploy digitalOcean
+	//  swagger ✅
+	//  DigitalOcean
+	//    deploy api ✅
+	//    create SQL DB ✅
+	//    create Storage
 	//  return filesUrl
 	//  services
-	//    login
+	//    login ✅
 	//    view job opening
 	//    change status job opening
 	//    change status module

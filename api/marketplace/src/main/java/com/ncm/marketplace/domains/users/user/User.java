@@ -36,7 +36,7 @@ public abstract class User {
     private Boolean isBlocked = Boolean.FALSE;
 
     @OneToOne
-    @JoinColumn(name = "fileId", referencedColumnName = "id")
+    @JoinColumn(name = "profilePictureId", referencedColumnName = "id")
     @JsonManagedReference("user-profile_picture")
     private File profilePicture;
 
