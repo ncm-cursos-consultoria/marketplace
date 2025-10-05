@@ -2,6 +2,7 @@ package com.ncm.marketplace.domains.user.candidate;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.domains.others.File;
 import com.ncm.marketplace.domains.enums.DiscEnum;
@@ -65,4 +66,9 @@ public class UserCandidate extends User {
     @OneToMany(mappedBy = "userCandidate")
     @JsonBackReference("user_candidate_job_opening-user_candidate")
     private Set<UserCandidateJobOpening> userCandidateJobOpenings = new HashSet<>();
+
+    @Override
+    public UserTypeEnum getType() {
+        return UserTypeEnum.CANDIDATE;
+    }
 }

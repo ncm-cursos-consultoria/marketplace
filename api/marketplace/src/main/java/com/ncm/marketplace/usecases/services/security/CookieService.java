@@ -33,4 +33,21 @@ public class CookieService {
 
         return b.build();
     }
+
+    public ResponseCookie createLogoutCookie() {
+        boolean isProd = "prod".equalsIgnoreCase(appEnv);
+
+        ResponseCookie.ResponseCookieBuilder b = ResponseCookie.from("ncm_marketplace_auth_token")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .secure(isProd)
+                .sameSite(isProd ? "None" : "Lax");
+
+        if (isProd && cookieDomain != null && !cookieDomain.isBlank()) {
+            b.domain(cookieDomain);
+        }
+
+        return b.build();
+    }
 }

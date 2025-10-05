@@ -2,6 +2,7 @@ package com.ncm.marketplace.domains.user;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ncm.marketplace.domains.enterprise.Enterprise;
+import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -21,4 +22,9 @@ public class UserEnterprise extends User {
     @JoinColumn(name = "enterpriseId", referencedColumnName = "id")
     @JsonManagedReference("user_enterprise-enterprise")
     private Enterprise enterprise;
+
+    @Override
+    public UserTypeEnum getType() {
+        return UserTypeEnum.ENTERPRISE;
+    }
 }

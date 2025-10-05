@@ -1,6 +1,7 @@
 package com.ncm.marketplace.domains.user;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.domains.others.Partner;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,4 +20,9 @@ public class UserPartner extends User {
     @JoinColumn(name = "partnerId", referencedColumnName = "id")
     @JsonManagedReference("user_partner-partner")
     private Partner partner;
+
+    @Override
+    public UserTypeEnum getType() {
+        return UserTypeEnum.PARTNER;
+    }
 }

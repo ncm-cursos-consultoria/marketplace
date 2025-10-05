@@ -43,13 +43,16 @@ public class AuthService {
             throw new UserBlockedException("User is blocked");
         }
 
-
         String token = jwtService.generateToken(
                 user.getId(),
                 user.getEmail()
         );
 
         return cookieService.createJwtCookie(token);
+    }
+
+    public ResponseCookie logout() {
+        return cookieService.createLogoutCookie();
     }
 
     @Transactional(readOnly = true)
@@ -84,14 +87,7 @@ public class AuthService {
 
         firstname = user.getFirstName();
         lastName = user.getLastName();
-
-        if (user instanceof UserCandidate) {
-            type = UserTypeEnum.CANDIDATE;
-        } else if (user instanceof UserEnterprise) {
-            type = UserTypeEnum.ENTERPRISE;
-        } else if (user instanceof UserPartner) {
-            type = UserTypeEnum.PARTNER;
-        }
+        type = user.getType();
 
         return MeResponse.builder()
                 .id(id)

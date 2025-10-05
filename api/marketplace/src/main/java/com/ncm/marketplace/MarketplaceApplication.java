@@ -30,7 +30,8 @@ public class MarketplaceApplication {
 	//    command ✅
 	//    query ✅
 	//  usecases ✅
-	//  controllers
+	//  controllers ✅
+	//  outros controllers
 	//  adicionar selo vaga externa
 	//  adicionar senioridade da vaga
 	//  adicionar horario de trabalho
@@ -42,6 +43,7 @@ public class MarketplaceApplication {
 	//    create SQL DB ✅
 	//    create Storage
 	//  return filesUrl
+	//  controllers de upload
 	//  services
 	//    login ✅
 	//    logout
