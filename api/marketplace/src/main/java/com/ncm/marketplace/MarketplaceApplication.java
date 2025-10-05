@@ -25,9 +25,9 @@ public class MarketplaceApplication {
 	//  dtos ✅
 	//    requests ✅
 	//    responses ✅
-	//  mappers
+	//  mappers ✅
 	//  services
-	//    command
+	//    command ✅
 	//    query
 	//  usecases
 	//  controllers
