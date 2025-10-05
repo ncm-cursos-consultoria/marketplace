@@ -1,8 +1,8 @@
 package com.ncm.marketplace.gateways.mappers.courses.module;
 
 import com.ncm.marketplace.domains.courses.Module;
-import com.ncm.marketplace.gateways.dtos.requests.courses.module.CreateModuleRequest;
-import com.ncm.marketplace.gateways.dtos.responses.courses.module.ModuleResponse;
+import com.ncm.marketplace.gateways.dtos.requests.domains.courses.module.CreateModuleRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.courses.module.ModuleResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

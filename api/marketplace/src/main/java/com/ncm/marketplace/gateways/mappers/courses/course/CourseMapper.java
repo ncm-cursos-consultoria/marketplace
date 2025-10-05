@@ -3,8 +3,8 @@ package com.ncm.marketplace.gateways.mappers.courses.course;
 
 import com.ncm.marketplace.domains.courses.Course;
 import com.ncm.marketplace.domains.courses.Video;
-import com.ncm.marketplace.gateways.dtos.requests.courses.course.CreateCourseRequest;
-import com.ncm.marketplace.gateways.dtos.responses.courses.course.CourseResponse;
+import com.ncm.marketplace.gateways.dtos.requests.domains.courses.course.CreateCourseRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.courses.course.CourseResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

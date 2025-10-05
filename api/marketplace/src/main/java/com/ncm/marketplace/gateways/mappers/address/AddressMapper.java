@@ -1,8 +1,8 @@
 package com.ncm.marketplace.gateways.mappers.address;
 
 import com.ncm.marketplace.domains.Address;
-import com.ncm.marketplace.gateways.dtos.requests.address.UpdateAddressRequest;
-import com.ncm.marketplace.gateways.dtos.responses.address.AddressResponse;
+import com.ncm.marketplace.gateways.dtos.requests.domains.address.UpdateAddressRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.address.AddressResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

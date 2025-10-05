@@ -30,6 +30,7 @@ public class Course {
     private String title;
     @Column(length = 500)
     private String description;
+    @Column(name = "courseOrder")
     private Integer order;
 
     @ManyToOne(fetch = FetchType.LAZY)
