@@ -1,9 +1,22 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
+'use client'
+
+import { useState } from "react";
+import { CandidateLogin } from "./candidate-login";
+import { EnterpriseLogin } from "./enterprise-login";
 
 export default function SignIn() {
+  const [selectType, setSelectType] = useState<"candidato" | "empresa">(
+    "candidato"
+  );
+
+  const btn = (active: boolean) =>
+    [
+      "w-[120px] px-4 py-2 rounded-md transition-all flex items-center justify-center cursor-pointer",
+      active
+        ? "bg-green-600 text-white shadow-sm border-none"
+        : "bg-white text-gray-800 border-neutral-300 hover:bg-gray-50",
+    ].join(" ");
+
   return (
     <div className="w-full max-w-md flex flex-col gap-6">
       {/* Cabeçalho */}
@@ -15,45 +28,24 @@ export default function SignIn() {
           Seja bem-vindo novamente
         </h2>
       </div>
-
-      <form className="flex flex-col gap-6">
-        <div className="flex flex-col gap-4">
-          {/* Email */}
-          <div className="flex flex-col gap-1">
-            <Label>Email</Label>
-            <Input
-              type="email"
-              className="border border-neutral-300"
-              placeholder="Digite seu email"
-            />
-          </div>
-
-          {/* Senha */}
-          <div className="flex flex-col gap-1">
-            <Label>Senha</Label>
-            <Input
-              type="password"
-              className="border border-neutral-300"
-              placeholder="Digite sua senha"
-            />
-          </div>
+      <div className="flex items-center justify-center border shadow-md p-2 border-neutral-200 w-auto">
+        <div
+          aria-pressed={selectType === "candidato"}
+          onClick={() => setSelectType("candidato")}
+          className={btn(selectType === "candidato")}
+        >
+          Candidato
         </div>
 
-        {/* Ações */}
-        <div className="flex flex-col gap-4 items-center">
-          <Link href="/oportunidades/home" className="w-full cursor-pointer">
-            <Button className="bg-[#008000] w-full py-3 text-white font-semibold rounded-md hover:bg-green-700 transition">
-              Entrar
-            </Button>
-          </Link>
-
-          <Link href="/auth/forgot-password">
-            <span className="text-sm text-neutral-500 hover:text-neutral-700 transition">
-              Esqueci a senha
-            </span>
-          </Link>
+        <div
+          aria-pressed={selectType === "empresa"}
+          onClick={() => setSelectType("empresa")}
+          className={btn(selectType === "empresa")}
+        >
+          Empresa
         </div>
-      </form>
+      </div>
+      {selectType === "candidato" ? <CandidateLogin /> : <EnterpriseLogin />}
     </div>
   );
 }

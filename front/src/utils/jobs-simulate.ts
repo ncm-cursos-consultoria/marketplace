@@ -56,3 +56,91 @@ export const jobs = [
     salary: "A combinar",
   },
 ];
+
+export const enterpriseJobs = [
+  {
+    id: 'v1',
+    title: 'Desenvolvedor(a) Full‑Stack (Nest + React)',
+    city: 'São Paulo',
+    uf: 'SP',
+    salary: 12000,
+    status: 'Ativa',
+    views: 341,
+    updatedAt: 'Hoje',
+  },
+  {
+    id: 'v2',
+    title: 'Analista de Dados Pleno',
+    city: 'Belo Horizonte',
+    uf: 'MG',
+    salary: 9000,
+    status: 'Em revisão',
+    views: 189,
+    updatedAt: 'Ontem',
+  },
+  {
+    id: 'v3',
+    title: 'UX/UI Designer Sênior',
+    city: 'Curitiba',
+    uf: 'PR',
+    salary: 11000,
+    status: 'Pausada',
+    views: 96,
+    updatedAt: 'Há 3 dias',
+  },
+]
+
+export const applicants = [
+  {
+    id: 'c1',
+    name: 'Ana Ribeiro',
+    position: 'Full‑Stack',
+    city: 'Campinas',
+    uf: 'SP',
+    match: 87,
+    status: 'Novo',
+  },
+  {
+    id: 'c2',
+    name: 'Lucas Monteiro',
+    position: 'Dados',
+    city: 'Florianópolis',
+    uf: 'SC',
+    match: 79,
+    status: 'Em triagem',
+  },
+  {
+    id: 'c3',
+    name: 'Beatriz Lima',
+    position: 'UX/UI',
+    city: 'Rio de Janeiro',
+    uf: 'RJ',
+    match: 92,
+    status: 'Entrevista',
+  },
+]
+
+export const materials = [
+  {
+    id: 'm1',
+    module: 'Módulo 1',
+    title: 'Como atrair talentos qualificados',
+    desc: 'Fundamentos do funil de contratação e EVP.',
+    // YouTube thumb style preview (change the id if you want real videos)
+    yt: 'dQw4w9WgXcQ',
+  },
+  {
+    id: 'm2',
+    module: 'Módulo 2',
+    title: 'Estruturando sua vaga de forma clara',
+    desc: 'Job description, requisitos e benefícios.',
+    yt: 'J---aiyznGQ',
+  },
+  {
+    id: 'm3',
+    module: 'Módulo 3',
+    title: 'Entrevistas objetivas e sem vieses',
+    desc: 'Roteiro, scorecards e tomada de decisão.',
+    yt: 'eY52Zsg-KVI',
+  },
+]

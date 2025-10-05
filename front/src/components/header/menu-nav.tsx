@@ -1,7 +1,7 @@
 export function MenuNav() {
   return (
     <ul className="flex flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-center gap-6 lg:gap-10">
-      <li className="font-medium cursor-pointer hover:text-green-600 transition-colors">
+      {/* <li className="font-medium cursor-pointer hover:text-green-600 transition-colors">
         Home
       </li>
       <li className="font-medium cursor-pointer hover:text-green-600 transition-colors">
@@ -12,7 +12,7 @@ export function MenuNav() {
       </li>
       <li className="font-medium cursor-pointer hover:text-green-600 transition-colors">
         Contato
-      </li>
+      </li> */}
     </ul>
   );
 }

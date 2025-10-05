@@ -12,11 +12,9 @@ export function Header() {
         <div className="flex items-center gap-3">
           <Image src={logo} alt="Logo NCM consultoria" width={120} />
         </div>
-
         <div className="hidden md:block">
           <MenuNav />
         </div>
-
         <div className="flex items-center gap-3">
           <LanguageToggle />
           <ButtonsMenu />

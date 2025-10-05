@@ -9,6 +9,7 @@ import fabricaDeProgramadores from "@/assets/fabrica-de-programadores.png";
 import santanaDeParnaiba from "@/assets/santa-parnaiba.png";
 import logo from "@/assets/logo-ncm-horizontal.svg";
 import { HeaderResponsive } from "@/components/header/header-responsive/header-responsive";
+import carreiras from "@/assets/Imagem do WhatsApp de 2025-10-03 à(s) 10.01.05_4b03cd40.jpg";
 
 const MotionImage = motion(Image);
 
@@ -176,6 +177,14 @@ export default function Home() {
               Prefeitura de Santana de Parnaíba
             </span>
           </div>
+
+          <Image
+            src={carreiras}
+            alt="Fábrica de Programadores"
+            width={200}
+            height={90}
+            unoptimized
+          />
         </motion.div>
       </section>
 
