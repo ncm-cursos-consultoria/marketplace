@@ -14,6 +14,7 @@ import com.ncm.marketplace.usecases.services.query.user.UserEnterpriseQueryServi
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class CrudUserEnterpriseImpl implements CrudUserEnterprise {
     private final UserEnterpriseQueryService userEnterpriseQueryService;
     private final EnterpriseCommandService enterpriseCommandService;
 
+    @Transactional
     @Override
     public UserEnterpriseResponse save(CreateUserEnterpriseRequest request) {
         UserEnterprise user = toEntityCreate(request);
@@ -36,11 +38,13 @@ public class CrudUserEnterpriseImpl implements CrudUserEnterprise {
         return toResponse(userEnterpriseCommandService.save(user));
     }
 
+    @Transactional
     @Override
     public void deleteById(String id) {
         userEnterpriseCommandService.deleteById(id);
     }
 
+    @Transactional
     @Override
     public UserEnterpriseResponse update(String id, UpdateUserEnterpriseRequest request) {
         UserEnterprise user = userEnterpriseQueryService.findByIdOrThrow(id);
@@ -67,6 +71,7 @@ public class CrudUserEnterpriseImpl implements CrudUserEnterprise {
         return toResponse(userEnterpriseQueryService.findAll());
     }
 
+    @Transactional
     @Override
     public void init(String enterpriseId) {
         if (!userEnterpriseQueryService.existsByEnterpriseId(enterpriseId)

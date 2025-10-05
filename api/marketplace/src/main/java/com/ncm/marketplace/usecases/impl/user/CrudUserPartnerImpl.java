@@ -18,6 +18,7 @@ import com.ncm.marketplace.usecases.services.query.user.UserPartnerQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,28 +33,19 @@ public class CrudUserPartnerImpl implements CrudUserPartner {
     private final EnterpriseCommandService enterpriseCommandService;
     private final PartnerCommandService partnerCommandService;
 
+    @Transactional
     @Override
     public UserPartnerResponse save(CreateUserPartnerRequest request) {
         return toResponse(userPartnerCommandService.save(toEntityCreate(request)));
     }
 
-    @Override
-    public UserPartnerResponse saveWithEnterpriseAndUserPartner(CreatePartnerAndEnterpriseAndUserPartnerRequest request) {
-        Enterprise enterprise = EnterpriseMapper.toEntityCreate(request);
-        Partner partner = PartnerMapper.toEntityCreate(request);
-        partner.setEnterprise(enterprise);
-        UserPartner userPartner = toEntityCreate(request);
-        userPartner.setPartner(partner);
-        enterpriseCommandService.save(enterprise);
-        partnerCommandService.save(partner);
-        return toResponse(userPartnerCommandService.save(userPartner));
-    }
-
+    @Transactional
     @Override
     public void deleteById(String id) {
         userPartnerCommandService.deleteById(id);
     }
 
+    @Transactional
     @Override
     public UserPartnerResponse update(String id, UpdateUserPartnerRequest request) {
         UserPartner user = userPartnerQueryService.findByIdOrThrow(id);
@@ -80,6 +72,7 @@ public class CrudUserPartnerImpl implements CrudUserPartner {
         return toResponse(userPartnerQueryService.findAll());
     }
 
+    @Transactional
     @Override
     public void init(String partnerId) {
         if (!userPartnerQueryService.existsByPartnerId(partnerId)

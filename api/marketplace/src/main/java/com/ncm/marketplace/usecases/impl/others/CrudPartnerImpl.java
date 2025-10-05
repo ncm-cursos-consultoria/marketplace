@@ -2,12 +2,18 @@ package com.ncm.marketplace.usecases.impl.others;
 
 import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.others.Partner;
+import com.ncm.marketplace.domains.user.UserPartner;
+import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.CreatePartnerAndEnterpriseAndUserPartnerRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.CreatePartnerRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.UpdatePartnerRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.others.partner.PartnerResponse;
+import com.ncm.marketplace.gateways.mappers.enterprises.enterprise.EnterpriseMapper;
 import com.ncm.marketplace.gateways.mappers.others.partner.PartnerMapper;
+import com.ncm.marketplace.gateways.mappers.user.partner.UserPartnerMapper;
 import com.ncm.marketplace.usecases.interfaces.others.CrudPartner;
+import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.others.PartnerCommandService;
+import com.ncm.marketplace.usecases.services.command.user.UserPartnerCommandService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +34,8 @@ public class CrudPartnerImpl implements CrudPartner {
     private final EnterpriseQueryService enterpriseQueryService;
     private final PartnerCommandService partnerCommandService;
     private final PartnerQueryService partnerQueryService;
+    private final EnterpriseCommandService enterpriseCommandService;
+    private final UserPartnerCommandService userPartnerCommandService;
 
     @Transactional
     @Override
@@ -35,6 +43,19 @@ public class CrudPartnerImpl implements CrudPartner {
         Partner partner = toEntityCreate(request);
         Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(partner.getId());
         partner.setEnterprise(enterprise);
+        return toResponse(partnerCommandService.save(partner));
+    }
+
+    @Transactional
+    @Override
+    public PartnerResponse saveWithEnterpriseAndUserPartner(CreatePartnerAndEnterpriseAndUserPartnerRequest request) {
+        Enterprise enterprise = EnterpriseMapper.toEntityCreate(request);
+        Partner partner = toEntityCreate(request);
+        partner.setEnterprise(enterprise);
+        UserPartner userPartner = UserPartnerMapper.toEntityCreate(request);
+        userPartner.setPartner(partner);
+        enterpriseCommandService.save(enterprise);
+        userPartnerCommandService.save(userPartner);
         return toResponse(partnerCommandService.save(partner));
     }
 

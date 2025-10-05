@@ -29,13 +29,13 @@ public class MarketplaceApplication {
 	//  services ✅
 	//    command ✅
 	//    query ✅
-	//  usecases
+	//  usecases ✅
+	//  controllers
 	//  adicionar selo vaga externa
 	//  adicionar senioridade da vaga
 	//  adicionar horario de trabalho
 	//  adicionar modelo de contratação
 	//  tags de soft e hard skills
-	//  controllers
 	//  swagger ✅
 	//  DigitalOcean
 	//    deploy api ✅
@@ -54,4 +54,5 @@ public class MarketplaceApplication {
 	//  estudar teste comportamental
 	//    disc
 	//    big five
+	//  role admin
 }
