@@ -48,6 +48,7 @@ export function CandidateSignUp() {
           <Input
             className="border border-neutral-300"
             placeholder="Digite uma senha"
+            {...register("cpf")}
           />
         </div>
 
@@ -74,10 +75,14 @@ export function CandidateSignUp() {
             />
           </div>
         </div>
+        <div>
+          <Label>Data de nascimento</Label>
+          <Input type="date" className="border border-neutral-300 w-full" {...register('birthDate')}/>
+        </div>
       </div>
       <div className="flex flex-col gap-3 items-center">
         <Button
-          className="bg-[#008000] w-full py-3 text-white font-semibold rounded-md hover:bg-green-700 transition"
+          className="bg-[#008000] w-full py-3 text-white font-semibold rounded-md hover:bg-green-700 transition cursor-pointer"
           type="submit"
           disabled={isPending}
         >

@@ -1,5 +1,15 @@
+import { login } from "@/service/auth/login";
+import { me } from "@/service/auth/me";
 import { UserCandidateProps } from "@/utils/interfaces";
-import { createContext, Dispatch, SetStateAction, useContext, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 interface userCandidateProviderProps {
   userCandidate: UserCandidateProps | null;
@@ -18,6 +28,21 @@ export function UserCandidateProvider({
   const [userCandidate, setUserCandidate] = useState<UserCandidateProps | null>(
     null
   );
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: me,
+    retry: false,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  useEffect(() => {
+    if (data) {
+      setUserCandidate(data);
+    } else {
+      setUserCandidate(null);
+    }
+  }, [data]);
 
   return (
     <userCandidateContext.Provider value={{ userCandidate, setUserCandidate }}>

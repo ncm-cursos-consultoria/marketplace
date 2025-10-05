@@ -1,17 +1,17 @@
-import { toast } from "sonner";
 import { api } from "../api";
 
 interface postUserProps {
-  firstName: string,
-  lastName: string,
-  cpf: string,
-  email: string,
-  password: string
+  firstName: string;
+  lastName: string;
+  cpf: string;
+  email: string;
+  password: string;
+  birthDate: string;
 }
 
 export const postUser = async (data: postUserProps) => {
   try {
-    const res = await api.post(`/autenticacao/backend_criar_conta.php`, data);
+    const res = await api.post(`/user/candidate`, data);
     return res.data;
   } catch (err: unknown) {
     if (err instanceof Error) {
