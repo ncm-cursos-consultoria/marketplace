@@ -31,7 +31,7 @@ public class MarketplaceApplication {
 	//    query
 	//  usecases
 	//  controllers
-	//  swagger
+	//  swagger ✅
 	//  DigitalOcean
 	//    deploy api ✅
 	//    create SQL DB ✅
