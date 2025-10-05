@@ -1,7 +1,6 @@
 package com.ncm.marketplace.usecases.services.query.courses;
 
-import com.ncm.marketplace.domains.courses.Course;
-import com.ncm.marketplace.domains.courses.Module;
+import com.ncm.marketplace.domains.catalog.Module;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.courses.module.ModuleRepository;
 import lombok.RequiredArgsConstructor;

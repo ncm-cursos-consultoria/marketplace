@@ -1,6 +1,6 @@
 package com.ncm.marketplace.usecases.services.command;
 
-import com.ncm.marketplace.domains.Address;
+import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.gateways.repositories.domains.address.AddressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

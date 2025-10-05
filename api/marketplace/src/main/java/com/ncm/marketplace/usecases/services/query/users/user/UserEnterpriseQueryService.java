@@ -1,7 +1,6 @@
 package com.ncm.marketplace.usecases.services.query.users.user;
 
-import com.ncm.marketplace.domains.users.user.UserEnterprise;
-import com.ncm.marketplace.domains.users.user.UserEnterprise;
+import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.user.enterprise.UserEnterpriseRepository;
 import lombok.RequiredArgsConstructor;

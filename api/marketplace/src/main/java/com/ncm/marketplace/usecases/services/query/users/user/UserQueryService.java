@@ -1,6 +1,6 @@
 package com.ncm.marketplace.usecases.services.query.users.user;
 
-import com.ncm.marketplace.domains.users.user.User;
+import com.ncm.marketplace.domains.user.User;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,5 +21,9 @@ public class UserQueryService {
     public User findByEmailOrNull(String email) {
         return userRepository.findByEmail(email)
                 .orElse(null);
+    }
+
+    public Boolean existByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 }

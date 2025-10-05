@@ -1,6 +1,6 @@
 package com.ncm.marketplace.usecases.services.command.enterprises;
 
-import com.ncm.marketplace.domains.enterprises.JobOpening;
+import com.ncm.marketplace.domains.enterprise.JobOpening;
 import com.ncm.marketplace.gateways.repositories.domains.enterprises.jobOpening.JobOpeningRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

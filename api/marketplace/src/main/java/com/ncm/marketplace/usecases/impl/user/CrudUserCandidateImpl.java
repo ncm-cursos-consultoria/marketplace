@@ -1,7 +1,6 @@
 package com.ncm.marketplace.usecases.impl.user;
 
-import com.ncm.marketplace.domains.users.user.User;
-import com.ncm.marketplace.domains.users.user.UserCandidate;
+import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
@@ -9,8 +8,8 @@ import com.ncm.marketplace.usecases.interfaces.user.CrudUserCandidate;
 import com.ncm.marketplace.usecases.services.command.users.user.UserCandidateCommandService;
 import com.ncm.marketplace.usecases.services.query.users.user.UserCandidateQueryService;
 import com.ncm.marketplace.usecases.services.query.users.user.UserQueryService;
-import com.ncm.marketplace.usecases.services.security.RandomPasswordService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +18,7 @@ import java.util.List;
 
 import static com.ncm.marketplace.gateways.mappers.user.candidate.UserCandidateMapper.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CrudUserCandidateImpl implements CrudUserCandidate {
@@ -65,8 +65,8 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
 
     @Override
     public void init() {
-        User user = userQueryService.findByEmailOrNull("user.candidate@email.com");
-        if (user == null) {;
+        if (!userCandidateQueryService.existByCpf("538.902.490-78")
+                || !userQueryService.existByEmail("user.candidate@email.com")) {;
             save(CreateUserCandidateRequest.builder()
                     .cpf("538.902.490-78")
                     .firstName("User")
@@ -75,6 +75,9 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
                     .password("SafePassword@001")
                     .birthday(LocalDate.now())
                     .build());
+            log.info("User candidate created ✅");
+        } else {
+            log.info("User candidate already exists ℹ️");
         }
     }
 }

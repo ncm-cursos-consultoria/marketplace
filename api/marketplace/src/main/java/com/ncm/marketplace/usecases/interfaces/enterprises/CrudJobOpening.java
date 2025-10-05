@@ -1,8 +1,8 @@
 package com.ncm.marketplace.usecases.interfaces.enterprises;
 
 
-import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.jobOpening.CreateJobOpeningRequest;
-import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.jobOpening.UpdateJobOpeningRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
 
 import java.util.List;

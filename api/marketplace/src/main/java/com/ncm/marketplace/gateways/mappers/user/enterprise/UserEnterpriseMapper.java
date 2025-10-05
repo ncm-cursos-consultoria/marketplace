@@ -1,8 +1,10 @@
 package com.ncm.marketplace.gateways.mappers.user.enterprise;
 
 import com.ncm.marketplace.domains.enums.UserTypeEnum;
-import com.ncm.marketplace.domains.users.user.UserEnterprise;
-import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.enterprise.CreateEnterpriseRequest;
+import com.ncm.marketplace.domains.user.UserEnterprise;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseAndUserEnterpriseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.enterprise.CreateUserEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.enterprise.UserEnterpriseResponse;
 import org.springframework.data.domain.Page;
 
@@ -11,7 +13,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UserEnterpriseMapper {
-    public static UserEnterprise toEntityCreate(CreateEnterpriseRequest request) {
+    public static UserEnterprise toEntityCreate(CreateUserEnterpriseRequest request) {
+        return UserEnterprise.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .birthday(request.getBirthday())
+                .build();
+    }
+
+    public static UserEnterprise toEntityCreate(CreateEnterpriseAndUserEnterpriseRequest request) {
         String legalName = request.getLegalName().trim();
         String[] nameParts = legalName.split(" ", 2);
         String firstName = nameParts[0];
@@ -19,7 +30,7 @@ public class UserEnterpriseMapper {
         return UserEnterprise.builder()
                 .firstName(firstName)
                 .lastName(lastName)
-                .email(request.getEmail().trim())
+                .email(request.getEmail())
                 .build();
     }
 

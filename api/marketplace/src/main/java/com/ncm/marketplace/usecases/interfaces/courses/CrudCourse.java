@@ -1,8 +1,8 @@
 package com.ncm.marketplace.usecases.interfaces.courses;
 
-import com.ncm.marketplace.gateways.dtos.requests.domains.courses.course.CreateCourseRequest;
-import com.ncm.marketplace.gateways.dtos.requests.domains.courses.course.UpdateCourseRequest;
-import com.ncm.marketplace.gateways.dtos.responses.domains.courses.course.CourseResponse;
+import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.UpdateCourseRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.catalog.course.CourseResponse;
 
 import java.util.List;
 

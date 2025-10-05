@@ -1,6 +1,6 @@
 package com.ncm.marketplace.usecases.services.command.users.user;
 
-import com.ncm.marketplace.domains.users.user.UserCandidate;
+import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.gateways.repositories.domains.user.candidate.UserCandidateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.ncm.marketplace.usecases.interfaces;
 
-import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.enterprise.CreateEnterpriseRequest;
-import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.enterprise.UpdateEnterpriseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.UpdateEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.enterprise.EnterpriseResponse;
 
 import java.util.List;

@@ -1,17 +1,19 @@
 package com.ncm.marketplace.usecases.impl.enterprises;
 
-import com.ncm.marketplace.domains.enterprises.Enterprise;
-import com.ncm.marketplace.domains.users.user.UserEnterprise;
-import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.enterprise.CreateEnterpriseRequest;
-import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.enterprise.UpdateEnterpriseRequest;
+import com.ncm.marketplace.domains.enterprise.Enterprise;
+import com.ncm.marketplace.domains.user.UserEnterprise;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.UpdateEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.enterprise.EnterpriseResponse;
 import com.ncm.marketplace.gateways.mappers.user.enterprise.UserEnterpriseMapper;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
 import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.users.user.UserEnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
+import com.ncm.marketplace.usecases.services.query.users.user.UserQueryService;
 import com.ncm.marketplace.usecases.services.security.RandomPasswordService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import java.util.List;
 
 import static com.ncm.marketplace.gateways.mappers.enterprises.enterprise.EnterpriseMapper.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CrudEnterpriseImpl implements CrudEnterprise {
@@ -27,6 +30,7 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     private final EnterpriseQueryService enterpriseQueryService;
     private final RandomPasswordService randomPasswordService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final UserQueryService userQueryService;
 
     @Override
     public EnterpriseResponse save(CreateEnterpriseRequest request) {
@@ -84,12 +88,18 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
 
     @Override
     public void init() {
-        save(CreateEnterpriseRequest.builder()
-                .legalName("Enterprise Test LTDA")
-                .tradeName("Enterprise Test")
-                .cnpj("58.902.096/0001-63")
-                .email("enterprise.test@email.com")
-                .password("SafePassword@001")
-                .build());
+        if (!enterpriseQueryService.existsByCnpj("58.902.096/0001-63")
+                || !userQueryService.existByEmail("enterprise.test@email.com")) {
+            save(CreateEnterpriseRequest.builder()
+                    .legalName("Enterprise Test LTDA")
+                    .tradeName("Enterprise Test")
+                    .cnpj("58.902.096/0001-63")
+                    .email("enterprise.test@email.com")
+                    .password("SafePassword@001")
+                    .build());
+            log.info("Enterprise and user enterprise created ✅");
+        } else {
+            log.info("Enterprise and user enterprise already exists ℹ️");
+        }
     }
 }

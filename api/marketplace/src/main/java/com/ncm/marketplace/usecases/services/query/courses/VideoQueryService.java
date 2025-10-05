@@ -1,6 +1,6 @@
 package com.ncm.marketplace.usecases.services.query.courses;
 
-import com.ncm.marketplace.domains.courses.Video;
+import com.ncm.marketplace.domains.catalog.Video;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.courses.video.VideoRepository;
 import lombok.RequiredArgsConstructor;

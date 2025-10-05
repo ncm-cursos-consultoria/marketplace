@@ -1,7 +1,9 @@
 package com.ncm.marketplace.gateways.mappers.enterprises.enterprise;
 
-import com.ncm.marketplace.domains.enterprises.Enterprise;
-import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.enterprise.CreateEnterpriseRequest;
+import com.ncm.marketplace.domains.enterprise.Enterprise;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseAndUserEnterpriseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.CreatePartnerAndEnterpriseAndUserPartnerRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.enterprise.EnterpriseResponse;
 import org.springframework.data.domain.Page;
 
@@ -11,6 +13,22 @@ import java.util.stream.Collectors;
 
 public class EnterpriseMapper {
     public static Enterprise toEntityCreate(CreateEnterpriseRequest request) {
+        return Enterprise.builder()
+                .legalName(request.getLegalName())
+                .tradeName(request.getTradeName())
+                .cnpj(request.getCnpj())
+                .build();
+    }
+
+    public static Enterprise toEntityCreate(CreateEnterpriseAndUserEnterpriseRequest request) {
+        return Enterprise.builder()
+                .legalName(request.getLegalName())
+                .tradeName(request.getTradeName())
+                .cnpj(request.getCnpj())
+                .build();
+    }
+
+    public static Enterprise toEntityCreate(CreatePartnerAndEnterpriseAndUserPartnerRequest request) {
         return Enterprise.builder()
                 .legalName(request.getLegalName())
                 .tradeName(request.getTradeName())

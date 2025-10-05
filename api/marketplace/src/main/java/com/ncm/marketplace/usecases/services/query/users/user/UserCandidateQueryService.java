@@ -1,6 +1,6 @@
 package com.ncm.marketplace.usecases.services.query.users.user;
 
-import com.ncm.marketplace.domains.users.user.UserCandidate;
+import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.user.candidate.UserCandidateRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +28,9 @@ public class UserCandidateQueryService {
 
     public Page<UserCandidate> findAll(Pageable pageable) {
         return userCandidateRepository.findAll(pageable);
+    }
+
+    public Boolean existByCpf(String cpf) {
+        return userCandidateRepository.existsByCpf(cpf);
     }
 }
