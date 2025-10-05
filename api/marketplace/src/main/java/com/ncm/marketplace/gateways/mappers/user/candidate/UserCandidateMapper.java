@@ -1,0 +1,81 @@
+package com.ncm.marketplace.gateways.mappers.user.candidate;
+
+import com.ncm.marketplace.domains.users.user.UserCandidate;
+import com.ncm.marketplace.gateways.dtos.requests.user.candidate.CreateUserCandidateRequest;
+import com.ncm.marketplace.gateways.dtos.responses.user.candidate.UserCandidateListResponse;
+import com.ncm.marketplace.gateways.dtos.responses.user.candidate.UserCandidateResponse;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class UserCandidateMapper {
+    public static UserCandidate toEntityCreate(CreateUserCandidateRequest request) {
+        return UserCandidate.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .birthday(request.getBirthday())
+                .cpf(request.getCpf())
+                .build();
+    }
+
+    public static UserCandidateResponse toResponse(UserCandidate userCandidate) {
+        return UserCandidateResponse.builder()
+                .id(userCandidate.getId())
+                .createdAt(userCandidate.getCreatedAt())
+                .updatedAt(userCandidate.getUpdatedAt())
+                .firstName(userCandidate.getFirstName())
+                .lastName(userCandidate.getLastName())
+                .email(userCandidate.getEmail())
+                .birthday(userCandidate.getBirthday())
+                .isBlocked(userCandidate.getIsBlocked())
+                .profilePictureUrl(userCandidate.getProfilePicture() != null
+                        ? userCandidate.getProfilePicture().getId()
+                        : null)
+                .curriculumVitaeUrl(userCandidate.getCurriculumVitae() != null
+                        ? userCandidate.getCurriculumVitae().getId()
+                        : null)
+                .build();
+    }
+
+    public static Set<UserCandidateResponse> toResponse(Set<UserCandidate> userCandidates) {
+        return userCandidates.stream().map(UserCandidateMapper::toResponse).collect(Collectors.toSet());
+    }
+
+    public static List<UserCandidateResponse> toResponse(List<UserCandidate> userCandidates) {
+        return userCandidates.stream().map(UserCandidateMapper::toResponse).collect(Collectors.toList());
+    }
+
+    public static Page<UserCandidateResponse> toResponse(Page<UserCandidate> userCandidates) {
+        return userCandidates.map(UserCandidateMapper::toResponse);
+    }
+
+    public static UserCandidateListResponse toListResponse(UserCandidate userCandidate) {
+        return UserCandidateListResponse.builder()
+                .id(userCandidate.getId())
+                .firstName(userCandidate.getFirstName())
+                .lastName(userCandidate.getLastName())
+                .email(userCandidate.getEmail())
+                .profilePictureUrl(userCandidate.getProfilePicture() != null
+                        ? userCandidate.getProfilePicture().getId()
+                        : null)
+                .curriculumVitaeUrl(userCandidate.getCurriculumVitae() != null
+                        ? userCandidate.getCurriculumVitae().getId()
+                        : null)
+                .build();
+    }
+
+    public static Set<UserCandidateListResponse> toListResponse(Set<UserCandidate> userCandidates) {
+        return userCandidates.stream().map(UserCandidateMapper::toListResponse).collect(Collectors.toSet());
+    }
+
+    public static List<UserCandidateListResponse> toListResponse(List<UserCandidate> userCandidates) {
+        return userCandidates.stream().map(UserCandidateMapper::toListResponse).collect(Collectors.toList());
+    }
+
+    public static Page<UserCandidateListResponse> toListResponse(Page<UserCandidate> userCandidates) {
+        return userCandidates.map(UserCandidateMapper::toListResponse);
+    }
+}

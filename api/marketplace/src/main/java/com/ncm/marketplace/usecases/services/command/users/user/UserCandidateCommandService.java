@@ -1,0 +1,22 @@
+package com.ncm.marketplace.usecases.services.command.users.user;
+
+import com.ncm.marketplace.domains.users.user.UserCandidate;
+import com.ncm.marketplace.gateways.repositories.domains.user.candidate.UserCandidateRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class UserCandidateCommandService {
+    private final UserCandidateRepository userCandidateRepository;
+
+    public UserCandidate save(UserCandidate userCandidate) {
+        return userCandidateRepository.save(userCandidate);
+    }
+
+    public void deleteById(String id) {
+        userCandidateRepository.deleteById(id);
+    }
+}
