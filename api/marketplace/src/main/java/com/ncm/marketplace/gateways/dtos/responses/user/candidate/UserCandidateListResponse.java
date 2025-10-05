@@ -15,8 +15,6 @@ import java.time.Instant;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UserCandidateListResponse {
     private String id;
-    private Instant createdAt;
-    private Instant updatedAt;
     private String firstName;
     private String lastName;
     private String email;

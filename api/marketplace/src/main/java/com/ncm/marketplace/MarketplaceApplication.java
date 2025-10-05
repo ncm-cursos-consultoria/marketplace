@@ -22,7 +22,7 @@ public class MarketplaceApplication {
 	// TODO
 	//  domains ✅
 	//  repositories ✅
-	//  dtos
+	//  dtos ✅
 	//    requests ✅
 	//    responses ✅
 	//  mappers
@@ -32,7 +32,10 @@ public class MarketplaceApplication {
 	//  usecases
 	//  controllers
 	//  swagger
+	//  create SQL DB in CLoud
+	//  create bucket in CLoud
 	//  deploy digitalOcean
+	//  return filesUrl
 	//  services
 	//    login
 	//    view job opening

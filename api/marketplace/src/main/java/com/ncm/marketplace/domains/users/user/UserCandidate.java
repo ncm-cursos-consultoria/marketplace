@@ -12,6 +12,7 @@ import com.ncm.marketplace.domains.relationship.user.candidate.UserCandidateModu
 import com.ncm.marketplace.domains.users.Disc;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.util.HashSet;
@@ -21,7 +22,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
 public class UserCandidate extends User {
     @Enumerated(EnumType.STRING)

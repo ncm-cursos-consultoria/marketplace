@@ -31,7 +31,7 @@ public class Partner {
     private Instant updatedAt;
     private String token;
     @Builder.Default
-    private Boolean subsidized = Boolean.FALSE;
+    private Boolean isSubsidized = Boolean.FALSE;
     private LocalDate subsidizedEndDate;
 
     @OneToOne(mappedBy = "partner")

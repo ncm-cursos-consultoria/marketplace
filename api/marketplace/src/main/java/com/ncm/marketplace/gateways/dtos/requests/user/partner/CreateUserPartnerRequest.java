@@ -21,7 +21,8 @@ public class CreateUserPartnerRequest {
     private String email;
     @NotEmpty
     private String password;
-    private LocalDate birthday;
+    private Boolean isSubsidized;
+    private LocalDate subsidizedEndDate;
     @CNPJ
     @NotEmpty
     private String cnpj;
