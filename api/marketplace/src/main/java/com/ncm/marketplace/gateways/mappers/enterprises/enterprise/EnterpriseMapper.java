@@ -1,8 +1,8 @@
 package com.ncm.marketplace.gateways.mappers.enterprises.enterprise;
 
 import com.ncm.marketplace.domains.enterprises.Enterprise;
-import com.ncm.marketplace.gateways.dtos.requests.enterprises.enterprise.CreateEnterpriseRequest;
-import com.ncm.marketplace.gateways.dtos.responses.enterprises.enterprise.EnterpriseResponse;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.enterprise.CreateEnterpriseRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.enterprise.EnterpriseResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

@@ -24,6 +24,7 @@ import java.util.Set;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
+@DiscriminatorValue("CANDIDATE")
 public class UserCandidate extends User {
     @Enumerated(EnumType.STRING)
     private DiscEnum discTag;
@@ -32,7 +33,7 @@ public class UserCandidate extends User {
     private String cpf;
 
     @OneToOne
-    @JoinColumn(name = "fileId", referencedColumnName = "id")
+    @JoinColumn(name = "curriculumVitaeId", referencedColumnName = "id")
     @JsonManagedReference("user_candidate-file")
     private File curriculumVitae;
 

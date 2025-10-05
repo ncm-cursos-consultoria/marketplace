@@ -1,8 +1,8 @@
 package com.ncm.marketplace.gateways.mappers.partner;
 
 import com.ncm.marketplace.domains.Partner;
-import com.ncm.marketplace.gateways.dtos.requests.user.partner.CreateUserPartnerRequest;
-import com.ncm.marketplace.gateways.dtos.responses.partner.PartnerResponse;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.partner.CreateUserPartnerRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.partner.PartnerResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

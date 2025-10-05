@@ -17,6 +17,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @SuperBuilder
 @Entity(name = "APP_USER")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -36,7 +38,7 @@ public abstract class User {
     private Boolean isBlocked = Boolean.FALSE;
 
     @OneToOne
-    @JoinColumn(name = "fileId", referencedColumnName = "id")
+    @JoinColumn(name = "profilePictureId", referencedColumnName = "id")
     @JsonManagedReference("user-profile_picture")
     private File profilePicture;
 

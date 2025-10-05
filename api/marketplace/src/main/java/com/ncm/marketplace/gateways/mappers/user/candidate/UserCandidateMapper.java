@@ -1,9 +1,10 @@
 package com.ncm.marketplace.gateways.mappers.user.candidate;
 
+import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.domains.users.user.UserCandidate;
-import com.ncm.marketplace.gateways.dtos.requests.user.candidate.CreateUserCandidateRequest;
-import com.ncm.marketplace.gateways.dtos.responses.user.candidate.UserCandidateListResponse;
-import com.ncm.marketplace.gateways.dtos.responses.user.candidate.UserCandidateResponse;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateListResponse;
+import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class UserCandidateMapper {
                 .curriculumVitaeUrl(userCandidate.getCurriculumVitae() != null
                         ? userCandidate.getCurriculumVitae().getId()
                         : null)
+                .type(UserTypeEnum.CANDIDATE)
                 .build();
     }
 

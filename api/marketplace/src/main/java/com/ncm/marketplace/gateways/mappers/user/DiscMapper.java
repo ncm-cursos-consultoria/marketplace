@@ -1,8 +1,8 @@
 package com.ncm.marketplace.gateways.mappers.user;
 
 import com.ncm.marketplace.domains.users.Disc;
-import com.ncm.marketplace.gateways.dtos.requests.user.CreateDiscRequest;
-import com.ncm.marketplace.gateways.dtos.responses.user.disc.DiscResponse;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.CreateDiscRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.user.disc.DiscResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

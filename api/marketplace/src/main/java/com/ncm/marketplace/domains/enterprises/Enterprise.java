@@ -40,7 +40,7 @@ public class Enterprise {
     private String cnpj;
 
     @OneToOne
-    @JoinColumn(name = "fileId", referencedColumnName = "id")
+    @JoinColumn(name = "profilePictureId", referencedColumnName = "id")
     @JsonManagedReference("enterprise-profile_picture")
     private File profilePicture;
 

@@ -1,9 +1,9 @@
 package com.ncm.marketplace.gateways.mappers.enterprises.jobOpening;
 
 import com.ncm.marketplace.domains.enterprises.JobOpening;
-import com.ncm.marketplace.gateways.dtos.requests.enterprises.jobOpening.CreateJobOpeningRequest;
-import com.ncm.marketplace.gateways.dtos.responses.enterprises.jobOpening.JobOpeningResponse;
-import com.ncm.marketplace.gateways.dtos.responses.enterprises.jobOpening.JobOpeningSnippetResponse;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.jobOpening.CreateJobOpeningRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
+import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningSnippetResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
