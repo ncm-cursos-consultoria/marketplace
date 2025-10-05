@@ -11,7 +11,7 @@ import java.util.List;
 public interface EnterpriseController {
     ResponseEntity<EnterpriseResponse> save(CreateEnterpriseRequest request);
     ResponseEntity<EnterpriseResponse> saveWithUser(CreateEnterpriseAndUserEnterpriseRequest request);
-    ResponseEntity<Void> delete(String id);
+    ResponseEntity<Void> deleteById(String id);
     ResponseEntity<EnterpriseResponse> update(String id, UpdateEnterpriseRequest request);
     ResponseEntity<EnterpriseResponse> findById(String id);
     ResponseEntity<List<EnterpriseResponse>> findAll();
