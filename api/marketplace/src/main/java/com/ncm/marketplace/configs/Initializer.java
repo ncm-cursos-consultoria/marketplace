@@ -1,7 +1,7 @@
 package com.ncm.marketplace.configs;
 
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
-import com.ncm.marketplace.usecases.interfaces.user.CrudUserCandidate;
+import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;

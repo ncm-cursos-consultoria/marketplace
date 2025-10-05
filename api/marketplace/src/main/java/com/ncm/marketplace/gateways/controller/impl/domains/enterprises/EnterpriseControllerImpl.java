@@ -27,8 +27,16 @@ public class EnterpriseControllerImpl implements EnterpriseController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create an enterprise and an enterprise user")
     @Override
-    public ResponseEntity<EnterpriseResponse> save(@Valid @RequestBody CreateEnterpriseAndUserEnterpriseRequest request) {
+    public ResponseEntity<EnterpriseResponse> save(@Valid @RequestBody CreateEnterpriseRequest request) {
         return ResponseEntity.ok(crudEnterprise.save(request));
+    }
+
+    @PostMapping("/with-user")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create an enterprise and an enterprise user")
+    @Override
+    public ResponseEntity<EnterpriseResponse> saveWithUser(@Valid @RequestBody CreateEnterpriseAndUserEnterpriseRequest request) {
+        return ResponseEntity.ok(crudEnterprise.saveWithUser(request));
     }
 
     @DeleteMapping("/{id}")

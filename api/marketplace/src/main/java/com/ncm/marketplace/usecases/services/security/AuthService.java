@@ -9,7 +9,7 @@ import com.ncm.marketplace.exceptions.InvalidCredentialsException;
 import com.ncm.marketplace.exceptions.UserBlockedException;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
 import com.ncm.marketplace.gateways.dtos.responses.services.auth.MeResponse;
-import com.ncm.marketplace.usecases.services.query.users.user.UserQueryService;
+import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;

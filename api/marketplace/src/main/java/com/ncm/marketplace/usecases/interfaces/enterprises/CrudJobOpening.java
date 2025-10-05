@@ -1,6 +1,5 @@
 package com.ncm.marketplace.usecases.interfaces.enterprises;
 
-
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
@@ -13,4 +12,5 @@ public interface CrudJobOpening {
     JobOpeningResponse update(String id, UpdateJobOpeningRequest request);
     JobOpeningResponse findById(String id);
     List<JobOpeningResponse> findAll();
+    void init();
 }
