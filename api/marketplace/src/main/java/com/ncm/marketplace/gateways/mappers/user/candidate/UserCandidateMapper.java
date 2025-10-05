@@ -1,7 +1,7 @@
 package com.ncm.marketplace.gateways.mappers.user.candidate;
 
 import com.ncm.marketplace.domains.enums.UserTypeEnum;
-import com.ncm.marketplace.domains.users.user.UserCandidate;
+import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateListResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;

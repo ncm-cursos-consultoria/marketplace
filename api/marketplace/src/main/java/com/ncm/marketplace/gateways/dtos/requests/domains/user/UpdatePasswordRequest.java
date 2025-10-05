@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.dtos.requests.domains.user;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,8 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 public class UpdatePasswordRequest {
+    @NotEmpty
     private String oldPassword;
+    @NotEmpty
     private String newPassword;
 }

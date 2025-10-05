@@ -1,15 +1,15 @@
 package com.ncm.marketplace.usecases.services.security;
 
 import com.ncm.marketplace.domains.enums.UserTypeEnum;
-import com.ncm.marketplace.domains.users.user.User;
-import com.ncm.marketplace.domains.users.user.UserCandidate;
-import com.ncm.marketplace.domains.users.user.UserEnterprise;
-import com.ncm.marketplace.domains.users.user.UserPartner;
+import com.ncm.marketplace.domains.user.User;
+import com.ncm.marketplace.domains.user.candidate.UserCandidate;
+import com.ncm.marketplace.domains.user.UserEnterprise;
+import com.ncm.marketplace.domains.user.UserPartner;
 import com.ncm.marketplace.exceptions.InvalidCredentialsException;
 import com.ncm.marketplace.exceptions.UserBlockedException;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
 import com.ncm.marketplace.gateways.dtos.responses.services.auth.MeResponse;
-import com.ncm.marketplace.usecases.services.query.users.user.UserQueryService;
+import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
