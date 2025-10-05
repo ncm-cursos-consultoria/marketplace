@@ -12,4 +12,5 @@ public interface CrudEnterprise {
     EnterpriseResponse update(String id, UpdateEnterpriseRequest request);
     EnterpriseResponse findById(String id);
     List<EnterpriseResponse> findAll();
+    void init();
 }

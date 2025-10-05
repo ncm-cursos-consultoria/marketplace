@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,4 +26,5 @@ public class UserCandidateResponse {
     private Boolean isBlocked;
     private String profilePictureUrl;
     private String curriculumVitaeUrl;
+    private UserTypeEnum type;
 }

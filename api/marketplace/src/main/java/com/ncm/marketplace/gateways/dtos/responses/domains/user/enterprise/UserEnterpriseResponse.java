@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.dtos.responses.domains.user.enterprise;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,4 +26,5 @@ public class UserEnterpriseResponse {
     private Boolean isBlocked;
     private String profilePictureUrl;
     private String enterpriseId;
+    private UserTypeEnum type;
 }

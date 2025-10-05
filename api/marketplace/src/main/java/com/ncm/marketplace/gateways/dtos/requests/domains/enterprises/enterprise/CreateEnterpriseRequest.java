@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.enterprise;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,5 +22,6 @@ public class CreateEnterpriseRequest {
     @NotEmpty
     private String email;
     @NotEmpty
+    @Size(min = 8)
     private String password;
 }
