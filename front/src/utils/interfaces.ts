@@ -24,5 +24,13 @@ export interface UserEnterpriseProps {
   cnpj: string;
   profilesPictureUrl: string;
   addressId: string;
-  type: string
+  type: string;
+  enterpriseId: string,
+  email: string,
+}
+
+export interface workModelEnum {
+  ON_SITE: string;
+  HYBRID: string;
+  REMOTE: string;
 }

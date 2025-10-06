@@ -1,29 +1,99 @@
+import { UseUserEnteprise } from "@/context/user-enterprise.context";
+import { getModules } from "@/service/module/get-modules-enterprise";
 import { materials } from "@/utils/jobs-simulate";
-import { PlayCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { PlayCircle, Plus } from "lucide-react";
+import { Modal } from "../modal";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { useCreateModule } from "@/hooks/forms/create-module";
+import ncm from "@/assets/logo-ncm-horizontal.svg"
+import Image from "next/image";
+import Link from "next/link";
 
 export function CardMaterial() {
-  return(
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {materials.map((m) => (
-                <article key={m.id} className="rounded-xl overflow-hidden bg-white shadow-sm border border-gray-100">
-                  <div className="relative aspect-video">
-                    <img
-                      alt={m.title}
-                      className="h-full w-full object-cover"
-                      src={`https://img.youtube.com/vi/${m.yt}/hqdefault.jpg`}
-                    />
-                    <div className="absolute inset-0 bg-black/10" />
-                    <button className="absolute left-4 bottom-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1 text-sm font-medium shadow">
-                      <PlayCircle className="h-4 w-4" /> Assistir
-                    </button>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-sm text-gray-500">{m.module}</p>
-                    <h3 className="font-semibold leading-snug mt-0.5">{m.title}</h3>
-                    <p className="text-sm text-gray-600 mt-1">{m.desc}</p>
-                  </div>
-                </article>
-              ))}
+  const { userEnterprise } = UseUserEnteprise();
+  const enterpriseId = userEnterprise?.enterpriseId ?? null;
+  const { error, form, isError, isPending, onSubmit } = useCreateModule();
+  const { register, handleSubmit, formState } = form;
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["module", enterpriseId],
+    queryFn: () => getModules(enterpriseId!),
+    enabled: !!enterpriseId,
+  });
+
+  if (data <= 0) {
+    return (
+      <div className="">
+        <Modal
+          title={"+"}
+          headerTitle="Crie um módulo"
+          className="bg-neutral-400 h-[300px] w-[300px] rounded-md text-[60px] text-white cursor-pointer hover:bg-neutral-500"
+        >
+          <div>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+              <div>
+                <Label>Títlo do módulo</Label>
+                <Input {...register("title")} className="border border-neutral-400"/>
+              </div>
+              <div>
+                <Label>Descrição do módulo</Label>
+                <Input {...register("description")}  className="border border-neutral-400" />
+              </div>
+              <Button className="bg-blue-600 text-white cursor-pointer w-full" disabled={isPending} type="submit">
+                {isPending ? "Carregando..." : "Criar"}
+              </Button>
+            </form>
+          </div>
+        </Modal>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+      {Array.isArray(data) &&
+        data.map((m: any) => (
+          <Link 
+          href={`/enterprise/courses/${m.id}`}
+            key={m.id}
+            className="rounded-xl overflow-hidden bg-white shadow-sm border border-gray-100"
+          >
+            <div className="relative aspect-video p-10">
+              <div className="absolute inset-0 bg-black/15" />
+              <Image src={ncm} alt="" />
             </div>
-  )
+            <div className="p-4">
+              <h3 className="font-semibold leading-snug mt-0.5">{m.title}</h3>
+              <p className="text-sm text-gray-600 mt-1">{m.description}</p>
+            </div>
+          </Link>
+        ))}
+      <div className="">
+        <Modal
+          title={"+"}
+          headerTitle="Crie um módulo"
+          className="bg-neutral-400 h-[280px] w-[300px] rounded-md text-[60px] text-white cursor-pointer hover:bg-neutral-500"
+        >
+          <div>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+              <div>
+                <Label>Títlo do módulo</Label>
+                <Input {...register("title")}  className="border border-neutral-400"/>
+              </div>
+              <div>
+                <Label>Descrição do módulo</Label>
+                <Input {...register("description")}  className="border border-neutral-400"/>
+              </div>
+              <Button className="bg-blue-600 text-white cursor-pointer w-full" disabled={isPending} type="submit">
+                {isPending ? "Carregando..." : "Criar"}
+              </Button>
+            </form>
+          </div>
+        </Modal>
+      </div>
+    </div>
+  );
 }

@@ -23,7 +23,7 @@ const NAV: NavItem[] = [
 export function Aside() {
   const { userCandidate } = UseUserCandidate();
   const pathnameRaw = usePathname();
-  const pathname = pathnameRaw || ""; // garante string
+  const pathname = pathnameRaw || ""; 
   const params = useParams();
 
   const idFromContext = userCandidate?.id;

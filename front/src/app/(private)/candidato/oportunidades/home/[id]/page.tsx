@@ -2,17 +2,27 @@
 
 import { CourseCard } from "@/components/card/course-card";
 import { UseUserCandidate } from "@/context/user-candidate.context";
-import { jobs } from "@/utils/jobs-simulate";
+import { getAllJobs } from "@/service/job/get-all-jobs";
+import { formatLocation } from "@/utils/format-location";
+import { formatMoney } from "@/utils/format-money";
+import { statusClass } from "@/utils/status-class";
+import { workModelLabel } from "@/utils/work-model-label";
+import { useQuery } from "@tanstack/react-query";
+import { Briefcase, MapPin } from "lucide-react";
 
 export default function Home() {
-  const {userCandidate} = UseUserCandidate()
+  const { userCandidate } = UseUserCandidate();
+
+  const { data: jobs, isLoading } = useQuery({
+    queryKey: ["job"],
+    queryFn: () => getAllJobs(),
+  });
+
+  console.log(jobs);
 
   return (
     <div className="flex min-h-screen">
-
-      {/* Conteúdo principal */}
       <main className="flex-1 bg-gray-100 p-8 space-y-16">
-        {/* Section 1: Boas-vindas */}
         <section>
           <h1 className="text-3xl font-bold mb-4">
             Bem-vindo ao Marketplace das Oportunidades
@@ -22,8 +32,6 @@ export default function Home() {
             profissional.
           </p>
         </section>
-
-        {/* Section 2: Cursos */}
         <section>
           <h2 className="text-2xl font-semibold mb-6">Cursos disponíveis</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -44,18 +52,53 @@ export default function Home() {
             />
           </div>
         </section>
-
-        {/* Section 3: Vagas */}
         <section>
           <h2 className="text-2xl font-semibold mb-6">Vagas de emprego</h2>
           <ul className="space-y-4">
-            {jobs.slice(0, 3).map((job) => (
-              <li className="bg-white p-4 rounded shadow" key={job.id}>
-                <h3 className="font-semibold">{job.title}</h3>
-                <p className="text-[14px]">{job.location}</p>
-                <p className="text-[14px]">{job.salary}</p>
-              </li>
-            ))}
+            {Array.isArray(jobs) &&
+              jobs.slice(0, 3).map((job: any) => (
+                <li
+                  key={job.id}
+                  className="rounded-xl border bg-white p-5 shadow-sm hover:shadow-md transition"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-semibold text-lg">{job.title}</h3>
+                    <span
+                      className={`rounded-full border px-2.5 py-1 text-xs font-medium ${statusClass(
+                        job.status
+                      )}`}
+                    >
+                      {job.status ?? "—"}
+                    </span>
+                  </div>
+
+                  <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                    <span className="inline-flex items-center gap-1">
+                      <MapPin className="h-4 w-4" />
+                      {formatLocation(job)}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <Briefcase className="h-4 w-4" />
+                      {workModelLabel(job.workModel)}
+                    </span>
+                  </div>
+
+                  {job.description && (
+                    <p className="mt-2 line-clamp-2 text-sm text-gray-600">
+                      {job.description}
+                    </p>
+                  )}
+
+                  <div className="mt-3 flex items-center justify-between">
+                    <p className="text-sm">
+                      <span className="text-gray-500">Salário</span>{" "}
+                      <span className="font-semibold">
+                        {formatMoney(job.salary, job.currency)}
+                      </span>
+                    </p>
+                  </div>
+                </li>
+              ))}
           </ul>
         </section>
 

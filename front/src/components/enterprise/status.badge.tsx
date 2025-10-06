@@ -1,6 +1,6 @@
 export function StatusBadge({ value }: { value: string }) {
   const palette: Record<string, string> = {
-    Ativa: "bg-green-100 text-green-800",
+    ACTIVE: "bg-green-100 text-green-800",
     "Em revisão": "bg-amber-100 text-amber-800",
     Pausada: "bg-gray-200 text-gray-800",
     Novo: "bg-blue-100 text-blue-800",

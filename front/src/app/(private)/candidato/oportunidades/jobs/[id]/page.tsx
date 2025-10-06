@@ -1,14 +1,26 @@
 "use client";
 
-import { JobCard } from "@/components/card/job-card";
+import { JobCardList } from "@/components/card/job-card";
+import { getAllCourses } from "@/service/course/get-all";
+import { getAllJobs } from "@/service/job/get-all-jobs";
+
 import { jobs } from "@/utils/jobs-simulate";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export default function JobsPage() {
+
+  const {data: jobs, isLoading} = useQuery({
+    queryKey: ['job'],
+    queryFn: () => getAllJobs()
+  })
+
+  console.log(jobs);
+  
 
   return (
     <div className="flex min-h-screen">
 
-      {/* Conteúdo principal */}
       <main className="flex-1 bg-gray-100 p-8 space-y-10">
         <h1 className="text-3xl font-bold mb-4">
           Vagas de Tecnologia em Santana de Parnaíba
@@ -19,7 +31,7 @@ export default function JobsPage() {
         </p>
 
         <div className="">
-          <JobCard jobs={jobs}/>
+          <JobCardList jobs={jobs} onApply={(job) => toast.message("Aplicação enviada", { description: job.title })}/>
         </div>
 
         {/* Footer */}

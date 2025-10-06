@@ -5,11 +5,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { login } from "@/service/auth/login";
 import { useRouter } from "next/navigation";
 import { UseUserCandidate } from "@/context/user-candidate.context";
+import { UseUserEnteprise } from "@/context/user-enterprise.context";
 
 export function useLoginEnterprise() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { userCandidate } = UseUserCandidate();
+  const {userEnterprise} = UseUserEnteprise()
   
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
@@ -22,8 +23,8 @@ export function useLoginEnterprise() {
       console.log(data);
       
       await queryClient.invalidateQueries({ queryKey: ["authUser"] });
-      if (userCandidate?.id) {
-        router.push(`/enterprise/${userCandidate.id}`);
+      if (userEnterprise?.enterpriseId) {
+        router.push(`/enterprise/${userEnterprise.enterpriseId}`);
       }
     },
   });

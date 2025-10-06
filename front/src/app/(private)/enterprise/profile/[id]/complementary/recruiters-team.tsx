@@ -21,7 +21,7 @@ export function RecruitersTeam({ company }: recruitersTeamProps) {
     <Card>
       <CardHeader title="Equipe de recrutamento" />
       <ul className="space-y-3">
-        {company.recruiters.map((r) => (
+        {/* {company.recruiters.map((r) => (
           <li key={r.id} className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-semibold">
@@ -43,7 +43,7 @@ export function RecruitersTeam({ company }: recruitersTeamProps) {
               Enviar e-mail
             </a>
           </li>
-        ))}
+        ))} */}
       </ul>
     </Card>
   );

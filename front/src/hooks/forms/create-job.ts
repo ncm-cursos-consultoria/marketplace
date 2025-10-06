@@ -1,28 +1,48 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import {
-  CreateJobFormSchema,
-  createJobFormSchema,
-} from "../schemas/create-job";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postJob } from "@/service/job/post.job";
+import { UseUserEnteprise } from "@/context/user-enterprise.context";
+import {
+  createJobFormSchema,
+  type CreateJobFormSchema,
+} from "../schemas/create-job";
+import { useEffect } from "react";
+import { useParams } from "next/navigation";
 
 export function useCreateJob() {
+  const params = useParams<{ id: string }>();
+  const id = params?.id;
+  const { userEnterprise } = UseUserEnteprise();
+  const enterpriseId = userEnterprise?.enterpriseId ?? id;
+
+  
   const queryClient = useQueryClient();
+
   const form = useForm<CreateJobFormSchema>({
-    resolver: zodResolver(createJobFormSchema),
+    resolver: zodResolver(createJobFormSchema)
   });
 
   const { mutate, isPending, error, isError } = useMutation({
     mutationFn: (data: CreateJobFormSchema) => postJob(data),
     mutationKey: ["job"],
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["job"] });
-    },
+      queryClient.invalidateQueries({ 
+        queryKey: ["job", enterpriseId] 
+      });
+      
+      form.reset();
+    }
   });
 
-  const onSubmit = async (data: CreateJobFormSchema) => {
-    mutate(data);
+  const onSubmit: SubmitHandler<CreateJobFormSchema> = (data) => {
+    const payload = {
+      ...data,
+      enterpriseId: enterpriseId
+    }
+    console.log(payload);
+    
+    mutate(payload);
   };
 
   return { onSubmit, form, isPending, error, isError };
