@@ -76,6 +76,9 @@ public class AuthService {
         String firstname = null;
         String lastName = null;
         UserTypeEnum type = UserTypeEnum.UNKNOWN;
+        String enterpriseId = null;
+        String partnerId = null;
+        LocalDate birthday = null;
 
         Object details = auth.getDetails();
         if (details instanceof java.util.Map<?,?> map) {
@@ -88,6 +91,19 @@ public class AuthService {
         firstname = user.getFirstName();
         lastName = user.getLastName();
         type = user.getType();
+        birthday = user.getBirthday();
+
+        if (user instanceof UserEnterprise userEnterprise) {
+            enterpriseId = userEnterprise.getEnterprise() != null
+                    ? userEnterprise.getEnterprise().getId()
+                    : null;
+        } else if (user instanceof UserPartner userPartner) {
+            partnerId = userPartner.getPartner() != null ? userPartner.getPartner().getId() : null;
+            enterpriseId = userPartner.getPartner() != null
+                        && userPartner.getPartner().getEnterprise() != null
+                    ? userPartner.getPartner().getEnterprise().getId()
+                    : null;
+        }
 
         return MeResponse.builder()
                 .id(id)
@@ -95,6 +111,9 @@ public class AuthService {
                 .firstName(firstname)
                 .lastName(lastName)
                 .type(type)
+                .birthday(birthday)
+                .enterpriseId(enterpriseId)
+                .partnerId(partnerId)
                 .build();
     }
 
