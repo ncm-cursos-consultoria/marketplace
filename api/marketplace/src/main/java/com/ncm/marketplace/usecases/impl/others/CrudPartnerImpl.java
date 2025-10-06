@@ -8,7 +8,6 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.CreateP
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.UpdatePartnerRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.others.partner.PartnerResponse;
 import com.ncm.marketplace.gateways.mappers.enterprises.enterprise.EnterpriseMapper;
-import com.ncm.marketplace.gateways.mappers.others.partner.PartnerMapper;
 import com.ncm.marketplace.gateways.mappers.user.partner.UserPartnerMapper;
 import com.ncm.marketplace.usecases.interfaces.others.CrudPartner;
 import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseCommandService;
@@ -42,9 +41,11 @@ public class CrudPartnerImpl implements CrudPartner {
     @Override
     public PartnerResponse save(CreatePartnerRequest request) {
         Partner partner = toEntityCreate(request);
-        Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(partner.getId());
+        Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(request.getEnterpriseId());
         partner.setEnterprise(enterprise);
-        return toResponse(partnerCommandService.save(partner));
+        partner = partnerCommandService.save(partner);
+        partner.setToken(partner.generateToken());
+        return toResponse(partner);
     }
 
     @Transactional
@@ -56,8 +57,10 @@ public class CrudPartnerImpl implements CrudPartner {
         UserPartner userPartner = UserPartnerMapper.toEntityCreate(request);
         userPartner.setPartner(partner);
         enterpriseCommandService.save(enterprise);
+        partner = partnerCommandService.saveAndFlush(partner);
         userPartnerCommandService.save(userPartner);
-        return toResponse(partnerCommandService.save(partner));
+        partner.setToken(partner.generateToken());
+        return toResponse(partner);
     }
 
     @Transactional
@@ -92,7 +95,6 @@ public class CrudPartnerImpl implements CrudPartner {
     public void init(String enterpriseId) {
         if (!partnerQueryService.existsByEnterpriseId(enterpriseId)) {
             save(CreatePartnerRequest.builder()
-                    .token("TOKEN25")
                     .isSubsidized(Boolean.TRUE)
                     .subsidizedEndDate(LocalDate.now().plusMonths(6))
                     .enterpriseId(enterpriseId)

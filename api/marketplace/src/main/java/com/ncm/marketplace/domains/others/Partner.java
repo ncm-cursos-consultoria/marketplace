@@ -13,6 +13,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,4 +56,15 @@ public class Partner {
     @OneToMany(mappedBy = "partner")
     @JsonBackReference("partner_user_candidates-partner")
     private Set<PartnerUserCandidate> partnerUserCandidates = new HashSet<>();
+
+    public String generateToken() {
+        if (this.enterprise == null || this.enterprise.getLegalName() == null || this.enterprise.getLegalName().isBlank() || this.createdAt == null) {
+            return null;
+        }
+        String firstWord = this.enterprise.getLegalName().split(" ")[0].toUpperCase();
+        ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(this.createdAt, ZoneOffset.UTC);
+        int year = zonedDateTime.getYear();
+        int lastTwoDigitsOfYear = year % 100;
+        return String.format("%s%02d", firstWord, lastTwoDigitsOfYear);
+    }
 }
