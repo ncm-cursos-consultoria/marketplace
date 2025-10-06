@@ -25,6 +25,7 @@ import static com.ncm.marketplace.gateways.mappers.enterprises.jobOpening.JobOpe
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CrudJobOpeningImpl implements CrudJobOpening {
     private final JobOpeningCommandService jobOpeningCommandService;
     private final JobOpeningQueryService jobOpeningQueryService;

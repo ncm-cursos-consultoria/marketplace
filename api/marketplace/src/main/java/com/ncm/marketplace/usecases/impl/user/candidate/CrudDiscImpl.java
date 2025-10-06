@@ -22,6 +22,7 @@ import static com.ncm.marketplace.gateways.mappers.user.candidate.DiscMapper.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CrudDiscImpl implements CrudDisc {
     private final UserCandidateQueryService userCandidateQueryService;
     private final DiscCommandService discCommandService;

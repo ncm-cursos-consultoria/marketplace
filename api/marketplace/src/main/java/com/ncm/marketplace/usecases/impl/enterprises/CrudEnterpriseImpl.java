@@ -26,6 +26,7 @@ import static com.ncm.marketplace.gateways.mappers.enterprises.enterprise.Enterp
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CrudEnterpriseImpl implements CrudEnterprise {
     private final EnterpriseCommandService enterpriseCommandService;
     private final UserEnterpriseCommandService userEnterpriseCommandService;

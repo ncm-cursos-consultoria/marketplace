@@ -66,4 +66,11 @@ public class CourseControllerImpl implements CourseController {
     public ResponseEntity<List<CourseResponse>> findAll() {
         return ResponseEntity.ok(crudCourse.findAll());
     }
+
+    @GetMapping("/module/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Override
+    public ResponseEntity<List<CourseResponse>> findAllByModuleId(@PathVariable String id) {
+        return ResponseEntity.ok(crudCourse.findAllByModuleId(id));
+    }
 }

@@ -25,6 +25,7 @@ import static com.ncm.marketplace.gateways.mappers.others.address.AddressMapper.
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CrudAddressImpl implements CrudAddress {
     private final AddressCommandService addressCommandService;
     private final AddressQueryService addressQueryService;
