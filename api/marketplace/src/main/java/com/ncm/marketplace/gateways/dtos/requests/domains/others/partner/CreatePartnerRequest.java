@@ -16,8 +16,6 @@ import java.time.LocalDate;
 @Builder
 @Jacksonized
 public class CreatePartnerRequest {
-    @NotEmpty
-    private String token;
     private Boolean isSubsidized;
     private LocalDate subsidizedEndDate;
     @NotEmpty

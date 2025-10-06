@@ -18,6 +18,7 @@ public class PartnerResponse {
     private String id;
     private Instant createdAt;
     private Instant updatedAt;
+    private String token;
     private Boolean isSubsidized;
     private LocalDate subsidizedEndDate;
 }
