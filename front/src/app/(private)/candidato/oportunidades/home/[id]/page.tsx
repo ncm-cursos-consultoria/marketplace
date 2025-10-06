@@ -1,9 +1,12 @@
 "use client";
 
 import { CourseCard } from "@/components/card/course-card";
+import { UseUserCandidate } from "@/context/user-candidate.context";
 import { jobs } from "@/utils/jobs-simulate";
 
 export default function Home() {
+  const {userCandidate} = UseUserCandidate()
+
   return (
     <div className="flex min-h-screen">
 

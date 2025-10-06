@@ -8,11 +8,21 @@ export interface CandidateProps {
 }
 
 export interface UserCandidateProps {
-  id: string,
-  firstName: string,
-  lastName: string,
-  email: string,
-  cpf: string,
-  profilePicture?: string,
-  birthDate?: string,
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  cpf: string;
+  profilePicture?: string;
+  birthDate?: string;
+}
+
+export interface UserEnterpriseProps {
+  id: string;
+  legalName: string;
+  tradeName: string;
+  cnpj: string;
+  profilesPictureUrl: string;
+  addressId: string;
+  type: string
 }

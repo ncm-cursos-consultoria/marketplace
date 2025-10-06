@@ -12,13 +12,17 @@ interface modalProps {
   title: string;
   children: ReactNode;
   headerTitle: string;
-  className: string
+  className: string;
+  subTitles?: string
 }
 
-export function Modal({ title, children, headerTitle, className }: modalProps) {
+export function Modal({ title, children, headerTitle, className, subTitles }: modalProps) {
   return (
     <Dialog>
-      <DialogTrigger className={className}>{title}</DialogTrigger>
+      <DialogTrigger className={className}>
+        {title}
+        {subTitles}
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{headerTitle}</DialogTitle>

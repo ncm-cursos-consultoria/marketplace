@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useCreateEnterprise } from "@/hooks/forms/create-enterprise";
 import { useCreateUser } from "@/hooks/forms/create-user";
 import Link from "next/link";
 import { useState } from "react";
 
 export function EnterpriseCandidate() {
-  const { form, isPending, onSubmit } = useCreateUser();
+  const { form, isPending, onSubmit } = useCreateEnterprise()
 
   const {
     register,
@@ -26,11 +27,11 @@ export function EnterpriseCandidate() {
             <Input
               className="border border-neutral-300 w-full"
               placeholder="Digite seu nome"
-              {...register("firstName")}
+              {...register("legalName")}
             />
-            {errors.firstName && (
+            {errors.legalName && (
               <span className="text-sm text-red-600">
-                {errors.firstName.message}
+                {errors.legalName.message}
               </span>
             )}
           </div>
@@ -40,7 +41,7 @@ export function EnterpriseCandidate() {
             <Input
               className="border border-neutral-300 w-full"
               placeholder="Digite seu sobrenome"
-              {...register("lastName")}
+              {...register("tradeName")}
             />
           </div>
         </div>
@@ -49,8 +50,8 @@ export function EnterpriseCandidate() {
           <Input
             className="border border-neutral-300"
             placeholder="Digite seu email"
-            type="email"
-            {...register("email")}
+            type="text"
+            {...register("cnpj")}
           />
         </div>
 
@@ -60,11 +61,11 @@ export function EnterpriseCandidate() {
             <Input
               className="border border-neutral-300 w-full"
               placeholder="Digite seu nome"
-              {...register("firstName")}
+              {...register("email")}
             />
-            {errors.firstName && (
+            {errors.email && (
               <span className="text-sm text-red-600">
-                {errors.firstName.message}
+                {errors.email.message}
               </span>
             )}
           </div>
@@ -74,7 +75,7 @@ export function EnterpriseCandidate() {
             <Input
               className="border border-neutral-300 w-full"
               placeholder="Digite seu sobrenome"
-              {...register("lastName")}
+              {...register("password")}
             />
           </div>
         </div>

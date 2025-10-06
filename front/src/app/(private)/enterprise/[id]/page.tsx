@@ -4,14 +4,12 @@ import Link from "next/link";
 import { CardMaterial } from "@/components/card/material-card";
 import { PostedJobs } from "./posted-job";
 import { RecentApplication } from "./recent-applications";
-import { AsideEnterprise } from "@/components/enterprise/aside";
 
 export default function EmpresaDashboardPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       <div className="flex">
-        <AsideEnterprise />
-        <main className="flex-1 md:ml-0 px-4 md:px-8 lg:px-12 py-6 w-full">
+        <main className="">
           <header className="mb-6">
             <h1 className="text-2xl md:text-3xl font-bold">
               Bem-vindo ao Painel da Empresa

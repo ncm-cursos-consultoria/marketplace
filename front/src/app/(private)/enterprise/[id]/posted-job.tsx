@@ -1,5 +1,6 @@
 import { ModalCreateJob } from "@/components/enterprise/modal-create-jobs";
 import { StatusBadge } from "@/components/enterprise/status.badge";
+import { Modal } from "@/components/modal";
 import { enterpriseJobs } from "@/utils/jobs-simulate";
 import {
   ChevronRight,

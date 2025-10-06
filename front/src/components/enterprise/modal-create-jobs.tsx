@@ -13,9 +13,13 @@ import { Button } from "../ui/button";
 import { useCreateJob } from "@/hooks/forms/create-job";
 
 export function ModalCreateJob() {
-  const {error,form,isError,isPending,onSubmit} = useCreateJob()
+  const { error, form, isError, isPending, onSubmit } = useCreateJob();
 
-  const {register, handleSubmit, formState: {errors}} = form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = form;
 
   return (
     <div>
@@ -27,17 +31,41 @@ export function ModalCreateJob() {
         <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-1">
             <Label>Título da vaga</Label>
-            <Input className="border-neutral-400" {...register("title")}/>
+            <Input className="border-neutral-400" {...register("title")} />
           </div>
           <div className="flex flex-col gap-1">
             <Label>Descrição</Label>
-            <textarea className="border-neutral-400 border p-2 rounded-md" {...register("description")}/>
+            <textarea
+              className="border-neutral-400 border p-2 rounded-md"
+              {...register("description")}
+            />
           </div>
           <div className="flex flex-col gap-1">
             <Label>Salário</Label>
-            <Input className="border-neutral-400" {...register("salary")}/>
+            <Input className="border-neutral-400" {...register("salary")} />
           </div>
-          <Button className="bg-blue-500 hover:bg-blue-600 cursor-pointer" type="submit">Criar</Button>
+          <div>
+            <Label></Label>
+            <Input {...register("country")}/>
+          </div>
+          <div>
+            <Label></Label>
+            <Input {...register("state")}/>
+          </div>
+          <div>
+            <Label></Label>
+            <Input {...register("city")}/>
+          </div>
+          <div>
+            <Label></Label>
+            <Input {...register("workModel")}/>
+          </div>
+          <Button
+            className="bg-blue-500 hover:bg-blue-600 cursor-pointer"
+            type="submit"
+          >
+            Criar
+          </Button>
         </form>
       </Modal>
     </div>

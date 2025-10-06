@@ -3,8 +3,10 @@ import { useForm } from "react-hook-form";
 import { CreateEnterpriseFormSchema, createEnterpriseFormSchema } from "../schemas/create-enterprise-formschema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postEnterprise } from "@/service/enterprise/post-enterprise";
+import { useRouter } from "next/navigation";
 
 export function useCreateEnterprise() {
+  const router = useRouter()
   const queryClient = useQueryClient()
   const form = useForm<CreateEnterpriseFormSchema>({
     resolver: zodResolver(createEnterpriseFormSchema)
@@ -19,6 +21,7 @@ export function useCreateEnterprise() {
   })
 
   const onSubmit = async(data: CreateEnterpriseFormSchema) => {
+    console.log(data);
     mutate(data)
   }
 

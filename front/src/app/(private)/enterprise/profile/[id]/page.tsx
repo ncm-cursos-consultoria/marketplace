@@ -104,7 +104,6 @@ export default function EmpresaProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex w-full">
-        <AsideEnterprise />
         <main className="flex-1">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
             <EnterpriseProfileHeader />

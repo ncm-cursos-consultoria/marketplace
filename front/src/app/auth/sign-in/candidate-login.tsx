@@ -9,6 +9,7 @@ export function CandidateLogin() {
 
   const { register, handleSubmit } = form;
 
+
   return (
     <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-4">
@@ -35,8 +36,9 @@ export function CandidateLogin() {
         <Button
           className="bg-green-600 w-full py-3 text-white font-semibold rounded-md hover:bg-green-700 transition cursor-pointer"
           type="submit"
+          disabled={isPending}
         >
-          Entrar
+          {isPending ? "Carregando..." : "Entrar"}
         </Button>
 
         <Link href="/auth/forgot-password">
