@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 public class PartnerMapper {
     public static Partner toEntityCreate(CreatePartnerRequest request) {
         return Partner.builder()
-                .token(request.getToken())
                 .isSubsidized(request.getIsSubsidized())
                 .subsidizedEndDate(request.getSubsidizedEndDate())
                 .build();
@@ -22,7 +21,6 @@ public class PartnerMapper {
 
     public static Partner toEntityCreate(CreatePartnerAndEnterpriseAndUserPartnerRequest request) {
         return Partner.builder()
-                .token(request.getToken())
                 .isSubsidized(request.getIsSubsidized())
                 .subsidizedEndDate(request.getSubsidizedEndDate())
                 .build();
@@ -33,6 +31,7 @@ public class PartnerMapper {
                 .id(partner.getId())
                 .createdAt(partner.getCreatedAt())
                 .updatedAt(partner.getUpdatedAt())
+                .token(partner.getToken())
                 .isSubsidized(partner.getIsSubsidized())
                 .subsidizedEndDate(partner.getSubsidizedEndDate())
                 .build();

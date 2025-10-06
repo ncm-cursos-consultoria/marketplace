@@ -19,4 +19,8 @@ public class PartnerCommandService {
     public void deleteById(String id) {
         partnerRepository.deleteById(id);
     }
+
+    public Partner saveAndFlush(Partner partner) {
+        return partnerRepository.saveAndFlush(partner);
+    }
 }
