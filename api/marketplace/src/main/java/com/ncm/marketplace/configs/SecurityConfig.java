@@ -41,9 +41,9 @@ public class SecurityConfig {
                                 "/auth/login"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST,
-                                "/user/partner",
                                 "/user/candidate",
-                                "/enterprise"
+                                "/enterprise/with-user",
+                                "/partner/with-enterprise-and-user"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
