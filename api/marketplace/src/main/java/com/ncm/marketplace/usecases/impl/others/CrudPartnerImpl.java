@@ -29,6 +29,7 @@ import static com.ncm.marketplace.gateways.mappers.others.partner.PartnerMapper.
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CrudPartnerImpl implements CrudPartner {
 
     private final EnterpriseQueryService enterpriseQueryService;

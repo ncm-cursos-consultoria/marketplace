@@ -33,4 +33,8 @@ public class ModuleQueryService {
     public Boolean existsByEnterpriseId(String enterpriseId) {
         return moduleRepository.existsByEnterprise_Id(enterpriseId);
     }
+
+    public List<Module> findAllByEnterpriseId(String id) {
+        return moduleRepository.findAllByEnterprise_Id(id);
+    }
 }

@@ -15,4 +15,5 @@ public interface CourseController {
     ResponseEntity<CourseResponse> uploadVideo(String id, MultipartFile file);
     ResponseEntity<CourseResponse> findById(String id);
     ResponseEntity<List<CourseResponse>> findAll();
+    ResponseEntity<List<CourseResponse>> findAllByModuleId(String id);
 }

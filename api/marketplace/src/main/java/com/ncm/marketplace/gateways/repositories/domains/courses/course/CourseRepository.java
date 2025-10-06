@@ -3,6 +3,9 @@ package com.ncm.marketplace.gateways.repositories.domains.courses.course;
 import com.ncm.marketplace.domains.catalog.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface CourseRepository extends JpaRepository<Course, String> {
     Boolean existsByModule_Id(String moduleId);
+    List<Course> findAllByModule_Id(String id);
 }

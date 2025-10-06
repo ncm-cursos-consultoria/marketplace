@@ -22,6 +22,7 @@ import static com.ncm.marketplace.gateways.mappers.catalog.course.CourseMapper.*
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CrudCourseImpl implements CrudCourse {
     private final CourseCommandService courseCommandService;
     private final CourseQueryService courseQueryService;
@@ -76,5 +77,10 @@ public class CrudCourseImpl implements CrudCourse {
         } else {
             log.info("Course already exists ℹ️");
         }
+    }
+
+    @Override
+    public List<CourseResponse> findAllByModuleId(String id) {
+        return toResponse(courseQueryService.findAllByModuleId(id));
     }
 }

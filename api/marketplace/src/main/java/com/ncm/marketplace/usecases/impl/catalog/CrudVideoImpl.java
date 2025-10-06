@@ -17,6 +17,7 @@ import static com.ncm.marketplace.gateways.mappers.catalog.video.VideoMapper.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CrudVideoImpl implements CrudVideo {
     private final VideoCommandService videoCommandService;
     private final VideoQueryService videoQueryService;
