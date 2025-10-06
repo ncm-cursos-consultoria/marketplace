@@ -1,7 +1,6 @@
 package com.ncm.marketplace.usecases.services.query.relationship.user.candidate;
 
-import com.ncm.marketplace.domains.relationship.user.candidate.UserCandidateModule;
-import com.ncm.marketplace.domains.relationship.user.candidate.UserCandidateModule;
+import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateModule;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.relationship.user.candidate.UserCandidateModuleRepository;
 import lombok.RequiredArgsConstructor;

@@ -26,21 +26,35 @@ public class MarketplaceApplication {
 	//    requests ✅
 	//    responses ✅
 	//  mappers ✅
-	//  services
+	//  services ✅
 	//    command ✅
-	//    query
-	//  usecases
-	//  controllers
+	//    query ✅
+	//  usecases ✅
+	//  controllers ✅
+	//  outros controllers
+	//  adicionar selo vaga externa
+	//  adicionar senioridade da vaga
+	//  adicionar horario de trabalho
+	//  adicionar modelo de contratação
+	//  tags de soft e hard skills
 	//  swagger ✅
 	//  DigitalOcean
 	//    deploy api ✅
 	//    create SQL DB ✅
 	//    create Storage
 	//  return filesUrl
+	//  controllers de upload
 	//  services
 	//    login ✅
+	//    logout
+	//    painel partner
 	//    view job opening
 	//    change status job opening
 	//    change status module
 	//    change status course
+	//  emissão de certificados
+	//  estudar teste comportamental
+	//    disc
+	//    big five
+	//  role admin
 }

@@ -1,6 +1,6 @@
 package com.ncm.marketplace.usecases.services.command.relationship.user.candidate;
 
-import com.ncm.marketplace.domains.relationship.user.candidate.UserCandidateJobOpening;
+import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import com.ncm.marketplace.gateways.repositories.domains.relationship.user.candidate.UserCandidateJobOpeningRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

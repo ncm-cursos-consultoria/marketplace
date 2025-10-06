@@ -1,6 +1,6 @@
 package com.ncm.marketplace.usecases.services.query.enterprises;
 
-import com.ncm.marketplace.domains.enterprises.JobOpening;
+import com.ncm.marketplace.domains.enterprise.JobOpening;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.enterprises.jobOpening.JobOpeningRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +28,9 @@ public class JobOpeningQueryService {
 
     public Page<JobOpening> findAll(Pageable pageable) {
         return jobOpeningRepository.findAll(pageable);
+    }
+
+    public Boolean existsByTitle(String jobOpeningTest) {
+        return jobOpeningRepository.existsByTitle(jobOpeningTest);
     }
 }

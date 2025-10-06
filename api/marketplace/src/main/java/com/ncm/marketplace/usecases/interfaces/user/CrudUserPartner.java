@@ -12,4 +12,5 @@ public interface CrudUserPartner {
     UserPartnerResponse update(String id, UpdateUserPartnerRequest request);
     UserPartnerResponse findById(String id);
     List<UserPartnerResponse> findAll();
+    void init(String partnerId);
 }

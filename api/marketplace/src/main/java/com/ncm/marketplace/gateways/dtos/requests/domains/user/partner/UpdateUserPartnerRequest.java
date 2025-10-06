@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.dtos.requests.domains.user.partner;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,10 +18,8 @@ public class UpdateUserPartnerRequest {
     @NotEmpty
     private String firstName;
     private String lastName;
+    @Email
     @NotEmpty
     private String email;
     private LocalDate birthday;
-    @CNPJ
-    @NotEmpty
-    private String cnpj;
 }

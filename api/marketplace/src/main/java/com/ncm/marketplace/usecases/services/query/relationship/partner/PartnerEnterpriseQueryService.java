@@ -1,7 +1,6 @@
 package com.ncm.marketplace.usecases.services.query.relationship.partner;
 
-import com.ncm.marketplace.domains.enterprises.Enterprise;
-import com.ncm.marketplace.domains.relationship.partner.PartnerEnterprise;
+import com.ncm.marketplace.domains.relationships.partner.PartnerEnterprise;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.relationship.partner.PartnerEnterpriseRepository;
 import lombok.RequiredArgsConstructor;

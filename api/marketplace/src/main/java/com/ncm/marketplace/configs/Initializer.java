@@ -1,7 +1,7 @@
 package com.ncm.marketplace.configs;
 
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
-import com.ncm.marketplace.usecases.interfaces.user.CrudUserCandidate;
+import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -17,18 +17,17 @@ public class Initializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.info("Initializing application");
+        log.info("Initializing application...");
         try {
             crudUserCandidate.init();
-            log.info("User candidate initialized");
         } catch (Exception e) {
-            log.error("Failed in creating user candidate: {}", e.getMessage());
+            log.error("Failed in creating user candidate ❌: {}", e.getMessage());
         }
         try {
             crudEnterprise.init();
-            log.info("Enterprise and user enterprise initialized");
         } catch (Exception e) {
-            log.error("Failed in creating enterprise and user enterprise: {}", e.getMessage());
+            log.error("Failed in creating enterprise and user enterprise ❌: {}", e.getMessage());
         }
+        log.info("Application initialized successfully. ✅");
     }
 }

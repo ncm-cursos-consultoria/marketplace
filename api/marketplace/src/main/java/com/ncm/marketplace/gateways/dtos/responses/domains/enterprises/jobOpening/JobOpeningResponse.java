@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 
 import java.time.Instant;
+import java.util.Currency;
 
 @Getter
 @Setter
@@ -21,6 +22,7 @@ public class JobOpeningResponse {
     private Instant updatedAt;
     private String title;
     private Double salary;
+    private Currency currency;
     private String description;
     private JobOpeningStatusEnum status;
     private String country;

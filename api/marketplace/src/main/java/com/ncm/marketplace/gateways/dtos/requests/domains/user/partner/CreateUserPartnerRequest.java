@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.dtos.requests.domains.user.partner;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -18,14 +19,11 @@ public class CreateUserPartnerRequest {
     @NotEmpty
     private String firstName;
     private String lastName;
+    @Email
     @NotEmpty
     private String email;
+    private LocalDate birthday;
     @NotEmpty
     @Size(min = 8)
     private String password;
-    private Boolean isSubsidized;
-    private LocalDate subsidizedEndDate;
-    @CNPJ
-    @NotEmpty
-    private String cnpj;
 }

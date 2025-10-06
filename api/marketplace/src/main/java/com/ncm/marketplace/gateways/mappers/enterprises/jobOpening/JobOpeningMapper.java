@@ -1,7 +1,7 @@
 package com.ncm.marketplace.gateways.mappers.enterprises.jobOpening;
 
-import com.ncm.marketplace.domains.enterprises.JobOpening;
-import com.ncm.marketplace.gateways.dtos.requests.domains.enterprises.jobOpening.CreateJobOpeningRequest;
+import com.ncm.marketplace.domains.enterprise.JobOpening;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningSnippetResponse;
 import org.springframework.data.domain.Page;
@@ -15,6 +15,7 @@ public class JobOpeningMapper {
         return JobOpening.builder()
                 .title(request.getTitle())
                 .salary(request.getSalary())
+                .currency(request.getCurrency())
                 .description(request.getDescription())
                 .country(request.getCountry())
                 .state(request.getState())
@@ -30,6 +31,7 @@ public class JobOpeningMapper {
                 .updatedAt(jobOpening.getUpdatedAt())
                 .title(jobOpening.getTitle())
                 .salary(jobOpening.getSalary())
+                .currency(jobOpening.getCurrency())
                 .description(jobOpening.getDescription())
                 .status(jobOpening.getStatus())
                 .country(jobOpening.getCountry())
@@ -58,6 +60,18 @@ public class JobOpeningMapper {
     public static JobOpeningSnippetResponse toSnippetResponse(JobOpening jobOpening) {
         return JobOpeningSnippetResponse.builder()
                 .id(jobOpening.getId())
+                .title(jobOpening.getTitle())
+                .salary(jobOpening.getSalary())
+                .currency(jobOpening.getCurrency())
+                .status(jobOpening.getStatus())
+                .country(jobOpening.getCountry())
+                .state(jobOpening.getState())
+                .city(jobOpening.getCity())
+                .workModel(jobOpening.getWorkModel())
+                .views(jobOpening.getViews())
+                .enterpriseLegalName(jobOpening.getEnterprise() != null
+                        ? jobOpening.getEnterprise().getLegalName()
+                        : null)
                 .build();
     }
 

@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -18,6 +19,7 @@ public class CreateUserCandidateRequest {
     @NotEmpty
     private String firstName;
     private String lastName;
+    @Email
     @NotEmpty
     private String email;
     @NotEmpty

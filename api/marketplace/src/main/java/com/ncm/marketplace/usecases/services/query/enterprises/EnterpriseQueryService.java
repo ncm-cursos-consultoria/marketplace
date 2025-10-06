@@ -1,6 +1,6 @@
 package com.ncm.marketplace.usecases.services.query.enterprises;
 
-import com.ncm.marketplace.domains.enterprises.Enterprise;
+import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.enterprises.enterprise.EnterpriseRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +28,9 @@ public class EnterpriseQueryService {
 
     public Page<Enterprise> findAll(Pageable pageable) {
         return enterpriseRepository.findAll(pageable);
+    }
+
+    public Boolean existsByCnpj(String cnpj) {
+        return enterpriseRepository.existsByCnpj(cnpj);
     }
 }

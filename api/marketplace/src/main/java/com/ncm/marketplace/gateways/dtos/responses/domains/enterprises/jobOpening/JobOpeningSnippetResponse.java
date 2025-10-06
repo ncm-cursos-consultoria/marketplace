@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 
+import java.util.Currency;
+
 @Getter
 @Setter
 @Builder
@@ -17,6 +19,7 @@ public class JobOpeningSnippetResponse {
     private String id;
     private String title;
     private Double salary;
+    private Currency currency;
     private JobOpeningStatusEnum status;
     private String country;
     private String state;
