@@ -7,6 +7,7 @@ import {
   Home,
   NotebookPenIcon,
   Plus,
+  LogOut,
 } from "lucide-react";
 import { NavItem } from "./nav-item";
 import Link from "next/link";
@@ -16,7 +17,7 @@ import { getEnterprise } from "@/service/enterprise/get-enterprise";
 import { UserEnterpriseProps } from "@/utils/interfaces";
 
 export function AsideEnterprise() {
-  const { userEnterprise } = UseUserEnteprise();
+  const { userEnterprise, logout, isLoggingOut } = UseUserEnteprise();
   const enterpriseId = userEnterprise?.enterpriseId ?? null;
 
   const { data, isLoading } = useQuery<UserEnterpriseProps>({
@@ -37,15 +38,15 @@ export function AsideEnterprise() {
   }
 
   return (
-    <aside className="hidden md:flex md:flex-col md:w-64 bg-[#0D2E66] text-white min-h-screen sticky top-0">
+    <aside className="hidden md:flex md:flex-col md:w-72 bg-[#0D2E66] text-white min-h-screen sticky top-0">
       <div className="px-6 py-6 border-b border-white/10">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-lg bg-white/10 flex items-center justify-center font-bold">
             <Building />
           </div>
           <div className="leading-tight">
-            <p className="font-semibold">{data.legalName}</p>
-            <p className="text-xs text-white/70">{data.tradeName}</p>
+            <p className="font-semibold">{data.tradeName}</p>
+            <p className="text-xs text-white/70">{data.legalName}</p>
           </div>
         </div>
       </div>
@@ -77,13 +78,23 @@ export function AsideEnterprise() {
         </NavItem>
       </nav>
 
-      <div className="p-4 mt-auto">
+      <div className="p-4 mt-auto space-y-2">
         <Link
           href={`/enterprise/${enterpriseId}/jobs/new`}
           className="inline-flex items-center gap-2 w-full justify-center rounded-lg bg-white text-[#0D2E66] font-medium py-2"
         >
           <Plus className="h-4 w-4" /> Criar nova vaga
         </Link>
+
+        <button
+          type="button"
+          onClick={() => logout?.("/auth/sign-in")}
+          disabled={isLoggingOut}
+          className="inline-flex items-center gap-2 w-full justify-center rounded-lg border border-white/20 text-white font-medium py-2 hover:bg-white/10 disabled:opacity-60"
+        >
+          <LogOut className="h-4 w-4" />
+          {isLoggingOut ? "Saindo..." : "Sair"}
+        </button>
       </div>
     </aside>
   );

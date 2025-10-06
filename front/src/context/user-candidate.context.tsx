@@ -1,9 +1,10 @@
 "use client";
 
 import { me } from "@/service/auth/me";
+import { logout as logoutRequest } from "@/service/auth/logout";
 import { UserCandidateProps } from "@/utils/interfaces";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter, usePathname } from "next/navigation";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import React, {
   createContext,
   Dispatch,
@@ -16,18 +17,20 @@ import React, {
 interface userCandidateProviderProps {
   userCandidate: UserCandidateProps | null;
   setUserCandidate: Dispatch<SetStateAction<UserCandidateProps | null>>;
+  logout: (redirectTo?: string) => Promise<void>;
+  isLoggingOut: boolean;
 }
 
 const userCandidateContext = createContext<userCandidateProviderProps | undefined>(undefined);
 
 export function UserCandidateProvider({ children }: { children: React.ReactNode }) {
   const [userCandidate, setUserCandidate] = useState<UserCandidateProps | null>(null);
-  const router = useRouter()
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery<UserCandidateProps | null>({
     queryKey: ["authUser"],
     queryFn: me,
-
     retry: false,
     staleTime: 1000 * 60 * 5,
   });
@@ -41,11 +44,24 @@ export function UserCandidateProvider({ children }: { children: React.ReactNode 
     setUserCandidate(data);
   }, [data?.id, isLoading, data]);
 
-  console.log(userCandidate);
-  
+  const { mutateAsync: doLogout, isPending: isLoggingOut } = useMutation({
+    mutationFn: logoutRequest,
+  });
+
+  const logout = async (redirectTo: string = "/") => {
+    try {
+      await doLogout();
+    } finally {
+      setUserCandidate(null);
+      queryClient.clear(); 
+      router.replace(redirectTo);
+    }
+  };
 
   return (
-    <userCandidateContext.Provider value={{ userCandidate, setUserCandidate }}>
+    <userCandidateContext.Provider
+      value={{ userCandidate, setUserCandidate, logout, isLoggingOut }}
+    >
       {children}
     </userCandidateContext.Provider>
   );

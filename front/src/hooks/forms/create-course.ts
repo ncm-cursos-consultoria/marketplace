@@ -14,6 +14,7 @@ export function useCreateCourse(moduleId: string) {
     mutationFn: (data: CreateCourseFormSchema) => createCourse(data),
     mutationKey: ['course'],
     onSuccess: () => {
+      window.location.reload()
       queryClient.invalidateQueries({queryKey: ['course']})
     }
   })

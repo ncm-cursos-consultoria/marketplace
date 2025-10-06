@@ -1,8 +1,10 @@
 "use client";
 
 import { me } from "@/service/auth/me";
+import { logout as logoutRequest } from "@/service/auth/logout";
 import { UserEnterpriseProps } from "@/utils/interfaces";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import React, {
   createContext,
   Dispatch,
@@ -15,19 +17,16 @@ import React, {
 interface userEnterpriseContextProps {
   userEnterprise: UserEnterpriseProps | null;
   setUserEnterprise: Dispatch<SetStateAction<UserEnterpriseProps | null>>;
+  logout: (redirectTo?: string) => Promise<void>;
+  isLoggingOut: boolean;
 }
 
-const userEnterpriseContext = createContext<
-  userEnterpriseContextProps | undefined
->(undefined);
+const userEnterpriseContext = createContext<userEnterpriseContextProps | undefined>(undefined);
 
-export function UserEnterpriseProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [userEnterprise, setUserEnterprise] =
-    useState<UserEnterpriseProps | null>(null);
+export function UserEnterpriseProvider({ children }: { children: React.ReactNode }) {
+  const [userEnterprise, setUserEnterprise] = useState<UserEnterpriseProps | null>(null);
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { data, isLoading } = useQuery<UserEnterpriseProps | null>({
     queryKey: ["authUser"],
@@ -45,8 +44,24 @@ export function UserEnterpriseProvider({
     setUserEnterprise(data);
   }, [data?.id, isLoading, data]);
 
+  const { mutateAsync: doLogout, isPending: isLoggingOut } = useMutation({
+    mutationFn: logoutRequest,
+  });
+
+  const logout = async (redirectTo: string = "/") => {
+    try {
+      await doLogout();
+    } finally {
+      setUserEnterprise(null);
+      queryClient.clear();
+      router.replace(redirectTo);
+    }
+  };
+
   return (
-    <userEnterpriseContext.Provider value={{ userEnterprise, setUserEnterprise }}>
+    <userEnterpriseContext.Provider
+      value={{ userEnterprise, setUserEnterprise, logout, isLoggingOut }}
+    >
       {children}
     </userEnterpriseContext.Provider>
   );

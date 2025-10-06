@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postModule } from "@/service/module/post-module";
 import { UseUserEnteprise } from "@/context/user-enterprise.context";
+import { toast } from "sonner";
 
 export function useCreateModule() {
   const {userEnterprise} = UseUserEnteprise()
@@ -29,7 +30,9 @@ export function useCreateModule() {
       queryClient.invalidateQueries({ 
         queryKey: ['module', enterpriseId],
         exact: true 
+        
       });
+      toast.success("Módulo criado com sucesso")
       form.reset()
     }
   });

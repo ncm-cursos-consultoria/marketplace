@@ -7,7 +7,6 @@ import {
   createJobFormSchema,
   type CreateJobFormSchema,
 } from "../schemas/create-job";
-import { useEffect } from "react";
 import { useParams } from "next/navigation";
 
 export function useCreateJob() {
@@ -30,7 +29,7 @@ export function useCreateJob() {
       queryClient.invalidateQueries({ 
         queryKey: ["job", enterpriseId] 
       });
-      
+      window.location.reload()
       form.reset();
     }
   });

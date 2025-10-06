@@ -13,11 +13,10 @@ export function PostedJobs() {
   const enterpriseId = userEnterprise?.enterpriseId ?? null;
 
   const { data, isLoading } = useQuery({
-    queryKey: ["job", enterpriseId], 
+    queryKey: ["job", enterpriseId],
     queryFn: () => getJobByEnterprise(enterpriseId!),
     enabled: !!enterpriseId,
   });
-
 
   const salaryFmt = useMemo(
     () =>
@@ -37,6 +36,20 @@ export function PostedJobs() {
       timeStyle: "short",
       hour12: false,
     }).format(d);
+  }
+
+  if (data <= 0) {
+    return (
+      <div className="flex flex-col justify-between mb-3 gap-10">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Vagas publicadas</h2>
+          <ModalCreateJob />
+        </div>
+        <div>
+          <p className="text-[14px] text-neutral-600">Não há vagas postadas até o momento</p>
+        </div>
+      </div>
+    );
   }
 
   return (

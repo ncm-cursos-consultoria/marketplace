@@ -9,9 +9,10 @@ import { statusClass } from "@/utils/status-class";
 import { workModelLabel } from "@/utils/work-model-label";
 import { useQuery } from "@tanstack/react-query";
 import { Briefcase, MapPin } from "lucide-react";
+import { ModuleSection } from "./complementary/module-section";
 
 export default function Home() {
-  const { userCandidate } = UseUserCandidate();
+  // const { userCandidate } = UseUserCandidate();
 
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["job"],
@@ -32,26 +33,7 @@ export default function Home() {
             profissional.
           </p>
         </section>
-        <section>
-          <h2 className="text-2xl font-semibold mb-6">Cursos disponíveis</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <CourseCard
-              title="Módulo 1"
-              description="Introdução"
-              video="https://www.youtube.com/embed/3YyWO-lO4rM"
-            />
-            <CourseCard
-              title="Módulo 2"
-              description="Nossos serviços"
-              video="https://www.youtube.com/embed/UlH6-T7xwEw"
-            />
-            <CourseCard
-              title="Módulo 3"
-              description="Comportamento Empreendedor para Startups"
-              video="https://www.youtube.com/embed/Cfh0weATucA"
-            />
-          </div>
-        </section>
+
         <section>
           <h2 className="text-2xl font-semibold mb-6">Vagas de emprego</h2>
           <ul className="space-y-4">
@@ -101,6 +83,7 @@ export default function Home() {
               ))}
           </ul>
         </section>
+        <ModuleSection />
 
         {/* Section 4: Informações gerais */}
         <section className="bg-white p-6 rounded shadow">
