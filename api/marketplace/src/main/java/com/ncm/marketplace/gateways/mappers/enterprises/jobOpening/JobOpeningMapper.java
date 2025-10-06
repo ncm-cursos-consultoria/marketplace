@@ -2,6 +2,7 @@ package com.ncm.marketplace.gateways.mappers.enterprises.jobOpening;
 
 import com.ncm.marketplace.domains.enterprise.JobOpening;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.CurrencyResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningSnippetResponse;
 import org.springframework.data.domain.Page;
@@ -32,7 +33,11 @@ public class JobOpeningMapper {
                 .updatedAt(jobOpening.getUpdatedAt())
                 .title(jobOpening.getTitle())
                 .salary(jobOpening.getSalary())
-                .currency(Currency.getInstance(jobOpening.getCurrencyCode()))
+                .currency(CurrencyResponse.builder()
+                        .code(jobOpening.getCurrencyCode())
+                        .symbol(Currency.getInstance(jobOpening.getCurrencyCode()).getSymbol())
+                        .displayName(Currency.getInstance(jobOpening.getCurrencyCode()).getDisplayName())
+                        .build())
                 .description(jobOpening.getDescription())
                 .status(jobOpening.getStatus())
                 .country(jobOpening.getCountry())

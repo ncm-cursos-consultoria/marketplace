@@ -22,7 +22,7 @@ public class JobOpeningResponse {
     private Instant updatedAt;
     private String title;
     private Double salary;
-    private Currency currency;
+    private CurrencyResponse currency;
     private String description;
     private JobOpeningStatusEnum status;
     private String country;
