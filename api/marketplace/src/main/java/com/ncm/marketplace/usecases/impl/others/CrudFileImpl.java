@@ -17,6 +17,7 @@ import static com.ncm.marketplace.gateways.mappers.others.file.FileMapper.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CrudFileImpl implements CrudFile {
     private final FileCommandService fileCommandService;
     private final FileQueryService fileQueryService;

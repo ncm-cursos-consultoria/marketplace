@@ -31,6 +31,7 @@ public class MarketplaceApplication {
 	//    query ✅
 	//  usecases ✅
 	//  controllers ✅
+	//  finalizar initializer
 	//  outros controllers
 	//  adicionar selo vaga externa
 	//  adicionar senioridade da vaga
@@ -46,7 +47,7 @@ public class MarketplaceApplication {
 	//  controllers de upload
 	//  services
 	//    login ✅
-	//    logout
+	//    logout ✅
 	//    painel partner
 	//    view job opening
 	//    change status job opening

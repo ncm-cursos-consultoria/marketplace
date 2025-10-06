@@ -38,8 +38,12 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
                                 "/webjars/**",
-                                "/auth/login",
-                                "/user/candidate"
+                                "/auth/login"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/user/partner",
+                                "/user/candidate",
+                                "/enterprise"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

@@ -2,10 +2,12 @@ package com.ncm.marketplace.gateways.mappers.enterprises.jobOpening;
 
 import com.ncm.marketplace.domains.enterprise.JobOpening;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.CurrencyResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningSnippetResponse;
 import org.springframework.data.domain.Page;
 
+import java.util.Currency;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,7 +17,7 @@ public class JobOpeningMapper {
         return JobOpening.builder()
                 .title(request.getTitle())
                 .salary(request.getSalary())
-                .currency(request.getCurrency())
+                .currencyCode(request.getCurrencyCode())
                 .description(request.getDescription())
                 .country(request.getCountry())
                 .state(request.getState())
@@ -31,7 +33,11 @@ public class JobOpeningMapper {
                 .updatedAt(jobOpening.getUpdatedAt())
                 .title(jobOpening.getTitle())
                 .salary(jobOpening.getSalary())
-                .currency(jobOpening.getCurrency())
+                .currency(CurrencyResponse.builder()
+                        .code(jobOpening.getCurrencyCode())
+                        .symbol(Currency.getInstance(jobOpening.getCurrencyCode()).getSymbol())
+                        .displayName(Currency.getInstance(jobOpening.getCurrencyCode()).getDisplayName())
+                        .build())
                 .description(jobOpening.getDescription())
                 .status(jobOpening.getStatus())
                 .country(jobOpening.getCountry())
@@ -62,7 +68,11 @@ public class JobOpeningMapper {
                 .id(jobOpening.getId())
                 .title(jobOpening.getTitle())
                 .salary(jobOpening.getSalary())
-                .currency(jobOpening.getCurrency())
+                .currency(CurrencyResponse.builder()
+                        .code(jobOpening.getCurrencyCode())
+                        .symbol(Currency.getInstance(jobOpening.getCurrencyCode()).getSymbol())
+                        .displayName(Currency.getInstance(jobOpening.getCurrencyCode()).getDisplayName())
+                        .build())
                 .status(jobOpening.getStatus())
                 .country(jobOpening.getCountry())
                 .state(jobOpening.getState())

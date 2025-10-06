@@ -22,6 +22,7 @@ import static com.ncm.marketplace.gateways.mappers.catalog.module.ModuleMapper.*
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CrudModuleImpl implements CrudModule {
     private final ModuleQueryService moduleQueryService;
     private final EnterpriseQueryService enterpriseQueryService;
@@ -76,5 +77,10 @@ public class CrudModuleImpl implements CrudModule {
         } else {
             log.info("Module already exists ℹ️");
         }
+    }
+
+    @Override
+    public List<ModuleResponse> findAllByEnterpriseId(String id) {
+        return toResponse(moduleQueryService.findAllByEnterpriseId(id));
     }
 }

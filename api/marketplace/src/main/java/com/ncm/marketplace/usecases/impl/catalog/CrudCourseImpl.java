@@ -2,11 +2,13 @@ package com.ncm.marketplace.usecases.impl.catalog;
 
 import com.ncm.marketplace.domains.catalog.Course;
 import com.ncm.marketplace.domains.catalog.Module;
+import com.ncm.marketplace.domains.catalog.Video;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.UpdateCourseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.video.CreateVideoRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.catalog.course.CourseResponse;
-import com.ncm.marketplace.gateways.mappers.catalog.course.CourseMapper;
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudCourse;
+import com.ncm.marketplace.usecases.interfaces.catalog.CrudVideo;
 import com.ncm.marketplace.usecases.services.command.catalog.CourseCommandService;
 import com.ncm.marketplace.usecases.services.query.catalog.CourseQueryService;
 import com.ncm.marketplace.usecases.services.query.catalog.ModuleQueryService;
@@ -22,10 +24,13 @@ import static com.ncm.marketplace.gateways.mappers.catalog.course.CourseMapper.*
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CrudCourseImpl implements CrudCourse {
     private final CourseCommandService courseCommandService;
     private final CourseQueryService courseQueryService;
     private final ModuleQueryService moduleQueryService;
+    private final CrudVideo crudVideo;
+    private final CrudVideo videoService;
 
     @Transactional
     @Override
@@ -33,7 +38,13 @@ public class CrudCourseImpl implements CrudCourse {
         Course course = toEntityCreate(request);
         Module module = moduleQueryService.findByIdOrThrow(request.getModuleId());
         course.setModule(module);
-        return toResponse(courseCommandService.save(course));
+        course = courseCommandService.save(course);
+        crudVideo.save(CreateVideoRequest.builder()
+                .title(course.getTitle())
+                .url(request.getVideoUrl())
+                .courseId(course.getId())
+                .build());
+        return toResponse(course);
     }
 
     @Transactional
@@ -49,8 +60,19 @@ public class CrudCourseImpl implements CrudCourse {
 
         course.setTitle(request.getTitle());
         course.setDescription(request.getDescription());
+        if (course.getVideos() != null) {
+            Video lastActiveVideo = videoService.findLastActiveVideo(course.getId());
+            if (!request.getVideoUrl().equals(lastActiveVideo.getUrl())) {
+                crudVideo.deactivateOldVideos(course.getId());
+                crudVideo.save(CreateVideoRequest.builder()
+                        .title(course.getTitle())
+                        .url(request.getVideoUrl())
+                        .courseId(course.getId())
+                        .build());
+            }
+        }
 
-        return toResponse(courseCommandService.save(course));
+        return toResponse(course);
     }
 
     @Override
@@ -76,5 +98,10 @@ public class CrudCourseImpl implements CrudCourse {
         } else {
             log.info("Course already exists ℹ️");
         }
+    }
+
+    @Override
+    public List<CourseResponse> findAllByModuleId(String id) {
+        return toResponse(courseQueryService.findAllByModuleId(id));
     }
 }

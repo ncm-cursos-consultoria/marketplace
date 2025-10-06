@@ -27,6 +27,7 @@ import static com.ncm.marketplace.gateways.mappers.user.partner.UserPartnerMappe
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CrudUserPartnerImpl implements CrudUserPartner {
     private final UserPartnerCommandService userPartnerCommandService;
     private final UserPartnerQueryService userPartnerQueryService;

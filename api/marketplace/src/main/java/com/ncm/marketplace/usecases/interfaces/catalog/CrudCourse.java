@@ -13,4 +13,5 @@ public interface CrudCourse {
     CourseResponse findById(String id);
     List<CourseResponse> findAll();
     void init(String moduleId);
+    List<CourseResponse> findAllByModuleId(String id);
 }

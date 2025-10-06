@@ -22,6 +22,7 @@ import static com.ncm.marketplace.gateways.mappers.user.candidate.UserCandidateM
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CrudUserCandidateImpl implements CrudUserCandidate {
     private final UserCandidateCommandService userCandidateCommandService;
     private final UserCandidateQueryService userCandidateQueryService;

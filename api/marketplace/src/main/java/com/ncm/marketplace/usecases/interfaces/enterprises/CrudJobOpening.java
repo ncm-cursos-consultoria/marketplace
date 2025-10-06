@@ -1,6 +1,7 @@
 package com.ncm.marketplace.usecases.interfaces.enterprises;
 
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.JobOpeningSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
 
@@ -11,6 +12,7 @@ public interface CrudJobOpening {
     void deleteById(String id);
     JobOpeningResponse update(String id, UpdateJobOpeningRequest request);
     JobOpeningResponse findById(String id);
-    List<JobOpeningResponse> findAll();
+    List<JobOpeningResponse> findAll(JobOpeningSpecificationRequest specificationRequest);
     void init(String enterpriseId);
+    List<JobOpeningResponse> findAllByEnterpriseId(String id);
 }

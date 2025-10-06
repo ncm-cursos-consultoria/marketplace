@@ -1,16 +1,20 @@
 package com.ncm.marketplace.usecases.impl.enterprises;
 
+import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enterprise.JobOpening;
 import com.ncm.marketplace.domains.enums.WorkModelEnum;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.JobOpeningSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
-import com.ncm.marketplace.gateways.mappers.enterprises.jobOpening.JobOpeningMapper;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudJobOpening;
 import com.ncm.marketplace.usecases.services.command.enterprises.JobOpeningCommandService;
+import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.enterprises.JobOpeningQueryService;
+import com.ncm.marketplace.usecases.services.specification.enterprise.JobOpeningSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,14 +25,20 @@ import static com.ncm.marketplace.gateways.mappers.enterprises.jobOpening.JobOpe
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CrudJobOpeningImpl implements CrudJobOpening {
     private final JobOpeningCommandService jobOpeningCommandService;
     private final JobOpeningQueryService jobOpeningQueryService;
+    private final EnterpriseQueryService enterpriseQueryService;
+    private final JobOpeningSpecification jobOpeningSpecification;
 
     @Transactional
     @Override
     public JobOpeningResponse save(CreateJobOpeningRequest request) {
-        return toResponse(jobOpeningCommandService.save(toEntityCreate(request)));
+        JobOpening jobOpening = toEntityCreate(request);
+        Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(request.getEnterpriseId());
+        jobOpening.setEnterprise(enterprise);
+        return toResponse(jobOpeningCommandService.save(jobOpening));
     }
 
     @Transactional
@@ -59,8 +69,9 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
     }
 
     @Override
-    public List<JobOpeningResponse> findAll() {
-        return toResponse(jobOpeningQueryService.findAll());
+    public List<JobOpeningResponse> findAll(JobOpeningSpecificationRequest specificationRequest) {
+        Specification<JobOpening> specification = jobOpeningSpecification.toSpecification(specificationRequest);
+        return toResponse(jobOpeningQueryService.findAll(specification));
     }
 
     @Transactional
@@ -81,5 +92,10 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
         } else {
             log.info("Job opening already exists ℹ️");
         }
+    }
+
+    @Override
+    public List<JobOpeningResponse> findAllByEnterpriseId(String id) {
+        return toResponse(jobOpeningQueryService.findAllByEnterpriseId(id));
     }
 }

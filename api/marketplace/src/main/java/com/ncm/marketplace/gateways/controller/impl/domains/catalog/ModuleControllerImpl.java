@@ -56,4 +56,11 @@ public class ModuleControllerImpl implements ModuleController {
     public ResponseEntity<List<ModuleResponse>> findAll() {
         return ResponseEntity.ok(crudModule.findAll());
     }
+
+    @GetMapping("/enterprise/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Override
+    public ResponseEntity<List<ModuleResponse>> findAllByEnterpriseId(@PathVariable String id) {
+        return ResponseEntity.ok(crudModule.findAllByEnterpriseId(id));
+    }
 }

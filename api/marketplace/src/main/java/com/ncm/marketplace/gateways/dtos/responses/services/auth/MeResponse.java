@@ -22,4 +22,6 @@ public class MeResponse {
     private LocalDate birthday;
     private String profilePictureUrl;
     private UserTypeEnum type;
+    private String enterpriseId;
+    private String partnerId;
 }

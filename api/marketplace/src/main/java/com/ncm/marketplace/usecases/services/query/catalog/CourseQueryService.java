@@ -34,4 +34,8 @@ public class CourseQueryService {
     public Boolean existsByModuleId(String moduleId) {
         return courseRepository.existsByModule_Id(moduleId);
     }
+
+    public List<Course> findAllByModuleId(String id) {
+        return courseRepository.findAllByModule_Id(id);
+    }
 }
