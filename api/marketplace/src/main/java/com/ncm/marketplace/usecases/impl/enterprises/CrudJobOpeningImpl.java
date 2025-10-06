@@ -92,4 +92,9 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
             log.info("Job opening already exists ℹ️");
         }
     }
+
+    @Override
+    public List<JobOpeningResponse> findAllByEnterpriseId(String id) {
+        return toResponse(jobOpeningQueryService.findAllByEnterpriseId(id));
+    }
 }

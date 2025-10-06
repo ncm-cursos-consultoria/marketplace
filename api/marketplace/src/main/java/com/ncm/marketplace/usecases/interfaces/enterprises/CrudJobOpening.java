@@ -14,4 +14,5 @@ public interface CrudJobOpening {
     JobOpeningResponse findById(String id);
     List<JobOpeningResponse> findAll(JobOpeningSpecificationRequest specificationRequest);
     void init(String enterpriseId);
+    List<JobOpeningResponse> findAllByEnterpriseId(String id);
 }

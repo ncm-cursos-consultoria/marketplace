@@ -35,4 +35,8 @@ public class JobOpeningQueryService {
     public Boolean existsByTitle(String jobOpeningTest) {
         return jobOpeningRepository.existsByTitle(jobOpeningTest);
     }
+
+    public List<JobOpening> findAllByEnterpriseId(String id) {
+        return jobOpeningRepository.findAllByEnterprise_Id(id);
+    }
 }

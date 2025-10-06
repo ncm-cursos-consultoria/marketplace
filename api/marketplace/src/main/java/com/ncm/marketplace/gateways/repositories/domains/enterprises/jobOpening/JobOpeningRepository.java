@@ -4,6 +4,9 @@ import com.ncm.marketplace.domains.enterprise.JobOpening;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
+
 public interface JobOpeningRepository extends JpaRepository<JobOpening, String>, JpaSpecificationExecutor<JobOpening> {
     Boolean existsByTitle(String jobOpeningTest);
+    List<JobOpening> findAllByEnterprise_Id(String id);
 }
