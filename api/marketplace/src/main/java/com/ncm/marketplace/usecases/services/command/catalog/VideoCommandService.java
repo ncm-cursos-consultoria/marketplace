@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -18,5 +21,9 @@ public class VideoCommandService {
 
     public void deleteById(String id) {
         videoRepository.deleteById(id);
+    }
+
+    public List<Video> saveAll(List<Video> videos) {
+        return videoRepository.saveAll(videos);
     }
 }
