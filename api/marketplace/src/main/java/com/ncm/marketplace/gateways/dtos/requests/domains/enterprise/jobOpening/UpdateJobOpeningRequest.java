@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 
-import java.util.Currency;
-
 @Getter
 @Setter
 @Builder
@@ -20,7 +18,7 @@ public class UpdateJobOpeningRequest {
     private String title;
     private Double salary;
     @NotNull
-    private Currency currency;
+    private String currencyCode;
     @NotEmpty
     @Size(min = 1, max = 1000)
     private String description;

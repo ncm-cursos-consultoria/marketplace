@@ -6,6 +6,7 @@ import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpenin
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningSnippetResponse;
 import org.springframework.data.domain.Page;
 
+import java.util.Currency;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,7 +16,7 @@ public class JobOpeningMapper {
         return JobOpening.builder()
                 .title(request.getTitle())
                 .salary(request.getSalary())
-                .currency(request.getCurrency())
+                .currencyCode(request.getCurrencyCode())
                 .description(request.getDescription())
                 .country(request.getCountry())
                 .state(request.getState())
@@ -31,7 +32,7 @@ public class JobOpeningMapper {
                 .updatedAt(jobOpening.getUpdatedAt())
                 .title(jobOpening.getTitle())
                 .salary(jobOpening.getSalary())
-                .currency(jobOpening.getCurrency())
+                .currency(Currency.getInstance(jobOpening.getCurrencyCode()))
                 .description(jobOpening.getDescription())
                 .status(jobOpening.getStatus())
                 .country(jobOpening.getCountry())
@@ -62,7 +63,7 @@ public class JobOpeningMapper {
                 .id(jobOpening.getId())
                 .title(jobOpening.getTitle())
                 .salary(jobOpening.getSalary())
-                .currency(jobOpening.getCurrency())
+                .currency(Currency.getInstance(jobOpening.getCurrencyCode()))
                 .status(jobOpening.getStatus())
                 .country(jobOpening.getCountry())
                 .state(jobOpening.getState())
