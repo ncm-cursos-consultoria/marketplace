@@ -3,14 +3,20 @@ package com.ncm.marketplace.usecases.impl.enterprises;
 import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enterprise.JobOpening;
 import com.ncm.marketplace.domains.enums.WorkModelEnum;
+import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
+import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.JobOpeningSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
+import com.ncm.marketplace.gateways.dtos.responses.domains.relationships.enterprises.jobOpening.JobOpeningUserCandidateResponse;
+import com.ncm.marketplace.gateways.mappers.relationships.enterprises.jobOpening.JobOpeningUserCandidateMapper;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudJobOpening;
 import com.ncm.marketplace.usecases.services.command.enterprises.JobOpeningCommandService;
+import com.ncm.marketplace.usecases.services.command.relationship.user.candidate.UserCandidateJobOpeningCommandService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.enterprises.JobOpeningQueryService;
+import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import com.ncm.marketplace.usecases.services.specification.enterprise.JobOpeningSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 
 import static com.ncm.marketplace.gateways.mappers.enterprises.jobOpening.JobOpeningMapper.*;
@@ -31,6 +38,8 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
     private final JobOpeningQueryService jobOpeningQueryService;
     private final EnterpriseQueryService enterpriseQueryService;
     private final JobOpeningSpecification jobOpeningSpecification;
+    private final UserCandidateQueryService userCandidateQueryService;
+    private final UserCandidateJobOpeningCommandService userCandidateJobOpeningCommandService;
 
     @Transactional
     @Override
@@ -97,5 +106,18 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
     @Override
     public List<JobOpeningResponse> findAllByEnterpriseId(String id) {
         return toResponse(jobOpeningQueryService.findAllByEnterpriseId(id));
+    }
+
+    @Transactional
+    @Override
+    public JobOpeningUserCandidateResponse submitUserCandidateToJobOpeningById(String id, String userId) {
+        JobOpening jobOpening = jobOpeningQueryService.findByIdOrThrow(id);
+        UserCandidate user = userCandidateQueryService.findByIdOrThrow(userId);
+        return JobOpeningUserCandidateMapper.toResponse(
+                userCandidateJobOpeningCommandService.save(UserCandidateJobOpening.builder()
+                        .submittedAt(Instant.now())
+                        .jobOpening(jobOpening)
+                        .userCandidate(user)
+                        .build()));
     }
 }

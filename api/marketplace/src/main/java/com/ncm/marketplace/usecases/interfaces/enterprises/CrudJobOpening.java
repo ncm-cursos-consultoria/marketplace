@@ -4,6 +4,7 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.JobOpeningSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
+import com.ncm.marketplace.gateways.dtos.responses.domains.relationships.enterprises.jobOpening.JobOpeningUserCandidateResponse;
 
 import java.util.List;
 
@@ -15,4 +16,5 @@ public interface CrudJobOpening {
     List<JobOpeningResponse> findAll(JobOpeningSpecificationRequest specificationRequest);
     void init(String enterpriseId);
     List<JobOpeningResponse> findAllByEnterpriseId(String id);
+    JobOpeningUserCandidateResponse submitUserCandidateToJobOpeningById(String id, String userId);
 }

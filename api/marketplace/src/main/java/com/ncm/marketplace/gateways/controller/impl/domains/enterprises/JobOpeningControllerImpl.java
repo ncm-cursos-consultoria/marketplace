@@ -5,6 +5,7 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.JobOpeningSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
+import com.ncm.marketplace.gateways.dtos.responses.domains.relationships.enterprises.jobOpening.JobOpeningUserCandidateResponse;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudJobOpening;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -70,5 +71,13 @@ public class JobOpeningControllerImpl implements JobOpeningController {
     @Override
     public ResponseEntity<List<JobOpeningResponse>> findAllByEnterpriseId(@PathVariable String id) {
         return ResponseEntity.ok(crudJobOpening.findAllByEnterpriseId(id));
+    }
+
+    @PostMapping("/{id}/submit/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Add user candidate to a job opening by ids")
+    @Override
+    public ResponseEntity<JobOpeningUserCandidateResponse> submitUserCandidateToJobOpeningById(@PathVariable String id, @PathVariable String userId) {
+        return ResponseEntity.ok(crudJobOpening.submitUserCandidateToJobOpeningById(id, userId));
     }
 }
