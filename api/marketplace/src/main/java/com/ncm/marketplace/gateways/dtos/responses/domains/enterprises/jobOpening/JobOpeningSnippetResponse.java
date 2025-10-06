@@ -19,7 +19,7 @@ public class JobOpeningSnippetResponse {
     private String id;
     private String title;
     private Double salary;
-    private Currency currency;
+    private CurrencyResponse currency;
     private JobOpeningStatusEnum status;
     private String country;
     private String state;
