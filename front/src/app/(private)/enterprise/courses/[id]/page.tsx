@@ -16,15 +16,8 @@ import { getModule } from '@/service/module/get-module'
 import { ModalCreateCourse } from './complementary/modal-create-course'
 import { UseUserEnteprise } from '@/context/user-enterprise.context'
 
-export type Course = {
-  id: string
-  title: string
-  description?: string
-  coverUrl?: string
-  durationInMin?: number
-  level?: 'BASIC' | 'INTERMEDIATE' | 'ADVANCED'
-  videoUrl?: string
-}
+
+
 
 export default function CoursesByModulePage() {
   const { userEnterprise } = UseUserEnteprise()
@@ -45,7 +38,7 @@ export default function CoursesByModulePage() {
   const {
     data: courses = [],
     isLoading: isLoadingCourses,
-  } = useQuery<Course[]>({
+  } = useQuery({
     queryKey: ['courses', id],
     queryFn: () => getCourses(id),
     enabled: !!id,

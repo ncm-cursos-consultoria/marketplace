@@ -4,8 +4,11 @@ export type Course = {
   id: string;
   title: string;
   description?: string;
-  order: number;
   videoUrl: string;
+  // deixe opcional se nem sempre vem do backend:
+  order?: number;
+  // adicione se existir no backend:
+  moduleId?: string;
 };
 
 function toYouTubeEmbed(raw: string): string | null {
