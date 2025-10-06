@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +29,13 @@ public class VideoQueryService {
 
     public Page<Video> findAll(Pageable pageable) {
         return videoRepository.findAll(pageable);
+    }
+
+    public Set<Video> findAllByCourseIdAndIsActive(String id, Boolean isActive) {
+        return videoRepository.findAllByCourse_IdAndIsActive(id, isActive);
+    }
+
+    public Video findLastByCourseIdAndIsActive(String courseId, Boolean isActive) {
+        return videoRepository.findFirstByCourse_IdAndIsActiveOrderByCreatedAtDesc(courseId, isActive);
     }
 }

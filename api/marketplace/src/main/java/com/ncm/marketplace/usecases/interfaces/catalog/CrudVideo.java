@@ -12,4 +12,6 @@ public interface CrudVideo {
     Video update(String id, UpdateVideoRequest request);
     Video findById(String id);
     List<Video> findAll();
+    void deactivateOldVideos(String courseId);
+    Video findLastActiveVideo(String courseId);
 }

@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,4 +16,6 @@ public class UpdateCourseRequest {
     private String title;
     @Size(max = 500)
     private String description;
+    @NotEmpty
+    private String videoUrl;
 }
