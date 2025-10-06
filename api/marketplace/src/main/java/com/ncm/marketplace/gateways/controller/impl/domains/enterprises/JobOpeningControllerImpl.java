@@ -2,6 +2,7 @@ package com.ncm.marketplace.gateways.controller.impl.domains.enterprises;
 
 import com.ncm.marketplace.gateways.controller.interfaces.domains.enterprises.JobOpeningController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.JobOpeningSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudJobOpening;
@@ -55,11 +56,11 @@ public class JobOpeningControllerImpl implements JobOpeningController {
         return ResponseEntity.ok(crudJobOpening.findById(id));
     }
 
-    @GetMapping
+    @PostMapping("/find-all")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Find all enterprises in a list")
     @Override
-    public ResponseEntity<List<JobOpeningResponse>> findAll() {
-        return ResponseEntity.ok(crudJobOpening.findAll());
+    public ResponseEntity<List<JobOpeningResponse>> findAll(@RequestBody(required = false) JobOpeningSpecificationRequest specificationRequest) {
+        return ResponseEntity.ok(crudJobOpening.findAll(specificationRequest));
     }
 }
