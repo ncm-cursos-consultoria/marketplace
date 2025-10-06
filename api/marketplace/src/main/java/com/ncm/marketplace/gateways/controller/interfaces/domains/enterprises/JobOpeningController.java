@@ -15,4 +15,5 @@ public interface JobOpeningController {
     ResponseEntity<JobOpeningResponse> update(String id, UpdateJobOpeningRequest request);
     ResponseEntity<JobOpeningResponse> findById(String id);
     ResponseEntity<List<JobOpeningResponse>> findAll(JobOpeningSpecificationRequest specificationRequest);
+    ResponseEntity<List<JobOpeningResponse>> findAllByEnterpriseId(String id);
 }
