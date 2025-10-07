@@ -75,7 +75,7 @@ function JobCardItem({
   };
 
   return (
-    <Link href={`/candidato/oportunidades/vaga/${job.id}`} className="flex flex-col rounded-xl border bg-white p-5 shadow transition hover:shadow-md">
+    <Link href={`/br/candidato/oportunidades/vaga/${job.id}`} className="flex flex-col rounded-xl border bg-white p-5 shadow transition hover:shadow-md">
       <div className="mb-3 flex items-center justify-between gap-2">
         <h2 className="line-clamp-1 text-xl font-semibold">{job.title}</h2>
         {statusBadge}

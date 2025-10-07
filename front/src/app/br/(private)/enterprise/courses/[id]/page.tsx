@@ -60,7 +60,7 @@ export default function CoursesByModulePage() {
     <div className="w-full pr-4 lg:pr-0 flex items-start justify-between flex-col">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Link href={`/enterprise/${userEnterprise?.enterpriseId ?? ''}`}>
+          <Link href={`/br/enterprise/${userEnterprise?.enterpriseId ?? ''}`}>
             <Button variant="outline" size="sm">
               <ArrowLeft className="mr-1 h-4 w-4" /> Voltar
             </Button>

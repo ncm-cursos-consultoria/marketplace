@@ -21,7 +21,7 @@ export function useLoginEnterprise() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["enterprise-user"] });
       setTimeout(() => {
-        router.push(`/enterprise/${userEnterprise?.enterpriseId}`)
+        router.push(`/br/enterprise/${userEnterprise?.enterpriseId}`)
       })
     },
   });

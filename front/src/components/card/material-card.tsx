@@ -57,7 +57,7 @@ export function CardMaterial() {
       {Array.isArray(data) &&
         data.map((m: any) => (
           <Link 
-          href={`/enterprise/courses/${m.id}`}
+          href={`/br/enterprise/courses/${m.id}`}
             key={m.id}
             className="rounded-xl overflow-hidden bg-white shadow-sm border border-gray-100"
           >

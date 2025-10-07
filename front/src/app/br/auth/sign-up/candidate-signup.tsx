@@ -92,7 +92,7 @@ export function CandidateSignUp() {
         <span className="font-semibold text-gray-500">OU</span>
 
         <Link
-          href="/auth/sign-in"
+          href="/br/auth/sign-in"
           className="bg-gray-800 text-white py-2 w-full text-center rounded-md font-medium hover:bg-gray-700 transition"
         >
           Entrar

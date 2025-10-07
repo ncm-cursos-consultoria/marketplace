@@ -21,7 +21,7 @@ export function useCreateUser() {
     onSuccess: () => {
       console.log("Sucesso");
       toast.success("Conta criada com sucesso")
-      router.push(`/auth/sign-in`)
+      router.push(`/br/auth/sign-in`)
     },
     onError: (err) => {
      console.log("Erro",err);

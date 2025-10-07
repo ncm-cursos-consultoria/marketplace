@@ -21,7 +21,7 @@ export function useLogin() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["authUser"] });
       setTimeout(() => {
-        router.push(`/candidato/oportunidades/home/${userCandidate?.id}`);
+        router.push(`/br/candidato/oportunidades/home/${userCandidate?.id}`);
       });
     },
   });

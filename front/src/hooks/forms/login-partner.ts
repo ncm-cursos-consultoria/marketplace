@@ -22,7 +22,7 @@ export function useLoginPartner() {
       setUserPartner(data);
       await queryClient.invalidateQueries({ queryKey: ["partner-user"] });
       setTimeout(() => {
-        router.push(`/partner/home`);
+        router.push(`/br/partner/home`);
       });
     },
   });

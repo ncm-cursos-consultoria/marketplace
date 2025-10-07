@@ -60,7 +60,7 @@ function ModuleCard({ mod }: { mod: Module }) {
         </div>
 
         <Button asChild size="sm">
-          <Link href={`/candidato/oportunidades/curso/${mod.id}`}>Ver conteúdo</Link>
+          <Link href={`/br/candidato/oportunidades/curso/${mod.id}`}>Ver conteúdo</Link>
         </Button>
       </CardFooter>
     </Card>

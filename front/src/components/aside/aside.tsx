@@ -31,7 +31,7 @@ export function Aside() {
   const idFromParams = (params?.id as string | undefined) ?? undefined;
   const id: string | undefined = idFromContext ?? idFromParams;
 
-  const base = "/candidato/oportunidades";
+  const base = "/br/candidato/oportunidades";
 
   const hrefFor = (slug: NavItem["slug"]) =>
     id ? `${base}/${slug}/${id}` : `${base}/${slug}`;

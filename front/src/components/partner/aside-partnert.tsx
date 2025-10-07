@@ -48,7 +48,7 @@ export function AsidePartner() {
 
       <nav className="flex-1 px-2 py-4 space-y-1">
         <NavItem
-          href={`/partner/${userPartner?.id}`}
+          href={`/br/partner/${userPartner?.id}`}
           icon={<Home className="h-4 w-4" />}
         >
           Início
@@ -83,7 +83,7 @@ export function AsidePartner() {
 
         <button
           type="button"
-          onClick={() => logout?.("/auth/sign-in")}
+          onClick={() => logout?.("/br/auth/sign-in")}
           disabled={isLoggingOut}
           className="inline-flex items-center gap-2 w-full justify-center rounded-lg border border-white/20 text-white font-medium py-2 hover:bg-white/10 disabled:opacity-60"
         >

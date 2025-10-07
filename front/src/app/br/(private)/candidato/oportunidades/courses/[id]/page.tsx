@@ -28,7 +28,7 @@ export default function CoursesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {Array.isArray(data) &&
               data.map((course: any) => (
-                <Link key={course.id} href={`/candidato/oportunidades/curso/${course.id}`}>
+                <Link key={course.id} href={`/br/candidato/oportunidades/curso/${course.id}`}>
                   <CourseCard
                     key={course.id}
                     title={course.title}

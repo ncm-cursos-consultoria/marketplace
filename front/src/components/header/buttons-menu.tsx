@@ -6,12 +6,12 @@ export function ButtonsMenu() {
   return (
     <div className="flex items-center gap-5">
       <div>
-        <Link href={'/auth/sign-in'}>
+        <Link href={'/br/auth/sign-in'}>
           <Button variant={"ghost"} className=" cursor-pointer">
             Entrar
           </Button>
         </Link>
-        <Link href={"/auth/sign-up"}>
+        <Link href={"/br/auth/sign-up"}>
           <Button className="bg-[#008000] cursor-pointer text-white">Cadastre-se</Button>
         </Link>
       </div>

@@ -53,13 +53,13 @@ export function AsideEnterprise() {
 
       <nav className="flex-1 px-2 py-4 space-y-1">
         <NavItem
-          href={`/enterprise/${enterpriseId}`}
+          href={`/br/enterprise/${enterpriseId}`}
           icon={<Home className="h-4 w-4" />}
         >
           Início
         </NavItem>
         <NavItem
-          href={`/enterprise/profile/${enterpriseId}`}
+          href={`/br/enterprise/profile/${enterpriseId}`}
           icon={<Building2 className="h-4 w-4" />}
         >
           Minha Empresa
@@ -71,7 +71,7 @@ export function AsideEnterprise() {
           Minhas Vagas
         </NavItem> */}
         <NavItem
-          href={`/enterprise/module/${enterpriseId}`}
+          href={`/br/enterprise/module/${enterpriseId}`}
           icon={<NotebookPenIcon className="h-4 w-4" />}
         >
           Meus Módulos
@@ -88,7 +88,7 @@ export function AsideEnterprise() {
 
         <button
           type="button"
-          onClick={() => logout?.("/auth/sign-in")}
+          onClick={() => logout?.("/br/auth/sign-in")}
           disabled={isLoggingOut}
           className="inline-flex items-center gap-2 w-full justify-center rounded-lg border border-white/20 text-white font-medium py-2 hover:bg-white/10 disabled:opacity-60"
         >
