@@ -16,5 +16,6 @@ public interface JobOpeningController {
     ResponseEntity<JobOpeningResponse> findById(String id);
     ResponseEntity<List<JobOpeningResponse>> findAll(JobOpeningSpecificationRequest specificationRequest);
     ResponseEntity<List<JobOpeningResponse>> findAllByEnterpriseId(String id);
+    ResponseEntity<List<JobOpeningResponse>> findAllThirdParty();
     ResponseEntity<JobOpeningUserCandidateResponse> submitUserCandidateToJobOpeningById(String id, String userId);
 }

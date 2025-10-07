@@ -120,4 +120,9 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
                         .userCandidate(user)
                         .build()));
     }
+
+    @Override
+    public List<JobOpeningResponse> findAllByThirdPartyIsTrue() {
+        return toResponse(jobOpeningQueryService.findAllByThirdParty(Boolean.TRUE));
+    }
 }

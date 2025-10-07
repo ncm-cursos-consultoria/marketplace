@@ -31,4 +31,5 @@ public class JobOpeningResponse {
     private WorkModelEnum workModel;
     private Integer views;
     private String enterpriseId;
+    private Boolean thirdParty;
 }
