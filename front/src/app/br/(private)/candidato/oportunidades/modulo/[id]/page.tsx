@@ -7,8 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { BookOpen, PlayCircle } from "lucide-react";
 import { getModule } from "@/service/module/get-module";
 import { getCourses } from "@/service/course/get-courses";
-import { EmptyState } from "@/app/(private)/enterprise/courses/[id]/complementary/empty-state";
 import { CourseCard } from "@/components/course-card";
+import { EmptyState } from "@/app/br/(private)/enterprise/courses/[id]/complementary/empty-state";
 
 
 type Course = {
