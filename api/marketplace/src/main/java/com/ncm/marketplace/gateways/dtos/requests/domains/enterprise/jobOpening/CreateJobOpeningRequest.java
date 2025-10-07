@@ -20,7 +20,7 @@ public class CreateJobOpeningRequest {
     @NotNull
     private String currencyCode;
     @NotEmpty
-    @Size(min = 1, max = 1000)
+    @Size(min = 1, max = 5000)
     private String description;
     @NotEmpty
     private String country;
@@ -32,4 +32,5 @@ public class CreateJobOpeningRequest {
     private WorkModelEnum workModel;
     @NotEmpty
     private String enterpriseId;
+    private Boolean thirdParty;
 }
