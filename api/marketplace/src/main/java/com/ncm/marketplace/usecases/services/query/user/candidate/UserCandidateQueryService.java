@@ -1,5 +1,6 @@
 package com.ncm.marketplace.usecases.services.query.user.candidate;
 
+import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.user.candidate.UserCandidateRepository;
@@ -32,5 +33,13 @@ public class UserCandidateQueryService {
 
     public Boolean existsByCpf(String cpf) {
         return userCandidateRepository.existsByCpf(cpf);
+    }
+
+    public Integer countTotalByPartnerId(String id) {
+        return userCandidateRepository.countByPartnerUserCandidate_Partner_Id(id);
+    }
+
+    public Integer countTotalSelectedByPartnerId(String id, JobOpeningUserCandidateStatus status) {
+        return userCandidateRepository.countByPartnerUserCandidate_Partner_IdAndUserCandidateJobOpenings_Status(id, status);
     }
 }

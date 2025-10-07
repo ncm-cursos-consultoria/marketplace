@@ -1,6 +1,8 @@
 package com.ncm.marketplace.usecases.services.query.enterprises;
 
 import com.ncm.marketplace.domains.enterprise.JobOpening;
+import com.ncm.marketplace.domains.enums.JobOpeningStatusEnum;
+import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.enterprises.jobOpening.JobOpeningRepository;
 import com.ncm.marketplace.usecases.services.specification.enterprise.JobOpeningSpecification;
@@ -38,5 +40,13 @@ public class JobOpeningQueryService {
 
     public List<JobOpening> findAllByEnterpriseId(String id) {
         return jobOpeningRepository.findAllByEnterprise_Id(id);
+    }
+
+    public Integer countTotalByPartnerId(String id) {
+        return jobOpeningRepository.countByEnterprise_PartnerEnterprise_Partner_Id(id);
+    }
+
+    public Integer countTotalFilledByPartnerId(String id, JobOpeningUserCandidateStatus status) {
+        return jobOpeningRepository.countByEnterprise_PartnerEnterprise_Partner_IdAndUserCandidateJobOpenings_Status(id, status);
     }
 }

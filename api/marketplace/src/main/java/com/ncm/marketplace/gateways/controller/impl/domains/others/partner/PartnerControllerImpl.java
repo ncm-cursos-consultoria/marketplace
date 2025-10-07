@@ -1,6 +1,6 @@
-package com.ncm.marketplace.gateways.controller.impl.domains.others;
+package com.ncm.marketplace.gateways.controller.impl.domains.others.partner;
 
-import com.ncm.marketplace.gateways.controller.interfaces.domains.others.PartnerController;
+import com.ncm.marketplace.gateways.controller.interfaces.domains.others.partner.PartnerController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.CreatePartnerAndEnterpriseAndUserPartnerRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.UpdatePartnerRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.others.partner.PartnerResponse;
