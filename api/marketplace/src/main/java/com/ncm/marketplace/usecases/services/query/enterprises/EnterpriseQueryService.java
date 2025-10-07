@@ -33,4 +33,8 @@ public class EnterpriseQueryService {
     public Boolean existsByCnpj(String cnpj) {
         return enterpriseRepository.existsByCnpj(cnpj);
     }
+
+    public Integer countTotalByPartnerId(String id) {
+        return enterpriseRepository.countByPartnerEnterprise_Partner_Id(id);
+    }
 }

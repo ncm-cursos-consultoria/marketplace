@@ -28,4 +28,5 @@ public class CreateEnterpriseAndUserEnterpriseRequest {
     @NotEmpty
     @Size(min = 8)
     private String password;
+    private String partnerToken;
 }

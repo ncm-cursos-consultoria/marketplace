@@ -23,6 +23,7 @@ public class JobOpeningMapper {
                 .state(request.getState())
                 .city(request.getCity())
                 .workModel(request.getWorkModel())
+                .thirdParty(request.getThirdParty())
                 .build();
     }
 
@@ -48,6 +49,7 @@ public class JobOpeningMapper {
                 .enterpriseId(jobOpening.getEnterprise() != null
                         ? jobOpening.getEnterprise().getId()
                         : null)
+                .thirdParty(jobOpening.getThirdParty())
                 .build();
     }
 
@@ -82,6 +84,7 @@ public class JobOpeningMapper {
                 .enterpriseLegalName(jobOpening.getEnterprise() != null
                         ? jobOpening.getEnterprise().getLegalName()
                         : null)
+                .thirdParty(jobOpening.getThirdParty())
                 .build();
     }
 

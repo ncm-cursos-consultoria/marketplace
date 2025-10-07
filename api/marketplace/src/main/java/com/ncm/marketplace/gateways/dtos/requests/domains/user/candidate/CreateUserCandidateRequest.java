@@ -29,4 +29,5 @@ public class CreateUserCandidateRequest {
     @CPF
     @NotEmpty
     private String cpf;
+    private String partnerToken;
 }

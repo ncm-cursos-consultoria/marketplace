@@ -73,6 +73,14 @@ public class JobOpeningControllerImpl implements JobOpeningController {
         return ResponseEntity.ok(crudJobOpening.findAllByEnterpriseId(id));
     }
 
+    @GetMapping("/third-party")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Find all third party job openings")
+    @Override
+    public ResponseEntity<List<JobOpeningResponse>> findAllThirdParty() {
+        return ResponseEntity.ok(crudJobOpening.findAllByThirdPartyIsTrue());
+    }
+
     @PostMapping("/{id}/submit/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Add user candidate to a job opening by ids")

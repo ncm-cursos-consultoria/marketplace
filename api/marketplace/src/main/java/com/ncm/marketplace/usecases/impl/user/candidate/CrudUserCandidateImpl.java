@@ -1,11 +1,16 @@
 package com.ncm.marketplace.usecases.impl.user.candidate;
 
+import com.ncm.marketplace.domains.enums.PartnerStatusEnum;
+import com.ncm.marketplace.domains.others.Partner;
+import com.ncm.marketplace.domains.relationships.partner.PartnerUserCandidate;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
+import com.ncm.marketplace.usecases.services.command.relationship.partner.PartnerUserCandidateCommandService;
 import com.ncm.marketplace.usecases.services.command.user.candidate.UserCandidateCommandService;
+import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +33,8 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
     private final UserCandidateQueryService userCandidateQueryService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserQueryService userQueryService;
+    private final PartnerQueryService partnerQueryService;
+    private final PartnerUserCandidateCommandService partnerUserCandidateCommandService;
 
     @Transactional
     @Override
@@ -35,7 +42,16 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
         UserCandidate user = toEntityCreate(request);
         String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
         user.setPassword(encryptedRandomPassword);
-        return toResponse(userCandidateCommandService.save(user));
+        user = userCandidateCommandService.save(user);
+        if (request.getPartnerToken() != null && !request.getPartnerToken().isEmpty()) {
+            Partner partner = partnerQueryService.findByTokenOrThrow(request.getPartnerToken());
+            partnerUserCandidateCommandService.save(PartnerUserCandidate.builder()
+                            .userCandidate(user)
+                            .partner(partner)
+                            .status(PartnerStatusEnum.ACCEPTED)
+                    .build());
+        }
+        return toResponse(user);
     }
 
     @Transactional

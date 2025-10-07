@@ -32,7 +32,7 @@ public class JobOpening {
     private String title;
     private Double salary;
     private String currencyCode;
-    @Column(length = 1000)
+    @Column(length = 5000)
     private String description;
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -42,6 +42,8 @@ public class JobOpening {
     @Column(length = 2)
     private String state;
     private String city;
+    @Builder.Default
+    private Boolean thirdParty = Boolean.FALSE;
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private WorkModelEnum workModel = WorkModelEnum.ON_SITE;

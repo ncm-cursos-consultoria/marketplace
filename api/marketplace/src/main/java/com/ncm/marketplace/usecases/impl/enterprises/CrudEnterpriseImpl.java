@@ -1,6 +1,10 @@
 package com.ncm.marketplace.usecases.impl.enterprises;
 
 import com.ncm.marketplace.domains.enterprise.Enterprise;
+import com.ncm.marketplace.domains.enums.PartnerStatusEnum;
+import com.ncm.marketplace.domains.others.Partner;
+import com.ncm.marketplace.domains.relationships.partner.PartnerEnterprise;
+import com.ncm.marketplace.domains.relationships.partner.PartnerUserCandidate;
 import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseAndUserEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseRequest;
@@ -9,8 +13,10 @@ import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.enterpris
 import com.ncm.marketplace.gateways.mappers.user.enterprise.UserEnterpriseMapper;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
 import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseCommandService;
+import com.ncm.marketplace.usecases.services.command.relationship.partner.PartnerEnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.user.UserEnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
+import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
 import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
 import com.ncm.marketplace.usecases.services.security.RandomPasswordService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +39,8 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     private final EnterpriseQueryService enterpriseQueryService;
     private final RandomPasswordService randomPasswordService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final PartnerQueryService partnerQueryService;
+    private final PartnerEnterpriseCommandService partnerEnterpriseCommandService;
 
     @Transactional
     @Override
@@ -50,6 +58,14 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
         user.setPassword(encryptedRandomPassword);
         userEnterpriseCommandService.save(user);
+        if (request.getPartnerToken() != null && !request.getPartnerToken().isEmpty()) {
+            Partner partner = partnerQueryService.findByTokenOrThrow(request.getPartnerToken());
+            partnerEnterpriseCommandService.save(PartnerEnterprise.builder()
+                    .enterprise(enterprise)
+                    .partner(partner)
+                    .status(PartnerStatusEnum.ACCEPTED)
+                    .build());
+        }
 
         return toResponse(enterprise);
     }

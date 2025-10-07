@@ -27,4 +27,5 @@ public class JobOpeningSnippetResponse {
     private WorkModelEnum workModel;
     private Integer views;
     private String enterpriseLegalName;
+    private Boolean thirdParty;
 }
