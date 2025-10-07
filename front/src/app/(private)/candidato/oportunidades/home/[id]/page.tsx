@@ -12,14 +12,15 @@ import { Briefcase, MapPin } from "lucide-react";
 import { ModuleSection } from "./complementary/module-section";
 
 export default function Home() {
-  // const { userCandidate } = UseUserCandidate();
+  const { userCandidate } = UseUserCandidate();
 
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["job"],
     queryFn: () => getAllJobs(),
   });
 
-  console.log(jobs);
+  console.log(userCandidate);
+  
 
   return (
     <div className="flex min-h-screen">

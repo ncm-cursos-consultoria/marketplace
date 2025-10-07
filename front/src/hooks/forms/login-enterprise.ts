@@ -4,7 +4,6 @@ import { LoginFormSchema, loginFormSchema } from "../schemas/login-formschema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { login } from "@/service/auth/login";
 import { useRouter } from "next/navigation";
-import { UseUserCandidate } from "@/context/user-candidate.context";
 import { UseUserEnteprise } from "@/context/user-enterprise.context";
 
 export function useLoginEnterprise() {
@@ -19,13 +18,11 @@ export function useLoginEnterprise() {
   const { mutate, isPending } = useMutation({
     mutationFn: (data: LoginFormSchema) => login(data),
     mutationKey: ["login"],
-    onSuccess: async (data) => {
-      console.log(data);
-      
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["authUser"] });
-      if (userEnterprise?.enterpriseId) {
-        router.push(`/enterprise/${userEnterprise.enterpriseId}`);
-      }
+      setTimeout(() => {
+        router.push(`/enterprise/${userEnterprise?.enterpriseId}`)
+      })
     },
   });
 

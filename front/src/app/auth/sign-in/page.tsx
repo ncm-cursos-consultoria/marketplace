@@ -1,25 +1,31 @@
-'use client'
+"use client";
 
-import { useState } from "react";
+import { JSX, useState } from "react";
 import { CandidateLogin } from "./candidate-login";
 import { EnterpriseLogin } from "./enterprise-login";
+import PartnerLogin from "./partner-login";
+
+type SelectType = "candidato" | "empresa" | "parceiro";
 
 export default function SignIn() {
-  const [selectType, setSelectType] = useState<"candidato" | "empresa">(
-    "candidato"
-  );
+  const [selectType, setSelectType] = useState<SelectType>("candidato");
 
   const btn = (active: boolean) =>
     [
-      "w-[120px] px-4 py-2 rounded-md transition-all flex items-center justify-center cursor-pointer",
+      "w-[320px] px-4 py-2 rounded-md transition-all flex items-center justify-center cursor-pointer",
       active
-        ? "bg-green-600 text-white shadow-sm border-none"
-        : "bg-white text-gray-800 border-neutral-300 hover:bg-gray-50",
+        ? "bg-green-600 text-white  shadow-sm border-none"
+        : "bg-white text-gray-800  border border-neutral-300 hover:bg-gray-50",
     ].join(" ");
 
+  const forms: Record<SelectType, JSX.Element> = {
+    candidato: <CandidateLogin />,
+    empresa: <EnterpriseLogin />,
+    parceiro: <PartnerLogin />,
+  };
+
   return (
-    <div className="w-full max-w-md flex flex-col gap-6">
-      {/* Cabeçalho */}
+    <div className="w-full max-w-md flex flex-col gap-6 items-center">
       <div className="flex flex-col items-center text-center gap-2">
         <h1 className="font-bold text-2xl md:text-3xl text-gray-900">
           Continue sua jornada!
@@ -28,24 +34,37 @@ export default function SignIn() {
           Seja bem-vindo novamente
         </h2>
       </div>
-      <div className="flex items-center justify-center border shadow-md p-2 border-neutral-200 w-auto">
-        <div
+
+      <div className="flex items-center justify-center border shadow-md p-2 border-neutral-200 w-[600px] gap-2 ">
+        <button
+          type="button"
           aria-pressed={selectType === "candidato"}
           onClick={() => setSelectType("candidato")}
           className={btn(selectType === "candidato")}
         >
           Candidato
-        </div>
+        </button>
 
-        <div
+        <button
+          type="button"
+          aria-pressed={selectType === "parceiro"}
+          onClick={() => setSelectType("parceiro")}
+          className={btn(selectType === "parceiro")} 
+        >
+          Prefeitura
+        </button>
+
+        <button
+          type="button"
           aria-pressed={selectType === "empresa"}
           onClick={() => setSelectType("empresa")}
           className={btn(selectType === "empresa")}
         >
-          Empresa
-        </div>
+          Empresa Parceira
+        </button>
       </div>
-      {selectType === "candidato" ? <CandidateLogin /> : <EnterpriseLogin />}
+
+      {forms[selectType]}
     </div>
   );
 }

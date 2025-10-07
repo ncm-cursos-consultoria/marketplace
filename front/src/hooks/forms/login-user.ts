@@ -10,7 +10,7 @@ export function useLogin() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { userCandidate } = UseUserCandidate();
-  
+
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
   });
@@ -20,9 +20,9 @@ export function useLogin() {
     mutationKey: ["login"],
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["authUser"] });
-      if (userCandidate?.id) {
-        router.push(`/candidato/oportunidades/home/${userCandidate.id}`);
-      }
+      setTimeout(() => {
+        router.push(`/candidato/oportunidades/home/${userCandidate?.id}`);
+      });
     },
   });
 

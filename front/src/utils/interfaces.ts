@@ -25,12 +25,24 @@ export interface UserEnterpriseProps {
   profilesPictureUrl: string;
   addressId: string;
   type: string;
-  enterpriseId: string,
-  email: string,
+  enterpriseId: string;
+  email: string;
 }
 
 export interface workModelEnum {
   ON_SITE: string;
   HYBRID: string;
   REMOTE: string;
+}
+
+export interface UserPartnerProps {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  birthday: string;
+  isBlocked: boolean;
+  profilePictureUrl: string;
+  partnerId: string;
+  type: string;
 }

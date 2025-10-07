@@ -2,6 +2,7 @@
 import { CandidateProvider } from "@/context/candidate.context";
 import { UserCandidateProvider } from "@/context/user-candidate.context";
 import { UserEnterpriseProvider } from "@/context/user-enterprise.context";
+import { UserPartnerProvider } from "@/context/user-partner.context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 
@@ -19,19 +20,21 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <CandidateProvider>
-        <UserCandidateProvider>
-          <UserEnterpriseProvider>
-            <Toaster
-              richColors
-              closeButton
-              expand={false}
-              className="w-[20vw]"
-            />
-            {children}
-          </UserEnterpriseProvider>
-        </UserCandidateProvider>
-      </CandidateProvider>
+      <UserPartnerProvider>
+        <CandidateProvider>
+          <UserCandidateProvider>
+            <UserEnterpriseProvider>
+              <Toaster
+                richColors
+                closeButton
+                expand={false}
+                className="w-[20vw]"
+              />
+              {children}
+            </UserEnterpriseProvider>
+          </UserCandidateProvider>
+        </CandidateProvider>
+      </UserPartnerProvider>
     </QueryClientProvider>
   );
 }

@@ -10,14 +10,14 @@ export function EnterpriseLogin() {
   const { register, handleSubmit } = form;
 
   return (
-    <div>
-      <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-4">
+    <div className="w-full">
+      <form className="flex flex-col gap-6 w-full" onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-col gap-4 w-full">
           <div className="flex flex-col gap-1">
             <Label>Email Corporativo</Label>
             <Input
               type="email"
-              className="border border-neutral-300"
+              className="border border-neutral-300 w-full"
               placeholder="Digite seu email"
               {...register("email")}
             />
@@ -26,7 +26,7 @@ export function EnterpriseLogin() {
             <Label>Senha</Label>
             <Input
               type="password"
-              className="border border-neutral-300"
+              className="border border-neutral-300 w-full"
               placeholder="Digite sua senha"
               {...register("password")}
             />
