@@ -64,12 +64,12 @@ export function AsideEnterprise() {
         >
           Minha Empresa
         </NavItem>
-        <NavItem
+        {/* <NavItem
           href={`/enterprise/${enterpriseId}/jobs`}
           icon={<Briefcase className="h-4 w-4" />}
         >
           Minhas Vagas
-        </NavItem>
+        </NavItem> */}
         <NavItem
           href={`/enterprise/module/${enterpriseId}`}
           icon={<NotebookPenIcon className="h-4 w-4" />}
