@@ -6,6 +6,7 @@ import { useParams, usePathname } from "next/navigation";
 import logo from "@/assets/ncm-logo.png";
 import avatar from "@/assets/avatar.png";
 import { UseUserCandidate } from "@/context/user-candidate.context";
+import { LogOut, Loader2 } from "lucide-react";
 
 type NavItem = {
   label: string;
@@ -17,13 +18,13 @@ const NAV: NavItem[] = [
   { label: "Início", slug: "home", requiresId: true },
   { label: "Cursos", slug: "courses", requiresId: true },
   { label: "Vagas", slug: "jobs", requiresId: true },
-  { label: "Minhas Candidaturas", slug: "user", requiresId: true },
+  // { label: "Minhas Candidaturas", slug: "user", requiresId: true },
 ];
 
 export function Aside() {
-  const { userCandidate } = UseUserCandidate();
+  const { userCandidate, logout, isLoggingOut } = UseUserCandidate();
   const pathnameRaw = usePathname();
-  const pathname = pathnameRaw || ""; 
+  const pathname = pathnameRaw || "";
   const params = useParams();
 
   const idFromContext = userCandidate?.id;
@@ -48,13 +49,19 @@ export function Aside() {
       .filter(Boolean)
       .join(" ");
 
+  // redireciona para raiz após logout (ajuste se quiser outra rota)
+  const handleLogout = async () => {
+    await logout("/"); 
+  };
+
   return (
     <aside className="fixed inset-y-0 left-0 w-[300px] h-screen bg-blue-900 text-white p-6 space-y-6 overflow-y-auto z-30">
       <Image src={logo} alt="Logo NCM" width={200} priority />
+
       <div className="flex flex-col items-start">
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-2 w-full">
           {NAV.map(({ label, slug, requiresId }) => {
-            const disabled: boolean = !!(requiresId && !id); // força boolean
+            const disabled: boolean = !!(requiresId && !id);
             const href = hrefFor(slug);
             const active: boolean = isActive(slug);
 
@@ -74,7 +81,8 @@ export function Aside() {
           })}
         </ul>
 
-        <div className="mt-[470px] px-3 py-2">
+        {/* Perfil + Logout */}
+        <div className="mt-[470px] px-3 py-2 w-full">
           <div className="flex items-start gap-2">
             <Image
               src={(userCandidate?.profilePicture as any) || avatar}
@@ -91,6 +99,27 @@ export function Aside() {
               <p className="text-[10px]">{userCandidate?.email}</p>
             </div>
           </div>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            aria-busy={isLoggingOut}
+            className="mt-4 inline-flex items-center gap-2 rounded-md bg-white/10 px-3 py-2 text-sm font-medium hover:bg-white/20 disabled:opacity-60 disabled:cursor-not-allowed w-full cursor-pointer"
+            title="Sair da conta"
+          >
+            {isLoggingOut ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Saindo...
+              </>
+            ) : (
+              <>
+                <LogOut className="h-4 w-4" />
+                Sair
+              </>
+            )}
+          </button>
         </div>
       </div>
     </aside>

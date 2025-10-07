@@ -17,9 +17,9 @@ export function useLoginEnterprise() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data: LoginFormSchema) => login(data),
-    mutationKey: ["login"],
+    mutationKey: ["enterprise-user"],
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["authUser"] });
+      await queryClient.invalidateQueries({ queryKey: ["enterprise-user"] });
       setTimeout(() => {
         router.push(`/enterprise/${userEnterprise?.enterpriseId}`)
       })

@@ -1,27 +1,18 @@
 "use client";
 
 import {
-  Briefcase,
   Building,
-  Building2,
   Home,
-  NotebookPenIcon,
   Plus,
   LogOut,
 } from "lucide-react";
 import Link from "next/link";
-import { UseUserEnteprise } from "@/context/user-enterprise.context";
-import { useQuery } from "@tanstack/react-query";
-import { getEnterprise } from "@/service/enterprise/get-enterprise";
-import { UserEnterpriseProps } from "@/utils/interfaces";
 import { NavItem } from "../enterprise/nav-item";
 import { UseUserPartner } from "@/context/user-partner.context";
 
 export function AsidePartner() {
   const { userPartner, logout, isLoggingOut } = UseUserPartner();
-  const partnerId = userPartner?.partnerId ?? null;
 
-  console.log(userPartner);
   
 
   // const { data, isLoading } = useQuery<UserEnterpriseProps>({
@@ -31,7 +22,7 @@ export function AsidePartner() {
   //   staleTime: 1000 * 60 * 5,
   // });
 
-  if (!partnerId) return null;
+  // if (!partnerId) return null;
 
   // if (isLoading || !data) {
   //   return (
@@ -57,7 +48,7 @@ export function AsidePartner() {
 
       <nav className="flex-1 px-2 py-4 space-y-1">
         <NavItem
-          href={`/partner/${partnerId}`}
+          href={`/partner/${userPartner?.id}`}
           icon={<Home className="h-4 w-4" />}
         >
           Início
@@ -83,12 +74,12 @@ export function AsidePartner() {
       </nav>
 
       <div className="p-4 mt-auto space-y-2">
-        <Link
-          href={`/enterprise/${partnerId}/jobs/new`}
+        {/* <Link
+          href={`/enterprise/${userPartner?.id}/jobs/new`}
           className="inline-flex items-center gap-2 w-full justify-center rounded-lg bg-white text-[#0D2E66] font-medium py-2"
         >
           <Plus className="h-4 w-4" /> Criar nova vaga
-        </Link>
+        </Link> */}
 
         <button
           type="button"

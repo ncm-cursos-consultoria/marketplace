@@ -2,7 +2,9 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { htmlToText } from "@/utils/htmlformat";
 import { MapPin, Briefcase, Clock, Eye } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 
 type ApiCurrency = {
@@ -73,7 +75,7 @@ function JobCardItem({
   };
 
   return (
-    <div className="flex flex-col rounded-xl border bg-white p-5 shadow transition hover:shadow-md">
+    <Link href={`/candidato/oportunidades/vaga/${job.id}`} className="flex flex-col rounded-xl border bg-white p-5 shadow transition hover:shadow-md">
       <div className="mb-3 flex items-center justify-between gap-2">
         <h2 className="line-clamp-1 text-xl font-semibold">{job.title}</h2>
         {statusBadge}
@@ -95,7 +97,7 @@ function JobCardItem({
       </div>
 
       <p className="mb-4 line-clamp-3 text-sm text-muted-foreground">
-        {job.description}
+       {htmlToText(job.description)}            
       </p>
 
       <div className="mt-auto flex items-center justify-between">
@@ -108,7 +110,7 @@ function JobCardItem({
           Candidatar-se
         </Button>
       </div>
-    </div>
+    </Link>
   );
 }
 

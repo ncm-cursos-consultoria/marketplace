@@ -1,16 +1,16 @@
 "use client";
 
 import { CourseCard } from "@/components/card/course-card";
-import { getAllCourses } from "@/service/course/get-all";
+import { getAllModules } from "@/service/module/get-all-modules";
 import { useQuery } from "@tanstack/react-query";
+import ncm from "@/assets/logo-ncm-horizontal.svg";
+import Link from "next/link";
 
 export default function CoursesPage() {
   const { data, isLoading } = useQuery({
-    queryKey: ["job"],
-    queryFn: () => getAllCourses(),
+    queryKey: [],
+    queryFn: () => getAllModules(),
   });
-
-  console.log("teste", data);
 
   return (
     <div className="flex min-h-screen">
@@ -21,44 +21,24 @@ export default function CoursesPage() {
           objetivos.
         </p>
         <section>
-          <h2 className="text-2xl font-semibold mb-6">Tecnologia</h2>
-          {Array.isArray(data) &&
-            data.map((course: any) => (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" key={course.id}>
-                <CourseCard
-                  title={course.title}
-                  description={course.description}
-                  image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc-gvg0WjYVtXhQnbfQf-Y_-QRIuyYWrPa-A&s"
-                />
-              </div>
-            ))}
-        </section>
+          <h2 className="text-2xl font-semibold mb-6">
+            Modeulo de Cursos Marketplace das Oportunidades
+          </h2>
 
-        {/* Tema 2: Negócios */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-6">Negócios</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <CourseCard
-              title="Marketing Digital"
-              description="Domine estratégias de marketing nas redes."
-              image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc-gvg0WjYVtXhQnbfQf-Y_-QRIuyYWrPa-A&s"
-            />
-            <CourseCard
-              title="SEO e Otimização"
-              description="Aprenda a posicionar sites no Google."
-              image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc-gvg0WjYVtXhQnbfQf-Y_-QRIuyYWrPa-A&s"
-            />
-            <CourseCard
-              title="Branding e Identidade Visual"
-              description="Construa marcas memoráveis."
-              image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc-gvg0WjYVtXhQnbfQf-Y_-QRIuyYWrPa-A&s"
-            />
+            {Array.isArray(data) &&
+              data.map((course: any) => (
+                <Link key={course.id} href={`/candidato/oportunidades/curso/${course.id}`}>
+                  <CourseCard
+                    key={course.id}
+                    title={course.title}
+                    description={course.description}
+                    image={ncm}
+                  />
+                </Link>
+              ))}
           </div>
         </section>
-
-        {/* Tema 3: Marketing */}
-
-        {/* Footer */}
         <footer className="text-center text-gray-500 text-sm pt-6 border-t mt-10">
           &copy; {new Date().getFullYear()} Marketplace das Oportunidades. Todos
           os direitos reservados.

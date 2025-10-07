@@ -79,12 +79,12 @@ export function AsideEnterprise() {
       </nav>
 
       <div className="p-4 mt-auto space-y-2">
-        <Link
+        {/* <Link
           href={`/enterprise/${enterpriseId}/jobs/new`}
           className="inline-flex items-center gap-2 w-full justify-center rounded-lg bg-white text-[#0D2E66] font-medium py-2"
         >
           <Plus className="h-4 w-4" /> Criar nova vaga
-        </Link>
+        </Link> */}
 
         <button
           type="button"

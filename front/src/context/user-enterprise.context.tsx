@@ -29,7 +29,7 @@ export function UserEnterpriseProvider({ children }: { children: React.ReactNode
   const router = useRouter();
 
   const { data, isLoading } = useQuery<UserEnterpriseProps | null>({
-    queryKey: ["authUser"],
+    queryKey: ["enterprise-user"],
     queryFn: me,
     retry: false,
     staleTime: 1000 * 60 * 5,

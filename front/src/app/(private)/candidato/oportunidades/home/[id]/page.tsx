@@ -10,6 +10,8 @@ import { workModelLabel } from "@/utils/work-model-label";
 import { useQuery } from "@tanstack/react-query";
 import { Briefcase, MapPin } from "lucide-react";
 import { ModuleSection } from "./complementary/module-section";
+import { htmlToText } from "@/utils/htmlformat";
+import Link from "next/link";
 
 export default function Home() {
   const { userCandidate } = UseUserCandidate();
@@ -20,7 +22,8 @@ export default function Home() {
   });
 
   console.log(userCandidate);
-  
+
+  console.log(jobs);
 
   return (
     <div className="flex min-h-screen">
@@ -44,49 +47,49 @@ export default function Home() {
                   key={job.id}
                   className="rounded-xl border bg-white p-5 shadow-sm hover:shadow-md transition"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="font-semibold text-lg">{job.title}</h3>
-                    <span
-                      className={`rounded-full border px-2.5 py-1 text-xs font-medium ${statusClass(
-                        job.status
-                      )}`}
-                    >
-                      {job.status ?? "—"}
-                    </span>
-                  </div>
-
-                  <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                    <span className="inline-flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {formatLocation(job)}
-                    </span>
-                    <span className="inline-flex items-center gap-1">
-                      <Briefcase className="h-4 w-4" />
-                      {workModelLabel(job.workModel)}
-                    </span>
-                  </div>
-
-                  {job.description && (
-                    <p className="mt-2 line-clamp-2 text-sm text-gray-600">
-                      {job.description}
-                    </p>
-                  )}
-
-                  <div className="mt-3 flex items-center justify-between">
-                    <p className="text-sm">
-                      <span className="text-gray-500">Salário</span>{" "}
-                      <span className="font-semibold">
-                        {formatMoney(job.salary, job.currency)}
+                  <Link href={`/candidato/oportunidades/vaga/${job.id}`}>
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="font-semibold text-lg">{job.title}</h3>
+                      <span
+                        className={`rounded-full border px-2.5 py-1 text-xs font-medium ${statusClass(
+                          job.status
+                        )}`}
+                      >
+                        {job.status ?? "—"}
                       </span>
-                    </p>
-                  </div>
+                    </div>
+
+                    <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin className="h-4 w-4" />
+                        {formatLocation(job)}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <Briefcase className="h-4 w-4" />
+                        {workModelLabel(job.workModel)}
+                      </span>
+                    </div>
+
+                    {job.description && (
+                      <p className="mt-2 line-clamp-2 text-sm text-gray-600">
+                        {htmlToText(job.description)}
+                      </p>
+                    )}
+
+                    <div className="mt-3 flex items-center justify-between">
+                      <p className="text-sm">
+                        <span className="text-gray-500">Salário</span>{" "}
+                        <span className="font-semibold">
+                          {formatMoney(job.salary, job.currency)}
+                        </span>
+                      </p>
+                    </div>
+                  </Link>
                 </li>
               ))}
           </ul>
         </section>
         <ModuleSection />
-
-        {/* Section 4: Informações gerais */}
         <section className="bg-white p-6 rounded shadow">
           <h2 className="text-xl font-semibold mb-2">
             Informações importantes

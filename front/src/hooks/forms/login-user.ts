@@ -17,7 +17,7 @@ export function useLogin() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data: LoginFormSchema) => login(data),
-    mutationKey: ["login"],
+    mutationKey: ["authUser"],
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["authUser"] });
       setTimeout(() => {

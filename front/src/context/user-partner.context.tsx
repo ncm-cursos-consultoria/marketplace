@@ -29,7 +29,7 @@ export function UserPartnerProvider({ children }: { children: React.ReactNode })
   const router = useRouter();
 
   const { data, isLoading } = useQuery<UserPartnerProps | null>({
-    queryKey: ["authUser"],
+    queryKey: ["partner-user"],
     queryFn: me,
     retry: false,
     staleTime: 1000 * 60 * 5,

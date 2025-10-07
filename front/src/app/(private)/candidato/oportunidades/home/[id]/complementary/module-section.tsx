@@ -60,8 +60,7 @@ function ModuleCard({ mod }: { mod: Module }) {
         </div>
 
         <Button asChild size="sm">
-          {/* Ajuste a rota conforme sua app (ex.: /modules/[id] ou /enterprise/modules/[id]) */}
-          <Link href={`/candidato/oportunidades/modulo/${mod.id}`}>Ver conteúdo</Link>
+          <Link href={`/candidato/oportunidades/curso/${mod.id}`}>Ver conteúdo</Link>
         </Button>
       </CardFooter>
     </Card>
@@ -105,6 +104,7 @@ export function ModuleSection() {
       {isError && (
         <div className="rounded-lg border p-4 text-sm text-red-600 bg-red-50">
           Oops! Não foi possível carregar os módulos agora.
+
         </div>
       )}
 

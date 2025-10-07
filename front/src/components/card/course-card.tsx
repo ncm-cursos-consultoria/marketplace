@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 // components/CourseCard.tsx
 interface CourseCardProps {
   title: string;
@@ -15,7 +17,7 @@ export function CourseCard({
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden">
       {image && (
-        <img src={image} alt={title} className="w-full h-40 object-cover" />
+        <Image src={image} alt={title} className=" object-cover p-10 bg-neutral-200" />
       )}
       {video && (
         <iframe

@@ -54,6 +54,7 @@ export function UserCandidateProvider({ children }: { children: React.ReactNode 
     } finally {
       setUserCandidate(null);
       queryClient.clear(); 
+      queryClient.invalidateQueries({queryKey: ['authUser']})
       router.replace(redirectTo);
     }
   };

@@ -7,32 +7,32 @@ import { useRouter } from "next/navigation";
 import { UseUserPartner } from "@/context/user-partner.context";
 
 export function useLoginPartner() {
-  const {userPartner, setUserPartner} = UseUserPartner()
-  const router = useRouter()
-  const queryClient = useQueryClient()
+  const { userPartner, setUserPartner } = UseUserPartner();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  
   const form = useForm<LoginFormSchema>({
-    resolver: zodResolver(loginFormSchema)
-  })
+    resolver: zodResolver(loginFormSchema),
+  });
 
-  const {mutate, isPending} = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: (data: LoginFormSchema) => login(data),
-    mutationKey: ['partner-user'],
-    onSuccess: (data) => {
-      console.log(data);
-      
-      setUserPartner(data)
-      queryClient.invalidateQueries({queryKey: ['partner-user']})
+    mutationKey: ["partner-user"],
+    onSuccess: async(data) => {
+      setUserPartner(data);
+      await queryClient.invalidateQueries({ queryKey: ["partner-user"] });
       setTimeout(() => {
-        router.push(`/partner/${userPartner?.partnerId}`)
-      }) 
-    }
-  })
+        router.push(`/partner/home`);
+      });
+    },
+  });
 
-  const onSubmit = async(data: LoginFormSchema) => {
+  const onSubmit = async (data: LoginFormSchema) => {
     console.log(data);
-    
-    mutate(data)
-  }
 
-  return{onSubmit, form, isPending}
+    mutate(data);
+
+  };
+
+  return { onSubmit, form, isPending };
 }
