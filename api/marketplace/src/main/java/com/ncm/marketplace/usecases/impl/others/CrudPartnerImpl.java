@@ -1,11 +1,13 @@
 package com.ncm.marketplace.usecases.impl.others;
 
 import com.ncm.marketplace.domains.enterprise.Enterprise;
+import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.domains.others.Partner;
 import com.ncm.marketplace.domains.user.UserPartner;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.CreatePartnerAndEnterpriseAndUserPartnerRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.CreatePartnerRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.UpdatePartnerRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.others.partner.PartnerDashboardResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.others.partner.PartnerResponse;
 import com.ncm.marketplace.gateways.mappers.enterprises.enterprise.EnterpriseMapper;
 import com.ncm.marketplace.gateways.mappers.user.partner.UserPartnerMapper;
@@ -14,7 +16,9 @@ import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseComma
 import com.ncm.marketplace.usecases.services.command.others.PartnerCommandService;
 import com.ncm.marketplace.usecases.services.command.user.UserPartnerCommandService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
+import com.ncm.marketplace.usecases.services.query.enterprises.JobOpeningQueryService;
 import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
+import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus.*;
 import static com.ncm.marketplace.gateways.mappers.others.partner.PartnerMapper.*;
 
 @Slf4j
@@ -36,6 +41,8 @@ public class CrudPartnerImpl implements CrudPartner {
     private final PartnerQueryService partnerQueryService;
     private final EnterpriseCommandService enterpriseCommandService;
     private final UserPartnerCommandService userPartnerCommandService;
+    private final JobOpeningQueryService jobOpeningQueryService;
+    private final UserCandidateQueryService userCandidateQueryService;
 
     @Transactional
     @Override
@@ -103,5 +110,31 @@ public class CrudPartnerImpl implements CrudPartner {
         } else {
             log.info("Partner already exists ℹ️");
         }
+    }
+
+    @Override
+    public PartnerDashboardResponse findDashboardInfosByPartnerId(String id) {
+        partnerQueryService.findByIdOrThrow(id);
+
+        Integer totalJobOpening;
+        Integer totalJobOpeningFilled;
+        totalJobOpening = jobOpeningQueryService.countTotalByPartnerId(id);
+        totalJobOpeningFilled = jobOpeningQueryService.countTotalFilledByPartnerId(id, APPROVED);
+
+        Integer totalEnterprise;
+        totalEnterprise = enterpriseQueryService.countTotalByPartnerId(id);
+
+        Integer totalUserCandidate;
+        Integer totalUserCandidateSelected;
+        totalUserCandidate = userCandidateQueryService.countTotalByPartnerId(id);
+        totalUserCandidateSelected = userCandidateQueryService.countTotalSelectedByPartnerId(id, SELECTED);
+
+        return PartnerDashboardResponse.builder()
+                .totalJobOpening(totalJobOpening)
+                .totalJobOpeningFilled(totalJobOpeningFilled)
+                .totalEnterprise(totalEnterprise)
+                .totalUserCandidate(totalUserCandidate)
+                .totalUserCandidateSelected(totalUserCandidateSelected)
+                .build();
     }
 }

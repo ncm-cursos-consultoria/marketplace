@@ -33,4 +33,9 @@ public class PartnerQueryService {
     public Boolean existsByEnterpriseId(String enterpriseId) {
         return partnerRepository.existsByEnterprise_Id(enterpriseId);
     }
+
+    public Partner findByTokenOrThrow(String partnerToken) {
+        return partnerRepository.findByToken(partnerToken)
+                .orElseThrow(() -> new NotFoundException("Partner not found"));
+    }
 }
