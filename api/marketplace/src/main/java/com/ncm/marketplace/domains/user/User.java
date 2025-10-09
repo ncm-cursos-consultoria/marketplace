@@ -39,7 +39,7 @@ public abstract class User {
     @Builder.Default
     private Boolean isBlocked = Boolean.FALSE;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profilePictureId", referencedColumnName = "id")
     @JsonManagedReference("user-profile_picture")
     private File profilePicture;

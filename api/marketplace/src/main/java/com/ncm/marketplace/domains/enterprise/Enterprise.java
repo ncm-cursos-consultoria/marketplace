@@ -40,17 +40,17 @@ public class Enterprise {
     @Column(unique = true, nullable = false)
     private String cnpj;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profilePictureId", referencedColumnName = "id")
     @JsonManagedReference("enterprise-profile_picture")
     private File profilePicture;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId", referencedColumnName = "id")
     @JsonManagedReference("enterprise-address")
     private Address address;
 
-    @OneToOne(mappedBy = "enterprise")
+    @OneToOne(mappedBy = "enterprise", cascade = CascadeType.ALL)
     @JsonBackReference("user_enterprise-enterprise")
     private UserEnterprise userEnterprise;
 
@@ -68,7 +68,7 @@ public class Enterprise {
     @JsonBackReference("job_openings-enterprise")
     private Set<JobOpening> jobOpenings = new HashSet<>();
 
-    @OneToOne(mappedBy = "enterprise")
+    @OneToOne(mappedBy = "enterprise", cascade = CascadeType.ALL)
     @JsonBackReference("partner_enterprise-enterprise")
     private PartnerEnterprise partnerEnterprise;
 }

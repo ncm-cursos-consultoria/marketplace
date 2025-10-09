@@ -38,22 +38,22 @@ public class Partner {
     private Boolean isSubsidized = Boolean.FALSE;
     private LocalDate subsidizedEndDate;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "enterpriseId", referencedColumnName = "id")
     @JsonManagedReference("partner-enterprise")
     private Enterprise enterprise;
 
-    @OneToOne(mappedBy = "partner")
+    @OneToOne(mappedBy = "partner", cascade = CascadeType.ALL)
     @JsonBackReference("user_partner-partner")
     private UserPartner userPartner;
 
     @Builder.Default
-    @OneToMany(mappedBy = "partner")
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
     @JsonBackReference("partner_enterprises-partner")
     private Set<PartnerEnterprise> partnerEnterprises = new HashSet<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "partner")
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
     @JsonBackReference("partner_user_candidates-partner")
     private Set<PartnerUserCandidate> partnerUserCandidates = new HashSet<>();
 

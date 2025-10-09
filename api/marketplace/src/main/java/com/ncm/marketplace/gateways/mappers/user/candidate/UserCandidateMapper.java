@@ -19,6 +19,9 @@ public class UserCandidateMapper {
                 .email(request.getEmail())
                 .birthday(request.getBirthday())
                 .cpf(request.getCpf())
+                .linkedInUrl(request.getLinkedInUrl())
+                .githubUrl(request.getGithubUrl())
+                .mySiteUrl(request.getMySiteUrl())
                 .build();
     }
 
@@ -39,6 +42,9 @@ public class UserCandidateMapper {
                         ? userCandidate.getCurriculumVitae().getId()
                         : null)
                 .type(UserTypeEnum.CANDIDATE)
+                .linkedInUrl(userCandidate.getLinkedInUrl())
+                .githubUrl(userCandidate.getGithubUrl())
+                .mySiteUrl(userCandidate.getMySiteUrl())
                 .build();
     }
 

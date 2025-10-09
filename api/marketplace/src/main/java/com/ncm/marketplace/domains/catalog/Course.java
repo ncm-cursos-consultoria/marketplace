@@ -45,7 +45,7 @@ public class Course {
     private Set<Video> videos = new HashSet<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     @JsonBackReference("user_candidate_course-course")
     private Set<UserCandidateCourse> userCandidateCourses = new HashSet<>();
 }

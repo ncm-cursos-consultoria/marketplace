@@ -2,6 +2,7 @@ package com.ncm.marketplace.usecases.impl.enterprises;
 
 import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enterprise.JobOpening;
+import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.domains.enums.WorkModelEnum;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
@@ -16,8 +17,11 @@ import com.ncm.marketplace.usecases.services.command.enterprises.JobOpeningComma
 import com.ncm.marketplace.usecases.services.command.relationship.user.candidate.UserCandidateJobOpeningCommandService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.enterprises.JobOpeningQueryService;
+import com.ncm.marketplace.usecases.services.query.relationship.user.candidate.UserCandidateJobOpeningQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
+import com.ncm.marketplace.usecases.services.security.AuthService;
 import com.ncm.marketplace.usecases.services.specification.enterprise.JobOpeningSpecification;
+import com.ncm.marketplace.usecases.services.specification.relationships.user.candidate.UserCandidateJobOpeningSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,7 +29,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.ncm.marketplace.gateways.mappers.enterprises.jobOpening.JobOpeningMapper.*;
 
@@ -40,6 +47,8 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
     private final JobOpeningSpecification jobOpeningSpecification;
     private final UserCandidateQueryService userCandidateQueryService;
     private final UserCandidateJobOpeningCommandService userCandidateJobOpeningCommandService;
+    private final UserCandidateJobOpeningQueryService userCandidateJobOpeningQueryService;
+    private final UserCandidateJobOpeningSpecification userCandidateJobOpeningSpecification;
 
     @Transactional
     @Override
@@ -80,7 +89,21 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
     @Override
     public List<JobOpeningResponse> findAll(JobOpeningSpecificationRequest specificationRequest) {
         Specification<JobOpening> specification = jobOpeningSpecification.toSpecification(specificationRequest);
-        return toResponse(jobOpeningQueryService.findAll(specification));
+        List<JobOpeningResponse> response = toResponse(jobOpeningQueryService.findAll(specification));
+        String authenticatedUserId = AuthService.getAuthenticatedUserId();
+        List<UserCandidateJobOpening> userJobOpenings = userCandidateJobOpeningQueryService.findAll(userCandidateJobOpeningSpecification.toSpecification(List.of(authenticatedUserId)));
+
+        Map<String, JobOpeningUserCandidateStatus> jobOpeningUserCandidateStatusMap = userJobOpenings.stream()
+                .collect(Collectors.toMap(userCandidateJobOpening ->
+                        userCandidateJobOpening.getJobOpening().getId(),UserCandidateJobOpening::getStatus));
+
+        for (JobOpeningResponse jobOpeningResponse : response) {
+            if (jobOpeningUserCandidateStatusMap.containsKey(jobOpeningResponse.getId())) {
+                jobOpeningResponse.setMyApplicationStatus(jobOpeningUserCandidateStatusMap.get(jobOpeningResponse.getId()));
+            }
+        }
+
+        return response;
     }
 
     @Transactional
