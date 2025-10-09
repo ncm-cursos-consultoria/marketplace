@@ -6,6 +6,7 @@ import com.ncm.marketplace.gateways.repositories.domains.relationship.user.candi
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +23,8 @@ public class UserCandidateJobOpeningQueryService {
                 .orElseThrow(() -> new NotFoundException("User Candidate - Job Opening not found"));
     }
 
-    public List<UserCandidateJobOpening> findAll() {
-        return userCandidateJobOpeningRepository.findAll();
+    public List<UserCandidateJobOpening> findAll(Specification<UserCandidateJobOpening> specification) {
+        return userCandidateJobOpeningRepository.findAll(specification);
     }
 
     public Page<UserCandidateJobOpening> findAll(Pageable pageable) {
