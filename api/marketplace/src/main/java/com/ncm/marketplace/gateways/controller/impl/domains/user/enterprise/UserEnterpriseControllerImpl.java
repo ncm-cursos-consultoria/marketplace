@@ -29,14 +29,6 @@ public class UserEnterpriseControllerImpl implements UserEnterpriseController {
         return ResponseEntity.ok(crudUserEnterprise.update(id, request));
     }
 
-    @PatchMapping("/{id}/profile-picture")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Função off")
-    @Override
-    public ResponseEntity<UserEnterpriseResponse> uploadProfilePicture(@PathVariable String id, @RequestPart(value = "file") MultipartFile file) {
-        return null;
-    }
-
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Override

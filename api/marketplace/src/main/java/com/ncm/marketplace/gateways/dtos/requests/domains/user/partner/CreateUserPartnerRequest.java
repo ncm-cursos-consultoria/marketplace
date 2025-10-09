@@ -26,4 +26,6 @@ public class CreateUserPartnerRequest {
     @NotEmpty
     @Size(min = 8)
     private String password;
+    @NotEmpty
+    private String partnerId;
 }

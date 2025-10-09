@@ -2,7 +2,7 @@ package com.ncm.marketplace.usecases.services.query.catalog;
 
 import com.ncm.marketplace.domains.catalog.Video;
 import com.ncm.marketplace.exceptions.NotFoundException;
-import com.ncm.marketplace.gateways.repositories.domains.courses.video.VideoRepository;
+import com.ncm.marketplace.gateways.repositories.domains.catalog.video.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

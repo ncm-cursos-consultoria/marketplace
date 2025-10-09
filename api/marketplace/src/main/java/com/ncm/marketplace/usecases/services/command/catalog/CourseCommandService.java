@@ -1,7 +1,7 @@
 package com.ncm.marketplace.usecases.services.command.catalog;
 
 import com.ncm.marketplace.domains.catalog.Course;
-import com.ncm.marketplace.gateways.repositories.domains.courses.course.CourseRepository;
+import com.ncm.marketplace.gateways.repositories.domains.catalog.course.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

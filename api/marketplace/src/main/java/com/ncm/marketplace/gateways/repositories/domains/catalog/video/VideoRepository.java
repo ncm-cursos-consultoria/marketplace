@@ -1,4 +1,4 @@
-package com.ncm.marketplace.gateways.repositories.domains.courses.video;
+package com.ncm.marketplace.gateways.repositories.domains.catalog.video;
 
 import com.ncm.marketplace.domains.catalog.Video;
 import org.springframework.data.jpa.repository.JpaRepository;

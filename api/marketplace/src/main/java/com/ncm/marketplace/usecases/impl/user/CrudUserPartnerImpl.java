@@ -14,9 +14,11 @@ import com.ncm.marketplace.usecases.interfaces.user.CrudUserPartner;
 import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.others.PartnerCommandService;
 import com.ncm.marketplace.usecases.services.command.user.UserPartnerCommandService;
+import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
 import com.ncm.marketplace.usecases.services.query.user.UserPartnerQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,11 +35,18 @@ public class CrudUserPartnerImpl implements CrudUserPartner {
     private final UserPartnerQueryService userPartnerQueryService;
     private final EnterpriseCommandService enterpriseCommandService;
     private final PartnerCommandService partnerCommandService;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final PartnerQueryService partnerQueryService;
 
     @Transactional
     @Override
     public UserPartnerResponse save(CreateUserPartnerRequest request) {
-        return toResponse(userPartnerCommandService.save(toEntityCreate(request)));
+        UserPartner user = toEntityCreate(request);
+        String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(encryptedRandomPassword);
+        Partner partner = partnerQueryService.findByIdOrThrow(request.getPartnerId());
+        user.setPartner(partner);
+        return toResponse(userPartnerCommandService.save(user));
     }
 
     @Transactional

@@ -3,6 +3,7 @@ package com.ncm.marketplace.usecases.impl.catalog;
 import com.ncm.marketplace.domains.catalog.Module;
 import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.CreateModuleRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.ModuleSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.UpdateModuleRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.catalog.module.ModuleResponse;
 import com.ncm.marketplace.gateways.mappers.catalog.module.ModuleMapper;
@@ -10,8 +11,10 @@ import com.ncm.marketplace.usecases.interfaces.catalog.CrudModule;
 import com.ncm.marketplace.usecases.services.command.catalog.ModuleCommandService;
 import com.ncm.marketplace.usecases.services.query.catalog.ModuleQueryService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
+import com.ncm.marketplace.usecases.services.specification.catalog.ModuleSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,7 @@ public class CrudModuleImpl implements CrudModule {
     private final ModuleQueryService moduleQueryService;
     private final EnterpriseQueryService enterpriseQueryService;
     private final ModuleCommandService moduleCommandService;
+    private final ModuleSpecification moduleSpecification;
 
     @Transactional
     @Override
@@ -60,8 +64,9 @@ public class CrudModuleImpl implements CrudModule {
     }
 
     @Override
-    public List<ModuleResponse> findAll() {
-        return toResponse(moduleQueryService.findAll());
+    public List<ModuleResponse> findAll(ModuleSpecificationRequest specificationRequest) {
+        Specification<Module> specification = moduleSpecification.toSpecification(specificationRequest);
+        return toResponse(moduleQueryService.findAll(specification));
     }
 
     @Transactional

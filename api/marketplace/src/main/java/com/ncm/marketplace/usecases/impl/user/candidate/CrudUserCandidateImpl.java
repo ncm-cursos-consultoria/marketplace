@@ -1,15 +1,21 @@
 package com.ncm.marketplace.usecases.impl.user.candidate;
 
+import com.ncm.marketplace.domains.enums.FilePathEnum;
+import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.domains.enums.PartnerStatusEnum;
 import com.ncm.marketplace.domains.others.Partner;
 import com.ncm.marketplace.domains.relationships.partner.PartnerUserCandidate;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
+import com.ncm.marketplace.gateways.dtos.requests.domains.others.file.CreateFileRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
+import com.ncm.marketplace.usecases.impl.others.CrudFileImpl;
+import com.ncm.marketplace.usecases.interfaces.others.CrudFile;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
 import com.ncm.marketplace.usecases.services.command.relationship.partner.PartnerUserCandidateCommandService;
 import com.ncm.marketplace.usecases.services.command.user.candidate.UserCandidateCommandService;
+import com.ncm.marketplace.usecases.services.fileStorage.FileStorageService;
 import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
@@ -18,9 +24,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.ncm.marketplace.gateways.mappers.user.candidate.UserCandidateMapper.*;
 
@@ -35,6 +44,8 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
     private final UserQueryService userQueryService;
     private final PartnerQueryService partnerQueryService;
     private final PartnerUserCandidateCommandService partnerUserCandidateCommandService;
+    private final FileStorageService fileStorageService;
+    private final CrudFile cruFile;
 
     @Transactional
     @Override

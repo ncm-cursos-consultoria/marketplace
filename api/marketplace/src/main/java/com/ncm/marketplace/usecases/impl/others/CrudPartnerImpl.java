@@ -21,6 +21,7 @@ import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +44,7 @@ public class CrudPartnerImpl implements CrudPartner {
     private final UserPartnerCommandService userPartnerCommandService;
     private final JobOpeningQueryService jobOpeningQueryService;
     private final UserCandidateQueryService userCandidateQueryService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
@@ -61,11 +63,13 @@ public class CrudPartnerImpl implements CrudPartner {
         Enterprise enterprise = EnterpriseMapper.toEntityCreate(request);
         Partner partner = toEntityCreate(request);
         partner.setEnterprise(enterprise);
-        UserPartner userPartner = UserPartnerMapper.toEntityCreate(request);
-        userPartner.setPartner(partner);
+        UserPartner user = UserPartnerMapper.toEntityCreate(request);
+        user.setPartner(partner);
+        String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(encryptedRandomPassword);
         enterpriseCommandService.save(enterprise);
         partner = partnerCommandService.saveAndFlush(partner);
-        userPartnerCommandService.save(userPartner);
+        userPartnerCommandService.save(user);
         partner.setToken(partner.generateToken());
         return toResponse(partner);
     }

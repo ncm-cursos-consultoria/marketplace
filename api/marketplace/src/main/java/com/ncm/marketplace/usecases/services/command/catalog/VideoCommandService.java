@@ -1,13 +1,12 @@
 package com.ncm.marketplace.usecases.services.command.catalog;
 
 import com.ncm.marketplace.domains.catalog.Video;
-import com.ncm.marketplace.gateways.repositories.domains.courses.video.VideoRepository;
+import com.ncm.marketplace.gateways.repositories.domains.catalog.video.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor

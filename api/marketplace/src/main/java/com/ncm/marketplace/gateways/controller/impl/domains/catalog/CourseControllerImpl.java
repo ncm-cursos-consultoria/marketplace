@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.controller.impl.domains.catalog;
 
 import com.ncm.marketplace.gateways.controller.interfaces.domains.catalog.CourseController;
+import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CourseSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.UpdateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.catalog.course.CourseResponse;
@@ -50,7 +51,7 @@ public class CourseControllerImpl implements CourseController {
     @Operation(summary = "Função off")
     @Override
     public ResponseEntity<CourseResponse> uploadVideo(@PathVariable String id, @RequestPart(value = "file") MultipartFile file) {
-        return null;
+        return ResponseEntity.ok(crudCourse.upload(id,file));
     }
 
     @GetMapping("/{id}")
@@ -63,8 +64,8 @@ public class CourseControllerImpl implements CourseController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Override
-    public ResponseEntity<List<CourseResponse>> findAll() {
-        return ResponseEntity.ok(crudCourse.findAll());
+    public ResponseEntity<List<CourseResponse>> findAll(CourseSpecificationRequest specificationRequest) {
+        return ResponseEntity.ok(crudCourse.findAll(specificationRequest));
     }
 
     @GetMapping("/module/{id}")

@@ -30,13 +30,7 @@ public class CourseMapper {
                 .moduleId(course.getModule() != null
                         ? course.getModule().getId()
                         : null)
-                .videoUrl(course.getVideos() != null
-                        ? course.getVideos().stream()
-                            .filter(Video::getIsActive)
-                            .findFirst()
-                            .map(Video::getUrl)
-                            .orElse(null)
-                        : null)
+                .videoUrl(course.getLastVideoUrl())
                 .build();
     }
 

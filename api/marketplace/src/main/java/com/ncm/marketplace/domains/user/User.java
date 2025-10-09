@@ -1,6 +1,7 @@
 package com.ncm.marketplace.domains.user;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.domains.others.File;
 import jakarta.persistence.*;
@@ -48,4 +49,8 @@ public abstract class User {
     }
 
     public abstract UserTypeEnum getType();
+
+    public boolean canUpload(FileTypeEnum fileType) {
+        return fileType == FileTypeEnum.PROFILE_PICTURE;
+    }
 }

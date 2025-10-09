@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface UserPartnerController {
     ResponseEntity<UserPartnerResponse> update(String id, UpdateUserPartnerRequest request);
-    ResponseEntity<UserPartnerResponse> uploadProfilePicture(String id, MultipartFile file);
     ResponseEntity<UserPartnerResponse> findById(String id);
     ResponseEntity<List<UserPartnerResponse>> findAll();
 }

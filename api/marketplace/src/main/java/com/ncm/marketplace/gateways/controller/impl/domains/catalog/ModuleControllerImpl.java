@@ -2,6 +2,7 @@ package com.ncm.marketplace.gateways.controller.impl.domains.catalog;
 
 import com.ncm.marketplace.gateways.controller.interfaces.domains.catalog.ModuleController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.CreateModuleRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.ModuleSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.UpdateModuleRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.catalog.module.ModuleResponse;
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudModule;
@@ -53,8 +54,8 @@ public class ModuleControllerImpl implements ModuleController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Override
-    public ResponseEntity<List<ModuleResponse>> findAll() {
-        return ResponseEntity.ok(crudModule.findAll());
+    public ResponseEntity<List<ModuleResponse>> findAll(ModuleSpecificationRequest specificationRequest) {
+        return ResponseEntity.ok(crudModule.findAll(specificationRequest));
     }
 
     @GetMapping("/enterprise/{id}")
