@@ -13,6 +13,7 @@ import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQuerySe
 import com.ncm.marketplace.usecases.services.query.user.UserEnterpriseQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ public class CrudUserEnterpriseImpl implements CrudUserEnterprise {
     private final UserEnterpriseCommandService userEnterpriseCommandService;
     private final UserEnterpriseQueryService userEnterpriseQueryService;
     private final EnterpriseCommandService enterpriseCommandService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
@@ -36,6 +38,8 @@ public class CrudUserEnterpriseImpl implements CrudUserEnterprise {
         UserEnterprise user = toEntityCreate(request);
         Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(request.getEnterpriseId());
         user.setEnterprise(enterprise);
+        String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(encryptedRandomPassword);
         return toResponse(userEnterpriseCommandService.save(user));
     }
 

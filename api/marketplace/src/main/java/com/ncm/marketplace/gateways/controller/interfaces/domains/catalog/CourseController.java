@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.controller.interfaces.domains.catalog;
 
+import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CourseSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.UpdateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.catalog.course.CourseResponse;
@@ -14,6 +15,6 @@ public interface CourseController {
     ResponseEntity<CourseResponse> update(String id, UpdateCourseRequest request);
     ResponseEntity<CourseResponse> uploadVideo(String id, MultipartFile file);
     ResponseEntity<CourseResponse> findById(String id);
-    ResponseEntity<List<CourseResponse>> findAll();
+    ResponseEntity<List<CourseResponse>> findAll(CourseSpecificationRequest specificationRequest);
     ResponseEntity<List<CourseResponse>> findAllByModuleId(String id);
 }

@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.controller.interfaces.domains.user.candidate;
 
+import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
@@ -14,8 +15,6 @@ public interface UserCandidateController {
     ResponseEntity<UserCandidateResponse> save(CreateUserCandidateRequest request);
     ResponseEntity<Void> delete(String id);
     ResponseEntity<UserCandidateResponse> update(String id, UpdateUserCandidateRequest request);
-    ResponseEntity<UserCandidateResponse> uploadProfilePicture(String id, MultipartFile file);
-    ResponseEntity<UserCandidateResponse> uploadCurriculumVitae(String id, MultipartFile file);
     ResponseEntity<UserCandidateResponse> addAddress(String id, CreateAddressRequest request);
     ResponseEntity<UserCandidateResponse> addDisc(String id, CreateDiscRequest request);
     ResponseEntity<UserCandidateResponse> findById(String id);

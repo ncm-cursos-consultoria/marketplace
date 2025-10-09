@@ -2,8 +2,10 @@ package com.ncm.marketplace.domains.enterprise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ncm.marketplace.domains.enums.ContractTypeEnum;
 import com.ncm.marketplace.domains.enums.WorkModelEnum;
 import com.ncm.marketplace.domains.enums.JobOpeningStatusEnum;
+import com.ncm.marketplace.domains.enums.WorkPeriodEnum;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,6 +13,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,6 +52,14 @@ public class JobOpening {
     private WorkModelEnum workModel = WorkModelEnum.ON_SITE;
     @Builder.Default
     private Integer views = 0;
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private WorkPeriodEnum workPeriod = WorkPeriodEnum.PART_TIME;
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private ContractTypeEnum contractType = ContractTypeEnum.INTERNSHIP;
+    private LocalTime workStartTime;
+    private LocalTime workEndTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enterpriseId", referencedColumnName = "id")

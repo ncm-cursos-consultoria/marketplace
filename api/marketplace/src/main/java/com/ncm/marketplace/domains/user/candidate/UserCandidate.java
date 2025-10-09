@@ -2,6 +2,7 @@ package com.ncm.marketplace.domains.user.candidate;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.domains.others.File;
@@ -70,5 +71,10 @@ public class UserCandidate extends User {
     @Override
     public UserTypeEnum getType() {
         return UserTypeEnum.CANDIDATE;
+    }
+
+    @Override
+    public boolean canUpload(FileTypeEnum fileType) {
+        return super.canUpload(fileType) || fileType == FileTypeEnum.CURRICULUM_VITAE;
     }
 }

@@ -1,14 +1,17 @@
 package com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ncm.marketplace.domains.enums.ContractTypeEnum;
 import com.ncm.marketplace.domains.enums.JobOpeningStatusEnum;
 import com.ncm.marketplace.domains.enums.WorkModelEnum;
+import com.ncm.marketplace.domains.enums.WorkPeriodEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.Currency;
 
 @Getter
@@ -32,4 +35,8 @@ public class JobOpeningResponse {
     private Integer views;
     private String enterpriseId;
     private Boolean thirdParty;
+    private WorkPeriodEnum workPeriod;
+    private ContractTypeEnum contractType;
+    private LocalTime workStartTime;
+    private LocalTime workEndTime;
 }

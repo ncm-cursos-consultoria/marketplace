@@ -32,6 +32,7 @@ public class Course {
     private String description;
     @Column(name = "courseOrder")
     private Integer order;
+    private String lastVideoUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "moduleId", referencedColumnName = "id", nullable = false)

@@ -21,12 +21,26 @@ public class JobOpeningSpecification {
         };
     }
 
+    public static Specification<JobOpening> byThirdParty(List<Boolean> thirdParty) {
+        return ((root, query, criteriaBuilder) -> {
+            if (thirdParty == null || thirdParty.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            } else {
+                assert query != null;
+                query.distinct(true);
+                return root.get("thirdParty").in(thirdParty);
+            }
+        });
+    }
+
     public Specification<JobOpening> toSpecification(JobOpeningSpecificationRequest request) {
         Specification<JobOpening> specification = (root, query, criteriaBuilder) ->
                 criteriaBuilder.conjunction();
         if (request != null) {
             specification = specification.and(byEnterpriseId(request.getEnterpriseIds()));
+            specification = specification.and(byThirdParty(request.getThirdParty()));
         }
+
         return specification;
     }
 }

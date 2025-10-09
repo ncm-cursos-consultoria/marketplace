@@ -29,14 +29,6 @@ public class UserPartnerControllerImpl implements UserPartnerController {
         return ResponseEntity.ok(crudUserPartner.update(id, request));
     }
 
-    @PatchMapping("/{id}/profile-picture")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Função off")
-    @Override
-    public ResponseEntity<UserPartnerResponse> uploadProfilePicture(@PathVariable String id, @RequestPart(value = "file") MultipartFile file) {
-        return null;
-    }
-
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Override

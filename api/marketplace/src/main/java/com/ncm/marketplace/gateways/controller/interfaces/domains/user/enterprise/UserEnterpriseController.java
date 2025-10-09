@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface UserEnterpriseController {
     ResponseEntity<UserEnterpriseResponse> update(String id, UpdateUserEnterpriseRequest request);
-    ResponseEntity<UserEnterpriseResponse> uploadProfilePicture(String id, MultipartFile file);
     ResponseEntity<UserEnterpriseResponse> findById(String id);
     ResponseEntity<List<UserEnterpriseResponse>> findAll();
 }

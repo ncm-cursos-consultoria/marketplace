@@ -1,6 +1,8 @@
 package com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening;
 
+import com.ncm.marketplace.domains.enums.ContractTypeEnum;
 import com.ncm.marketplace.domains.enums.WorkModelEnum;
+import com.ncm.marketplace.domains.enums.WorkPeriodEnum;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,6 +10,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
+
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -30,4 +34,9 @@ public class UpdateJobOpeningRequest {
     private String city;
     @NotNull
     private WorkModelEnum workModel;
+    @NotNull
+    private WorkPeriodEnum workPeriod;
+    private ContractTypeEnum contractType;
+    private LocalTime workStartTime;
+    private LocalTime workEndTime;
 }

@@ -24,6 +24,10 @@ public class JobOpeningMapper {
                 .city(request.getCity())
                 .workModel(request.getWorkModel())
                 .thirdParty(request.getThirdParty())
+                .workPeriod(request.getWorkPeriod())
+                .contractType(request.getContractType())
+                .workStartTime(request.getWorkStartTime())
+                .workEndTime(request.getWorkEndTime())
                 .build();
     }
 
@@ -50,6 +54,10 @@ public class JobOpeningMapper {
                         ? jobOpening.getEnterprise().getId()
                         : null)
                 .thirdParty(jobOpening.getThirdParty())
+                .workPeriod(jobOpening.getWorkPeriod())
+                .contractType(jobOpening.getContractType())
+                .workStartTime(jobOpening.getWorkStartTime())
+                .workEndTime(jobOpening.getWorkEndTime())
                 .build();
     }
 
@@ -85,6 +93,9 @@ public class JobOpeningMapper {
                         ? jobOpening.getEnterprise().getLegalName()
                         : null)
                 .thirdParty(jobOpening.getThirdParty())
+                .workPeriod(jobOpening.getWorkPeriod())
+                .workStartTime(jobOpening.getWorkStartTime())
+                .workEndTime(jobOpening.getWorkEndTime())
                 .build();
     }
 

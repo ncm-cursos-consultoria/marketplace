@@ -3,6 +3,7 @@ package com.ncm.marketplace.usecases.impl.catalog;
 import com.ncm.marketplace.domains.catalog.Course;
 import com.ncm.marketplace.domains.catalog.Module;
 import com.ncm.marketplace.domains.catalog.Video;
+import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CourseSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.UpdateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.video.CreateVideoRequest;
@@ -10,13 +11,18 @@ import com.ncm.marketplace.gateways.dtos.responses.domains.catalog.course.Course
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudCourse;
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudVideo;
 import com.ncm.marketplace.usecases.services.command.catalog.CourseCommandService;
+import com.ncm.marketplace.usecases.services.fileStorage.FileStorageService;
 import com.ncm.marketplace.usecases.services.query.catalog.CourseQueryService;
 import com.ncm.marketplace.usecases.services.query.catalog.ModuleQueryService;
+import com.ncm.marketplace.usecases.services.specification.catalog.CourseSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.ncm.marketplace.gateways.mappers.catalog.course.CourseMapper.*;
@@ -31,6 +37,8 @@ public class CrudCourseImpl implements CrudCourse {
     private final ModuleQueryService moduleQueryService;
     private final CrudVideo crudVideo;
     private final CrudVideo videoService;
+    private final CourseSpecification courseSpecification;
+    private final FileStorageService fileStorageService;
 
     @Transactional
     @Override
@@ -44,6 +52,7 @@ public class CrudCourseImpl implements CrudCourse {
                 .url(request.getVideoUrl())
                 .courseId(course.getId())
                 .build());
+        course.setLastVideoUrl(request.getVideoUrl());
         return toResponse(course);
     }
 
@@ -61,8 +70,7 @@ public class CrudCourseImpl implements CrudCourse {
         course.setTitle(request.getTitle());
         course.setDescription(request.getDescription());
         if (course.getVideos() != null) {
-            Video lastActiveVideo = videoService.findLastActiveVideo(course.getId());
-            if (!request.getVideoUrl().equals(lastActiveVideo.getUrl())) {
+            if (!request.getVideoUrl().equals(course.getLastVideoUrl())) {
                 crudVideo.deactivateOldVideos(course.getId());
                 crudVideo.save(CreateVideoRequest.builder()
                         .title(course.getTitle())
@@ -81,8 +89,9 @@ public class CrudCourseImpl implements CrudCourse {
     }
 
     @Override
-    public List<CourseResponse> findAll() {
-        return toResponse(courseQueryService.findAll());
+    public List<CourseResponse> findAll(CourseSpecificationRequest specificationRequest) {
+        Specification<Course> specification = courseSpecification.toSpecification(specificationRequest);
+        return toResponse(courseQueryService.findAll(specification));
     }
 
     @Transactional
@@ -103,5 +112,26 @@ public class CrudCourseImpl implements CrudCourse {
     @Override
     public List<CourseResponse> findAllByModuleId(String id) {
         return toResponse(courseQueryService.findAllByModuleId(id));
+    }
+
+    @Transactional
+    @Override
+    public CourseResponse upload(String id, MultipartFile file) {
+//        try {
+//            String videoUrl = fileStorageService.uploadFile(file);
+//            crudVideo.deactivateOldVideos(id);
+//            crudVideo.save(CreateVideoRequest.builder()
+//                    .title(file.getOriginalFilename())
+//                    .url(videoUrl)
+//                    .courseId(id)
+//                    .build());
+//
+//            return findById(id);
+//
+//        } catch (IOException e) {
+//            log.error("Falha no upload do arquivo", e);
+//            throw new RuntimeException("Falha no upload do arquivo", e);
+//        }
+        return null;
     }
 }

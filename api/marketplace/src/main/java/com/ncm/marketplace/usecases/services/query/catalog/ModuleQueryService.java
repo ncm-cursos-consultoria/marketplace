@@ -2,10 +2,11 @@ package com.ncm.marketplace.usecases.services.query.catalog;
 
 import com.ncm.marketplace.domains.catalog.Module;
 import com.ncm.marketplace.exceptions.NotFoundException;
-import com.ncm.marketplace.gateways.repositories.domains.courses.module.ModuleRepository;
+import com.ncm.marketplace.gateways.repositories.domains.catalog.module.ModuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +23,8 @@ public class ModuleQueryService {
                 .orElseThrow(() -> new NotFoundException("Module not found"));
     }
 
-    public List<Module> findAll() {
-        return moduleRepository.findAll();
+    public List<Module> findAll(Specification<Module> specification) {
+        return moduleRepository.findAll(specification);
     }
 
     public Page<Module> findAll(Pageable pageable) {

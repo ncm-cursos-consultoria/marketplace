@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.controller.impl.domains.user.candidate;
 
+import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.gateways.controller.interfaces.domains.user.candidate.UserCandidateController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
@@ -50,21 +51,6 @@ public class UserCandidateControllerImpl implements UserCandidateController {
         return ResponseEntity.ok(crudUserCandidate.update(id, request));
     }
 
-    @PatchMapping("/{id}/profile-picture")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Função off")
-    @Override
-    public ResponseEntity<UserCandidateResponse> uploadProfilePicture(@PathVariable String id, MultipartFile file) {
-        return null;
-    }
-
-    @PatchMapping("/{id}/curriculum-vitae")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Função off")
-    @Override
-    public ResponseEntity<UserCandidateResponse> uploadCurriculumVitae(@PathVariable String id, @RequestPart(value = "file") MultipartFile file) {
-        return null;
-    }
 
     @PatchMapping("/{id}/address")
     @ResponseStatus(HttpStatus.OK)
