@@ -15,6 +15,7 @@ import com.ncm.marketplace.domains.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.validator.constraints.URL;
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.util.HashSet;
@@ -33,6 +34,12 @@ public class UserCandidate extends User {
     @CPF
     @Column(unique = true, nullable = false)
     private String cpf;
+    @URL(protocol = "https")
+    private String linkedInUrl;
+    @URL(protocol = "https")
+    private String githubUrl;
+    @URL(protocol = "https")
+    private String mySiteUrl;
 
     @OneToOne
     @JoinColumn(name = "curriculumVitaeId", referencedColumnName = "id")

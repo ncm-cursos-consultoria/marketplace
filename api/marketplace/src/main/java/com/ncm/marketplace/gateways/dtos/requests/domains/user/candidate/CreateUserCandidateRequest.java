@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
+import org.hibernate.validator.constraints.URL;
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDate;
@@ -29,5 +30,11 @@ public class CreateUserCandidateRequest {
     @CPF
     @NotEmpty
     private String cpf;
+    @URL(protocol = "https")
+    private String linkedInUrl;
+    @URL(protocol = "https")
+    private String githubUrl;
+    @URL(protocol = "https")
+    private String mySiteUrl;
     private String partnerToken;
 }
