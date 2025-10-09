@@ -67,7 +67,7 @@ public class JobOpening {
     private Enterprise enterprise;
 
     @Builder.Default
-    @OneToMany(mappedBy = "jobOpening")
+    @OneToMany(mappedBy = "jobOpening", cascade = CascadeType.ALL)
     @JsonBackReference("user_candidate_job_opening-job_opening")
     private Set<UserCandidateJobOpening> userCandidateJobOpenings = new HashSet<>();
 }

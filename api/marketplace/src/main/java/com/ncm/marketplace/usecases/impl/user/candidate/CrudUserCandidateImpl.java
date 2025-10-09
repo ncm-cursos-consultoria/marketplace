@@ -3,16 +3,21 @@ package com.ncm.marketplace.usecases.impl.user.candidate;
 import com.ncm.marketplace.domains.enums.FilePathEnum;
 import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.domains.enums.PartnerStatusEnum;
+import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.domains.others.Partner;
 import com.ncm.marketplace.domains.relationships.partner.PartnerUserCandidate;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
+import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.file.CreateFileRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
+import com.ncm.marketplace.gateways.mappers.others.address.AddressMapper;
+import com.ncm.marketplace.usecases.impl.others.CrudAddressImpl;
 import com.ncm.marketplace.usecases.impl.others.CrudFileImpl;
 import com.ncm.marketplace.usecases.interfaces.others.CrudFile;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
+import com.ncm.marketplace.usecases.services.command.others.AddressCommandService;
 import com.ncm.marketplace.usecases.services.command.relationship.partner.PartnerUserCandidateCommandService;
 import com.ncm.marketplace.usecases.services.command.user.candidate.UserCandidateCommandService;
 import com.ncm.marketplace.usecases.services.fileStorage.FileStorageService;
@@ -46,6 +51,8 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
     private final PartnerUserCandidateCommandService partnerUserCandidateCommandService;
     private final FileStorageService fileStorageService;
     private final CrudFile cruFile;
+    private final AddressCommandService addressCommandService;
+    private final CrudAddressImpl crudAddressImpl;
 
     @Transactional
     @Override
@@ -112,5 +119,27 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
         } else {
             log.info("User candidate already exists ℹ️");
         }
+    }
+
+    @Transactional
+    @Override
+    public UserCandidateResponse addOrUpdateAddress(String id, CreateAddressRequest request) {
+        UserCandidate user = userCandidateQueryService.findByIdOrThrow(id);
+        Address address = user.getAddress();
+        if (address != null) {
+            address.setCountry(request.getCountry());
+            address.setState(request.getState());
+            address.setCity(request.getCity());
+            address.setDistrict(request.getDistrict());
+            address.setZip(request.getZip());
+            address.setStreet(request.getStreet());
+            address.setNumber(request.getNumber());
+            address.setAddressLine2(request.getAddressLine2());
+        } else {
+            address = AddressMapper.toEntityCreate(request);
+            user.setAddress(address);
+            addressCommandService.save(address);
+        }
+        return toResponse(user);
     }
 }
