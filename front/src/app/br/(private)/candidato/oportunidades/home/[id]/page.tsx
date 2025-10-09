@@ -20,10 +20,7 @@ export default function Home() {
     queryKey: ["job"],
     queryFn: () => getAllJobs(),
   });
-
-  console.log(userCandidate);
-
-  console.log(jobs);
+  
 
   return (
     <div className="flex min-h-screen">

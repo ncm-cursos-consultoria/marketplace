@@ -6,10 +6,12 @@ import { login } from "@/service/auth/login";
 import { useRouter } from "next/navigation";
 import { UseUserCandidate } from "@/context/user-candidate.context";
 
+import { me } from "@/service/auth/me";
+
 export function useLogin() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { userCandidate } = UseUserCandidate();
+  const { setUserCandidate } = UseUserCandidate();
 
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
@@ -19,10 +21,16 @@ export function useLogin() {
     mutationFn: (data: LoginFormSchema) => login(data),
     mutationKey: ["authUser"],
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["authUser"] });
-      setTimeout(() => {
-        router.push(`/br/candidato/oportunidades/home/${userCandidate?.id}`);
+      const userData = await queryClient.fetchQuery({
+        queryKey: ["authUser"],
+        queryFn: me,
       });
+      if (userData?.id) {
+        setUserCandidate(userData);
+        router.push(`/br/candidato/oportunidades/home/${userData.id}`);
+      } else {
+        console.error("Erro ao carregar dados do usuário");
+      }
     },
   });
 

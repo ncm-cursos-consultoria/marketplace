@@ -9,6 +9,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { StatCard } from "../complementary/stat-card";
+import { UseUserPartner } from "@/context/user-partner.context";
 
 function ProgressRow({ label, percent }: { label: string; percent: number }) {
   const pct = Math.max(0, Math.min(100, Math.round(percent)));
@@ -34,6 +35,11 @@ function ProgressRow({ label, percent }: { label: string; percent: number }) {
 
 
 export default function PartnerPanel() {
+const {userPartner} = UseUserPartner()
+
+console.log(userPartner);
+
+
   const totalJobOpening = 42;
   const totalJobOpeningFilled = 27;
   const totalEnterprise = 18;

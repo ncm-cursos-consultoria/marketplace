@@ -5,12 +5,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { login } from "@/service/auth/login";
 import { useRouter } from "next/navigation";
 import { UseUserEnteprise } from "@/context/user-enterprise.context";
+import { me } from "@/service/auth/me";
 
 export function useLoginEnterprise() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const {userEnterprise} = UseUserEnteprise()
-  
+  const { setUserEnterprise } = UseUserEnteprise();
+
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
   });
@@ -19,10 +20,16 @@ export function useLoginEnterprise() {
     mutationFn: (data: LoginFormSchema) => login(data),
     mutationKey: ["enterprise-user"],
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["enterprise-user"] });
-      setTimeout(() => {
-        router.push(`/br/enterprise/${userEnterprise?.enterpriseId}`)
-      })
+      const userData = await queryClient.fetchQuery({
+        queryKey: ["authUser"],
+        queryFn: me,
+      });
+      if (userData?.id) {
+        setUserEnterprise(userData);
+        router.push(`/br/enterprise/${userData.id}`);
+      } else {
+        console.error("Erro ao carregar dados do usuário");
+      }
     },
   });
 

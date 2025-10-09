@@ -53,25 +53,25 @@ export function AsideEnterprise() {
 
       <nav className="flex-1 px-2 py-4 space-y-1">
         <NavItem
-          href={`/br/enterprise/${enterpriseId}`}
+          href={`/br/enterprise/${userEnterprise?.id}`}
           icon={<Home className="h-4 w-4" />}
         >
           Início
         </NavItem>
         <NavItem
-          href={`/br/enterprise/profile/${enterpriseId}`}
+          href={`/br/enterprise/profile/${userEnterprise?.id}`}
           icon={<Building2 className="h-4 w-4" />}
         >
           Minha Empresa
         </NavItem>
         {/* <NavItem
-          href={`/enterprise/${enterpriseId}/jobs`}
+          href={`/enterprise/${userEnterprise?.id}/jobs`}
           icon={<Briefcase className="h-4 w-4" />}
         >
           Minhas Vagas
         </NavItem> */}
         <NavItem
-          href={`/br/enterprise/module/${enterpriseId}`}
+          href={`/br/enterprise/module/${userEnterprise?.id}`}
           icon={<NotebookPenIcon className="h-4 w-4" />}
         >
           Meus Módulos
