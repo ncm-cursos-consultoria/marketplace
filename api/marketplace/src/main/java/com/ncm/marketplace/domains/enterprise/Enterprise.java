@@ -7,6 +7,7 @@ import com.ncm.marketplace.domains.others.File;
 import com.ncm.marketplace.domains.catalog.Module;
 import com.ncm.marketplace.domains.others.Partner;
 import com.ncm.marketplace.domains.relationships.partner.PartnerEnterprise;
+import com.ncm.marketplace.domains.thirdParty.mercadoPago.MPCustomer;
 import com.ncm.marketplace.domains.user.UserEnterprise;
 import jakarta.persistence.*;
 import lombok.*;
@@ -71,4 +72,8 @@ public class Enterprise {
     @OneToOne(mappedBy = "enterprise", cascade = CascadeType.ALL)
     @JsonBackReference("partner_enterprise-enterprise")
     private PartnerEnterprise partnerEnterprise;
+
+    @OneToOne(mappedBy = "enterprise", cascade = CascadeType.ALL)
+    @JsonBackReference("mp_customer-enterprise")
+    private MPCustomer mpCustomer;
 }

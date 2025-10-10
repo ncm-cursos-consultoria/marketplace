@@ -70,3 +70,8 @@ do:
     secret-key: ${DIGITAL_OCEAN_SECRET_KEY}
     region: ${DIGITAL_OCEAN_REGION}
     bucket-name: ${DIGITAL_OCEAN_BUCKET}
+client:
+  mercado-pago:
+    url: https://api.mercadopago.com
+    access-token: ${ACCESS_TOKEN}
+    public-key: ${PUBLIC_KEY}

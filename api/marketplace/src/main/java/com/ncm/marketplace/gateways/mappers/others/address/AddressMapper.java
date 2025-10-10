@@ -2,8 +2,8 @@ package com.ncm.marketplace.gateways.mappers.others.address;
 
 import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
-import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.UpdateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.others.address.AddressResponse;
+import com.ncm.marketplace.gateways.dtos.responses.domains.thirdParty.mercadoPago.customer.MPCustomerAPIResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -21,6 +21,18 @@ public class AddressMapper {
                 .street(request.getStreet())
                 .number(request.getNumber())
                 .addressLine2(request.getAddressLine2())
+                .build();
+    }
+
+    public static Address toEntityCreate(MPCustomerAPIResponse.AddressDetailResponse response) {
+        return Address.builder()
+                .country(response.getCountry().getName())
+                .state(response.getState().getName())
+                .city(response.getCity().getName())
+                .district(response.getNeighborhood().getName())
+                .zip(response.getZipCode())
+                .street(response.getStreetName())
+                .number(response.getStreetNumber().toString())
                 .build();
     }
 
