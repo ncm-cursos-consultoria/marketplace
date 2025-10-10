@@ -49,7 +49,6 @@ export function Aside() {
       .filter(Boolean)
       .join(" ");
 
-  // redireciona para raiz após logout (ajuste se quiser outra rota)
   const handleLogout = async () => {
     await logout("/"); 
   };
@@ -91,13 +90,13 @@ export function Aside() {
               height={40}
               className="rounded-full"
             />
-            <div className="flex flex-col leading-tight">
+            <Link href={`/br/candidato/oportunidades/perfil/${userCandidate?.id}`} className="flex flex-col leading-tight">
               <div className="flex items-center gap-1">
                 <p className="font-semibold">{userCandidate?.firstName}</p>
                 <p>{userCandidate?.lastName}</p>
               </div>
               <p className="text-[10px]">{userCandidate?.email}</p>
-            </div>
+            </Link>
           </div>
 
           <button

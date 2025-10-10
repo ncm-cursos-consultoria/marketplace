@@ -21,14 +21,17 @@ export default function Home() {
     queryFn: () => getAllJobs(),
   });
   
+  console.log(userCandidate);
+  
 
   return (
     <div className="flex min-h-screen">
       <main className="flex-1 bg-gray-100 p-8 space-y-16">
         <section>
-          <h1 className="text-3xl font-bold mb-4">
+          <h1 className="text-2xl font-bold">Olá {userCandidate?.firstName} {userCandidate?.lastName}</h1>
+          <h2 className="text-3xl font-bold mb-4">
             Bem-vindo ao Marketplace das Oportunidades
-          </h1>
+          </h2>
           <p className="text-gray-700 text-lg">
             Encontre cursos, vagas e informações para transformar sua vida
             profissional.

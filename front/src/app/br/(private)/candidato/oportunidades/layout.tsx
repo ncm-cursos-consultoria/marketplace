@@ -5,7 +5,7 @@ export default function LayoutOportunidades({ children }: { children: React.Reac
   return (
     <div className="min-h-screen">
       <Aside />
-      <main className="ml-[300px] w-[calc(100%-350px)] min-h-screen">
+      <main className="ml-[300px] min-h-screen bg-neutral-200">
         {children}
       </main>
     </div>
