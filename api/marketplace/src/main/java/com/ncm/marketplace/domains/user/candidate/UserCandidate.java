@@ -15,6 +15,7 @@ import com.ncm.marketplace.domains.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.validator.constraints.URL;
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.util.HashSet;
@@ -33,13 +34,19 @@ public class UserCandidate extends User {
     @CPF
     @Column(unique = true, nullable = false)
     private String cpf;
+    @URL(protocol = "https")
+    private String linkedInUrl;
+    @URL(protocol = "https")
+    private String githubUrl;
+    @URL(protocol = "https")
+    private String mySiteUrl;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "curriculumVitaeId", referencedColumnName = "id")
     @JsonManagedReference("user_candidate-file")
     private File curriculumVitae;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId", referencedColumnName = "id")
     @JsonManagedReference("user_candidate-address")
     private Address address;
@@ -54,17 +61,17 @@ public class UserCandidate extends User {
     private PartnerUserCandidate partner;
 
     @Builder.Default
-    @OneToMany(mappedBy = "userCandidate")
+    @OneToMany(mappedBy = "userCandidate", cascade = CascadeType.ALL)
     @JsonBackReference("user_candidate_module-user_candidate")
     private Set<UserCandidateModule> userCandidateModules = new HashSet<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "userCandidate")
+    @OneToMany(mappedBy = "userCandidate", cascade = CascadeType.ALL)
     @JsonBackReference("user_candidate_course-user_candidate")
     private Set<UserCandidateCourse> userCandidateCourses = new HashSet<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "userCandidate")
+    @OneToMany(mappedBy = "userCandidate", cascade = CascadeType.ALL)
     @JsonBackReference("user_candidate_job_opening-user_candidate")
     private Set<UserCandidateJobOpening> userCandidateJobOpenings = new HashSet<>();
 

@@ -18,6 +18,5 @@ public class CreateCourseRequest {
     private String description;
     @NotEmpty
     private String moduleId;
-    @NotEmpty
     private String videoUrl;
 }

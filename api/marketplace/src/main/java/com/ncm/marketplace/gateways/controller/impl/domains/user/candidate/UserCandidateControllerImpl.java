@@ -1,6 +1,5 @@
 package com.ncm.marketplace.gateways.controller.impl.domains.user.candidate;
 
-import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.gateways.controller.interfaces.domains.user.candidate.UserCandidateController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
@@ -15,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -54,10 +52,10 @@ public class UserCandidateControllerImpl implements UserCandidateController {
 
     @PatchMapping("/{id}/address")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Função off")
+    @Operation(summary = "Add or update an address to an user candidate")
     @Override
-    public ResponseEntity<UserCandidateResponse> addAddress(@PathVariable String id, @Valid @RequestBody CreateAddressRequest request) {
-        return null;
+    public ResponseEntity<UserCandidateResponse> addOrUpdateAddress(@PathVariable String id, @Valid @RequestBody CreateAddressRequest request) {
+        return ResponseEntity.ok(crudUserCandidate.addOrUpdateAddress(id,request));
     }
 
     @PatchMapping("/{id}/disc")

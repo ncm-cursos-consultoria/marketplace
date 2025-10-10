@@ -27,4 +27,7 @@ public class UserCandidateResponse {
     private String profilePictureUrl;
     private String curriculumVitaeUrl;
     private UserTypeEnum type;
+    private String linkedInUrl;
+    private String githubUrl;
+    private String mySiteUrl;
 }

@@ -43,7 +43,7 @@ public class Module {
     private Enterprise enterprise;
 
     @Builder.Default
-    @OneToMany(mappedBy = "module")
+    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL)
     @JsonBackReference("user_candidate_module-module")
     private Set<UserCandidateModule> userCandidateModules = new HashSet<>();
 }
