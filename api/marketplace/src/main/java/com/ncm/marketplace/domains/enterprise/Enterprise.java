@@ -2,11 +2,14 @@ package com.ncm.marketplace.domains.enterprise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ncm.marketplace.domains.enums.PlansEnum;
 import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.domains.others.File;
 import com.ncm.marketplace.domains.catalog.Module;
 import com.ncm.marketplace.domains.others.Partner;
 import com.ncm.marketplace.domains.relationships.partner.PartnerEnterprise;
+import com.ncm.marketplace.domains.relationships.plan.enterprise.PlanEnterprise;
+import com.ncm.marketplace.domains.thirdParty.mercadoPago.MercadoPagoCustomer;
 import com.ncm.marketplace.domains.user.UserEnterprise;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,6 +42,8 @@ public class Enterprise {
     @CNPJ
     @Column(unique = true, nullable = false)
     private String cnpj;
+    @Builder.Default
+    private String plan = PlansEnum.BASIC.getName();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profilePictureId", referencedColumnName = "id")
@@ -71,4 +76,12 @@ public class Enterprise {
     @OneToOne(mappedBy = "enterprise", cascade = CascadeType.ALL)
     @JsonBackReference("partner_enterprise-enterprise")
     private PartnerEnterprise partnerEnterprise;
+
+    @OneToOne(mappedBy = "enterprise", cascade = CascadeType.ALL)
+    @JsonBackReference("plan_enterprise-enterprise")
+    private PlanEnterprise planEnterprise;
+
+    @OneToOne(mappedBy = "enterprise", cascade = CascadeType.ALL)
+    @JsonBackReference("mp_customer-enterprise")
+    private MercadoPagoCustomer mercadoPagoCustomer;
 }

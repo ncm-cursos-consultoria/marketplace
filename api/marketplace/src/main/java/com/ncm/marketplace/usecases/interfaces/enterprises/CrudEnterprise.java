@@ -13,6 +13,7 @@ public interface CrudEnterprise {
     void deleteById(String id);
     EnterpriseResponse update(String id, UpdateEnterpriseRequest request);
     EnterpriseResponse findById(String id);
+    EnterpriseResponse findByCnpj(String cnpj);
     List<EnterpriseResponse> findAll();
-    void init();
+    String init();
 }

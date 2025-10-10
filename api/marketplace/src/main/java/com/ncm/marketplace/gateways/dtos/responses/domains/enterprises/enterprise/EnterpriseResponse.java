@@ -20,6 +20,7 @@ public class EnterpriseResponse {
     private String legalName;
     private String tradeName;
     private String cnpj;
+    private String plan;
     private String profilePictureUrl;
     private String addressId;
 }
