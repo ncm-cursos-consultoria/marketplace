@@ -75,3 +75,7 @@ client:
     url: https://api.mercadopago.com
     access-token: ${ACCESS_TOKEN}
     public-key: ${PUBLIC_KEY}
+    plan:
+      reference: ENTERPRISE_STANDART
+      reason: Plano Empresarial Mensal
+      amount: 499

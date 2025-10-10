@@ -126,7 +126,7 @@ public class CrudCourseImpl implements CrudCourse {
 //                    .courseId(id)
 //                    .build());
 //
-//            return findById(id);
+//            return findByIdOrThrow(id);
 //
 //        } catch (IOException e) {
 //            log.error("Falha no upload do arquivo", e);

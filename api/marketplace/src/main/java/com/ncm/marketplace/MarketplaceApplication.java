@@ -23,6 +23,8 @@ public class MarketplaceApplication {
 	}
 	// TODO
 	//  domains ✅
+	//  bugfix
+	//    plans not creating
 	//  repositories ✅
 	//  dtos ✅
 	//    requests ✅

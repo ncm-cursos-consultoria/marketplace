@@ -2,7 +2,7 @@ package com.ncm.marketplace.domains.others;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ncm.marketplace.domains.enterprise.Enterprise;
-import com.ncm.marketplace.domains.thirdParty.mercadoPago.MPCustomer;
+import com.ncm.marketplace.domains.thirdParty.mercadoPago.MercadoPagoCustomer;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import jakarta.persistence.*;
 import lombok.*;
@@ -46,5 +46,5 @@ public class Address {
 
     @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
     @JsonBackReference("mp_customer-enterprise")
-    private MPCustomer mpCustomer;
+    private MercadoPagoCustomer mercadoPagoCustomer;
 }

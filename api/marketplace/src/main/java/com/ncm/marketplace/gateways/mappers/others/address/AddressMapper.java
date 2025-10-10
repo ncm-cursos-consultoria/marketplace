@@ -3,7 +3,7 @@ package com.ncm.marketplace.gateways.mappers.others.address;
 import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.others.address.AddressResponse;
-import com.ncm.marketplace.gateways.dtos.responses.domains.thirdParty.mercadoPago.customer.MPCustomerAPIResponse;
+import com.ncm.marketplace.gateways.dtos.responses.domains.thirdParty.mercadoPago.customer.MercadoPagoCustomerApiResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class AddressMapper {
                 .build();
     }
 
-    public static Address toEntityCreate(MPCustomerAPIResponse.AddressDetailResponse response) {
+    public static Address toEntityCreate(MercadoPagoCustomerApiResponse.AddressDetailResponse response) {
         return Address.builder()
                 .country(response.getCountry().getName())
                 .state(response.getState().getName())

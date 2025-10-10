@@ -3,24 +3,25 @@ package com.ncm.marketplace.usecases.impl.enterprises;
 import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enums.PartnerStatusEnum;
 import com.ncm.marketplace.domains.others.Partner;
+import com.ncm.marketplace.domains.others.Plan;
 import com.ncm.marketplace.domains.relationships.partner.PartnerEnterprise;
-import com.ncm.marketplace.domains.relationships.partner.PartnerUserCandidate;
 import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseAndUserEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.UpdateEnterpriseRequest;
-import com.ncm.marketplace.gateways.dtos.requests.domains.thirdParty.mercadoPago.customer.CreateMPCustomerRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.thirdParty.mercadoPago.CreateMercadoPagoCustomerRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.enterprise.EnterpriseResponse;
-import com.ncm.marketplace.gateways.mappers.thirdParty.mercadoPago.MPCustomerMapper;
+import com.ncm.marketplace.gateways.mappers.thirdParty.mercadoPago.MercadoPagoMapper;
 import com.ncm.marketplace.gateways.mappers.user.enterprise.UserEnterpriseMapper;
+import com.ncm.marketplace.usecases.impl.relationships.plan.enterprise.PlanEnterpriseServiceImpl;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
-import com.ncm.marketplace.usecases.interfaces.thirdParty.mercadoPago.MPService;
+import com.ncm.marketplace.usecases.interfaces.thirdParty.mercadoPago.MercadoPagoService;
 import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.relationship.partner.PartnerEnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.user.UserEnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
-import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
+import com.ncm.marketplace.usecases.services.query.others.PlanQueryService;
 import com.ncm.marketplace.usecases.services.security.RandomPasswordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,26 +45,36 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     private final BCryptPasswordEncoder passwordEncoder;
     private final PartnerQueryService partnerQueryService;
     private final PartnerEnterpriseCommandService partnerEnterpriseCommandService;
-    private final MPService mpService;
+    private final MercadoPagoService mercadoPagoService;
+    private final PlanEnterpriseServiceImpl planEnterpriseServiceImpl;
+    private final PlanQueryService planQueryService;
 
     @Transactional
     @Override
     public EnterpriseResponse save(CreateEnterpriseRequest request) {
-        return toResponse(enterpriseCommandService.save(toEntityCreate(request)));
+        Enterprise enterprise = enterpriseCommandService.save(toEntityCreate(request));
+        Plan plan = planQueryService.findByNameOrThrow("Basic");
+        planEnterpriseServiceImpl.save(enterprise.getId(),plan.getId());
+        return toResponse(enterprise);
     }
 
     @Transactional
     @Override
     public EnterpriseResponse saveWithUser(CreateEnterpriseAndUserEnterpriseRequest request) {
         Enterprise enterprise = enterpriseCommandService.save(toEntityCreate(request));
-
+        // plan
+        Plan plan = planQueryService.findByNameOrThrow("Basic");
+        planEnterpriseServiceImpl.save(enterprise.getId(),plan.getId());
+        //user
         UserEnterprise user = UserEnterpriseMapper.toEntityCreate(request);
         user.setEnterprise(enterprise);
         String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
         user.setPassword(encryptedRandomPassword);
         userEnterpriseCommandService.save(user);
-        CreateMPCustomerRequest customerRequest = MPCustomerMapper.toEntityCreate(request);
-        mpService.saveCustomer(enterprise.getId(),customerRequest);
+        // mercado pago costumer
+        CreateMercadoPagoCustomerRequest customerRequest = MercadoPagoMapper.toEntityCreate(request);
+        mercadoPagoService.saveCustomer(enterprise.getId(),customerRequest);
+        // partner
         if (request.getPartnerToken() != null && !request.getPartnerToken().isEmpty()) {
             Partner partner = partnerQueryService.findByTokenOrThrow(request.getPartnerToken());
             partnerEnterpriseCommandService.save(PartnerEnterprise.builder()
@@ -117,22 +128,30 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     }
 
     @Override
+    public EnterpriseResponse findByCnpj(String cnpj) {
+        return toResponse(enterpriseQueryService.findByCnpjOrThrow(cnpj));
+    }
+
+    @Override
     public List<EnterpriseResponse> findAll() {
         return toResponse(enterpriseQueryService.findAll());
     }
 
     @Transactional
     @Override
-    public void init() {
+    public String init() {
         if (!enterpriseQueryService.existsByCnpj("58.902.096/0001-63")) {
-            save(CreateEnterpriseRequest.builder()
+            EnterpriseResponse enterprise = save(CreateEnterpriseRequest.builder()
                     .legalName("Enterprise Test LTDA")
                     .tradeName("Enterprise Test")
                     .cnpj("58.902.096/0001-63")
                     .build());
             log.info("Enterprise created ✅");
+            return enterprise.getId();
         } else {
             log.info("Enterprise already exists ℹ️");
+            EnterpriseResponse enterprise = findByCnpj("58.902.096/0001-63");
+            return enterprise.getId();
         }
     }
 }

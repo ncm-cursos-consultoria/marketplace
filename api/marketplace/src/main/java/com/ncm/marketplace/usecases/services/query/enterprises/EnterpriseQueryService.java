@@ -37,4 +37,10 @@ public class EnterpriseQueryService {
     public Integer countTotalByPartnerId(String id) {
         return enterpriseRepository.countByPartnerEnterprise_Partner_Id(id);
     }
+
+    public Enterprise findByCnpjOrThrow(String cnpj) {
+        return enterpriseRepository.findByCnpj(cnpj)
+                .orElseThrow(() -> new NotFoundException("Enterprise not found"));
+
+    }
 }
