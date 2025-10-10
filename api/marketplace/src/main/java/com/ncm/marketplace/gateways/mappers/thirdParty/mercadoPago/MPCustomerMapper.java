@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.mappers.thirdParty.mercadoPago;
 
 import com.ncm.marketplace.domains.thirdParty.mercadoPago.MPCustomer;
+import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseAndUserEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.thirdParty.mercadoPago.customer.CreateMPCustomerRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.thirdParty.mercadoPago.customer.MPCustomerAPIResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.thirdParty.mercadoPago.customer.MpCustomerResponse;
@@ -20,6 +21,18 @@ public class MPCustomerMapper {
                 .email(response.getEmail())
                 .firstName(response.getFirstName())
                 .lastName(response.getLastName())
+                .build();
+    }
+
+    public static CreateMPCustomerRequest toEntityCreate(CreateEnterpriseAndUserEnterpriseRequest request) {
+        String legalName = request.getLegalName().trim();
+        String[] nameParts = legalName.split(" ", 2);
+        String firstName = nameParts[0];
+        String lastName = nameParts.length > 1 ? nameParts[1] : "";
+        return CreateMPCustomerRequest.builder()
+                .email(request.getEmail())
+                .firstName(firstName)
+                .lastName(lastName)
                 .build();
     }
 

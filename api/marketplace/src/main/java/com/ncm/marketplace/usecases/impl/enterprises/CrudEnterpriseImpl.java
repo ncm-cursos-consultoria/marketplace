@@ -9,9 +9,12 @@ import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseAndUserEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.UpdateEnterpriseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.thirdParty.mercadoPago.customer.CreateMPCustomerRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.enterprise.EnterpriseResponse;
+import com.ncm.marketplace.gateways.mappers.thirdParty.mercadoPago.MPCustomerMapper;
 import com.ncm.marketplace.gateways.mappers.user.enterprise.UserEnterpriseMapper;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
+import com.ncm.marketplace.usecases.interfaces.thirdParty.mercadoPago.MPService;
 import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.relationship.partner.PartnerEnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.user.UserEnterpriseCommandService;
@@ -41,6 +44,7 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     private final BCryptPasswordEncoder passwordEncoder;
     private final PartnerQueryService partnerQueryService;
     private final PartnerEnterpriseCommandService partnerEnterpriseCommandService;
+    private final MPService mpService;
 
     @Transactional
     @Override
@@ -58,6 +62,8 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
         user.setPassword(encryptedRandomPassword);
         userEnterpriseCommandService.save(user);
+        CreateMPCustomerRequest customerRequest = MPCustomerMapper.toEntityCreate(request);
+        mpService.saveCustomer(enterprise.getId(),customerRequest);
         if (request.getPartnerToken() != null && !request.getPartnerToken().isEmpty()) {
             Partner partner = partnerQueryService.findByTokenOrThrow(request.getPartnerToken());
             partnerEnterpriseCommandService.save(PartnerEnterprise.builder()

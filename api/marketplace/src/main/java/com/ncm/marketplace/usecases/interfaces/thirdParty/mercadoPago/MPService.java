@@ -5,4 +5,6 @@ import com.ncm.marketplace.gateways.dtos.responses.domains.thirdParty.mercadoPag
 
 public interface MPService {
     MpCustomerResponse saveCustomer(String id, CreateMPCustomerRequest request);
+    MpCustomerResponse savePlan(String id, CreateMPCustomerRequest request);
+    MpCustomerResponse saveSignature(String id, CreateMPCustomerRequest request);
 }

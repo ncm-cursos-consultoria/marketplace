@@ -52,5 +52,15 @@ public class MPServiceImpl implements MPService {
         return toResponse(mpCustomerCommandService.save(customer));
     }
 
+    @Override
+    public MpCustomerResponse savePlan(String id, CreateMPCustomerRequest request) {
+        return null;
+    }
+
+    @Override
+    public MpCustomerResponse saveSignature(String id, CreateMPCustomerRequest request) {
+        return null;
+    }
+
 
 }
