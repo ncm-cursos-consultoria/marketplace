@@ -27,6 +27,7 @@ public class UserCandidateResponse {
     private Boolean isBlocked;
     private String profilePictureUrl;
     private String curriculumVitaeUrl;
+    private String addressId;
     private UserTypeEnum type;
     private String linkedInUrl;
     private String githubUrl;

@@ -48,6 +48,9 @@ public class EnterpriseMapper {
                         ? enterprise.getProfilePicture().getPath()
                         : null)
                 .plan(enterprise.getPlan())
+                .addressId(enterprise.getAddress() != null
+                        ? enterprise.getAddress().getId()
+                        : null)
                 .build();
     }
 

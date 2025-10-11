@@ -52,6 +52,9 @@ public class UserCandidateMapper {
                 .subTitle(userCandidate.getSubTitle())
                 .about(userCandidate.getAbout())
                 .phoneNumber(userCandidate.getPhoneNumber())
+                .addressId(userCandidate.getAddress() != null
+                        ? userCandidate.getAddress().getId()
+                        : null)
                 .build();
     }
 

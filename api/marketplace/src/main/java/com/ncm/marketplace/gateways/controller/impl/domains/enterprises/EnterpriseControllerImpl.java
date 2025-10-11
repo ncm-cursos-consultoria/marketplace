@@ -47,7 +47,7 @@ public class EnterpriseControllerImpl implements EnterpriseController {
     @Operation(summary = "Função off")
     @Override
     public ResponseEntity<EnterpriseResponse> addAddress(@PathVariable String id, @Valid @RequestBody CreateAddressRequest request) {
-        return null;
+        return ResponseEntity.ok(crudEnterprise.addOrUpdateAddress(id,request));
     }
 
     @DeleteMapping("/{id}")

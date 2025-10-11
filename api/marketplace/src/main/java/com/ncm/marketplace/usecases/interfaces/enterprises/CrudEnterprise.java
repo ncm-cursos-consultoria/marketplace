@@ -3,6 +3,7 @@ package com.ncm.marketplace.usecases.interfaces.enterprises;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseAndUserEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.UpdateEnterpriseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.enterprise.EnterpriseResponse;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,4 +19,5 @@ public interface CrudEnterprise {
     List<EnterpriseResponse> findAll();
     String init();
     EnterpriseResponse upload(String id, MultipartFile file);
+    EnterpriseResponse addOrUpdateAddress(String id, CreateAddressRequest request);
 }
