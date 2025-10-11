@@ -22,6 +22,9 @@ public class UserCandidateMapper {
                 .linkedInUrl(request.getLinkedInUrl())
                 .githubUrl(request.getGithubUrl())
                 .mySiteUrl(request.getMySiteUrl())
+                .subTitle(request.getSubTitle())
+                .about(request.getAbout())
+                .phoneNumber(request.getPhoneNumber())
                 .build();
     }
 
@@ -45,6 +48,9 @@ public class UserCandidateMapper {
                 .linkedInUrl(userCandidate.getLinkedInUrl())
                 .githubUrl(userCandidate.getGithubUrl())
                 .mySiteUrl(userCandidate.getMySiteUrl())
+                .subTitle(userCandidate.getSubTitle())
+                .about(userCandidate.getAbout())
+                .phoneNumber(userCandidate.getPhoneNumber())
                 .build();
     }
 

@@ -37,4 +37,7 @@ public class CreateUserCandidateRequest {
     @URL(protocol = "https")
     private String mySiteUrl;
     private String partnerToken;
+    private String subTitle;
+    private String about;
+    private String phoneNumber;
 }

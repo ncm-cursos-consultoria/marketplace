@@ -30,4 +30,7 @@ public class UserCandidateResponse {
     private String linkedInUrl;
     private String githubUrl;
     private String mySiteUrl;
+    private String subTitle;
+    private String about;
+    private String phoneNumber;
 }
