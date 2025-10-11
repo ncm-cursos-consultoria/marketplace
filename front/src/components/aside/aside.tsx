@@ -18,7 +18,7 @@ const NAV: NavItem[] = [
   { label: "Início", slug: "home", requiresId: true },
   { label: "Cursos", slug: "courses", requiresId: true },
   { label: "Vagas", slug: "jobs", requiresId: true },
-  {label: "Teste Comportamental", slug: "teste-comportamental", requiresId: true}
+  {label: "Teste Comportamental do Candidato", slug: "teste-comportamental", requiresId: true}
 ];
 
 export function Aside() {
