@@ -58,6 +58,7 @@ public class PlanServiceImpl implements PlanService {
         return toResponse(planQueryService.findAll());
     }
 
+    @Transactional
     @Override
     public void init() {
         Set<String> planNames = Arrays.stream(PlansEnum.values())

@@ -45,7 +45,7 @@ public class UserEnterpriseMapper {
                 .birthday(userEnterprise.getBirthday())
                 .isBlocked(userEnterprise.getIsBlocked())
                 .profilePictureUrl(userEnterprise.getProfilePicture() != null
-                        ? userEnterprise.getProfilePicture().getId()
+                        ? userEnterprise.getProfilePicture().getPath()
                         : null)
                 .enterpriseId(userEnterprise.getEnterprise() != null
                         ? userEnterprise.getEnterprise().getId()
