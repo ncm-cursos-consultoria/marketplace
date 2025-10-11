@@ -302,7 +302,7 @@ export default function JobUniquePage() {
               </dl>
             </div>
             <Link
-              href={`/candidato/oportunidades/jobs/${userCandidate?.id}`}
+              href={`/br/candidato/oportunidades/jobs/${userCandidate?.id}`}
               className="block rounded-xl border bg-white px-4 py-2 text-center text-sm hover:bg-neutral-50"
             >
               Ver outras vagas

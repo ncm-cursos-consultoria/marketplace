@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Camera, Loader2 } from "lucide-react";
 import test from "@/assets/avatar.png"
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB em bytes
+const MAX_FILE_SIZE = 10 * 1024 * 1024; 
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
 export function ProfileImg() {
@@ -17,15 +17,11 @@ export function ProfileImg() {
   const qc = useQueryClient();
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
-
-  console.log("ProfileImg - userCandidate:", userCandidate);
-  console.log("ProfileImg - userId:", userCandidate?.id);
+  
 
 const { mutate, isPending } = useMutation({
   mutationKey: ["authUser"],
   mutationFn: (file: File) => {
-    console.log("mutationFn - chamada com file:", file);
-    console.log("mutationFn - userId:", userCandidate?.id);
     
     if (!userCandidate?.id) {
       throw new Error("ID do usuário não encontrado");
@@ -33,20 +29,17 @@ const { mutate, isPending } = useMutation({
     
     return patchProfilePicture(file, userCandidate.id);
   },
-  onSuccess: (data) => {
-    console.log("onSuccess - resposta:", data);
-    console.log("onSuccess - resposta completa (verificar se tem URL):", JSON.stringify(data, null, 2));
+  onSuccess: () => {
+
     
     toast.success("Foto de perfil enviada com sucesso");
     
     qc.invalidateQueries({ queryKey: ["authUser"] });
     qc.invalidateQueries({ queryKey: ["userCandidate"] });
     
-    // Força refetch
     qc.refetchQueries({ queryKey: ["authUser"] });
     qc.refetchQueries({ queryKey: ["userCandidate"] });
-    
-    console.log("onSuccess - queries invalidadas");
+
     
     setPreview(null);
   },
@@ -56,37 +49,26 @@ const { mutate, isPending } = useMutation({
   },
 });
 
-  function openPicker() {
-    console.log("openPicker - clicado");
-    inputRef.current?.click();
-  }
 
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    console.log("onFileChange - evento:", e);
     const file = e.target.files?.[0];
-    console.log("onFileChange - arquivo selecionado:", file);
-    
+  
     if (!file) {
       console.log("onFileChange - nenhum arquivo selecionado");
       return;
     }
 
-    // Validação de tipo
     if (!ALLOWED_TYPES.includes(file.type)) {
-      console.error("onFileChange - tipo de arquivo inválido:", file.type);
       toast.error("Apenas arquivos JPG e PNG são permitidos");
-      // Limpa o input
       if (inputRef.current) {
         inputRef.current.value = '';
       }
       return;
     }
 
-    // Validação de tamanho
+
     if (file.size > MAX_FILE_SIZE) {
-      console.error("onFileChange - arquivo muito grande:", file.size);
       toast.error("O arquivo deve ter no máximo 10MB");
-      // Limpa o input
       if (inputRef.current) {
         inputRef.current.value = '';
       }
@@ -94,7 +76,6 @@ const { mutate, isPending } = useMutation({
     }
 
     if (!userCandidate?.id) {
-      console.error("onFileChange - userCandidate.id não existe!");
       toast.error("Erro: ID do usuário não encontrado");
       return;
     }
@@ -102,7 +83,6 @@ const { mutate, isPending } = useMutation({
     const url = URL.createObjectURL(file);
     setPreview(url);
     
-    console.log("onFileChange - validações OK, iniciando mutação...");
     mutate(file);
   }
 
@@ -110,7 +90,6 @@ const { mutate, isPending } = useMutation({
     <div>
       <button
         type="button"
-        onClick={openPicker}
         aria-label="Alterar foto de perfil"
         disabled={isPending}
         className="
@@ -119,7 +98,7 @@ const { mutate, isPending } = useMutation({
         "
       >
         <Image
-          src={preview || test}
+          src={test}
           alt="Levi avatar"
           width={96}
           height={96}

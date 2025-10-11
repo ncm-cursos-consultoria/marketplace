@@ -20,9 +20,19 @@ import Image from "next/image";
 import { FirstCol } from "./(complementary)/first-col";
 import { SecondCol } from "./(complementary)/second-col";
 import { ProfileThings } from "./(complementary)/profil-things";
+import { useQuery } from "@tanstack/react-query";
+import { getUniqueUser } from "@/service/user/get-unique-user";
 
 export default function UserProfilePage() {
   const { userCandidate } = UseUserCandidate();
+
+  const {data: user, isLoading} = useQuery({
+    queryKey: ['authUser'],
+    queryFn: () => getUniqueUser(userCandidate?.id),
+  })
+
+  console.log("teste",user);
+  
 
   return (
     <main className="min-h-screen bg-neutral-200 text-neutral-900 w-full">
@@ -30,7 +40,7 @@ export default function UserProfilePage() {
         <section className="flex flex-col">
           <header className="px-6 lg:px-10 pt-6 border-b">
             <h1 className="text-2xl font-semibold">
-              Olá {userCandidate?.firstName} {userCandidate?.lastName}
+              Olá {user?.firstName} {user?.lastName}
             </h1>
             <p className="text-neutral-600">Bem-vindo ao seu Perfil Pessoal</p>
           </header>

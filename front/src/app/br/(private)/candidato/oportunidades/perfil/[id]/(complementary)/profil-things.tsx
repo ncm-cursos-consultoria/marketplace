@@ -3,6 +3,9 @@ import Image from "next/image";
 import { ProfileImg } from "./profile-img";
 
 export function ProfileThings() {
+
+
+
   return (
     <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
       <div className="h-36 sm:h-48 bg-gradient-to-r from-blue-600 to-blue-400"></div>
@@ -14,9 +17,6 @@ export function ProfileThings() {
               <h2 className="text-xl sm:text-2xl font-semibold">
                 Levi Yuki Utima
               </h2>
-              <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">
-                <BadgeCheck className="h-3.5 w-3.5" /> Verificado
-              </span>
             </div>
             <p className="text-neutral-600 text-sm">
               Desenvolvedor Full‑Stack • NestJS • React (Next.js) • TypeScript
@@ -24,12 +24,6 @@ export function ProfileThings() {
             <div className="mt-2 flex flex-wrap items-center gap-3 text-neutral-600 text-sm">
               <span className="inline-flex items-center gap-1">
                 <MapPin className="h-4 w-4" /> São Paulo, BR
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <Shield className="h-4 w-4" /> Profissional de Saúde verificado
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <CalendarDays className="h-4 w-4" /> Membro desde 2024
               </span>
             </div>
           </div>

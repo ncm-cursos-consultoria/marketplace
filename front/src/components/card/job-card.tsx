@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { htmlToText } from "@/utils/htmlformat";
-import { MapPin, Briefcase, Clock, Eye } from "lucide-react";
+import { MapPin, Briefcase, Clock } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -61,9 +61,9 @@ function JobCardItem({
   onApply?: (job: ApiJob) => void;
 }) {
   const money = formatMoney(job.salary, job.currency);
+  const salaryLabel = money ?? "a combinar";
   const workLabel = workModelLabel(job.workModel);
   const statusBadge = statusBadgeView(job.status);
-
   const updatedAt = safeFormatDate(job.updatedAt);
 
   const handleApply = () => {
@@ -75,7 +75,10 @@ function JobCardItem({
   };
 
   return (
-    <Link href={`/br/candidato/oportunidades/vaga/${job.id}`} className="flex flex-col rounded-xl border bg-white p-5 shadow transition hover:shadow-md">
+    <Link
+      href={`/br/candidato/oportunidades/vaga/${job.id}`}
+      className="flex flex-col rounded-xl border bg-white p-5 shadow transition hover:shadow-md"
+    >
       <div className="mb-3 flex items-center justify-between gap-2">
         <h2 className="line-clamp-1 text-xl font-semibold">{job.title}</h2>
         {statusBadge}
@@ -97,16 +100,24 @@ function JobCardItem({
       </div>
 
       <p className="mb-4 line-clamp-3 text-sm text-muted-foreground">
-       {htmlToText(job.description)}            
+        {htmlToText(job.description ?? "")}
       </p>
 
       <div className="mt-auto flex items-center justify-between">
         <div className="text-sm">
           <span className="text-muted-foreground">Salário</span>{" "}
-          <span className="font-semibold">{money}</span>
+          <span className="font-semibold">{salaryLabel}</span>
         </div>
 
-        <Button onClick={handleApply} className="cursor-pointer">
+        <Button
+          onClick={(e) => {
+            // Evita navegar para a página da vaga ao clicar em "Candidatar-se"
+            e.preventDefault();
+            e.stopPropagation();
+            handleApply();
+          }}
+          className="cursor-pointer"
+        >
           Candidatar-se
         </Button>
       </div>
@@ -114,8 +125,18 @@ function JobCardItem({
   );
 }
 
-function formatMoney(amount?: number, currency?: ApiCurrency) {
-  if (typeof amount !== "number" || !currency?.code) return "—";
+function formatMoney(
+  amount?: number,
+  currency?: ApiCurrency
+): string | undefined {
+  // Sem salário (null/undefined/NaN) ou sem moeda -> sem valor
+  if (amount == null || Number.isNaN(Number(amount)) || !currency?.code) {
+    return undefined;
+  }
+
+  // Se quiser tratar 0 ou negativo como "sem salário", descomente:
+  // if (amount <= 0) return undefined;
+
   try {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -124,7 +145,10 @@ function formatMoney(amount?: number, currency?: ApiCurrency) {
       minimumFractionDigits: 2,
     }).format(amount);
   } catch {
-    return `${currency?.symbol ?? ""} ${amount.toFixed(2)}`;
+    // Fallback simples; se não tiver símbolo, considera "sem salário"
+    return currency?.symbol
+      ? `${currency.symbol} ${Number(amount).toFixed(2)}`
+      : undefined;
   }
 }
 
