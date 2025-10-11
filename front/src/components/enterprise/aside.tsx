@@ -74,7 +74,7 @@ export function AsideEnterprise() {
           href={`/br/enterprise/module/${userEnterprise?.id}`}
           icon={<NotebookPenIcon className="h-4 w-4" />}
         >
-          Meus Módulos
+          Portfólio de cursos
         </NavItem>
       </nav>
 
