@@ -2,7 +2,7 @@ package com.ncm.marketplace.usecases.services.query.others;
 
 import com.ncm.marketplace.domains.others.File;
 import com.ncm.marketplace.exceptions.NotFoundException;
-import com.ncm.marketplace.gateways.repositories.domains.file.FileRepository;
+import com.ncm.marketplace.gateways.repositories.domains.others.file.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

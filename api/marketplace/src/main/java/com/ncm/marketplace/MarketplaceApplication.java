@@ -3,8 +3,10 @@ package com.ncm.marketplace;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
+@EnableFeignClients
 public class MarketplaceApplication {
 
 	public static void main(String[] args) {
@@ -21,6 +23,8 @@ public class MarketplaceApplication {
 	}
 	// TODO
 	//  domains ✅
+	//  bugfix
+	//    plans not creating
 	//  repositories ✅
 	//  dtos ✅
 	//    requests ✅

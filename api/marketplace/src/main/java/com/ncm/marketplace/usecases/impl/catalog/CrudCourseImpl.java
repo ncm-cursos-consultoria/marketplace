@@ -120,13 +120,13 @@ public class CrudCourseImpl implements CrudCourse {
 //        try {
 //            String videoUrl = fileStorageService.uploadFile(file);
 //            crudVideo.deactivateOldVideos(id);
-//            crudVideo.save(CreateVideoRequest.builder()
+//            crudVideo.saveCustomer(CreateVideoRequest.builder()
 //                    .title(file.getOriginalFilename())
 //                    .url(videoUrl)
 //                    .courseId(id)
 //                    .build());
 //
-//            return findById(id);
+//            return findByIdOrThrow(id);
 //
 //        } catch (IOException e) {
 //            log.error("Falha no upload do arquivo", e);

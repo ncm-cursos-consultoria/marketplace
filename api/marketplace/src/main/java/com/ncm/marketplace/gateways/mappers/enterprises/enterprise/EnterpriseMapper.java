@@ -47,6 +47,7 @@ public class EnterpriseMapper {
                 .profilePictureUrl(enterprise.getProfilePicture() != null
                         ? enterprise.getProfilePicture().getId()
                         : null)
+                .plan(enterprise.getPlan())
                 .build();
     }
 
