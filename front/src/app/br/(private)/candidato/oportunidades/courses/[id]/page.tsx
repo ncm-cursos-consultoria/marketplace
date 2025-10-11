@@ -22,7 +22,7 @@ export default function CoursesPage() {
         </p>
         <section>
           <h2 className="text-2xl font-semibold mb-6">
-            Modeulo de Cursos Marketplace das Oportunidades
+           Cursos Marketplace das Oportunidades
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
