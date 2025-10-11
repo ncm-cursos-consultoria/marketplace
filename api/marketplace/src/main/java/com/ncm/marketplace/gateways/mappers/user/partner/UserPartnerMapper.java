@@ -45,7 +45,7 @@ public class UserPartnerMapper {
                 .birthday(userPartner.getBirthday())
                 .isBlocked(userPartner.getIsBlocked())
                 .profilePictureUrl(userPartner.getProfilePicture() != null
-                        ? userPartner.getProfilePicture().getId()
+                        ? userPartner.getProfilePicture().getPath()
                         : null)
                 .partnerId(userPartner.getPartner() != null
                         ? userPartner.getPartner().getId()

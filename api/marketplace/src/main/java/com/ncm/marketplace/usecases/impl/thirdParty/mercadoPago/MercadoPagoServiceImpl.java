@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -35,6 +36,7 @@ import static com.ncm.marketplace.gateways.mappers.thirdParty.mercadoPago.Mercad
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MercadoPagoServiceImpl implements MercadoPagoService {
     private final MercadoPagoClient mercadoPagoClient;
     private final AddressCommandService addressCommandService;
@@ -47,6 +49,7 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
     @Value("${client.mercado-pago.access-token}")
     private String accessToken;
 
+    @Transactional
     @Override
     public MercadoPagoCustomerResponse saveCustomer(String id, CreateMercadoPagoCustomerRequest request) {
         MercadoPagoCustomerApiResponse mercadoPagoCustomerAPIResponse;
@@ -87,6 +90,7 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
         return toResponse(mercadoPagoCustomerQueryService.findByIdOrThrow(id));
     }
 
+    @Transactional
     @Override
     public MercadoPagoPlanResponse savePlan(MercadoPagoPlanTypeEnum planType, CreateMercadoPagoPlanRequest request) {
         MercadoPagoPlanApiResponse mercadoPagoPlanApiResponse;
@@ -129,6 +133,7 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
         }
     }
 
+    @Transactional
     @Override
     public void initEnterprisePlan() {
         List<MercadoPagoPlan> plans = mercadoPagoPlanQueryService.findAll();

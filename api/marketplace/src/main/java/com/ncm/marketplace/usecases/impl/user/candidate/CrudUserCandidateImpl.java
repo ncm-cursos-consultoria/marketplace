@@ -6,6 +6,7 @@ import com.ncm.marketplace.domains.enums.PartnerStatusEnum;
 import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.domains.others.Partner;
 import com.ncm.marketplace.domains.relationships.partner.PartnerUserCandidate;
+import com.ncm.marketplace.domains.user.User;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.file.CreateFileRequest;
@@ -88,6 +89,13 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
         user.setEmail(request.getEmail());
         user.setBirthday(request.getBirthday());
         user.setCpf(request.getCpf());
+        user.setLinkedInUrl(request.getLinkedInUrl());
+        user.setGithubUrl(request.getGithubUrl());
+        user.setMySiteUrl(request.getMySiteUrl());
+        user.setSubTitle(request.getSubTitle());
+        user.setAbout(request.getAbout());
+        user.setPhoneNumber(request.getPhoneNumber());
+
 
         return toResponse(userCandidateCommandService.save(user));
     }
@@ -104,20 +112,29 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
 
     @Transactional
     @Override
-    public void init() {
+    public String init() {
         if (!userCandidateQueryService.existsByCpf("538.902.490-78")
                 || !userQueryService.existByEmail("user.candidate@email.com")) {;
-            save(CreateUserCandidateRequest.builder()
+            UserCandidateResponse user = save(CreateUserCandidateRequest.builder()
                     .cpf("538.902.490-78")
                     .firstName("User")
                     .lastName("Candidate")
                     .email("user.candidate@email.com")
                     .password("SafePassword@001")
                     .birthday(LocalDate.now())
+                    .linkedInUrl("linkedin.com/userCandidate")
+                    .githubUrl("github.com/userCandidate")
+                    .mySiteUrl("mysite.com/userCandidate")
+                    .subTitle("Subtitle - Test - Java - React")
+                    .about("About the user")
+                    .phoneNumber("+5511999999999")
                     .build());
             log.info("User candidate created ✅");
+            return user.getId();
         } else {
+            User user = userQueryService.findByEmailOrNull("user.candidate@email.com");
             log.info("User candidate already exists ℹ️");
+            return user.getId();
         }
     }
 

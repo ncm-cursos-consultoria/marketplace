@@ -38,4 +38,12 @@ public class PartnerQueryService {
         return partnerRepository.findByToken(partnerToken)
                 .orElseThrow(() -> new NotFoundException("Partner not found"));
     }
+
+    public Boolean existsByEnterpriseCnpj(String cnpj) {
+        return partnerRepository.existsByEnterprise_Cnpj(cnpj);
+    }
+
+    public Boolean existsByUserEmail(String email) {
+        return partnerRepository.existsByUserPartner_Email(email);
+    }
 }

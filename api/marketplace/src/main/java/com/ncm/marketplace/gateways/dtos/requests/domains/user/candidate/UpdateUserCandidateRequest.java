@@ -32,4 +32,7 @@ public class UpdateUserCandidateRequest {
     private String githubUrl;
     @URL(protocol = "https")
     private String mySiteUrl;
+    private String subTitle;
+    private String about;
+    private String phoneNumber;
 }

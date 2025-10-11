@@ -34,6 +34,9 @@ public class UserCandidate extends User {
     @CPF
     @Column(unique = true, nullable = false)
     private String cpf;
+    private String subTitle;
+    private String about;
+    private String phoneNumber;
     @URL(protocol = "https")
     private String linkedInUrl;
     @URL(protocol = "https")

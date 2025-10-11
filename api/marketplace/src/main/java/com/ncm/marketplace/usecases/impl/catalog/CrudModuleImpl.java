@@ -6,7 +6,6 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.CreateM
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.ModuleSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.UpdateModuleRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.catalog.module.ModuleResponse;
-import com.ncm.marketplace.gateways.mappers.catalog.module.ModuleMapper;
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudModule;
 import com.ncm.marketplace.usecases.services.command.catalog.ModuleCommandService;
 import com.ncm.marketplace.usecases.services.query.catalog.ModuleQueryService;
@@ -71,16 +70,19 @@ public class CrudModuleImpl implements CrudModule {
 
     @Transactional
     @Override
-    public void init(String enterpriseId) {
-        if (!moduleQueryService.existsByEnterpriseId(enterpriseId)) {
-            save(CreateModuleRequest.builder()
+    public String init(String enterpriseId) {
+        List<Module> modules = moduleQueryService.findAllByEnterpriseId(enterpriseId);
+        if (modules.isEmpty()) {
+            ModuleResponse module = save(CreateModuleRequest.builder()
                     .title("Module 001")
                     .description("Module 001 description")
                     .enterpriseId(enterpriseId)
                     .build());
             log.info("Module created ✅");
+            return module.getId();
         } else {
             log.info("Module already exists ℹ️");
+            return modules.get(0).getId();
         }
     }
 

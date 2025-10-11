@@ -2,8 +2,10 @@ package com.ncm.marketplace.usecases.impl.enterprises;
 
 import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enterprise.JobOpening;
+import com.ncm.marketplace.domains.enums.ContractTypeEnum;
 import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.domains.enums.WorkModelEnum;
+import com.ncm.marketplace.domains.enums.WorkPeriodEnum;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +112,8 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
     @Transactional
     @Override
     public void init(String enterpriseId) {
-        if (!jobOpeningQueryService.existsByTitle("Job Opening Test")) {
+        List<JobOpening> jobOpenings = jobOpeningQueryService.findAllByEnterpriseId(enterpriseId);
+        if (jobOpenings.isEmpty()) {
             save(CreateJobOpeningRequest.builder()
                     .title("Job Opening Test")
                     .salary(2500.50)
@@ -119,6 +123,10 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
                     .city("London")
                     .workModel(WorkModelEnum.REMOTE)
                     .enterpriseId(enterpriseId)
+                    .workPeriod(WorkPeriodEnum.FULL_TIME)
+                    .contractType(ContractTypeEnum.CLT)
+                    .workStartTime(LocalTime.of(8,0,0,0))
+                    .workEndTime(LocalTime.of(17,0,0,0))
                     .build());
             log.info("Job opening created ✅");
         } else {

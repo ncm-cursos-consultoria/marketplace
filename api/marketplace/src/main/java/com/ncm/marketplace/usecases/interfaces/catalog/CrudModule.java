@@ -13,6 +13,6 @@ public interface CrudModule {
     ModuleResponse update(String id, UpdateModuleRequest request);
     ModuleResponse findById(String id);
     List<ModuleResponse> findAll(ModuleSpecificationRequest specificationRequest);
-    void init(String enterpriseId);
+    String init(String enterpriseId);
     List<ModuleResponse> findAllByEnterpriseId(String id);
 }
