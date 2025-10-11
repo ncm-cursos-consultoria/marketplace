@@ -1,12 +1,12 @@
 import { api } from "../api";
 
 interface postUserProps {
-  firstName: string;
-  lastName: string;
-  cpf: string;
-  email: string;
+  firstName?: string;
+  lastName?: string;
+  cpf?: string;
+  email?: string;
   password: string;
-  birthDate: string;
+  birthday: string;
 }
 
 export const postUser = async (data: postUserProps) => {
