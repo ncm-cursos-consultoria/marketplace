@@ -24,4 +24,5 @@ public class MeResponse {
     private UserTypeEnum type;
     private String enterpriseId;
     private String partnerId;
+    private Boolean hasCurriculumVitae;
 }

@@ -16,6 +16,6 @@ public interface CrudPartner {
     PartnerResponse update(String id, UpdatePartnerRequest request);
     PartnerResponse findById(String id);
     List<PartnerResponse> findAll();
-    void init(String enterpriseId);
+    void init();
     PartnerDashboardResponse findDashboardInfosByPartnerId(String id);
 }

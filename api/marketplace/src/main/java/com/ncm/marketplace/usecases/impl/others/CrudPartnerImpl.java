@@ -103,16 +103,22 @@ public class CrudPartnerImpl implements CrudPartner {
 
     @Transactional
     @Override
-    public void init(String enterpriseId) {
-        if (!partnerQueryService.existsByEnterpriseId(enterpriseId)) {
-            save(CreatePartnerRequest.builder()
+    public void init() {
+        if (!partnerQueryService.existsByEnterpriseCnpj("15.692.653/0001-56")
+            || !partnerQueryService.existsByUserEmail("user.partner@email.com")) {
+            saveWithEnterpriseAndUserPartner(CreatePartnerAndEnterpriseAndUserPartnerRequest.builder()
                     .isSubsidized(Boolean.TRUE)
                     .subsidizedEndDate(LocalDate.now().plusMonths(6))
-                    .enterpriseId(enterpriseId)
+                    .legalName("Partner LTDA")
+                    .tradeName("Partner")
+                    .cnpj("15.692.653/0001-56")
+                    .email("user.partner@email.com")
+                    .birthday(LocalDate.now())
+                    .password("SafePassword@001")
                     .build());
-            log.info("Partner created ✅");
+            log.info("Partner with enterprise and user created ✅");
         } else {
-            log.info("Partner already exists ℹ️");
+            log.info("Partner with enterprise and user already exists ℹ️");
         }
     }
 
