@@ -17,10 +17,12 @@ public class CookieService {
     @Value("${app.cookie.domain:}")
     private String cookieDomain;
 
+    private final String COOKIE_NAME = "ncm_marketplace_auth_token";
+
     public ResponseCookie createJwtCookie(String token) {
         boolean isProd = "prod".equalsIgnoreCase(appEnv);
 
-        ResponseCookie.ResponseCookieBuilder b = ResponseCookie.from("ncm_marketplace_auth_token", token)
+        ResponseCookie.ResponseCookieBuilder cookieBuilder = ResponseCookie.from(COOKIE_NAME, token)
                 .httpOnly(true)
                 .path("/")
                 .maxAge(Duration.ofDays(1))
@@ -28,16 +30,16 @@ public class CookieService {
                 .sameSite(isProd ? "None" : "Lax");
 
         if (isProd && cookieDomain != null && !cookieDomain.isBlank()) {
-            b.domain(cookieDomain);
+            cookieBuilder.domain(cookieDomain);
         }
 
-        return b.build();
+        return cookieBuilder.build();
     }
 
     public ResponseCookie createLogoutCookie() {
         boolean isProd = "prod".equalsIgnoreCase(appEnv);
 
-        ResponseCookie.ResponseCookieBuilder b = ResponseCookie.from("ncm_marketplace_auth_token")
+        ResponseCookie.ResponseCookieBuilder cookieBuilder = ResponseCookie.from(COOKIE_NAME,"")
                 .httpOnly(true)
                 .path("/")
                 .maxAge(0)
@@ -45,9 +47,9 @@ public class CookieService {
                 .sameSite(isProd ? "None" : "Lax");
 
         if (isProd && cookieDomain != null && !cookieDomain.isBlank()) {
-            b.domain(cookieDomain);
+            cookieBuilder.domain(cookieDomain);
         }
 
-        return b.build();
+        return cookieBuilder.build();
     }
 }

@@ -22,6 +22,7 @@ public class UserCandidateResponse {
     private String firstName;
     private String lastName;
     private String email;
+    private String cpf;
     private LocalDate birthday;
     private Boolean isBlocked;
     private String profilePictureUrl;

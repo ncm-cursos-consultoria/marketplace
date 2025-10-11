@@ -19,6 +19,7 @@ public class MeResponse {
     private String firstName;
     private String lastName;
     private String email;
+    private String cpf;
     private LocalDate birthday;
     private String profilePictureUrl;
     private UserTypeEnum type;

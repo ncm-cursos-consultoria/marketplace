@@ -17,8 +17,8 @@ public class UserCandidateMapper {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
-                .birthday(request.getBirthday())
                 .cpf(request.getCpf())
+                .birthday(request.getBirthday())
                 .linkedInUrl(request.getLinkedInUrl())
                 .githubUrl(request.getGithubUrl())
                 .mySiteUrl(request.getMySiteUrl())
@@ -36,6 +36,7 @@ public class UserCandidateMapper {
                 .firstName(userCandidate.getFirstName())
                 .lastName(userCandidate.getLastName())
                 .email(userCandidate.getEmail())
+                .cpf(userCandidate.getCpf())
                 .birthday(userCandidate.getBirthday())
                 .isBlocked(userCandidate.getIsBlocked())
                 .profilePictureUrl(userCandidate.getProfilePicture() != null

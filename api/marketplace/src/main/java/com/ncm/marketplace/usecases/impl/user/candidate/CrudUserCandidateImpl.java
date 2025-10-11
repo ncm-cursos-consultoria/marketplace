@@ -96,7 +96,6 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
         user.setAbout(request.getAbout());
         user.setPhoneNumber(request.getPhoneNumber());
 
-
         return toResponse(userCandidateCommandService.save(user));
     }
 
