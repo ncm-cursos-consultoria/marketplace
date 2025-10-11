@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface PartnerRepository extends JpaRepository<Partner, String> {
     Boolean existsByEnterprise_Id(String enterpriseId);
     Optional<Partner> findByToken(String partnerToken);
+    Boolean existsByEnterprise_Cnpj(String cnpj);
+    Boolean existsByUserPartner_Email(String email);
 }

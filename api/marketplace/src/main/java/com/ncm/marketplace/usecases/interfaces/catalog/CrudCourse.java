@@ -14,7 +14,7 @@ public interface CrudCourse {
     CourseResponse update(String id, UpdateCourseRequest request);
     CourseResponse findById(String id);
     List<CourseResponse> findAll(CourseSpecificationRequest specificationRequest);
-    String init(String moduleId);
+    void init(String moduleId);
     List<CourseResponse> findAllByModuleId(String id);
     CourseResponse upload(String id, MultipartFile file);
 }

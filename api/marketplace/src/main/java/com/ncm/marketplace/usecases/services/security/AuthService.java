@@ -80,6 +80,7 @@ public class AuthService {
         String partnerId = null;
         LocalDate birthday = null;
         String profilePictureUrl = null;
+        Boolean hasCurriculumVitae = null;
 
         Object details = auth.getDetails();
         if (details instanceof java.util.Map<?,?> map) {
@@ -97,7 +98,13 @@ public class AuthService {
                 ? user.getProfilePicture().getPath()
                 : null;
 
-
+        if (user instanceof UserCandidate userCandidate) {
+            if (userCandidate.getCurriculumVitae() != null) {
+                hasCurriculumVitae = Boolean.TRUE;
+            } else {
+                hasCurriculumVitae = Boolean.FALSE;
+            }
+        }
         if (user instanceof UserEnterprise userEnterprise) {
             enterpriseId = userEnterprise.getEnterprise() != null
                     ? userEnterprise.getEnterprise().getId()
@@ -120,6 +127,7 @@ public class AuthService {
                 .birthday(birthday)
                 .enterpriseId(enterpriseId)
                 .partnerId(partnerId)
+                .hasCurriculumVitae(hasCurriculumVitae)
                 .build();
     }
 

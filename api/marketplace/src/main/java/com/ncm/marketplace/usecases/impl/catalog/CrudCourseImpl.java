@@ -94,19 +94,17 @@ public class CrudCourseImpl implements CrudCourse {
 
     @Transactional
     @Override
-    public String init(String moduleId) {
+    public void init(String moduleId) {
         List<Course> courses = courseQueryService.findAllByModuleId(moduleId);
         if (courses.isEmpty()) {
-            CourseResponse course = save(CreateCourseRequest.builder()
+            save(CreateCourseRequest.builder()
                     .title("Course 001")
                     .description("Course 001 description")
                     .moduleId(moduleId)
                     .build());
             log.info("Course created ✅");
-            return course.getId();
         } else {
             log.info("Course already exists ℹ️");
-            return courses.get(0).getId();
         }
     }
 
