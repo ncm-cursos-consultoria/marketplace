@@ -44,7 +44,7 @@ public class EnterpriseControllerImpl implements EnterpriseController {
 
     @PatchMapping("/{id}/address")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Função off")
+    @Operation(summary = "Add or update an address to an user candidate")
     @Override
     public ResponseEntity<EnterpriseResponse> addAddress(@PathVariable String id, @Valid @RequestBody CreateAddressRequest request) {
         return ResponseEntity.ok(crudEnterprise.addOrUpdateAddress(id,request));

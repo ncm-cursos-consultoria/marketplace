@@ -2,10 +2,7 @@ package com.ncm.marketplace.domains.enterprise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.ncm.marketplace.domains.enums.ContractTypeEnum;
-import com.ncm.marketplace.domains.enums.WorkModelEnum;
-import com.ncm.marketplace.domains.enums.JobOpeningStatusEnum;
-import com.ncm.marketplace.domains.enums.WorkPeriodEnum;
+import com.ncm.marketplace.domains.enums.*;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import jakarta.persistence.*;
 import lombok.*;
@@ -50,6 +47,8 @@ public class JobOpening {
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private WorkModelEnum workModel = WorkModelEnum.ON_SITE;
+    @Enumerated(EnumType.STRING)
+    private SeniorityLevelEnum seniority = SeniorityLevelEnum.MID_LEVEL;
     @Builder.Default
     private Integer views = 0;
     @Builder.Default
