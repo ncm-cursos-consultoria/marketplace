@@ -47,7 +47,7 @@ export default function Home() {
                   key={job.id}
                   className="rounded-xl border bg-white p-5 shadow-sm hover:shadow-md transition"
                 >
-                  <Link href={`/candidato/oportunidades/vaga/${job.id}`}>
+                  <Link href={`/br/candidato/oportunidades/vaga/${job.id}`}>
                     <div className="flex items-start justify-between gap-3">
                       <h3 className="font-semibold text-lg">{job.title}</h3>
                       <span
