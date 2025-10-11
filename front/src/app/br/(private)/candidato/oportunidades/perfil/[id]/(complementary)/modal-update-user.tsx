@@ -12,14 +12,14 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 
 const updateUserFormSchema = z.object({
-  firstName: z.string().optional().default(""),
-  lastName: z.string().optional().default(""),
-  email: z.string().optional().default(""),
-  birthday: z.string().optional().default(""),
-  cpf: z.string().optional().default(""),
-  linkediInUrl: z.string().optional().default(""),
-  githubUrl: z.string().optional().default(""),
-  mySiteUrl: z.string().optional().default(""),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  email: z.string().optional(),
+  birthday: z.string().optional(),
+  cpf: z.string().optional(),
+  linkediInUrl: z.string().optional(), 
+  githubUrl: z.string().optional(),
+  mySiteUrl: z.string().optional(),
 });
 
 type UpdateUserFormSchema = z.infer<typeof updateUserFormSchema>;
@@ -34,16 +34,6 @@ export function ModalUpdateUser() {
     formState: { isSubmitting },
   } = useForm<UpdateUserFormSchema>({
     resolver: zodResolver(updateUserFormSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      birthday: "",
-      cpf: "",
-      linkediInUrl: "",
-      githubUrl: "",
-      mySiteUrl: "",
-    },
   });
 
   const { data: user, isLoading } = useQuery({
