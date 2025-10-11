@@ -88,6 +88,13 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
         user.setEmail(request.getEmail());
         user.setBirthday(request.getBirthday());
         user.setCpf(request.getCpf());
+        user.setLinkedInUrl(request.getLinkedInUrl());
+        user.setGithubUrl(request.getGithubUrl());
+        user.setMySiteUrl(request.getMySiteUrl());
+        user.setSubTitle(request.getSubTitle());
+        user.setAbout(request.getAbout());
+        user.setPhoneNumber(request.getPhoneNumber());
+
 
         return toResponse(userCandidateCommandService.save(user));
     }
@@ -114,6 +121,12 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
                     .email("user.candidate@email.com")
                     .password("SafePassword@001")
                     .birthday(LocalDate.now())
+                    .linkedInUrl("linkedin.com/userCandidate")
+                    .githubUrl("github.com/userCandidate")
+                    .mySiteUrl("mysite.com/userCandidate")
+                    .subTitle("Subtitle - Test - Java - React")
+                    .about("About the user")
+                    .phoneNumber("+5511999999999")
                     .build());
             log.info("User candidate created ✅");
         } else {
