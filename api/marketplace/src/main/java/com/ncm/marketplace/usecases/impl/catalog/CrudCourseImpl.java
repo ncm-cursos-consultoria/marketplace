@@ -4,6 +4,7 @@ import com.ncm.marketplace.domains.catalog.Course;
 import com.ncm.marketplace.domains.catalog.Module;
 import com.ncm.marketplace.domains.catalog.Video;
 import com.ncm.marketplace.domains.enums.FilePathEnum;
+import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CourseSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.UpdateCourseRequest;
@@ -11,8 +12,8 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.video.CreateVi
 import com.ncm.marketplace.gateways.dtos.responses.domains.catalog.course.CourseResponse;
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudCourse;
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudVideo;
+import com.ncm.marketplace.usecases.interfaces.others.CrudFile;
 import com.ncm.marketplace.usecases.services.command.catalog.CourseCommandService;
-import com.ncm.marketplace.usecases.services.command.relationship.user.candidate.UserCandidateCourseCommandService;
 import com.ncm.marketplace.usecases.services.fileStorage.FileStorageService;
 import com.ncm.marketplace.usecases.services.query.catalog.CourseQueryService;
 import com.ncm.marketplace.usecases.services.query.catalog.ModuleQueryService;
@@ -39,10 +40,9 @@ public class CrudCourseImpl implements CrudCourse {
     private final CourseQueryService courseQueryService;
     private final ModuleQueryService moduleQueryService;
     private final CrudVideo crudVideo;
-    private final CrudVideo videoService;
     private final CourseSpecification courseSpecification;
     private final FileStorageService fileStorageService;
-    private final UserCandidateCourseCommandService userCandidateCourseCommandService;
+    private final CrudFile crudFile;
 
     @Transactional
     @Override
@@ -123,6 +123,7 @@ public class CrudCourseImpl implements CrudCourse {
     @Override
     public CourseResponse upload(String id, MultipartFile file) {
         Course course = courseQueryService.findByIdOrThrow(id);
+        crudFile.validateFileType(FileTypeEnum.VIDEO,file);
         String moduleId = course.getModule() != null
                 ? course.getModule().getId()
                 : null;

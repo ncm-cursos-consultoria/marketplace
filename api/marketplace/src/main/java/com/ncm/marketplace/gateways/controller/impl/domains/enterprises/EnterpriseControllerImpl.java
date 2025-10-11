@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.controller.impl.domains.enterprises;
 
+import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.gateways.controller.interfaces.domains.enterprises.EnterpriseController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseAndUserEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseRequest;
@@ -35,10 +36,10 @@ public class EnterpriseControllerImpl implements EnterpriseController {
 
     @PatchMapping("/{id}/profile-picture")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Função off")
+    @Operation(summary = "Upload a profile picture to the enterprise")
     @Override
     public ResponseEntity<EnterpriseResponse> uploadProfilePicture(@PathVariable String id, @RequestPart(value = "file") MultipartFile file) {
-        return null;
+        return ResponseEntity.ok(crudEnterprise.upload(id,file));
     }
 
     @PatchMapping("/{id}/address")

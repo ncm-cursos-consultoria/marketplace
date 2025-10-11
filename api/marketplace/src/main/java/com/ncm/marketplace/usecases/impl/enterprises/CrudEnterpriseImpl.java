@@ -1,35 +1,50 @@
 package com.ncm.marketplace.usecases.impl.enterprises;
 
 import com.ncm.marketplace.domains.enterprise.Enterprise;
+import com.ncm.marketplace.domains.enums.FilePathEnum;
+import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.domains.enums.PartnerStatusEnum;
+import com.ncm.marketplace.domains.enums.UserTypeEnum;
+import com.ncm.marketplace.domains.others.File;
 import com.ncm.marketplace.domains.others.Partner;
 import com.ncm.marketplace.domains.others.Plan;
 import com.ncm.marketplace.domains.relationships.partner.PartnerEnterprise;
+import com.ncm.marketplace.domains.user.User;
 import com.ncm.marketplace.domains.user.UserEnterprise;
+import com.ncm.marketplace.domains.user.candidate.UserCandidate;
+import com.ncm.marketplace.exceptions.BadRequestException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseAndUserEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.UpdateEnterpriseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.others.file.CreateFileRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.thirdParty.mercadoPago.CreateMercadoPagoCustomerRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.enterprise.EnterpriseResponse;
 import com.ncm.marketplace.gateways.mappers.thirdParty.mercadoPago.MercadoPagoMapper;
 import com.ncm.marketplace.gateways.mappers.user.enterprise.UserEnterpriseMapper;
+import com.ncm.marketplace.usecases.impl.others.CrudFileImpl;
 import com.ncm.marketplace.usecases.impl.relationships.plan.enterprise.PlanEnterpriseServiceImpl;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
+import com.ncm.marketplace.usecases.interfaces.others.CrudFile;
 import com.ncm.marketplace.usecases.interfaces.thirdParty.mercadoPago.MercadoPagoService;
 import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.relationship.partner.PartnerEnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.user.UserEnterpriseCommandService;
+import com.ncm.marketplace.usecases.services.fileStorage.FileStorageService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
 import com.ncm.marketplace.usecases.services.query.others.PlanQueryService;
 import com.ncm.marketplace.usecases.services.security.RandomPasswordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static com.ncm.marketplace.gateways.mappers.enterprises.enterprise.EnterpriseMapper.*;
 
@@ -48,6 +63,8 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     private final MercadoPagoService mercadoPagoService;
     private final PlanEnterpriseServiceImpl planEnterpriseServiceImpl;
     private final PlanQueryService planQueryService;
+    private final CrudFile crudFile;
+    private final FileStorageService fileStorageService;
 
     @Transactional
     @Override
@@ -152,6 +169,29 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
             log.info("Enterprise already exists ℹ️");
             EnterpriseResponse enterprise = findByCnpj("58.902.096/0001-63");
             return enterprise.getId();
+        }
+    }
+
+    @Transactional
+    @Override
+    public EnterpriseResponse upload(String id, MultipartFile file) {
+        crudFile.validateFileType(FileTypeEnum.PROFILE_PICTURE,file);
+        Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(id);
+        FilePathEnum path = FilePathEnum.ENTERPRISE_PROFILE_PICTURE;
+        Map<String, String> pathParams = Map.of("enterpriseId", id);
+
+        try {
+            String fileUrl = fileStorageService.uploadFile(file,path,pathParams);
+            File savedFile = crudFile.save(CreateFileRequest.builder()
+                    .path(fileUrl)
+                    .originalFileType(file.getOriginalFilename())
+                    .type(FileTypeEnum.PROFILE_PICTURE)
+                    .build());
+            enterprise.setProfilePicture(savedFile);
+            savedFile.setPath(fileUrl);
+            return toResponse(enterprise);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
