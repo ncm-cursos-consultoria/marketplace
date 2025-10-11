@@ -13,8 +13,9 @@ export interface UserCandidateProps {
   lastName: string;
   email: string;
   cpf: string;
-  profilePicture?: string;
-  birthDate?: string;
+  profilePictureUrl?: string;
+  birthday?: string;
+  curriculumVitaeUrl? : string
 }
 
 export interface UserEnterpriseProps {

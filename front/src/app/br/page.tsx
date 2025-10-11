@@ -41,7 +41,7 @@ export default function Home() {
             eficaz
           </p>
           <a
-            href="/auth/sign-up"
+            href="/br/auth/sign-up"
             className="bg-white text-black font-semibold px-6 py-3 rounded-md shadow hover:bg-gray-100 transition"
           >
             Crie sua conta agora
@@ -201,7 +201,7 @@ export default function Home() {
             Comece agora mesmo sua jornada profissional com o apoio certo
           </p>
           <a
-            href="/auth/sign-up"
+            href="/br/auth/sign-up"
             className="bg-white text-blue-600 font-semibold px-6 py-3 rounded-full shadow hover:bg-gray-100 transition"
           >
             Criar Conta Gratuita

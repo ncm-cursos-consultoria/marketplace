@@ -1,10 +1,14 @@
 import { BadgeCheck, CalendarDays, Edit3, MapPin, Shield, User } from "lucide-react";
 import Image from "next/image";
 import { ProfileImg } from "./profile-img";
+import { ModalUpdateUser } from "./modal-update-user";
 
-export function ProfileThings() {
+interface profileThingsProps {
+  firstName: string,
+  lastName: string,
+}
 
-
+export function ProfileThings({firstName,lastName}: profileThingsProps) {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
@@ -15,7 +19,7 @@ export function ProfileThings() {
           <div className="pb-4">
             <div className="flex items-center gap-2">
               <h2 className="text-xl sm:text-2xl font-semibold">
-                Levi Yuki Utima
+                {firstName} {lastName}
               </h2>
             </div>
             <p className="text-neutral-600 text-sm">
@@ -29,10 +33,9 @@ export function ProfileThings() {
           </div>
         </div>
 
-        <div className="hidden sm:flex items-center gap-3 pb-1">
-          <button className="px-3 h-10 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-sm inline-flex items-center gap-2">
-            <Edit3 className="h-4 w-4" /> Editar Perfil
-          </button>
+        <div className="flex items-center gap-1 border border-neutral-300 p-2 rounded-md shadow-md cursor-pointer hover:bg-neutral-200">
+          <Edit3 size={20}/>
+          <ModalUpdateUser />
         </div>
       </div>
     </div>

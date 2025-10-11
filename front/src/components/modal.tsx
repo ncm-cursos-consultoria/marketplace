@@ -9,7 +9,7 @@ import {
 import { ReactNode } from "react";
 
 interface modalProps {
-  title: string;
+  title: string | ReactNode;
   children: ReactNode;
   headerTitle: string;
   className: string;

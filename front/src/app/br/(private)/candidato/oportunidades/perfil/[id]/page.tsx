@@ -31,6 +31,9 @@ export default function UserProfilePage() {
     queryFn: () => getUniqueUser(userCandidate?.id),
   })
 
+  console.log(userCandidate);
+  
+
   console.log("teste",user);
   
 
@@ -45,7 +48,7 @@ export default function UserProfilePage() {
             <p className="text-neutral-600">Bem-vindo ao seu Perfil Pessoal</p>
           </header>
           <div className="px-6 lg:px-10 py-8 space-y-8">
-            <ProfileThings />
+            <ProfileThings firstName={user?.firstName} lastName={user?.lastName}/>
             <div className="flex xl:flex-row flex-col gap-5">
               <FirstCol />
               <SecondCol />

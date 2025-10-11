@@ -39,12 +39,6 @@ export function EnterpriseLogin() {
           >
             {isPending ? "Carregando... " : "Entrar"}
           </Button>
-
-          <Link href="/auth/forgot-password">
-            <span className="text-sm text-neutral-500 hover:text-neutral-700 transition">
-              Esqueci a senha
-            </span>
-          </Link>
         </div>
       </form>
     </div>

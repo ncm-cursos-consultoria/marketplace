@@ -10,7 +10,7 @@ import { LogOut, Loader2 } from "lucide-react";
 
 type NavItem = {
   label: string;
-  slug: "home" | "courses" | "jobs" | "user";
+  slug: "home" | "courses" | "jobs" | "user" | "teste-comportamental";
   requiresId?: boolean;
 };
 
@@ -18,7 +18,7 @@ const NAV: NavItem[] = [
   { label: "Início", slug: "home", requiresId: true },
   { label: "Cursos", slug: "courses", requiresId: true },
   { label: "Vagas", slug: "jobs", requiresId: true },
-  // { label: "Minhas Candidaturas", slug: "user", requiresId: true },
+  {label: "Teste Comportamental", slug: "teste-comportamental", requiresId: true}
 ];
 
 export function Aside() {
@@ -79,12 +79,10 @@ export function Aside() {
             );
           })}
         </ul>
-
-        {/* Perfil + Logout */}
-        <div className="mt-[470px] px-3 py-2 w-full">
+        <div className="mt-[430px] px-3  w-full">
           <div className="flex items-start gap-2">
             <Image
-              src={(userCandidate?.profilePicture as any) || avatar}
+              src={(userCandidate?.profilePictureUrl as any) || avatar}
               alt="Avatar"
               width={40}
               height={40}

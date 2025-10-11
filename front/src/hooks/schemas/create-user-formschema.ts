@@ -6,7 +6,7 @@ export const createUserFormSchema = z.object({
   cpf: z.string().nonempty("cpf não pode ser vazio"),
   email: z.string().email().nonempty("Obrigatório"),
   password: z.string().nonempty("Obrigatório"),
-  birthDate: z.string().nonempty("Data de nascimento é obrigatório")
+  birthday: z.string().nonempty("Data de nascimento é obrigatório")
 })
 
 export type CreateUserFormSchema = z.infer<typeof createUserFormSchema>

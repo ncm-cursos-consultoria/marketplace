@@ -77,7 +77,7 @@ export function CandidateSignUp() {
         </div>
         <div>
           <Label>Data de nascimento</Label>
-          <Input type="date" className="border border-neutral-300 w-full" {...register('birthDate')}/>
+          <Input type="date" className="border border-neutral-300 w-full" {...register('birthday')}/>
         </div>
       </div>
       <div className="flex flex-col gap-3 items-center">
