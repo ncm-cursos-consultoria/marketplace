@@ -2,6 +2,9 @@ package com.ncm.marketplace.usecases.impl.catalog;
 
 import com.ncm.marketplace.domains.catalog.Course;
 import com.ncm.marketplace.domains.catalog.Module;
+import com.ncm.marketplace.domains.catalog.Video;
+import com.ncm.marketplace.domains.enums.FilePathEnum;
+import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CourseSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.UpdateCourseRequest;
@@ -9,6 +12,7 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.video.CreateVi
 import com.ncm.marketplace.gateways.dtos.responses.domains.catalog.course.CourseResponse;
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudCourse;
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudVideo;
+import com.ncm.marketplace.usecases.interfaces.others.CrudFile;
 import com.ncm.marketplace.usecases.services.command.catalog.CourseCommandService;
 import com.ncm.marketplace.usecases.services.fileStorage.FileStorageService;
 import com.ncm.marketplace.usecases.services.query.catalog.CourseQueryService;
@@ -21,7 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static com.ncm.marketplace.gateways.mappers.catalog.course.CourseMapper.*;
 
@@ -34,9 +40,9 @@ public class CrudCourseImpl implements CrudCourse {
     private final CourseQueryService courseQueryService;
     private final ModuleQueryService moduleQueryService;
     private final CrudVideo crudVideo;
-    private final CrudVideo videoService;
     private final CourseSpecification courseSpecification;
     private final FileStorageService fileStorageService;
+    private final CrudFile crudFile;
 
     @Transactional
     @Override
@@ -116,21 +122,32 @@ public class CrudCourseImpl implements CrudCourse {
     @Transactional
     @Override
     public CourseResponse upload(String id, MultipartFile file) {
-//        try {
-//            String videoUrl = fileStorageService.uploadFile(file);
-//            crudVideo.deactivateOldVideos(id);
-//            crudVideo.saveCustomer(CreateVideoRequest.builder()
-//                    .title(file.getOriginalFilename())
-//                    .url(videoUrl)
-//                    .courseId(id)
-//                    .build());
-//
-//            return findByIdOrThrow(id);
-//
-//        } catch (IOException e) {
-//            log.error("Falha no upload do arquivo", e);
-//            throw new RuntimeException("Falha no upload do arquivo", e);
-//        }
-        return null;
+        Course course = courseQueryService.findByIdOrThrow(id);
+        crudFile.validateFileType(FileTypeEnum.VIDEO,file);
+        String moduleId = course.getModule() != null
+                ? course.getModule().getId()
+                : null;
+        if (moduleId == null) {
+            throw new IllegalStateException("Course doesn't have a module");
+        }
+        try {
+            Map<String, String> pathParams = Map.of("courseId", id,"moduleId", moduleId);
+            String videoUrl = fileStorageService.uploadFile(file, FilePathEnum.VIDEO, pathParams);
+            crudVideo.deactivateOldVideos(id);
+            Video video = crudVideo.save(CreateVideoRequest.builder()
+                    .title(file.getOriginalFilename())
+                    .url(videoUrl)
+                    .courseId(id)
+                    .build());
+
+            course.setLastVideoUrl(video.getUrl());
+            courseCommandService.save(course);
+
+            return findById(id);
+
+        } catch (IOException e) {
+            log.error("Falha no upload do arquivo", e);
+            throw new RuntimeException("Falha no upload do arquivo", e);
+        }
     }
 }

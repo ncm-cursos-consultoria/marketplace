@@ -48,7 +48,7 @@ public class CourseControllerImpl implements CourseController {
 
     @PatchMapping("/{id}/upload-video")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Função off")
+    @Operation(summary = "Upload video to a course")
     @Override
     public ResponseEntity<CourseResponse> uploadVideo(@PathVariable String id, @RequestPart(value = "file") MultipartFile file) {
         return ResponseEntity.ok(crudCourse.upload(id,file));

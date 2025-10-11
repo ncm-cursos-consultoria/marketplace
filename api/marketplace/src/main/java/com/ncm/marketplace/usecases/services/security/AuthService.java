@@ -80,6 +80,7 @@ public class AuthService {
         String partnerId = null;
         LocalDate birthday = null;
         String profilePictureUrl = null;
+        String cpf = null;
         Boolean hasCurriculumVitae = null;
 
         Object details = auth.getDetails();
@@ -104,8 +105,8 @@ public class AuthService {
             } else {
                 hasCurriculumVitae = Boolean.FALSE;
             }
-        }
-        if (user instanceof UserEnterprise userEnterprise) {
+            cpf = userCandidate.getCpf();
+        } else if (user instanceof UserEnterprise userEnterprise) {
             enterpriseId = userEnterprise.getEnterprise() != null
                     ? userEnterprise.getEnterprise().getId()
                     : null;
@@ -123,6 +124,7 @@ public class AuthService {
                 .firstName(firstname)
                 .lastName(lastName)
                 .profilePictureUrl(profilePictureUrl)
+                .cpf(cpf)
                 .type(type)
                 .birthday(birthday)
                 .enterpriseId(enterpriseId)
