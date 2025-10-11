@@ -79,6 +79,7 @@ public class AuthService {
         String enterpriseId = null;
         String partnerId = null;
         LocalDate birthday = null;
+        String profilePictureUrl = null;
 
         Object details = auth.getDetails();
         if (details instanceof java.util.Map<?,?> map) {
@@ -92,6 +93,10 @@ public class AuthService {
         lastName = user.getLastName();
         type = user.getType();
         birthday = user.getBirthday();
+        profilePictureUrl = user.getProfilePicture() != null
+                ? user.getProfilePicture().getPath()
+                : null;
+
 
         if (user instanceof UserEnterprise userEnterprise) {
             enterpriseId = userEnterprise.getEnterprise() != null
@@ -110,6 +115,7 @@ public class AuthService {
                 .email(email)
                 .firstName(firstname)
                 .lastName(lastName)
+                .profilePictureUrl(profilePictureUrl)
                 .type(type)
                 .birthday(birthday)
                 .enterpriseId(enterpriseId)

@@ -39,10 +39,10 @@ public class UserCandidateMapper {
                 .birthday(userCandidate.getBirthday())
                 .isBlocked(userCandidate.getIsBlocked())
                 .profilePictureUrl(userCandidate.getProfilePicture() != null
-                        ? userCandidate.getProfilePicture().getId()
+                        ? userCandidate.getProfilePicture().getPath()
                         : null)
                 .curriculumVitaeUrl(userCandidate.getCurriculumVitae() != null
-                        ? userCandidate.getCurriculumVitae().getId()
+                        ? userCandidate.getCurriculumVitae().getPath()
                         : null)
                 .type(UserTypeEnum.CANDIDATE)
                 .linkedInUrl(userCandidate.getLinkedInUrl())
@@ -73,10 +73,10 @@ public class UserCandidateMapper {
                 .lastName(userCandidate.getLastName())
                 .email(userCandidate.getEmail())
                 .profilePictureUrl(userCandidate.getProfilePicture() != null
-                        ? userCandidate.getProfilePicture().getId()
+                        ? userCandidate.getProfilePicture().getPath()
                         : null)
                 .curriculumVitaeUrl(userCandidate.getCurriculumVitae() != null
-                        ? userCandidate.getCurriculumVitae().getId()
+                        ? userCandidate.getCurriculumVitae().getPath()
                         : null)
                 .build();
     }

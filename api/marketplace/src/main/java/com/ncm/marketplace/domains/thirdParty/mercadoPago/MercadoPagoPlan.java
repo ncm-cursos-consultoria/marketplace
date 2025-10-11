@@ -27,5 +27,6 @@ public class MercadoPagoPlan {
     private String mercadoPagoId;
     private String reason;
     private BigDecimal amount;
+    @Enumerated(EnumType.STRING)
     private MercadoPagoPlanTypeEnum type;
 }

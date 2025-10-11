@@ -1,5 +1,8 @@
 package com.ncm.marketplace.configs;
 
+import com.ncm.marketplace.usecases.impl.catalog.CrudCourseImpl;
+import com.ncm.marketplace.usecases.impl.catalog.CrudModuleImpl;
+import com.ncm.marketplace.usecases.impl.enterprises.CrudJobOpeningImpl;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
 import com.ncm.marketplace.usecases.interfaces.others.PlanService;
 import com.ncm.marketplace.usecases.interfaces.thirdParty.mercadoPago.MercadoPagoService;
@@ -18,11 +21,16 @@ public class Initializer implements ApplicationRunner {
     private final CrudEnterprise crudEnterprise;
     private final MercadoPagoService mercadoPagoService;
     private final PlanService planService;
+    private final CrudModuleImpl crudModuleImpl;
+    private final CrudCourseImpl crudCourseImpl;
+    private final CrudJobOpeningImpl crudJobOpeningImpl;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         log.info("Initializing application...");
         String enterpriseId = "";
+        String moduleId = "";
+        String courseId = "";
         try {
             planService.init();
         } catch (Exception e) {
@@ -37,6 +45,21 @@ public class Initializer implements ApplicationRunner {
             enterpriseId = crudEnterprise.init();
         } catch (Exception e) {
             log.error("Failed in creating enterprise and user enterprise ❌: {}", e.getMessage());
+        }
+        try {
+            moduleId = crudModuleImpl.init(enterpriseId);
+        } catch (Exception e) {
+            log.error("Failed in creating module ❌: {}", e.getMessage());
+        }
+        try {
+            courseId = crudCourseImpl.init(moduleId);
+        } catch (Exception e) {
+            log.error("Failed in creating course ❌: {}", e.getMessage());
+        }
+        try {
+            crudJobOpeningImpl.init(enterpriseId);
+        } catch (Exception e) {
+            log.error("Failed in creating job opening ❌: {}", e.getMessage());
         }
         try {
             mercadoPagoService.initEnterprisePlan();

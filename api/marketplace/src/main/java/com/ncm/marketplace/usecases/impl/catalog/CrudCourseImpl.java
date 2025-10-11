@@ -2,7 +2,6 @@ package com.ncm.marketplace.usecases.impl.catalog;
 
 import com.ncm.marketplace.domains.catalog.Course;
 import com.ncm.marketplace.domains.catalog.Module;
-import com.ncm.marketplace.domains.catalog.Video;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CourseSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.UpdateCourseRequest;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 import static com.ncm.marketplace.gateways.mappers.catalog.course.CourseMapper.*;
@@ -96,16 +94,19 @@ public class CrudCourseImpl implements CrudCourse {
 
     @Transactional
     @Override
-    public void init(String moduleId) {
-        if (!courseQueryService.existsByModuleId(moduleId)) {
-            save(CreateCourseRequest.builder()
+    public String init(String moduleId) {
+        List<Course> courses = courseQueryService.findAllByModuleId(moduleId);
+        if (courses.isEmpty()) {
+            CourseResponse course = save(CreateCourseRequest.builder()
                     .title("Course 001")
                     .description("Course 001 description")
                     .moduleId(moduleId)
                     .build());
             log.info("Course created ✅");
+            return course.getId();
         } else {
             log.info("Course already exists ℹ️");
+            return courses.get(0).getId();
         }
     }
 
