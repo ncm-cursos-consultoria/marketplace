@@ -5,6 +5,7 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.CurrencyResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningSnippetResponse;
+import com.ncm.marketplace.gateways.mappers.others.tag.TagMapper;
 import org.springframework.data.domain.Page;
 
 import java.util.Currency;
@@ -61,6 +62,9 @@ public class JobOpeningMapper {
                 .contractType(jobOpening.getContractType())
                 .workStartTime(jobOpening.getWorkStartTime())
                 .workEndTime(jobOpening.getWorkEndTime())
+                .tags(jobOpening.getTagJobOpenings() != null
+                        ? TagMapper.toResponseFromJobOpening(jobOpening.getTagJobOpenings())
+                        : null)
                 .build();
     }
 
@@ -99,6 +103,9 @@ public class JobOpeningMapper {
                 .workPeriod(jobOpening.getWorkPeriod())
                 .workStartTime(jobOpening.getWorkStartTime())
                 .workEndTime(jobOpening.getWorkEndTime())
+                .tags(jobOpening.getTagJobOpenings() != null
+                        ? TagMapper.toResponseFromJobOpening(jobOpening.getTagJobOpenings())
+                        : null)
                 .build();
     }
 

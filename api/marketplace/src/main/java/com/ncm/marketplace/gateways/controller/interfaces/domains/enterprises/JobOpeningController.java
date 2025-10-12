@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.controller.interfaces.domains.enterprises;
 
+import com.ncm.marketplace.domains.enums.ActionEnum;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.JobOpeningSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
@@ -13,6 +14,7 @@ public interface JobOpeningController {
     ResponseEntity<JobOpeningResponse> save(CreateJobOpeningRequest request);
     ResponseEntity<Void> deleteById(String id);
     ResponseEntity<JobOpeningResponse> update(String id, UpdateJobOpeningRequest request);
+    ResponseEntity<JobOpeningResponse> updateTags(String id, String tagId, ActionEnum action);
     ResponseEntity<JobOpeningResponse> findById(String id);
     ResponseEntity<List<JobOpeningResponse>> findAll(JobOpeningSpecificationRequest specificationRequest);
     ResponseEntity<List<JobOpeningResponse>> findAllByEnterpriseId(String id);

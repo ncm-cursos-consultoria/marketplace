@@ -2,12 +2,14 @@ package com.ncm.marketplace.gateways.dtos.responses.services.auth;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ncm.marketplace.domains.enums.UserTypeEnum;
+import com.ncm.marketplace.gateways.dtos.responses.domains.others.tag.TagResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,4 +28,5 @@ public class MeResponse {
     private String enterpriseId;
     private String partnerId;
     private Boolean hasCurriculumVitae;
+    private List<TagResponse> tags;
 }

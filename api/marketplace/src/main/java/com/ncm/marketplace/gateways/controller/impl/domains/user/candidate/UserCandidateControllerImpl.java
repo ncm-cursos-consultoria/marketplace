@@ -1,11 +1,14 @@
 package com.ncm.marketplace.gateways.controller.impl.domains.user.candidate;
 
+import com.ncm.marketplace.domains.enums.ActionEnum;
 import com.ncm.marketplace.gateways.controller.interfaces.domains.user.candidate.UserCandidateController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.CreateDiscRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
+import com.ncm.marketplace.usecases.impl.others.TagServiceImpl;
+import com.ncm.marketplace.usecases.interfaces.others.TagService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,6 +26,7 @@ import java.util.List;
 @Tag(name = "User Candidate")
 public class UserCandidateControllerImpl implements UserCandidateController {
     private final CrudUserCandidate crudUserCandidate;
+    private final TagService tagService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -47,6 +51,16 @@ public class UserCandidateControllerImpl implements UserCandidateController {
     @Override
     public ResponseEntity<UserCandidateResponse> update(@PathVariable String id, @Valid @RequestBody UpdateUserCandidateRequest request) {
         return ResponseEntity.ok(crudUserCandidate.update(id, request));
+    }
+
+    @PatchMapping("/{id}/tag/{tagId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Add or remove tags from user using action ADD or REMOVE")
+    @Override
+    public ResponseEntity<UserCandidateResponse> updateTags(@PathVariable String id,
+                                                            @PathVariable String tagId,
+                                                            @RequestParam ActionEnum action) {
+        return ResponseEntity.ok(tagService.updateUserCandidateTags(id,tagId, action));
     }
 
 

@@ -3,6 +3,8 @@ package com.ncm.marketplace.domains.enterprise;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ncm.marketplace.domains.enums.*;
+import com.ncm.marketplace.domains.relationships.tag.TagJobOpening;
+import com.ncm.marketplace.domains.relationships.tag.TagUserCandidate;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import jakarta.persistence.*;
 import lombok.*;
@@ -66,7 +68,12 @@ public class JobOpening {
     private Enterprise enterprise;
 
     @Builder.Default
-    @OneToMany(mappedBy = "jobOpening", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "jobOpening", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("user_candidate_job_opening-job_opening")
     private Set<UserCandidateJobOpening> userCandidateJobOpenings = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "jobOpening", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference("tag_job_opening-job_opening")
+    private Set<TagJobOpening> tagJobOpenings = new HashSet<>();
 }
