@@ -1,5 +1,6 @@
 package com.ncm.marketplace.usecases.services.security;
 
+import com.ncm.marketplace.exceptions.IllegalStateException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,7 +45,7 @@ public class CryptoService {
             return VER + ":" + Base64.getEncoder().encodeToString(iv) + ":" +
                     Base64.getEncoder().encodeToString(cipher);
         } catch (Exception e) {
-            throw new IllegalStateException("Falha ao criptografar", e);
+            throw new IllegalStateException("Falha ao criptografar");
         }
     }
 
@@ -62,7 +63,7 @@ public class CryptoService {
             byte[] plain = c.doFinal(cipher);
             return new String(plain, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new IllegalStateException("Falha ao descriptografar", e);
+            throw new IllegalStateException("Falha ao descriptografar");
         }
     }
 }

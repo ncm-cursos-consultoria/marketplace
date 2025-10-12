@@ -5,6 +5,7 @@ import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.domains.others.Partner;
 import com.ncm.marketplace.domains.user.UserPartner;
 import com.ncm.marketplace.exceptions.BadRequestException;
+import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.CreatePartnerAndEnterpriseAndUserPartnerRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.CreatePartnerRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.UpdatePartnerRequest;
@@ -67,10 +68,10 @@ public class CrudPartnerImpl implements CrudPartner {
     @Override
     public PartnerResponse saveWithEnterpriseAndUserPartner(CreatePartnerAndEnterpriseAndUserPartnerRequest request) {
         if (enterpriseQueryService.existsByCnpj(request.getCnpj())) {
-            throw new IllegalStateException("CNPJ já existente");
+            throw new BadRequestException("CNPJ já existente");
         }
         if (userQueryService.existByEmail(request.getEmail())) {
-            throw new IllegalStateException("Email já existente");
+            throw new BadRequestException("Email já existente");
         }
         Enterprise enterprise = EnterpriseMapper.toEntityCreate(request);
         Partner partner = toEntityCreate(request);

@@ -3,6 +3,7 @@ package com.ncm.marketplace.usecases.impl.others;
 import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.domains.others.File;
 import com.ncm.marketplace.exceptions.BadRequestException;
+import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.file.CreateFileRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.file.UpdateFileRequest;
 import com.ncm.marketplace.gateways.mappers.others.file.FileMapper;

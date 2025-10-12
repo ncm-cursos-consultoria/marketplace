@@ -7,6 +7,7 @@ import com.ncm.marketplace.domains.others.File;
 import com.ncm.marketplace.domains.user.User;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.exceptions.BadRequestException;
+import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.file.CreateFileRequest;
 import com.ncm.marketplace.usecases.interfaces.others.CrudFile;
 import com.ncm.marketplace.usecases.interfaces.user.UserService;

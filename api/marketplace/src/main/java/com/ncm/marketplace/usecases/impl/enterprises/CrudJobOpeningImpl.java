@@ -62,9 +62,11 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
         JobOpening jobOpening = toEntityCreate(request);
         Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(request.getEnterpriseId());
         jobOpening.setEnterprise(enterprise);
-        Set<Tag> tags = new HashSet<>(tagQueryService.findAllByIds(request.getTagIds()));
-        for (Tag tag : tags) {
-            jobOpening.getTagJobOpenings().add(TagJobOpeningMapper.toEntityCreate(jobOpening,tag));
+        if (request.getTagIds() != null && !request.getTagIds().isEmpty()) {
+            Set<Tag> tags = new HashSet<>(tagQueryService.findAllByIds(request.getTagIds()));
+            for (Tag tag : tags) {
+                jobOpening.getTagJobOpenings().add(TagJobOpeningMapper.toEntityCreate(jobOpening,tag));
+            }
         }
         return toResponse(jobOpeningCommandService.save(jobOpening));
     }

@@ -73,7 +73,7 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     @Override
     public EnterpriseResponse save(CreateEnterpriseRequest request) {
         if (enterpriseQueryService.existsByCnpj(request.getCnpj())) {
-            throw new IllegalStateException("CNPJ já existente!");
+            throw new BadRequestException("CNPJ já existente!");
         }
         Enterprise enterprise = enterpriseCommandService.save(toEntityCreate(request));
         Plan plan = planQueryService.findByNameOrThrow("Basic");
@@ -85,10 +85,10 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     @Override
     public EnterpriseResponse saveWithUser(CreateEnterpriseAndUserEnterpriseRequest request) {
         if (userQueryService.existByEmail(request.getEmail())) {
-            throw new IllegalStateException("Email já existente!");
+            throw new BadRequestException("Email já existente!");
         }
         if (enterpriseQueryService.existsByCnpj(request.getCnpj())) {
-            throw new IllegalStateException("CNPJ já existente!");
+            throw new BadRequestException("CNPJ já existente!");
         }
         Enterprise enterprise = enterpriseCommandService.save(toEntityCreate(request));
         // plan

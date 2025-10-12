@@ -8,6 +8,7 @@ import com.ncm.marketplace.domains.relationships.tag.TagJobOpening;
 import com.ncm.marketplace.domains.relationships.tag.TagUserCandidate;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.exceptions.BadRequestException;
+import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.tag.CreateTagRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.tag.TagSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.tag.UpdateTagRequest;

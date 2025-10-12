@@ -11,6 +11,8 @@ import com.ncm.marketplace.domains.relationships.partner.PartnerUserCandidate;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import com.ncm.marketplace.domains.user.User;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
+import com.ncm.marketplace.exceptions.BadRequestException;
+import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.file.CreateFileRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
@@ -71,10 +73,10 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
     @Override
     public UserCandidateResponse save(CreateUserCandidateRequest request) {
         if (userQueryService.existByEmail(request.getEmail())) {
-            throw new IllegalStateException("Email já existente");
+            throw new BadRequestException("Email já existente");
         }
         if (userCandidateQueryService.existsByCpf(request.getCpf())) {
-            throw new IllegalStateException("CPF já existente");
+            throw new BadRequestException("CPF já existente");
         }
         UserCandidate user = toEntityCreate(request);
         String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
