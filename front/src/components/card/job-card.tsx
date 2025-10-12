@@ -1,5 +1,6 @@
 "use client";
 
+import { ModalCandidate } from "@/app/br/(private)/candidato/oportunidades/modal-candidate";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { htmlToText } from "@/utils/htmlformat";
@@ -109,17 +110,7 @@ function JobCardItem({
           <span className="font-semibold">{salaryLabel}</span>
         </div>
 
-        <Button
-          onClick={(e) => {
-            // Evita navegar para a página da vaga ao clicar em "Candidatar-se"
-            e.preventDefault();
-            e.stopPropagation();
-            handleApply();
-          }}
-          className="cursor-pointer"
-        >
-          Candidatar-se
-        </Button>
+        <Button className="bg-blue-600 cursor-pointer hover:bg-blue-700">Saiba mais</Button>
       </div>
     </Link>
   );

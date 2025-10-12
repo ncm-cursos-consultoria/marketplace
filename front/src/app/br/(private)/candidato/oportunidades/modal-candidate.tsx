@@ -79,6 +79,7 @@ export function ModalCandidate({title}: modalCandidateProps) {
       // Invalide o que fizer sentido no seu app:
       qc.invalidateQueries({ queryKey: ["job-opening", jobOpeningId] });
       qc.invalidateQueries({ queryKey: ["applications", userCandidate?.id] });
+      window.location.reload()
     },
     onError: (err: any) => {
       const msg =
