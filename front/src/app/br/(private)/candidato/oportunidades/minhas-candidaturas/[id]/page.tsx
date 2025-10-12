@@ -1,4 +1,4 @@
-export function MinhasCandidaturas() {
+export default function MinhasCandidaturas() {
   return(
     <div></div>
   )
