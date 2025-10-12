@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.controller.interfaces.domains.user.candidate;
 
+import com.ncm.marketplace.domains.enums.ActionEnum;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
@@ -13,6 +14,7 @@ public interface UserCandidateController {
     ResponseEntity<UserCandidateResponse> save(CreateUserCandidateRequest request);
     ResponseEntity<Void> delete(String id);
     ResponseEntity<UserCandidateResponse> update(String id, UpdateUserCandidateRequest request);
+    ResponseEntity<UserCandidateResponse> updateTags(String id, String tagId, ActionEnum action);
     ResponseEntity<UserCandidateResponse> addOrUpdateAddress(String id, CreateAddressRequest request);
     ResponseEntity<UserCandidateResponse> addDisc(String id, CreateDiscRequest request);
     ResponseEntity<UserCandidateResponse> findById(String id);

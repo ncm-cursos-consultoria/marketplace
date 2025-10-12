@@ -2,6 +2,7 @@ package com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpeni
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ncm.marketplace.domains.enums.*;
+import com.ncm.marketplace.gateways.dtos.responses.domains.others.tag.TagResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import lombok.extern.jackson.Jacksonized;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.util.Currency;
+import java.util.List;
 
 @Getter
 @Setter
@@ -38,4 +40,5 @@ public class JobOpeningResponse {
     private LocalTime workStartTime;
     private LocalTime workEndTime;
     private JobOpeningUserCandidateStatus myApplicationStatus;
+    private List<TagResponse> tags;
 }

@@ -8,6 +8,7 @@ import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.domains.others.File;
 import com.ncm.marketplace.domains.enums.DiscEnum;
 import com.ncm.marketplace.domains.relationships.partner.PartnerUserCandidate;
+import com.ncm.marketplace.domains.relationships.tag.TagUserCandidate;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateCourse;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateModule;
@@ -64,19 +65,24 @@ public class UserCandidate extends User {
     private PartnerUserCandidate partner;
 
     @Builder.Default
-    @OneToMany(mappedBy = "userCandidate", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userCandidate", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("user_candidate_module-user_candidate")
     private Set<UserCandidateModule> userCandidateModules = new HashSet<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "userCandidate", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userCandidate", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("user_candidate_course-user_candidate")
     private Set<UserCandidateCourse> userCandidateCourses = new HashSet<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "userCandidate", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userCandidate", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("user_candidate_job_opening-user_candidate")
     private Set<UserCandidateJobOpening> userCandidateJobOpenings = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "userCandidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference("tag_user_candidate-user_candidate")
+    private Set<TagUserCandidate> tagUserCandidates = new HashSet<>();
 
     @Override
     public UserTypeEnum getType() {

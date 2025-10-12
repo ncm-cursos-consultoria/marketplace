@@ -48,12 +48,12 @@ public class Partner {
     private UserPartner userPartner;
 
     @Builder.Default
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("partner_enterprises-partner")
     private Set<PartnerEnterprise> partnerEnterprises = new HashSet<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("partner_user_candidates-partner")
     private Set<PartnerUserCandidate> partnerUserCandidates = new HashSet<>();
 

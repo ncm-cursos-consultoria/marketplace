@@ -1,12 +1,15 @@
 package com.ncm.marketplace.gateways.controller.impl.domains.enterprises;
 
+import com.ncm.marketplace.domains.enums.ActionEnum;
 import com.ncm.marketplace.gateways.controller.interfaces.domains.enterprises.JobOpeningController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.JobOpeningSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.relationships.enterprises.jobOpening.JobOpeningUserCandidateResponse;
+import com.ncm.marketplace.usecases.impl.others.TagServiceImpl;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudJobOpening;
+import com.ncm.marketplace.usecases.interfaces.others.TagService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,6 +26,7 @@ import java.util.List;
 @Tag(name = "Job Opening")
 public class JobOpeningControllerImpl implements JobOpeningController {
     private final CrudJobOpening crudJobOpening;
+    private final TagService tagService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -47,6 +51,16 @@ public class JobOpeningControllerImpl implements JobOpeningController {
     @Override
     public ResponseEntity<JobOpeningResponse> update(@PathVariable String id, @Valid @RequestBody UpdateJobOpeningRequest request) {
         return ResponseEntity.ok(crudJobOpening.update(id, request));
+    }
+
+    @PatchMapping("/{id}/tag/{tagId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Add or remove tags from job opening using action ADD or REMOVE")
+    @Override
+    public ResponseEntity<JobOpeningResponse> updateTags(@PathVariable String id,
+                                                         @PathVariable String tagId,
+                                                         @RequestParam ActionEnum action) {
+        return ResponseEntity.ok(tagService.updateJobOpeningTags(id,tagId,action));
     }
 
     @GetMapping("/{id}")

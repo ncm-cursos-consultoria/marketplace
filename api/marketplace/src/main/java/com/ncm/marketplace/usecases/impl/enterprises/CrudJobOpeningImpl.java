@@ -86,7 +86,19 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
 
     @Override
     public JobOpeningResponse findById(String id) {
-        return toResponse(jobOpeningQueryService.findByIdOrThrow(id));
+        JobOpeningResponse jobOpeningResponse = toResponse(jobOpeningQueryService.findByIdOrThrow(id));
+        String authenticatedUserId = AuthService.getAuthenticatedUserId();
+        List<UserCandidateJobOpening> userJobOpenings = userCandidateJobOpeningQueryService.findAll(userCandidateJobOpeningSpecification.toSpecification(List.of(authenticatedUserId)));
+
+        Map<String, JobOpeningUserCandidateStatus> jobOpeningUserCandidateStatusMap = userJobOpenings.stream()
+                .collect(Collectors.toMap(userCandidateJobOpening ->
+                        userCandidateJobOpening.getJobOpening().getId(),UserCandidateJobOpening::getStatus));
+
+        if (jobOpeningUserCandidateStatusMap.containsKey(jobOpeningResponse.getId())) {
+            jobOpeningResponse.setMyApplicationStatus(jobOpeningUserCandidateStatusMap.get(jobOpeningResponse.getId()));
+        }
+
+        return jobOpeningResponse;
     }
 
     @Override
