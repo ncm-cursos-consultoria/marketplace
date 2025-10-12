@@ -53,6 +53,9 @@ public class JobOpeningMapper {
                 .enterpriseId(jobOpening.getEnterprise() != null
                         ? jobOpening.getEnterprise().getId()
                         : null)
+                .enterpriseLegalName(jobOpening.getEnterprise() != null
+                        ? jobOpening.getEnterprise().getLegalName()
+                        : null)
                 .thirdParty(jobOpening.getThirdParty())
                 .workPeriod(jobOpening.getWorkPeriod())
                 .contractType(jobOpening.getContractType())

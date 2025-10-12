@@ -45,9 +45,12 @@ public class EnterpriseMapper {
                 .tradeName(enterprise.getTradeName())
                 .cnpj(enterprise.getCnpj())
                 .profilePictureUrl(enterprise.getProfilePicture() != null
-                        ? enterprise.getProfilePicture().getId()
+                        ? enterprise.getProfilePicture().getPath()
                         : null)
                 .plan(enterprise.getPlan())
+                .addressId(enterprise.getAddress() != null
+                        ? enterprise.getAddress().getId()
+                        : null)
                 .build();
     }
 
