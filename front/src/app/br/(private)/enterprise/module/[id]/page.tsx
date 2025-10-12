@@ -85,7 +85,7 @@ function Header() {
   return (
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
       <h1 className="text-2xl font-bold tracking-tight inline-flex items-center gap-2">
-        <Layers className="h-6 w-6" /> Módulos
+        <Layers className="h-6 w-6" /> Cursos
       </h1>
     </div>
   );

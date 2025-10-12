@@ -15,8 +15,8 @@ export default function SignUp() {
     ].join(" ");
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white items-center shadow-lg rounded-xl p-6 md:p-8 flex flex-col gap-6">
+    <div className="flex justify-center items-center min-h-screen">
+      <div className=" items-center shadow-lg rounded-xl p-6 md:p-8 flex flex-col gap-6">
         <div className="flex flex-col items-center text-center font-medium gap-1">
           <h1 className="text-2xl md:text-3xl font-bold">Seja Bem Vindo</h1>
           <h2 className="text-base md:text-lg text-gray-600">

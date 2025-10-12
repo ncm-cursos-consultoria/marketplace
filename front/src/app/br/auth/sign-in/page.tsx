@@ -35,7 +35,7 @@ export default function SignIn() {
         </h2>
       </div>
 
-      <div className="flex items-center justify-center border shadow-md p-2 border-neutral-200 w-[600px] gap-2 ">
+      <div className="flex items-center justify-center border shadow-md p-2 border-neutral-500  gap-2 w-[600px]">
         <button
           type="button"
           aria-pressed={selectType === "candidato"}

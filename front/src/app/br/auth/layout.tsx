@@ -8,6 +8,7 @@ interface AuthLayoutProps {
 export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="flex h-screen">
+      {/* Imagem só aparece em telas md pra cima */}
       <div className="hidden md:block w-1/2 h-full relative">
         <Image
           src={authLogo}
