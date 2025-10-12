@@ -18,6 +18,7 @@ import { formatDate } from "@/utils/form-date";
 import { countryName } from "@/utils/country-name";
 import { UseUserCandidate } from "@/context/user-candidate.context";
 import Link from "next/link";
+import { ModalCandidate } from "../../modal-candidate";
 
 type Job = {
   id: string;
@@ -64,7 +65,7 @@ export default function JobUniquePage() {
     isError,
     error,
     refetch,
-  } = useQuery<Job>({
+  } = useQuery<any>({
     queryKey: ["job", id],
     queryFn: () => getUniqueJob(id as string),
     enabled: !!id,
@@ -228,9 +229,8 @@ export default function JobUniquePage() {
               <Share2 className="h-4 w-4" />
               Compartilhar
             </button>
-            <button className="inline-flex items-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
-              Candidatar-se
-            </button>
+            {}
+            <ModalCandidate title={title}/>
           </div>
         </div>
 
@@ -273,7 +273,7 @@ export default function JobUniquePage() {
                 <Detail
                   icon={<Building2 className="h-4 w-4" />}
                   label="Empresa"
-                  value={enterpriseId ? `ID ${enterpriseId}` : "—"}
+                  value={enterpriseId ? ` ${job?.enterpriseLegalName}` : "—"}
                 />
                 <Detail
                   icon={<MapPin className="h-4 w-4" />}

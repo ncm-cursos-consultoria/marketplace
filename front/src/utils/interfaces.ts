@@ -16,6 +16,7 @@ export interface UserCandidateProps {
   profilePictureUrl?: string;
   birthday?: string;
   curriculumVitaeUrl? : string
+  hasCurriculumVitaeUrl?: boolean
 }
 
 export interface UserEnterpriseProps {
