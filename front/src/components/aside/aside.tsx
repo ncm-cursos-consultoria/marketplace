@@ -10,7 +10,7 @@ import { LogOut, Loader2 } from "lucide-react";
 
 type NavItem = {
   label: string;
-  slug: "home" | "courses" | "jobs" | "user" | "teste-comportamental";
+  slug: "home" | "courses" | "jobs" | "user" | "teste-comportamental" | "minhas-vagas";
   requiresId?: boolean;
 };
 
@@ -18,7 +18,8 @@ const NAV: NavItem[] = [
   { label: "Início", slug: "home", requiresId: true },
   { label: "Cursos", slug: "courses", requiresId: true },
   { label: "Vagas", slug: "jobs", requiresId: true },
-  {label: "Teste Comportamental do Candidato", slug: "teste-comportamental", requiresId: true}
+  {label: "Teste Comportamental do Candidato", slug: "teste-comportamental", requiresId: true},
+  {label: "Minhas Vagas", slug: "minhas-vagas", requiresId: true}
 ];
 
 export function Aside() {

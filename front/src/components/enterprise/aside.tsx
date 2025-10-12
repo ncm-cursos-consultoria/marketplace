@@ -59,7 +59,7 @@ export function AsideEnterprise() {
           Início
         </NavItem>
         <NavItem
-          href={`/br/enterprise/profile/${userEnterprise?.id}`}
+          href={`/br/enterprise/profile/${userEnterprise?.enterpriseId}`}
           icon={<Building2 className="h-4 w-4" />}
         >
           Minha Empresa
