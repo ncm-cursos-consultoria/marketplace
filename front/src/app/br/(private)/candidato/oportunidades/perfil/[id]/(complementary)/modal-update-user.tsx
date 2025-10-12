@@ -43,6 +43,9 @@ export function ModalUpdateUser() {
     enabled: !!userCandidate?.id,
   });
 
+  console.log(user);
+  
+
   useEffect(() => {
     if (!user) return;
 

@@ -26,15 +26,11 @@ import { getUniqueUser } from "@/service/user/get-unique-user";
 export default function UserProfilePage() {
   const { userCandidate } = UseUserCandidate();
 
-  const {data: user, isLoading} = useQuery({
-    queryKey: ['authUser'],
-    queryFn: () => getUniqueUser(userCandidate?.id),
-  })
-
-  console.log(userCandidate);
-  
-
-  console.log("teste",user);
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["authUser", userCandidate?.id],
+    queryFn: () => getUniqueUser(userCandidate!.id),
+    enabled: !!userCandidate?.id,
+  });
   
 
   return (
@@ -48,9 +44,18 @@ export default function UserProfilePage() {
             <p className="text-neutral-600">Bem-vindo ao seu Perfil Pessoal</p>
           </header>
           <div className="px-6 lg:px-10 py-8 space-y-8">
-            <ProfileThings firstName={user?.firstName} lastName={user?.lastName}/>
+            <ProfileThings
+              firstName={user?.firstName}
+              lastName={user?.lastName}
+            />
             <div className="flex xl:flex-row flex-col gap-5">
-              <FirstCol />
+              <FirstCol
+                email={user?.email}
+                linkedInUrl={user?.linkedInUrl}
+                firstName={user?.firstName}
+                lastName={user?.lastName}
+                githubUrl={user?.githubUrl}
+              />
               <SecondCol />
             </div>
           </div>

@@ -1,44 +1,59 @@
-import { Globe2, Linkedin, Mail, Phone, Users2 } from "lucide-react";
+import { Github, Globe2, Linkedin, Mail, Phone, Users2 } from "lucide-react";
 import Image from "next/image";
 
 interface firstColProps {
-  firstName: string;
-  lastName: string;
-  firstLink: string;
-  secondLink: string;
-  email: string;
-  profileImg: string
+  firstName?: string;
+  lastName?: string;
+  firstLink?: string;
+  secondLink?: string;
+  email?: string;
+  profileImg?: string;
+  linkedInUrl?: string;
+  githubUrl?: string;
 }
 
-export function FirstCol() {
+export function FirstCol({
+  email,
+  firstLink,
+  firstName,
+  lastName,
+  profileImg,
+  secondLink,
+  linkedInUrl,
+  githubUrl,
+}: firstColProps) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-5">
         <div className="bg-white rounded-2xl shadow-sm p-6 h-[35vh] w-[35vw]">
           <h3 className="text-sm font-semibold text-neutral-700">Sobre</h3>
-          <p className="mt-3 text-sm text-neutral-700 leading-6">
-            Sou desenvolvedor full‑stack com foco em experiências bem acabadas
-            no front‑end e APIs escaláveis no back‑end. Curto TypeScript,
-            arquitetura limpa e automações com DevOps.
-          </p>
           <dl className="mt-5 space-y-3 text-sm text-neutral-700">
             <div className="flex items-center gap-2">
-              <Globe2 className="h-4 w-4" />{" "}
-              <a className="text-blue-600 hover:underline" href="#">
-                lutm.dev
-              </a>
+              <Github className="h-4 w-4" />{" "}
+              {githubUrl ? (
+                <a className="text-blue-600 hover:underline" href={githubUrl}>
+                  {githubUrl}
+                </a>
+              ) : (
+                <div className="text-blue-600 hover:underline">
+                  Sem link
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <Linkedin className="h-4 w-4" />{" "}
-              <a className="text-blue-600 hover:underline" href="#">
-                /in/levi‑utima
-              </a>
+              {linkedInUrl ? (
+                <a className="text-blue-600 hover:underline" href={linkedInUrl}>
+                  {linkedInUrl}
+                </a>
+              ) : (
+                <div className="text-blue-600 hover:underline">
+                  Sem link
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4" /> levi.utima@mediq.com.br
-            </div>
-            <div className="flex items-center gap-2">
-              <Phone className="h-4 w-4" /> +55 (11) 90000‑0000
+              <Mail className="h-4 w-4" /> {email}
             </div>
           </dl>
         </div>
