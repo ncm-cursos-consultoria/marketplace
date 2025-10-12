@@ -8,7 +8,7 @@ export default function Page() {
     nome: "Sr. Nivaldo Menezes",
     data: "23/05/2020",
     origem: "HRT-Adizes",
-    titulo: "DISC — Resultado do Teste - (DOMINANTE)",
+    titulo: "DISC — Resultado do Teste Comportamental- (DOMINANTE)",
   } as const;
 
   const voceNoDISC = [
