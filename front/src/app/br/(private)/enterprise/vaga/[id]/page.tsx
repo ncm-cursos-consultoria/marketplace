@@ -101,6 +101,9 @@ export default function EnterpriseJobPage() {
     enabled: !!id,
   });
 
+  console.log(data);
+  
+
   const statusClass = useMemo(() => {
     const k = (data?.status ?? "").toUpperCase();
     return statusStyle[k] || "bg-slate-100 text-slate-700";

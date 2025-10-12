@@ -8,6 +8,7 @@ import {
   NotebookPenIcon,
   Plus,
   LogOut,
+  BookCopy,
 } from "lucide-react";
 import { NavItem } from "./nav-item";
 import Link from "next/link";
@@ -75,6 +76,12 @@ export function AsideEnterprise() {
           icon={<NotebookPenIcon className="h-4 w-4" />}
         >
           Portfólio de cursos
+        </NavItem>
+        <NavItem
+          href={`/br/enterprise/teste-comportamental/${userEnterprise?.id}`}
+          icon={<BookCopy className="h-4 w-4" />}
+        >
+          Teste comportamental
         </NavItem>
       </nav>
 

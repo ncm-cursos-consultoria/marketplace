@@ -8,6 +8,7 @@ import {
   type CreateJobFormSchema,
 } from "../schemas/create-job";
 import { useParams } from "next/navigation";
+import { toast } from "sonner";
 
 export function useCreateJob() {
   const params = useParams<{ id: string }>();
@@ -29,8 +30,16 @@ export function useCreateJob() {
       queryClient.invalidateQueries({ 
         queryKey: ["job", enterpriseId] 
       });
+      toast.success("Sucesso ao criar nova vaga")
       window.location.reload()
       form.reset();
+    },
+    onError: (err: any) => {
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Erro ao criar vaga.";
+      toast.error(msg);
     }
   });
 
