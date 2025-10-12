@@ -26,6 +26,7 @@ export function CandidateSignUp() {
             <Input
               className="border border-neutral-300 w-full"
               placeholder="Digite seu nome"
+              aria-invalid={!!errors.firstName}
               {...register("firstName")}
             />
             {errors.firstName && (
@@ -34,30 +35,47 @@ export function CandidateSignUp() {
               </span>
             )}
           </div>
+
           <div className="flex-1 min-w-0">
             <Label>Sobrenome</Label>
             <Input
               className="border border-neutral-300 w-full"
               placeholder="Digite seu sobrenome"
+              aria-invalid={!!errors.lastName}
               {...register("lastName")}
             />
+            {errors.lastName && (
+              <span className="text-sm text-red-600">
+                {errors.lastName.message}
+              </span>
+            )}
           </div>
         </div>
+
         <div className="flex flex-col gap-1">
           <Label>CPF</Label>
           <Input
             className="border border-neutral-300"
-            placeholder="Digite uma senha"
+            placeholder="Digite seu CPF"
+            inputMode="numeric"
+            aria-invalid={!!errors.cpf}
             {...register("cpf")}
           />
+          {errors.cpf && (
+            <span className="text-sm text-red-600">
+              {errors.cpf.message}
+            </span>
+          )}
         </div>
 
         <div className="w-full flex flex-col md:flex-row gap-4">
           <div className="flex-1 min-w-0">
-            <Label>email</Label>
+            <Label>Email</Label>
             <Input
+              type="email"
               className="border border-neutral-300 w-full"
-              placeholder="Digite seu nome"
+              placeholder="Digite seu email"
+              aria-invalid={!!errors.email}
               {...register("email")}
             />
             {errors.email && (
@@ -66,20 +84,40 @@ export function CandidateSignUp() {
               </span>
             )}
           </div>
+
           <div className="flex-1 min-w-0">
-            <Label>senha</Label>
+            <Label>Senha</Label>
             <Input
+              type="password"
               className="border border-neutral-300 w-full"
-              placeholder="Digite seu sobrenome"
+              placeholder="Digite sua senha"
+              aria-invalid={!!errors.password}
               {...register("password")}
             />
+            {errors.password && (
+              <span className="text-sm text-red-600">
+                {errors.password.message}
+              </span>
+            )}
           </div>
         </div>
+
         <div>
           <Label>Data de nascimento</Label>
-          <Input type="date" className="border border-neutral-300 w-full" {...register('birthday')}/>
+          <Input
+            type="date"
+            className="border border-neutral-300 w-full"
+            aria-invalid={!!errors.birthday}
+            {...register("birthday")}
+          />
+          {errors.birthday && (
+            <span className="text-sm text-red-600">
+              {errors.birthday.message}
+            </span>
+          )}
         </div>
       </div>
+
       <div className="flex flex-col gap-3 items-center">
         <Button
           className="bg-[#008000] w-full py-3 text-white font-semibold rounded-md hover:bg-green-700 transition cursor-pointer"

@@ -2,12 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCreateEnterprise } from "@/hooks/forms/create-enterprise";
-import { useCreateUser } from "@/hooks/forms/create-user";
 import Link from "next/link";
-import { useState } from "react";
 
 export function EnterpriseCandidate() {
-  const { form, isPending, onSubmit } = useCreateEnterprise()
+  const { form, isPending, onSubmit } = useCreateEnterprise();
 
   const {
     register,
@@ -26,7 +24,8 @@ export function EnterpriseCandidate() {
             <Label>Razão social</Label>
             <Input
               className="border border-neutral-300 w-full"
-              placeholder="Digite seu nome"
+              placeholder="Digite a razão social"
+              aria-invalid={!!errors.legalName}
               {...register("legalName")}
             />
             {errors.legalName && (
@@ -40,27 +39,43 @@ export function EnterpriseCandidate() {
             <Label>Nome fantasia</Label>
             <Input
               className="border border-neutral-300 w-full"
-              placeholder="Digite seu sobrenome"
+              placeholder="Digite o nome fantasia"
+              aria-invalid={!!errors.tradeName}
               {...register("tradeName")}
             />
+            {errors.tradeName && (
+              <span className="text-sm text-red-600">
+                {errors.tradeName.message}
+              </span>
+            )}
           </div>
         </div>
+
         <div className="flex flex-col gap-1">
           <Label>CNPJ</Label>
           <Input
             className="border border-neutral-300"
-            placeholder="Digite seu email"
+            placeholder="Digite o CNPJ"
             type="text"
+            inputMode="numeric"
+            aria-invalid={!!errors.cnpj}
             {...register("cnpj")}
           />
+          {errors.cnpj && (
+            <span className="text-sm text-red-600">
+              {errors.cnpj.message}
+            </span>
+          )}
         </div>
 
         <div className="w-full flex flex-col md:flex-row gap-4">
           <div className="flex-1 min-w-0">
-            <Label>email</Label>
+            <Label>Email</Label>
             <Input
+              type="email"
               className="border border-neutral-300 w-full"
-              placeholder="Digite seu nome"
+              placeholder="Digite o email corporativo"
+              aria-invalid={!!errors.email}
               {...register("email")}
             />
             {errors.email && (
@@ -71,12 +86,19 @@ export function EnterpriseCandidate() {
           </div>
 
           <div className="flex-1 min-w-0">
-            <Label>senha</Label>
+            <Label>Senha</Label>
             <Input
+              type="password"
               className="border border-neutral-300 w-full"
-              placeholder="Digite seu sobrenome"
+              placeholder="Crie uma senha"
+              aria-invalid={!!errors.password}
               {...register("password")}
             />
+            {errors.password && (
+              <span className="text-sm text-red-600">
+                {errors.password.message}
+              </span>
+            )}
           </div>
         </div>
       </div>

@@ -5,7 +5,7 @@ export const createUserFormSchema = z.object({
   lastName: z.string().nonempty("Sobrenome é obrigatório"),
   cpf: z.string().nonempty("cpf não pode ser vazio"),
   email: z.string().email().nonempty("Obrigatório"),
-  password: z.string().nonempty("Obrigatório"),
+  password: z.string().nonempty("Obrigatório").min(6,"Mínimo 6 caractéres para senha"),
   birthday: z.string().nonempty("Data de nascimento é obrigatório")
 })
 

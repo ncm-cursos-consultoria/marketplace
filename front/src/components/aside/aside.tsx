@@ -80,7 +80,7 @@ export function Aside() {
             );
           })}
         </ul>
-        <div className="mt-[430px] px-3  w-full">
+        <div className="mt-[350px] px-3  w-full">
           <div className="flex items-start gap-2">
             <Image
               src={(userCandidate?.profilePictureUrl as any) || avatar}
