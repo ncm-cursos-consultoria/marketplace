@@ -10,10 +10,10 @@ import { toast } from "sonner";
 import { Loader2, Upload, Send } from "lucide-react";
 
 interface modalCandidateProps {
-  title: string
+  title: string;
 }
 
-export function ModalCandidate({title}: modalCandidateProps) {
+export function ModalCandidate({ title }: modalCandidateProps) {
   const { userCandidate } = UseUserCandidate();
   const qc = useQueryClient();
   const params = useParams<{ id: string }>();
@@ -27,10 +27,7 @@ export function ModalCandidate({title}: modalCandidateProps) {
     (userCandidate as any)?.hasCurriculumVitaeUrl ??
     false;
 
-  const {
-    mutate: uploadCV,
-    isPending: isUploading,
-  } = useMutation({
+  const { mutate: uploadCV, isPending: isUploading } = useMutation({
     mutationKey: ["candidate", "upload-cv", userCandidate?.id],
     mutationFn: async (formData: FormData) => {
       const { data } = await api.patch(
@@ -48,6 +45,7 @@ export function ModalCandidate({title}: modalCandidateProps) {
       toast.success("Currículo enviado com sucesso!");
       qc.invalidateQueries({ queryKey: ["userCandidate", userCandidate?.id] });
       setFile(null);
+      window.location.reload();
       if (inputRef.current) inputRef.current.value = "";
     },
     onError: (err: any) => {
@@ -60,10 +58,7 @@ export function ModalCandidate({title}: modalCandidateProps) {
   });
 
   // ==== MUTATION: Submeter candidatura ====
-  const {
-    mutate: submitApplication,
-    isPending: isSubmitting,
-  } = useMutation({
+  const { mutate: submitApplication, isPending: isSubmitting } = useMutation({
     mutationKey: ["job-opening", "submit", jobOpeningId, userCandidate?.id],
     mutationFn: async () => {
       if (!jobOpeningId || !userCandidate?.id) {
@@ -76,10 +71,9 @@ export function ModalCandidate({title}: modalCandidateProps) {
     },
     onSuccess: () => {
       toast.success("Candidatura enviada com sucesso!");
-      // Invalide o que fizer sentido no seu app:
       qc.invalidateQueries({ queryKey: ["job-opening", jobOpeningId] });
       qc.invalidateQueries({ queryKey: ["applications", userCandidate?.id] });
-      window.location.reload()
+      window.location.reload();
     },
     onError: (err: any) => {
       const msg =
@@ -109,6 +103,7 @@ export function ModalCandidate({title}: modalCandidateProps) {
   function onSubmitApplication(e: React.FormEvent) {
     e.preventDefault();
     submitApplication();
+    window.location.reload();
   }
 
   return (
