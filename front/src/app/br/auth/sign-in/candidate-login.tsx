@@ -7,7 +7,11 @@ import Link from "next/link";
 export function CandidateLogin() {
   const { form, isPending, onSubmit } = useLogin();
 
-  const { register, handleSubmit } = form;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = form;
 
   return (
     <div className="w-full">
@@ -22,19 +26,35 @@ export function CandidateLogin() {
               type="email"
               className="border border-neutral-300 w-full"
               placeholder="Digite seu email"
+              autoComplete="email"
+              aria-invalid={!!errors.email}
               {...register("email")}
             />
+            {errors.email && (
+              <span className="text-sm text-red-600">
+                {errors.email.message as string}
+              </span>
+            )}
           </div>
+
           <div className="flex flex-col gap-1">
             <Label>Senha</Label>
             <Input
               type="password"
               className="border border-neutral-300 w-full"
               placeholder="Digite sua senha"
+              autoComplete="current-password"
+              aria-invalid={!!errors.password}
               {...register("password")}
             />
+            {errors.password && (
+              <span className="text-sm text-red-600">
+                {errors.password.message as string}
+              </span>
+            )}
           </div>
         </div>
+
         <div className="flex flex-col gap-4 items-center">
           <Button
             className="bg-green-600 w-full py-3 text-white font-semibold rounded-md hover:bg-green-700 transition cursor-pointer"

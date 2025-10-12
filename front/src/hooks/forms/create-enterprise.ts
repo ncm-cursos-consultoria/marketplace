@@ -17,6 +17,7 @@ export function useCreateEnterprise() {
     mutationKey: ['auth-enterprise'],
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey:['auth-enterprise']})
+      router.push('/br/auth/sign-in')
     }
   })
 
