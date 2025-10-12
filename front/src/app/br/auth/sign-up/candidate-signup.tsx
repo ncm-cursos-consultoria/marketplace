@@ -138,7 +138,7 @@ export function CandidateSignUp() {
                   Bem-vindo ao Marketplace da NCM. Estes Termos e Condições de
                   Uso regulam o acesso e a utilização da Plataforma e dos
                   serviços oferecidos por NCM CONSULTORIA LTDA - ME, inscrita no
-                  CNPJ sob nº 53.189.671/0001-09, com sede em [Endereço
+                  CNPJ sob nº 08.631.537/0001-61, com sede em [Endereço
                   Completo]. Ao criar uma conta, acessar ou usar
                   a Plataforma, você concorda com estes Termos e com nossa
                   Política de Privacidade . Se você não concorda, não deve
