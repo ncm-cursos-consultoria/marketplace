@@ -1,3 +1,4 @@
+import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -62,9 +63,7 @@ export function CandidateSignUp() {
             {...register("cpf")}
           />
           {errors.cpf && (
-            <span className="text-sm text-red-600">
-              {errors.cpf.message}
-            </span>
+            <span className="text-sm text-red-600">{errors.cpf.message}</span>
           )}
         </div>
 
@@ -119,13 +118,37 @@ export function CandidateSignUp() {
       </div>
 
       <div className="flex flex-col gap-3 items-center">
-        <Button
-          className="bg-[#008000] w-full py-3 text-white font-semibold rounded-md hover:bg-green-700 transition cursor-pointer"
-          type="submit"
-          disabled={isPending}
-        >
-          {isPending ? "Criando..." : "Criar conta"}
-        </Button>
+        <div className="w-full">
+          <Button
+            className="bg-[#008000] w-full py-3 text-white font-semibold rounded-md hover:bg-green-700 transition cursor-pointer"
+            type="submit"
+            disabled={isPending}
+          >
+            {isPending ? "Criando..." : "Criar conta"}
+          </Button>
+          <div className="flex items-center gap-1">
+            <input type="checkbox" />
+            <Modal
+              title="Concorda com os termos e condições?"
+              className="text-[12px] underline text-blue-700 cursor-pointer hover:text-blue-800"
+              headerTitle="Termos e condições"
+            >
+              <div>
+                <p>
+                  Bem-vindo ao Marketplace da NCM. Estes Termos e Condições de
+                  Uso regulam o acesso e a utilização da Plataforma e dos
+                  serviços oferecidos por NCM CONSULTORIA LTDA - ME, inscrita no
+                  CNPJ sob nº 53.189.671/0001-09, com sede em [Endereço
+                  Completo]. Ao criar uma conta, acessar ou usar
+                  a Plataforma, você concorda com estes Termos e com nossa
+                  Política de Privacidade . Se você não concorda, não deve
+                  utilizar a Plataforma.
+                </p>
+              </div>
+            </Modal>
+            <span></span>
+          </div>
+        </div>
 
         <span className="font-semibold text-gray-500">OU</span>
 
