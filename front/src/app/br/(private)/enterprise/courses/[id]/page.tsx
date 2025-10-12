@@ -57,7 +57,7 @@ export default function CoursesByModulePage() {
   const totalCourses = courses.length
 
   return (
-    <div className="w-full pr-4 lg:pr-0 flex items-start justify-between flex-col">
+    <div className="w-full pr-4 lg:pr-0 flex items-start justify-between flex-col p-10">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Link href={`/br/enterprise/${userEnterprise?.enterpriseId ?? ''}`}>

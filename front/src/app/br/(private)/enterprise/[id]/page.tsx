@@ -6,7 +6,7 @@ import { RecentApplication } from "./recent-applications";
 
 export default function EmpresaDashboardPage() {
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50 p-10">
       <div className="flex">
         <main className="w-full flex flex-col gap-5">
           <header className="mb-6">

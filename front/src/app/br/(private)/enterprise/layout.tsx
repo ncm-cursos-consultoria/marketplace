@@ -21,9 +21,9 @@ export default function LayoutOportunidades({ children }: { children: React.Reac
   }
 
   return (
-    <div className="flex items-start">
+    <div className="flex">
       <AsideEnterprise />
-      <main className="m-[50px]">
+      <main className=" bg-neutral-200 w-full">
         {children}
       </main>
     </div>

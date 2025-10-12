@@ -7,8 +7,6 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useCreateJob } from "@/hooks/forms/create-job";
 
-
-
 export function ModalCreateJob() {
   const { error, form, isError, isPending, onSubmit } = useCreateJob();
 
@@ -16,9 +14,7 @@ export function ModalCreateJob() {
     register,
     handleSubmit,
     formState: { errors },
-
   } = form;
-
 
   return (
     <div>
@@ -27,10 +23,7 @@ export function ModalCreateJob() {
         headerTitle="Crie uma nova vaga"
         title="Nova Vaga"
       >
-        <form
-          className="flex flex-col gap-4"
-          onSubmit={handleSubmit(onSubmit)}
-        >
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           {isError && (
             <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md p-2">
               {(error as any)?.message ?? "Erro ao criar vaga."}
@@ -78,11 +71,10 @@ export function ModalCreateJob() {
             {/* País */}
             <div className="flex flex-col gap-1">
               <Label>País</Label>
-              <Input
-                placeholder="Ex.: Brasil"
-                className="border-neutral-300"
-                {...register("country")}
-              />
+              <select className="border border-neutral-400 p-1 rounded-md" {...register("country")}>
+                <option value="" disabled>Selecione um país</option>
+                <option value="BR">Brasil</option>
+              </select>
               {errors.country && (
                 <span className="text-sm text-red-600">
                   {errors.country.message as string}
@@ -120,9 +112,9 @@ export function ModalCreateJob() {
               )}
             </div>
             <select {...register("currencyCode")}>
+              <option value="" disabled >Selecione a moeda</option>
               <option value="BRL">R$</option>
             </select>
-
             <div className="flex flex-col gap-1">
               <Label>Salário</Label>
               <div className="relative">
@@ -157,6 +149,22 @@ export function ModalCreateJob() {
                 {errors.description.message as string}
               </span>
             )}
+          </div>
+
+          <div>
+            <Label>Horário de trabalho</Label>
+            <Input className="border-neutral-300 pl-8" />
+            {/* <textarea
+              rows={5}
+              placeholder="Fale sobre as responsabilidades, requisitos e benefícios…"
+              className="border-neutral-300 border p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200"
+              {...register("description")}
+            />
+            {errors.description && (
+              <span className="text-sm text-red-600">
+                {errors.description.message as string}
+              </span>
+            )} */}
           </div>
           {/* <input type="hidden" {...register("enterpriseId")} /> */}
 

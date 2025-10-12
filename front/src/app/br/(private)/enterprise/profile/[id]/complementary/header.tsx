@@ -9,7 +9,7 @@ interface enterpriseProfileHeaderProps {
 export function EnterpriseProfileHeader({cnpj,legalName}: enterpriseProfileHeaderProps) {
 
   return (
-    <div className="flex items-start justify-between gap-4 border border-neutral-300 rounded-md p-2 shadow-md">
+    <div className="flex items-start justify-between gap-4 border bg-white rounded-md p-2 shadow-md">
       <div className="flex items-start gap-4">
         <div className="p-5 rounded-xl bg-white shadow-md border border-neutral-200 ring-1 ring-black/5 overflow-hidden flex items-center justify-center">
           <Building/>

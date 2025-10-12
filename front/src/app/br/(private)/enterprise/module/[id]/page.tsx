@@ -60,9 +60,8 @@ export default function ModulesPage() {
   }
 
   return (
-    <div className="w-full max-w-[1200px] pr-4 lg:pr-0">
+    <div className="w-full max-w-[1200px] pr-4 lg:pr-0 p-10">
       <Header />
-
       <p className="mb-4 text-sm text-muted-foreground">
         Organize seus cursos por módulos e facilite a navegação dos alunos.
       </p>
@@ -82,7 +81,6 @@ export default function ModulesPage() {
     </div>
   );
 }
-
 function Header() {
   return (
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -92,7 +90,6 @@ function Header() {
     </div>
   );
 }
-
 function ModuleCard({
   module,
   enterpriseId,
