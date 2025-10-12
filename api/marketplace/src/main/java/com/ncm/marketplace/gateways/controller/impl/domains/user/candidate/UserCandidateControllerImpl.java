@@ -5,6 +5,7 @@ import com.ncm.marketplace.gateways.controller.interfaces.domains.user.candidate
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.CreateDiscRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
 import com.ncm.marketplace.usecases.impl.others.TagServiceImpl;
@@ -92,7 +93,7 @@ public class UserCandidateControllerImpl implements UserCandidateController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Find all candidate users in a list")
     @Override
-    public ResponseEntity<List<UserCandidateResponse>> findAll() {
-        return ResponseEntity.ok(crudUserCandidate.findAll());
+    public ResponseEntity<List<UserCandidateResponse>> findAll(UserCandidateSpecificationRequest specificationRequest) {
+        return ResponseEntity.ok(crudUserCandidate.findAll(specificationRequest));
     }
 }

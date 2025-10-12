@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.gateways.dtos.responses.domains.others.tag.TagResponse;
 import lombok.Builder;
@@ -37,5 +38,6 @@ public class UserCandidateResponse {
     private String subTitle;
     private String about;
     private String phoneNumber;
+    private JobOpeningUserCandidateStatus myApplicationStatus;
     private List<TagResponse> tags;
 }

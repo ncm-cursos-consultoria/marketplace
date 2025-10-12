@@ -4,6 +4,7 @@ import com.ncm.marketplace.domains.enums.ActionEnum;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.CreateDiscRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
 import org.springframework.http.ResponseEntity;
@@ -18,5 +19,5 @@ public interface UserCandidateController {
     ResponseEntity<UserCandidateResponse> addOrUpdateAddress(String id, CreateAddressRequest request);
     ResponseEntity<UserCandidateResponse> addDisc(String id, CreateDiscRequest request);
     ResponseEntity<UserCandidateResponse> findById(String id);
-    ResponseEntity<List<UserCandidateResponse>> findAll();
+    ResponseEntity<List<UserCandidateResponse>> findAll(UserCandidateSpecificationRequest specificationRequest);
 }

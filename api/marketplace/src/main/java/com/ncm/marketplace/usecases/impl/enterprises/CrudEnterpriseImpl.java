@@ -107,7 +107,7 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     @Transactional
     @Override
     public void deleteById(String id) {
-        userEnterpriseCommandService.deleteById(id);
+        enterpriseCommandService.deleteById(id);
     }
 
     @Transactional
