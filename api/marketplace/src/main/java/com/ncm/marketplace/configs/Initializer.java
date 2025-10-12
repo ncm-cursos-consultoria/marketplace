@@ -1,5 +1,6 @@
 package com.ncm.marketplace.configs;
 
+import com.ncm.marketplace.usecases.impl.others.TagServiceImpl;
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudCourse;
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudModule;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
@@ -7,6 +8,7 @@ import com.ncm.marketplace.usecases.interfaces.enterprises.CrudJobOpening;
 import com.ncm.marketplace.usecases.interfaces.others.CrudAddress;
 import com.ncm.marketplace.usecases.interfaces.others.CrudPartner;
 import com.ncm.marketplace.usecases.interfaces.others.PlanService;
+import com.ncm.marketplace.usecases.interfaces.others.TagService;
 import com.ncm.marketplace.usecases.interfaces.thirdParty.mercadoPago.MercadoPagoService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudDisc;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
@@ -30,6 +32,7 @@ public class Initializer implements ApplicationRunner {
     private final CrudAddress crudAddress;
     private final CrudPartner crudPartner;
     private final CrudDisc crudDisc;
+    private final TagService tagService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -81,6 +84,11 @@ public class Initializer implements ApplicationRunner {
             crudJobOpening.init(enterpriseId);
         } catch (Exception e) {
             log.error("Failed in creating job opening ❌: {}", e.getMessage());
+        }
+        try {
+            tagService.init();
+        } catch (Exception e) {
+            log.error("Failed in creating tag ❌: {}", e.getMessage());
         }
         try {
             mercadoPagoService.initEnterprisePlan();

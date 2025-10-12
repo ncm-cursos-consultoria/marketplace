@@ -5,6 +5,7 @@ import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateListResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
+import com.ncm.marketplace.gateways.mappers.others.tag.TagMapper;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -54,6 +55,9 @@ public class UserCandidateMapper {
                 .phoneNumber(userCandidate.getPhoneNumber())
                 .addressId(userCandidate.getAddress() != null
                         ? userCandidate.getAddress().getId()
+                        : null)
+                .tags(userCandidate.getTagUserCandidates() != null
+                        ? TagMapper.toResponseFromUserCandidate(userCandidate.getTagUserCandidates())
                         : null)
                 .build();
     }

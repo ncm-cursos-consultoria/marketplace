@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ncm.marketplace.domains.enums.JobOpeningStatusEnum;
 import com.ncm.marketplace.domains.enums.WorkModelEnum;
 import com.ncm.marketplace.domains.enums.WorkPeriodEnum;
+import com.ncm.marketplace.gateways.dtos.responses.domains.others.tag.TagResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalTime;
 import java.util.Currency;
+import java.util.List;
 
 @Getter
 @Setter
@@ -33,4 +35,5 @@ public class JobOpeningSnippetResponse {
     private WorkPeriodEnum workPeriod;
     private LocalTime workStartTime;
     private LocalTime workEndTime;
+    private List<TagResponse> tags;
 }

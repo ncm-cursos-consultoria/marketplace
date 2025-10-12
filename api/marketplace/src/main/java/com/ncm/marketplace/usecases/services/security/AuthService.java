@@ -8,7 +8,9 @@ import com.ncm.marketplace.domains.user.UserPartner;
 import com.ncm.marketplace.exceptions.InvalidCredentialsException;
 import com.ncm.marketplace.exceptions.UserBlockedException;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.others.tag.TagResponse;
 import com.ncm.marketplace.gateways.dtos.responses.services.auth.MeResponse;
+import com.ncm.marketplace.gateways.mappers.others.tag.TagMapper;
 import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
@@ -82,6 +84,7 @@ public class AuthService {
         String profilePictureUrl = null;
         String cpf = null;
         Boolean hasCurriculumVitae = null;
+        List<TagResponse> tags = null;
 
         Object details = auth.getDetails();
         if (details instanceof java.util.Map<?,?> map) {
@@ -106,6 +109,7 @@ public class AuthService {
                 hasCurriculumVitae = Boolean.FALSE;
             }
             cpf = userCandidate.getCpf();
+            tags = TagMapper.toResponseFromUserCandidate(userCandidate.getTagUserCandidates());
         } else if (user instanceof UserEnterprise userEnterprise) {
             enterpriseId = userEnterprise.getEnterprise() != null
                     ? userEnterprise.getEnterprise().getId()
@@ -130,6 +134,7 @@ public class AuthService {
                 .enterpriseId(enterpriseId)
                 .partnerId(partnerId)
                 .hasCurriculumVitae(hasCurriculumVitae)
+                .tags(tags)
                 .build();
     }
 

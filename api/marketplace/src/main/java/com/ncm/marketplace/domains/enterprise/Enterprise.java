@@ -77,7 +77,7 @@ public class Enterprise {
     @JsonBackReference("partner_enterprise-enterprise")
     private PartnerEnterprise partnerEnterprise;
 
-    @OneToOne(mappedBy = "enterprise", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("plan_enterprise-enterprise")
     private PlanEnterprise planEnterprise;
 
