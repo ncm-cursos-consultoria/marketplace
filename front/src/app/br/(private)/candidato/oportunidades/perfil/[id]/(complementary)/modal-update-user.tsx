@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 const updateUserFormSchema = z.object({
@@ -17,7 +18,7 @@ const updateUserFormSchema = z.object({
   email: z.string().optional(),
   birthday: z.string().optional(),
   cpf: z.string().optional(),
-  linkediInUrl: z.string().optional(), 
+  linkedInUrl: z.string().optional(), 
   githubUrl: z.string().optional(),
   mySiteUrl: z.string().optional(),
 });
@@ -50,7 +51,7 @@ export function ModalUpdateUser() {
     setValue("email", user.email ?? "");
     setValue("birthday", user.birthday ?? "");
     setValue("cpf", user.cpf ?? "");
-    setValue("linkediInUrl", user.linkediInUrl ?? "");
+    setValue("linkedInUrl", user.linkedInUrl ?? "");
     setValue("githubUrl", user.githubUrl ?? "");
     setValue("mySiteUrl", user.mySiteUrl ?? "");
   }, [user, setValue]);
@@ -63,6 +64,16 @@ export function ModalUpdateUser() {
       return updateUser(userCandidate.id, data);
     },
     mutationKey: ["authUser"],
+    onSuccess: (data) => {
+      console.log("boa");
+      console.log(data);
+      toast.success("Sucesso ao atualizar usuario ")
+      window.location.reload()
+    },
+    onError:(err) => {
+      console.log(err);
+      toast.error("Erro ao atualizar usário")
+    } 
   });
 
   const onSubmit = async (data: UpdateUserFormSchema) => {
@@ -105,7 +116,7 @@ export function ModalUpdateUser() {
             </div>
             <div>
               <Label>LinkedIn</Label>
-              <Input {...register("linkediInUrl")} disabled={loading} />
+              <Input {...register("linkedInUrl")} disabled={loading} />
             </div>
             <div>
               <Label>Github</Label>
