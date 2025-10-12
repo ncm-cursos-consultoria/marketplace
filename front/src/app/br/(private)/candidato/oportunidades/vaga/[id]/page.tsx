@@ -25,19 +25,21 @@ type Job = {
   createdAt: string;
   updatedAt: string;
   title: string;
+  salary?: number; // <-- salário opcional
   currency?: {
     code: string;
     symbol: string;
     displayName: string;
   };
-  description?: string; 
+  description?: string;
   status: "ACTIVE" | "INACTIVE" | "CLOSED" | string;
-  country?: string; 
-  state?: string;   
-  city?: string;    
+  country?: string;
+  state?: string;
+  city?: string;
   workModel?: "REMOTE" | "HYBRID" | "ON_SITE" | string;
   views?: number;
   enterpriseId?: string;
+  enterpriseLegalName?: string; // <-- usado no detalhe de Empresa
   thirdParty?: boolean;
 };
 
@@ -53,9 +55,8 @@ const STATUS_STYLE: Record<string, string> = {
   CLOSED: "bg-rose-100 text-rose-700 ring-1 ring-rose-300",
 };
 
-
 export default function JobUniquePage() {
-  const {userCandidate} = UseUserCandidate()
+  const { userCandidate } = UseUserCandidate();
   const params = useParams<{ id: string }>();
   const id = params?.id;
 
@@ -65,15 +66,12 @@ export default function JobUniquePage() {
     isError,
     error,
     refetch,
-  } = useQuery<any>({
+  } = useQuery<Job>({
     queryKey: ["job", id],
     queryFn: () => getUniqueJob(id as string),
     enabled: !!id,
     staleTime: 1000 * 60 * 2,
   });
-
-  console.log(job);
-  
 
   if (isLoading) {
     return (
@@ -107,7 +105,10 @@ export default function JobUniquePage() {
     return (
       <div className="mx-auto max-w-3xl px-5 py-10">
         <div className="mb-4">
-          <Link href="/oportunidades" className="inline-flex items-center gap-2 text-sm text-neutral-600 hover:text-black">
+          <Link
+            href="/oportunidades"
+            className="inline-flex items-center gap-2 text-sm text-neutral-600 hover:text-black"
+          >
             <ArrowLeft className="h-4 w-4" />
             Voltar
           </Link>
@@ -132,7 +133,10 @@ export default function JobUniquePage() {
     return (
       <div className="mx-auto max-w-3xl px-5 py-10">
         <div className="mb-4">
-          <Link href="/oportunidades" className="inline-flex items-center gap-2 text-sm text-neutral-600 hover:text-black">
+          <Link
+            href="/oportunidades"
+            className="inline-flex items-center gap-2 text-sm text-neutral-600 hover:text-black"
+          >
             <ArrowLeft className="h-4 w-4" />
             Voltar
           </Link>
@@ -144,7 +148,6 @@ export default function JobUniquePage() {
     );
   }
 
-  
   const {
     title,
     description,
@@ -159,8 +162,9 @@ export default function JobUniquePage() {
     updatedAt,
     thirdParty,
     enterpriseId,
+    enterpriseLegalName,
+    salary,
   } = job;
-
 
   const safeHtml = DOMPurify.sanitize(description ?? "", {
     USE_PROFILES: { html: true },
@@ -182,6 +186,7 @@ export default function JobUniquePage() {
       try {
         await navigator.share(shareData);
       } catch {
+        // ignore
       }
     } else if (navigator.clipboard) {
       await navigator.clipboard.writeText(url);
@@ -189,10 +194,31 @@ export default function JobUniquePage() {
     }
   };
 
+  // --- Helper para formatar salário com fallback "A combinar"
+  const formatSalary = (value?: number, curr?: Job["currency"]) => {
+    if (typeof value === "number" && isFinite(value) && value > 0) {
+      try {
+        if (curr?.code) {
+          return new Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: curr.code,
+          }).format(value);
+        }
+      } catch {
+        // caso a currency não seja suportada pelo Intl do runtime
+      }
+      return value.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+    }
+    return "A combinar";
+  };
+
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
       <div className="mb-6">
-        <Link href={`/candidato/oportunidades/home/${userCandidate?.id}`} className="inline-flex items-center gap-2 text-sm text-neutral-600 hover:text-black">
+        <Link
+          href={`/br/candidato/oportunidades/home/${userCandidate?.id}`}
+          className="inline-flex items-center gap-2 text-sm text-neutral-600 hover:text-black"
+        >
           <ArrowLeft className="h-4 w-4" />
           Voltar
         </Link>
@@ -202,7 +228,9 @@ export default function JobUniquePage() {
           <div>
             <h1 className="text-2xl font-semibold leading-tight">{title}</h1>
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${statusClass}`}>
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${statusClass}`}
+              >
                 {status === "ACTIVE" ? "Ativa" : status === "CLOSED" ? "Encerrada" : "Inativa"}
               </span>
               {workModel ? (
@@ -229,18 +257,13 @@ export default function JobUniquePage() {
               <Share2 className="h-4 w-4" />
               Compartilhar
             </button>
-            {}
-            <ModalCandidate title={title}/>
+            <ModalCandidate title={title} />
           </div>
         </div>
 
         {/* Metas */}
         <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <MetaItem
-            icon={<MapPin className="h-4 w-4" />}
-            label="Local"
-            value={locationStr || "—"}
-          />
+          <MetaItem icon={<MapPin className="h-4 w-4" />} label="Local" value={locationStr || "—"} />
           <MetaItem
             icon={<CalendarClock className="h-4 w-4" />}
             label="Publicado em"
@@ -251,7 +274,11 @@ export default function JobUniquePage() {
             label="Atualizado em"
             value={formatDate(updatedAt)}
           />
-          <MetaItem icon={<Eye className="h-4 w-4" />} label="Visualizações" value={String(views ?? 0)} />
+          <MetaItem
+            icon={<Eye className="h-4 w-4" />}
+            label="Visualizações"
+            value={String(views ?? 0)}
+          />
         </div>
 
         {/* Layout principal */}
@@ -273,13 +300,9 @@ export default function JobUniquePage() {
                 <Detail
                   icon={<Building2 className="h-4 w-4" />}
                   label="Empresa"
-                  value={enterpriseId ? ` ${job?.enterpriseLegalName}` : "—"}
+                  value={enterpriseId ? `${enterpriseLegalName ?? "—"}` : "—"}
                 />
-                <Detail
-                  icon={<MapPin className="h-4 w-4" />}
-                  label="Local"
-                  value={locationStr || "—"}
-                />
+                <Detail icon={<MapPin className="h-4 w-4" />} label="Local" value={locationStr || "—"} />
                 <Detail
                   icon={<Briefcase className="h-4 w-4" />}
                   label="Modelo de trabalho"
@@ -287,12 +310,8 @@ export default function JobUniquePage() {
                 />
                 <Detail
                   icon={<Globe2 className="h-4 w-4" />}
-                  label="Moeda"
-                  value={
-                    currency
-                      ? `${currency.symbol} • ${currency.displayName} (${currency.code})`
-                      : "—"
-                  }
+                  label="Salário"
+                  value={formatSalary(salary, currency)} // <-- aqui exibe o salário ou "A combinar"
                 />
                 <Detail
                   icon={<Eye className="h-4 w-4" />}
@@ -316,7 +335,15 @@ export default function JobUniquePage() {
 
 /** Componentes auxiliares */
 
-function MetaItem({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function MetaItem({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
   return (
     <div className="flex items-center gap-3 rounded-xl border bg-neutral-50 px-3 py-3">
       <div className="rounded-lg bg-white p-2 ring-1 ring-neutral-200">{icon}</div>
@@ -328,7 +355,15 @@ function MetaItem({ icon, label, value }: { icon: React.ReactNode; label: string
   );
 }
 
-function Detail({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function Detail({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
   return (
     <div className="flex items-start gap-3">
       <div className="mt-0.5 text-neutral-500">{icon}</div>

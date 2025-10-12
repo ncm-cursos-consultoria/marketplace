@@ -20,15 +20,16 @@ export default function Home() {
     queryKey: ["job"],
     queryFn: () => getAllJobs(),
   });
-  
+
   console.log(userCandidate);
-  
 
   return (
     <div className="flex min-h-screen">
       <main className="flex-1 bg-gray-100 p-8 space-y-16">
         <section>
-          <h1 className="text-2xl font-bold">Olá {userCandidate?.firstName} {userCandidate?.lastName}</h1>
+          <h1 className="text-2xl font-bold">
+            Olá {userCandidate?.firstName} {userCandidate?.lastName}
+          </h1>
           <h2 className="text-3xl font-bold mb-4">
             Bem-vindo ao Marketplace das Oportunidades
           </h2>
@@ -80,7 +81,9 @@ export default function Home() {
                       <p className="text-sm">
                         <span className="text-gray-500">Salário</span>{" "}
                         <span className="font-semibold">
-                          {formatMoney(job.salary, job.currency)}
+                          {Number.isFinite(job?.salary) && job.salary > 0
+                            ? formatMoney(job.salary, job.currency)
+                            : "A combinar"}
                         </span>
                       </p>
                     </div>
