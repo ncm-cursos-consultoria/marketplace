@@ -4,6 +4,7 @@ import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.domains.others.Partner;
 import com.ncm.marketplace.domains.user.UserPartner;
+import com.ncm.marketplace.exceptions.BadRequestException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.CreatePartnerAndEnterpriseAndUserPartnerRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.CreatePartnerRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.partner.UpdatePartnerRequest;
@@ -18,6 +19,7 @@ import com.ncm.marketplace.usecases.services.command.user.UserPartnerCommandServ
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.enterprises.JobOpeningQueryService;
 import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
+import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,12 +47,16 @@ public class CrudPartnerImpl implements CrudPartner {
     private final JobOpeningQueryService jobOpeningQueryService;
     private final UserCandidateQueryService userCandidateQueryService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final UserQueryService userQueryService;
 
     @Transactional
     @Override
     public PartnerResponse save(CreatePartnerRequest request) {
-        Partner partner = toEntityCreate(request);
         Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(request.getEnterpriseId());
+        if (partnerQueryService.existsByEnterpriseId(enterprise.getId())) {
+            throw new IllegalStateException("Partner already exists for this enterprise");
+        }
+        Partner partner = toEntityCreate(request);
         partner.setEnterprise(enterprise);
         partner = partnerCommandService.save(partner);
         partner.setToken(partner.generateToken());
@@ -60,6 +66,12 @@ public class CrudPartnerImpl implements CrudPartner {
     @Transactional
     @Override
     public PartnerResponse saveWithEnterpriseAndUserPartner(CreatePartnerAndEnterpriseAndUserPartnerRequest request) {
+        if (enterpriseQueryService.existsByCnpj(request.getCnpj())) {
+            throw new IllegalStateException("CNPJ já existente");
+        }
+        if (userQueryService.existByEmail(request.getEmail())) {
+            throw new IllegalStateException("Email já existente");
+        }
         Enterprise enterprise = EnterpriseMapper.toEntityCreate(request);
         Partner partner = toEntityCreate(request);
         partner.setEnterprise(enterprise);

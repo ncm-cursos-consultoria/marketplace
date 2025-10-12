@@ -70,6 +70,12 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
     @Transactional
     @Override
     public UserCandidateResponse save(CreateUserCandidateRequest request) {
+        if (userQueryService.existByEmail(request.getEmail())) {
+            throw new IllegalStateException("Email já existente");
+        }
+        if (userCandidateQueryService.existsByCpf(request.getCpf())) {
+            throw new IllegalStateException("CPF já existente");
+        }
         UserCandidate user = toEntityCreate(request);
         String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
         user.setPassword(encryptedRandomPassword);

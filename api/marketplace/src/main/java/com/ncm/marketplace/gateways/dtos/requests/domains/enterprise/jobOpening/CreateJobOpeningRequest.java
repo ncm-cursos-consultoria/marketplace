@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -42,4 +43,5 @@ public class CreateJobOpeningRequest {
     private ContractTypeEnum contractType;
     private LocalTime workStartTime;
     private LocalTime workEndTime;
+    private List<String> tagIds;
 }

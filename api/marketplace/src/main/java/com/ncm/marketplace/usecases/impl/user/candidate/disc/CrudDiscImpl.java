@@ -1,13 +1,13 @@
-package com.ncm.marketplace.usecases.impl.user.candidate;
+package com.ncm.marketplace.usecases.impl.user.candidate.disc;
 
-import com.ncm.marketplace.domains.user.candidate.Disc;
+import com.ncm.marketplace.domains.user.candidate.disc.Disc;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.CreateDiscRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.UpdateDiscRequest;
-import com.ncm.marketplace.gateways.dtos.responses.domains.user.disc.DiscResponse;
-import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudDisc;
-import com.ncm.marketplace.usecases.services.command.user.candidate.DiscCommandService;
-import com.ncm.marketplace.usecases.services.query.user.candidate.DiscQueryService;
+import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.disc.DiscResponse;
+import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.CrudDisc;
+import com.ncm.marketplace.usecases.services.command.user.candidate.disc.DiscCommandService;
+import com.ncm.marketplace.usecases.services.query.user.candidate.disc.DiscQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.ncm.marketplace.domains.enums.DiscEnum.*;
-import static com.ncm.marketplace.gateways.mappers.user.candidate.DiscMapper.*;
+import static com.ncm.marketplace.gateways.mappers.user.candidate.disc.DiscMapper.*;
 
 @Slf4j
 @Service

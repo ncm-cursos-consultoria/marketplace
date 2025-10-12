@@ -10,6 +10,7 @@ import com.ncm.marketplace.domains.others.Partner;
 import com.ncm.marketplace.domains.others.Plan;
 import com.ncm.marketplace.domains.relationships.partner.PartnerEnterprise;
 import com.ncm.marketplace.domains.user.UserEnterprise;
+import com.ncm.marketplace.exceptions.BadRequestException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseAndUserEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.UpdateEnterpriseRequest;
@@ -33,6 +34,7 @@ import com.ncm.marketplace.usecases.services.fileStorage.FileStorageService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
 import com.ncm.marketplace.usecases.services.query.others.PlanQueryService;
+import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
 import com.ncm.marketplace.usecases.services.security.RandomPasswordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,10 +67,14 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     private final CrudFile crudFile;
     private final FileStorageService fileStorageService;
     private final AddressCommandService addressCommandService;
+    private final UserQueryService userQueryService;
 
     @Transactional
     @Override
     public EnterpriseResponse save(CreateEnterpriseRequest request) {
+        if (enterpriseQueryService.existsByCnpj(request.getCnpj())) {
+            throw new IllegalStateException("CNPJ já existente!");
+        }
         Enterprise enterprise = enterpriseCommandService.save(toEntityCreate(request));
         Plan plan = planQueryService.findByNameOrThrow("Basic");
         planEnterpriseServiceImpl.save(enterprise.getId(),plan.getId());
@@ -78,6 +84,12 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     @Transactional
     @Override
     public EnterpriseResponse saveWithUser(CreateEnterpriseAndUserEnterpriseRequest request) {
+        if (userQueryService.existByEmail(request.getEmail())) {
+            throw new IllegalStateException("Email já existente!");
+        }
+        if (enterpriseQueryService.existsByCnpj(request.getCnpj())) {
+            throw new IllegalStateException("CNPJ já existente!");
+        }
         Enterprise enterprise = enterpriseCommandService.save(toEntityCreate(request));
         // plan
         Plan plan = planQueryService.findByNameOrThrow("Basic");

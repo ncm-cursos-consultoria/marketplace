@@ -22,41 +22,35 @@ public class MarketplaceApplication {
 		SpringApplication.run(MarketplaceApplication.class, args);
 	}
 	// TODO
-	//  domains ✅
-	//  bugfix
-	//    plans not creating
-	//  repositories ✅
-	//  dtos ✅
-	//    requests ✅
-	//    responses ✅
-	//  mappers ✅
-	//  services ✅
-	//    command ✅
-	//    query ✅
-	//  usecases ✅
-	//  controllers ✅
-	//  finalizar initializer
-	//  outros controllers
-	//  adicionar selo vaga externa
-	//  adicionar senioridade da vaga
-	//  adicionar horario de trabalho
-	//  adicionar modelo de contratação
-	//  tags de soft e hard skills
-	//  swagger ✅
-	//  DigitalOcean
-	//    deploy api ✅
-	//    create SQL DB ✅
-	//    create Storage
-	//  return filesUrl
-	//  controllers de upload
-	//  services
-	//    login ✅
-	//    logout ✅
-	//    painel partner
-	//    view job opening
-	//    change status job opening
-	//    change status module
-	//    change status course
+	//  retornar url nas vagsa externas
+	//  hasDisc
+	//  BUG
+	//    upload não funcionando ✅
+	//    profile picture nao retornando no /me ✅
+	//    todos erros retornando como 500
+	//  INITIALIZER
+	//    finalizar de aplicar as init criadas ✅
+	//  CONTROLLER
+	//    finalizar controllers que estão off ✅
+	//    esqueci senha
+	//  PROPRIEDADES
+	//    JOB OPENING
+	//      adcionar senioridade ✅
+	//  TABELAS
+	//    TAG
+	//      soft skills e hard skills ✅
+	//  RELATIONSHIPS
+	//    finalizar
+	//  SERVICES
+	//    DASHBOARD PARTNER
+	//      verificar propriedades
+	//    JOB OPENING
+	//      adicionar view
+	//      mudar status
+	//    MODULE
+	//      mudar status
+	//    COURSE
+	//      mudar status
 	//  emissão de certificados
 	//  estudar teste comportamental
 	//    disc

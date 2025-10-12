@@ -1,6 +1,6 @@
 package com.ncm.marketplace.gateways.controller.interfaces.domains.user.candidate;
 
-import com.ncm.marketplace.gateways.dtos.responses.domains.user.disc.DiscResponse;
+import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.disc.DiscResponse;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

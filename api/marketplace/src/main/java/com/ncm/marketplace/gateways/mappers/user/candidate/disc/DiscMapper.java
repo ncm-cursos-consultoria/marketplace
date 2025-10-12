@@ -1,8 +1,8 @@
-package com.ncm.marketplace.gateways.mappers.user.candidate;
+package com.ncm.marketplace.gateways.mappers.user.candidate.disc;
 
-import com.ncm.marketplace.domains.user.candidate.Disc;
+import com.ncm.marketplace.domains.user.candidate.disc.Disc;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.CreateDiscRequest;
-import com.ncm.marketplace.gateways.dtos.responses.domains.user.disc.DiscResponse;
+import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.disc.DiscResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
