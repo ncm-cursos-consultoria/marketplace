@@ -1,17 +1,21 @@
 package com.ncm.marketplace.usecases.impl.user.candidate;
 
+import com.ncm.marketplace.domains.enterprise.JobOpening;
 import com.ncm.marketplace.domains.enums.FilePathEnum;
 import com.ncm.marketplace.domains.enums.FileTypeEnum;
+import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.domains.enums.PartnerStatusEnum;
 import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.domains.others.Partner;
 import com.ncm.marketplace.domains.relationships.partner.PartnerUserCandidate;
+import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import com.ncm.marketplace.domains.user.User;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.file.CreateFileRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
 import com.ncm.marketplace.gateways.mappers.others.address.AddressMapper;
 import com.ncm.marketplace.usecases.impl.others.CrudAddressImpl;
@@ -22,11 +26,15 @@ import com.ncm.marketplace.usecases.services.command.others.AddressCommandServic
 import com.ncm.marketplace.usecases.services.command.relationship.partner.PartnerUserCandidateCommandService;
 import com.ncm.marketplace.usecases.services.command.user.candidate.UserCandidateCommandService;
 import com.ncm.marketplace.usecases.services.fileStorage.FileStorageService;
+import com.ncm.marketplace.usecases.services.query.enterprises.JobOpeningQueryService;
 import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
+import com.ncm.marketplace.usecases.services.query.relationship.user.candidate.UserCandidateJobOpeningQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
+import com.ncm.marketplace.usecases.services.specification.user.candidate.UserCandidateSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +44,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.ncm.marketplace.gateways.mappers.user.candidate.UserCandidateMapper.*;
 
@@ -54,6 +63,9 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
     private final CrudFile cruFile;
     private final AddressCommandService addressCommandService;
     private final CrudAddressImpl crudAddressImpl;
+    private final UserCandidateSpecification userCandidateSpecification;
+    private final UserCandidateJobOpeningQueryService userCandidateJobOpeningQueryService;
+    private final JobOpeningQueryService jobOpeningQueryService;
 
     @Transactional
     @Override
@@ -105,8 +117,27 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
     }
 
     @Override
-    public List<UserCandidateResponse> findAll() {
-        return toResponse(userCandidateQueryService.findAll());
+    public List<UserCandidateResponse> findAll(UserCandidateSpecificationRequest specificationRequest) {
+        Map<String, JobOpeningUserCandidateStatus> jobOpeningUserCandidateStatusMap = new HashMap<>();
+        Specification<UserCandidate> specification = userCandidateSpecification.toSpecification(specificationRequest);
+        List<UserCandidateResponse> response = toResponse(userCandidateQueryService.findAll(specification));
+        if (specificationRequest != null) {
+            if (specificationRequest.getJobOpeningIds() != null && !specificationRequest.getJobOpeningIds().isEmpty()) {
+                for (String jobOpeningId : specificationRequest.getJobOpeningIds()) {
+                    JobOpening jobOpening = jobOpeningQueryService.findByIdOrThrow(jobOpeningId);
+                    jobOpeningUserCandidateStatusMap = jobOpening.getUserCandidateJobOpenings().stream()
+                            .collect(Collectors.toMap(userCandidateJobOpening ->
+                                    userCandidateJobOpening.getUserCandidate().getId(),UserCandidateJobOpening::getStatus));
+
+                }
+                for (UserCandidateResponse user : response) {
+                    if (jobOpeningUserCandidateStatusMap.containsKey(user.getId())) {
+                        user.setMyApplicationStatus(jobOpeningUserCandidateStatusMap.get(user.getId()));
+                    }
+                }
+            }
+        }
+        return response;
     }
 
     @Transactional
