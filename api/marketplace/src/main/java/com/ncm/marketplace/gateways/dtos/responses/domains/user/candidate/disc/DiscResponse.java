@@ -1,4 +1,4 @@
-package com.ncm.marketplace.gateways.dtos.responses.domains.user.disc;
+package com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.disc;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ncm.marketplace.domains.enums.DiscEnum;

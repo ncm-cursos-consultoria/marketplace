@@ -1,6 +1,5 @@
 package com.ncm.marketplace.configs;
 
-import com.ncm.marketplace.usecases.impl.others.TagServiceImpl;
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudCourse;
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudModule;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
@@ -10,7 +9,7 @@ import com.ncm.marketplace.usecases.interfaces.others.CrudPartner;
 import com.ncm.marketplace.usecases.interfaces.others.PlanService;
 import com.ncm.marketplace.usecases.interfaces.others.TagService;
 import com.ncm.marketplace.usecases.interfaces.thirdParty.mercadoPago.MercadoPagoService;
-import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudDisc;
+import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.CrudDisc;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

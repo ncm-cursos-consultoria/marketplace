@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -32,5 +33,9 @@ public class TagQueryService {
 
     public Boolean existsByName(String name) {
         return tagRepository.existsByName(name);
+    }
+
+    public List<Tag> findAllByIds(List<String> ids) {
+        return tagRepository.findAllById(ids);
     }
 }

@@ -1,9 +1,9 @@
-package com.ncm.marketplace.usecases.interfaces.user.candidate;
+package com.ncm.marketplace.usecases.interfaces.user.candidate.disc;
 
 
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.CreateDiscRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.UpdateDiscRequest;
-import com.ncm.marketplace.gateways.dtos.responses.domains.user.disc.DiscResponse;
+import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.disc.DiscResponse;
 
 import java.util.List;
 

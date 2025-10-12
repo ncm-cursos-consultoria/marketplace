@@ -1,8 +1,8 @@
-package com.ncm.marketplace.usecases.services.query.user.candidate;
+package com.ncm.marketplace.usecases.services.query.user.candidate.disc;
 
-import com.ncm.marketplace.domains.user.candidate.Disc;
+import com.ncm.marketplace.domains.user.candidate.disc.Disc;
 import com.ncm.marketplace.exceptions.NotFoundException;
-import com.ncm.marketplace.gateways.repositories.domains.user.DiscRepository;
+import com.ncm.marketplace.gateways.repositories.domains.user.candidate.disc.DiscRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

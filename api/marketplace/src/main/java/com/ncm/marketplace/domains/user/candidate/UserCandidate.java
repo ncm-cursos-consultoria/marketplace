@@ -13,6 +13,7 @@ import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateCou
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateModule;
 import com.ncm.marketplace.domains.user.User;
+import com.ncm.marketplace.domains.user.candidate.disc.Disc;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

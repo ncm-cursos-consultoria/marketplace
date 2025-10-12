@@ -28,5 +28,6 @@ public class MeResponse {
     private String enterpriseId;
     private String partnerId;
     private Boolean hasCurriculumVitae;
+    private Boolean hasDisc;
     private List<TagResponse> tags;
 }
