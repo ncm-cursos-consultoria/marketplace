@@ -10,7 +10,7 @@ interface postJobProps {
   country: string;
 }
 
-export const postJob = async (data: postJobProps) => {
+export const postJob = async (data: {}) => {
   try {
     const res = await api.post("/job-opening", data);
     return res.data;

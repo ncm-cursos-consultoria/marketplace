@@ -5,7 +5,7 @@ import { EnterpriseCandidate } from "./enterprise-signup";
 import { PartnerSignUp } from "./partner-singup";
 
 export default function SignUp() {
-  const [selectType, setSelectType] = useState<"candidato" | "empresa" | "parceiro">(
+  const [selectType, setSelectType] = useState<"candidato" | "empresa" | "prefeitura">(
     "candidato"
   );
 
@@ -39,9 +39,9 @@ export default function SignUp() {
 
           <div
             role="button"
-            aria-pressed={selectType === "parceiro"}
-            onClick={() => setSelectType("parceiro")}
-            className={btn(selectType === "parceiro")}
+            aria-pressed={selectType === "prefeitura"}
+            onClick={() => setSelectType("prefeitura")}
+            className={btn(selectType === "prefeitura")}
           >
             Parceiro
           </div>
@@ -57,7 +57,7 @@ export default function SignUp() {
         </div>
 
         {selectType === "candidato" && <CandidateSignUp />}
-        {selectType === "parceiro" && <PartnerSignUp />}
+        {selectType === "prefeitura" && <PartnerSignUp />}
         {selectType === "empresa" && <EnterpriseCandidate />}
       </div>
     </div>

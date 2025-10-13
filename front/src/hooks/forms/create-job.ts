@@ -20,7 +20,10 @@ export function useCreateJob() {
   const queryClient = useQueryClient();
 
   const form = useForm<CreateJobFormSchema>({
-    resolver: zodResolver(createJobFormSchema)
+    resolver: zodResolver(createJobFormSchema),
+    defaultValues: {
+      tagIds: []
+    }
   });
 
   const { mutate, isPending, error, isError } = useMutation({
@@ -31,7 +34,7 @@ export function useCreateJob() {
         queryKey: ["job", enterpriseId] 
       });
       toast.success("Sucesso ao criar nova vaga")
-      window.location.reload()
+      // window.location.reload()
       form.reset();
     },
     onError: (err: any) => {

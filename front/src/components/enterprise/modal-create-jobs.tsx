@@ -12,9 +12,9 @@ import { api } from "@/service/api";
 
 type Tag = {
   id: string;
-  name?: string;     // esperado
-  title?: string;    // fallback
-  label?: string;    // fallback
+  name?: string;
+  title?: string;
+  label?: string;
 };
 
 export function ModalCreateJob() {
@@ -25,36 +25,40 @@ export function ModalCreateJob() {
     register,
     handleSubmit,
     formState: { errors },
-    setValue, // usado para converter thirdParty para boolean
+    setValue,
     watch,
   } = form;
 
-  // ------------------------------
-  // Tags (skills) vindas do backend
-  // ------------------------------
+  // garante que o campo exista no RHF (mesmo sem spread do register no select)
+  register("tagIds");
+
+  const tagIds = watch("tagIds") ?? [];
+
   const { data: tags, isLoading: loadingTags } = useQuery<Tag[]>({
     queryKey: ["tags"],
     queryFn: async () => {
-      const { data } = await api.get("/tag"); // GET /tag
+      const { data } = await api.get("/tag");
       return data as Tag[];
     },
     staleTime: 1000 * 60 * 5,
   });
 
-  // seleção local (não vai no submit; só UI)
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+  const getTagName = (t?: Tag) => t?.name ?? t?.title ?? t?.label ?? "—";
 
   const onChangeTags: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
     const values = Array.from(e.target.selectedOptions).map((o) => o.value);
-    setSelectedTagIds(values);
+    setValue("tagIds", values, { shouldValidate: true, shouldDirty: true });
   };
 
   const removeTag = (id: string) =>
-    setSelectedTagIds((prev) => prev.filter((x) => x !== id));
+    setValue(
+      "tagIds",
+      (tagIds as string[]).filter((x) => x !== id),
+      { shouldValidate: true, shouldDirty: true }
+    );
 
-  const clearTags = () => setSelectedTagIds([]);
-
-  const getTagName = (t?: Tag) => t?.name ?? t?.title ?? t?.label ?? "—";
+  const clearTags = () =>
+    setValue("tagIds", [], { shouldValidate: true, shouldDirty: true });
 
   return (
     <div>
@@ -74,7 +78,6 @@ export function ModalCreateJob() {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Título */}
             <div className="flex flex-col gap-1">
               <Label>Título da vaga</Label>
               <Input
@@ -90,7 +93,6 @@ export function ModalCreateJob() {
               )}
             </div>
 
-            {/* Modelo de trabalho */}
             <div className="flex flex-col gap-1">
               <Label>Modelo de trabalho</Label>
               <select
@@ -113,7 +115,6 @@ export function ModalCreateJob() {
               )}
             </div>
 
-            {/* País */}
             <div className="flex flex-col gap-1">
               <Label>País</Label>
               <select
@@ -134,7 +135,6 @@ export function ModalCreateJob() {
               )}
             </div>
 
-            {/* Estado */}
             <div className="flex flex-col gap-1">
               <Label>Estado</Label>
               <Input
@@ -150,7 +150,6 @@ export function ModalCreateJob() {
               )}
             </div>
 
-            {/* Cidade */}
             <div className="flex flex-col gap-1">
               <Label>Cidade</Label>
               <Input
@@ -166,7 +165,6 @@ export function ModalCreateJob() {
               )}
             </div>
 
-            {/* Moeda */}
             <div className="flex flex-col gap-1">
               <Label>Moeda</Label>
               <select
@@ -187,7 +185,6 @@ export function ModalCreateJob() {
               )}
             </div>
 
-            {/* Salário */}
             <div className="flex flex-col gap-1">
               <Label>Salário</Label>
               <div className="relative">
@@ -208,7 +205,6 @@ export function ModalCreateJob() {
               )}
             </div>
 
-            {/* Período de trabalho */}
             <div className="flex flex-col gap-1">
               <Label>Período de trabalho</Label>
               <select
@@ -228,7 +224,6 @@ export function ModalCreateJob() {
               )}
             </div>
 
-            {/* Tipo de contrato */}
             <div className="flex flex-col gap-1">
               <Label>Tipo de contrato</Label>
               <Input
@@ -244,26 +239,6 @@ export function ModalCreateJob() {
               )}
             </div>
 
-            {/* Terceiro (converte string -> boolean p/ bater com z.boolean)
-            <div className="flex flex-col gap-1">
-              <Label>Vaga de terceiro?</Label>
-              <select
-                className="border border-neutral-300 w-full p-2 rounded-md bg-white"
-                defaultValue={false}
-                onChange={(e) => setValue("thirdParty", e.target.value === "true")}
-                aria-invalid={!!errors.thirdParty}
-              >
-                <option value="fals">Não</option>
-                <option value="true">Sim</option>
-              </select>
-              {errors.thirdParty && (
-                <span className="text-sm text-red-600">
-                  {errors.thirdParty.message as string}
-                </span>
-              )}
-            </div> */}
-
-            {/* Horários */}
             <div className="flex flex-col gap-1">
               <Label>Início do expediente</Label>
               <Input
@@ -294,12 +269,12 @@ export function ModalCreateJob() {
             </div>
           </div>
 
-          {/* Hard skills (via GET /tag) – UI estática */}
+          {/* Hard skills → tagIds */}
           <div className="flex flex-col gap-2">
             <Label>Hard skills (tags)</Label>
             <select
               multiple
-              value={selectedTagIds}
+              value={tagIds}
               onChange={onChangeTags}
               className="border border-neutral-300 rounded-md p-2 bg-white h-40"
               disabled={loadingTags}
@@ -313,12 +288,12 @@ export function ModalCreateJob() {
               ))}
             </select>
             <p className="text-xs text-neutral-500">
-              Segure <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> para selecionar várias opções. (Seleção não enviada — apenas UI)
+              Segure <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> para selecionar várias opções.
             </p>
 
-            {selectedTagIds.length > 0 && (
+            {tagIds.length > 0 && (
               <div className="flex flex-wrap gap-2 pt-1">
-                {selectedTagIds.map((id) => {
+                {tagIds.map((id: string) => {
                   const tag = (tags ?? []).find((t) => t.id === id);
                   return (
                     <span
@@ -348,7 +323,6 @@ export function ModalCreateJob() {
             )}
           </div>
 
-          {/* Descrição */}
           <div className="flex flex-col gap-1">
             <Label>Descrição</Label>
             <textarea

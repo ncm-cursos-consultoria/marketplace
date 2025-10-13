@@ -112,7 +112,6 @@ export function ModalCandidate({ title }: modalCandidateProps) {
       headerTitle="Envie sua candidatura"
       className="bg-blue-600 hover:bg-blue-700 rounded-md p-2 font-semibold text-white cursor-pointer"
     >
-      {/* Se JÁ TEM CV, mostra ação de candidatura */}
       {hasCV ? (
         <form onSubmit={onSubmitApplication} className="space-y-4">
           {(userCandidate as any)?.curriculumVitaeUrl && (

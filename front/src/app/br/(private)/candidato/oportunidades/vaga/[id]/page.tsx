@@ -19,6 +19,7 @@ import { countryName } from "@/utils/country-name";
 import { UseUserCandidate } from "@/context/user-candidate.context";
 import Link from "next/link";
 import { ModalCandidate } from "../../modal-candidate";
+import { Button } from "@/components/ui/button";
 
 type Job = {
   id: string;
@@ -41,6 +42,7 @@ type Job = {
   enterpriseId?: string;
   enterpriseLegalName?: string; // <-- usado no detalhe de Empresa
   thirdParty?: boolean;
+  url?: string
 };
 
 const WORK_MODEL_LABEL: Record<string, string> = {
@@ -114,7 +116,9 @@ export default function JobUniquePage() {
           </Link>
         </div>
         <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
-          <p className="font-medium text-red-700">Não foi possível carregar a vaga.</p>
+          <p className="font-medium text-red-700">
+            Não foi possível carregar a vaga.
+          </p>
           <p className="text-sm text-red-600 mt-1">
             {(error as Error)?.message ?? "Tente novamente em instantes."}
           </p>
@@ -164,16 +168,23 @@ export default function JobUniquePage() {
     enterpriseId,
     enterpriseLegalName,
     salary,
+    url,
   } = job;
+
+  console.log(job);
+  
 
   const safeHtml = DOMPurify.sanitize(description ?? "", {
     USE_PROFILES: { html: true },
   });
 
   const statusClass =
-    STATUS_STYLE[status] ?? "bg-neutral-100 text-neutral-700 ring-1 ring-neutral-300";
+    STATUS_STYLE[status] ??
+    "bg-neutral-100 text-neutral-700 ring-1 ring-neutral-300";
 
-  const locationStr = [city, state, countryName(country)].filter(Boolean).join(" • ");
+  const locationStr = [city, state, countryName(country)]
+    .filter(Boolean)
+    .join(" • ");
 
   const handleShare = async () => {
     const url = typeof window !== "undefined" ? window.location.href : "";
@@ -231,7 +242,11 @@ export default function JobUniquePage() {
               <span
                 className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${statusClass}`}
               >
-                {status === "ACTIVE" ? "Ativa" : status === "CLOSED" ? "Encerrada" : "Inativa"}
+                {status === "ACTIVE"
+                  ? "Ativa"
+                  : status === "CLOSED"
+                  ? "Encerrada"
+                  : "Inativa"}
               </span>
               {workModel ? (
                 <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 ring-1 ring-indigo-200">
@@ -257,13 +272,17 @@ export default function JobUniquePage() {
               <Share2 className="h-4 w-4" />
               Compartilhar
             </button>
-            <ModalCandidate title={title} />
+            {thirdParty ? <a className="bg-blue-600 hover:bg-blue-700 cursor-pointer p-2 rounded-md text-white font-medium" href={job.url}>Candidatar-se</a> : <ModalCandidate title={title} />}
           </div>
         </div>
 
         {/* Metas */}
         <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <MetaItem icon={<MapPin className="h-4 w-4" />} label="Local" value={locationStr || "—"} />
+          <MetaItem
+            icon={<MapPin className="h-4 w-4" />}
+            label="Local"
+            value={locationStr || "—"}
+          />
           <MetaItem
             icon={<CalendarClock className="h-4 w-4" />}
             label="Publicado em"
@@ -288,25 +307,35 @@ export default function JobUniquePage() {
             <h2 className="text-lg font-semibold mb-3">Descrição da Vaga</h2>
             <div
               className="prose-sm sm:prose-base"
-              dangerouslySetInnerHTML={{ __html: safeHtml || "<p>Sem descrição.</p>" }}
+              dangerouslySetInnerHTML={{
+                __html: safeHtml || "<p>Sem descrição.</p>",
+              }}
             />
           </section>
 
           {/* Sidebar de detalhes */}
           <aside className="space-y-4">
             <div className="rounded-2xl border bg-white p-4">
-              <h3 className="mb-3 text-sm font-semibold text-neutral-700">Detalhes</h3>
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
+                Detalhes
+              </h3>
               <dl className="space-y-3 text-sm">
                 <Detail
                   icon={<Building2 className="h-4 w-4" />}
                   label="Empresa"
                   value={enterpriseId ? `${enterpriseLegalName ?? "—"}` : "—"}
                 />
-                <Detail icon={<MapPin className="h-4 w-4" />} label="Local" value={locationStr || "—"} />
+                <Detail
+                  icon={<MapPin className="h-4 w-4" />}
+                  label="Local"
+                  value={locationStr || "—"}
+                />
                 <Detail
                   icon={<Briefcase className="h-4 w-4" />}
                   label="Modelo de trabalho"
-                  value={workModel ? WORK_MODEL_LABEL[workModel] ?? workModel : "—"}
+                  value={
+                    workModel ? WORK_MODEL_LABEL[workModel] ?? workModel : "—"
+                  }
                 />
                 <Detail
                   icon={<Globe2 className="h-4 w-4" />}
@@ -346,7 +375,9 @@ function MetaItem({
 }) {
   return (
     <div className="flex items-center gap-3 rounded-xl border bg-neutral-50 px-3 py-3">
-      <div className="rounded-lg bg-white p-2 ring-1 ring-neutral-200">{icon}</div>
+      <div className="rounded-lg bg-white p-2 ring-1 ring-neutral-200">
+        {icon}
+      </div>
       <div>
         <p className="text-[12px] text-neutral-500">{label}</p>
         <p className="text-sm font-medium text-neutral-900">{value}</p>
