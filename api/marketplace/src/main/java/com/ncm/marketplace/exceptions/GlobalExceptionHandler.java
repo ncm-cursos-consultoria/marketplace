@@ -24,6 +24,11 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.FORBIDDEN, ex.getMessage(), req);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<?> handleIllegalState(IllegalStateException ex, HttpServletRequest req) {
+        return buildError(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
+    }
+
     @ExceptionHandler(UserBlockedException.class)
     public ResponseEntity<?> handleUserBlocked(UserBlockedException ex, HttpServletRequest req) {
         return buildError(HttpStatus.FORBIDDEN, ex.getMessage(), req);

@@ -46,6 +46,7 @@ public class JobOpening {
     private String city;
     @Builder.Default
     private Boolean thirdParty = Boolean.FALSE;
+    private String url;
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private WorkModelEnum workModel = WorkModelEnum.ON_SITE;

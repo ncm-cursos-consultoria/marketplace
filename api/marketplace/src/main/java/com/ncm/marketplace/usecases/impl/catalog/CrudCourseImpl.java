@@ -5,6 +5,7 @@ import com.ncm.marketplace.domains.catalog.Module;
 import com.ncm.marketplace.domains.catalog.Video;
 import com.ncm.marketplace.domains.enums.FilePathEnum;
 import com.ncm.marketplace.domains.enums.FileTypeEnum;
+import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CourseSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.UpdateCourseRequest;

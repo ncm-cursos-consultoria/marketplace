@@ -5,6 +5,7 @@ import com.ncm.marketplace.domains.user.User;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.domains.user.UserPartner;
+import com.ncm.marketplace.domains.user.candidate.disc.Disc;
 import com.ncm.marketplace.exceptions.InvalidCredentialsException;
 import com.ncm.marketplace.exceptions.UserBlockedException;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
@@ -84,6 +85,7 @@ public class AuthService {
         String profilePictureUrl = null;
         String cpf = null;
         Boolean hasCurriculumVitae = null;
+        Boolean hasDisc = null;
         List<TagResponse> tags = null;
 
         Object details = auth.getDetails();
@@ -103,11 +105,8 @@ public class AuthService {
                 : null;
 
         if (user instanceof UserCandidate userCandidate) {
-            if (userCandidate.getCurriculumVitae() != null) {
-                hasCurriculumVitae = Boolean.TRUE;
-            } else {
-                hasCurriculumVitae = Boolean.FALSE;
-            }
+            hasCurriculumVitae = userCandidate.getCurriculumVitae() != null;
+            hasDisc = userCandidate.getDiscs().stream().anyMatch(Disc::getIsActive);
             cpf = userCandidate.getCpf();
             tags = TagMapper.toResponseFromUserCandidate(userCandidate.getTagUserCandidates());
         } else if (user instanceof UserEnterprise userEnterprise) {
@@ -134,6 +133,7 @@ public class AuthService {
                 .enterpriseId(enterpriseId)
                 .partnerId(partnerId)
                 .hasCurriculumVitae(hasCurriculumVitae)
+                .hasDisc(hasDisc)
                 .tags(tags)
                 .build();
     }

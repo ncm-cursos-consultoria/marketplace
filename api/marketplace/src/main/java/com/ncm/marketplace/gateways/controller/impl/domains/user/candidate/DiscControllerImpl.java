@@ -1,8 +1,8 @@
 package com.ncm.marketplace.gateways.controller.impl.domains.user.candidate;
 
 import com.ncm.marketplace.gateways.controller.interfaces.domains.user.candidate.DiscController;
-import com.ncm.marketplace.gateways.dtos.responses.domains.user.disc.DiscResponse;
-import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudDisc;
+import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.disc.DiscResponse;
+import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.CrudDisc;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
