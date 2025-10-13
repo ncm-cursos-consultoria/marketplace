@@ -35,65 +35,65 @@ public class Initializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.info("Initializing application...");
-        String enterpriseId = "";
-        String userId = "";
-        String moduleId = "";
-        try {
-            planService.init();
-        } catch (Exception e) {
-            log.error("Failed in creating plans ❌: {}", e.getMessage());
-        }
-        try {
-            userId = crudUserCandidate.init();
-        } catch (Exception e) {
-            log.error("Failed in creating user candidate ❌: {}", e.getMessage());
-        }
-        try {
-            crudDisc.init(userId);
-        } catch (Exception e) {
-            log.error("Failed in creating user disc ❌: {}", e.getMessage());
-        }
-        try {
-            crudPartner.init();
-        } catch (Exception e) {
-            log.error("Failed in creating parter ❌: {}", e.getMessage());
-        }
-        try {
-            enterpriseId = crudEnterprise.init();
-        } catch (Exception e) {
-            log.error("Failed in creating enterprise and user enterprise ❌: {}", e.getMessage());
-        }
-        try {
-            crudAddress.init(userId,enterpriseId);
-        } catch (Exception e) {
-            log.error("Failed in creating address ❌: {}", e.getMessage());
-        }
-        try {
-            moduleId = crudModule.init(enterpriseId);
-        } catch (Exception e) {
-            log.error("Failed in creating module ❌: {}", e.getMessage());
-        }
-        try {
-            crudCourse.init(moduleId);
-        } catch (Exception e) {
-            log.error("Failed in creating course ❌: {}", e.getMessage());
-        }
-        try {
-            crudJobOpening.init(enterpriseId);
-        } catch (Exception e) {
-            log.error("Failed in creating job opening ❌: {}", e.getMessage());
-        }
-        try {
-            tagService.init();
-        } catch (Exception e) {
-            log.error("Failed in creating tag ❌: {}", e.getMessage());
-        }
-        try {
-            mercadoPagoService.initEnterprisePlan();
-        } catch (Exception e) {
-            log.error("Failed in creating plan ❌: {}", e.getMessage());
-        }
-        log.info("Application initialized successfully. ✅");
+//        log.info("Initializing application...");
+//        String enterpriseId = "";
+//        String userId = "";
+//        String moduleId = "";
+//        try {
+//            planService.init();
+//        } catch (Exception e) {
+//            log.error("Failed in creating plans ❌: {}", e.getMessage());
+//        }
+//        try {
+//            userId = crudUserCandidate.init();
+//        } catch (Exception e) {
+//            log.error("Failed in creating user candidate ❌: {}", e.getMessage());
+//        }
+//        try {
+//            crudDisc.init(userId);
+//        } catch (Exception e) {
+//            log.error("Failed in creating user disc ❌: {}", e.getMessage());
+//        }
+//        try {
+//            crudPartner.init();
+//        } catch (Exception e) {
+//            log.error("Failed in creating parter ❌: {}", e.getMessage());
+//        }
+//        try {
+//            enterpriseId = crudEnterprise.init();
+//        } catch (Exception e) {
+//            log.error("Failed in creating enterprise and user enterprise ❌: {}", e.getMessage());
+//        }
+//        try {
+//            crudAddress.init(userId,enterpriseId);
+//        } catch (Exception e) {
+//            log.error("Failed in creating address ❌: {}", e.getMessage());
+//        }
+//        try {
+//            moduleId = crudModule.init(enterpriseId);
+//        } catch (Exception e) {
+//            log.error("Failed in creating module ❌: {}", e.getMessage());
+//        }
+//        try {
+//            crudCourse.init(moduleId);
+//        } catch (Exception e) {
+//            log.error("Failed in creating course ❌: {}", e.getMessage());
+//        }
+//        try {
+//            crudJobOpening.init(enterpriseId);
+//        } catch (Exception e) {
+//            log.error("Failed in creating job opening ❌: {}", e.getMessage());
+//        }
+//        try {
+//            tagService.init();
+//        } catch (Exception e) {
+//            log.error("Failed in creating tag ❌: {}", e.getMessage());
+//        }
+//        try {
+//            mercadoPagoService.initEnterprisePlan();
+//        } catch (Exception e) {
+//            log.error("Failed in creating plan ❌: {}", e.getMessage());
+//        }
+//        log.info("Application initialized successfully. ✅");
     }
 }

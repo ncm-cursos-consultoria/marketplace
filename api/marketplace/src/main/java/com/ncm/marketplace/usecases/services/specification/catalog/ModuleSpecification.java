@@ -16,7 +16,8 @@ public class ModuleSpecification {
             } else {
                 assert query != null;
                 query.distinct(true);
-                return root.get("enterprise").get("id").in(enterpriseIds);
+                return criteriaBuilder.conjunction();
+//                return root.get("enterprise").get("id").in(enterpriseIds);
             }
         });
     }
