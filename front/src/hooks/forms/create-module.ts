@@ -14,12 +14,12 @@ export function useCreateModule() {
   const {userEnterprise} = UseUserEnteprise()
   const queryClient = useQueryClient()
   const params = useParams<{ id: string }>();
-  const enterpriseId = userEnterprise?.enterpriseId ?? null;
+  const enterpriseId = userEnterprise?.enterpriseId;
   const id = params?.id;
   const form = useForm<CreateModuleFormSchema>({
     resolver: zodResolver(createModuleFormSchema),
     defaultValues: {
-      enterpriseId: id,
+      enterpriseId: enterpriseId,
     },
   });
 
@@ -38,7 +38,11 @@ export function useCreateModule() {
   });
 
   const onSubmit = async (data: CreateModuleFormSchema) => {
-    mutate(data);
+    const finalPayload = {
+      ...data,
+      enterpriseId: enterpriseId,
+    };
+    mutate(finalPayload);
   };
 
   return { onSubmit, isPending, form, error, isError };
