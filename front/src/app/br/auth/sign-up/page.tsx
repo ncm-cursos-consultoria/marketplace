@@ -43,7 +43,7 @@ export default function SignUp() {
             onClick={() => setSelectType("prefeitura")}
             className={btn(selectType === "prefeitura")}
           >
-            Parceiro
+            Prefeitura
           </div>
 
           <div
