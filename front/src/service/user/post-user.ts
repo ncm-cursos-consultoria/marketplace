@@ -10,15 +10,6 @@ interface postUserProps {
 }
 
 export const postUser = async (data: postUserProps) => {
-  try {
-    const res = await api.post(`/user/candidate`, data);
-    return res.data;
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.log(err);
-      throw new Error();
-    } else {
-      console.error(err);
-    }
-  }
+  const res = await api.post(`/user/candidate`, data);
+  return res.data;
 };

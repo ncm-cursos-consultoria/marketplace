@@ -9,11 +9,6 @@ interface postEnterpriseProps {
 }
 
 export const postEnterprise = async (data: postEnterpriseProps) => {
-  try {
-    const res = await api.post("/enterprise/with-user", data);
-    return res.data
-  } catch (err: any) {
-    console.log(err);
-    throw new Error("error create enterprise");
-  }
+  const res = await api.post(`/enterprise/with-user`, data);
+  return res.data;
 };

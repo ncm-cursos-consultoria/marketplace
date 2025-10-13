@@ -9,8 +9,43 @@ import { postUser } from "@/service/user/post-user";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+function extractErrorMessage(err: unknown) {
+  const anyErr = err as any;
+  const fallback = anyErr?.message || "Erro ao criar conta";
+
+  // axios-like: err.response.data
+  const data = anyErr?.response?.data;
+
+  if (!data) return fallback;
+
+  // string direto
+  if (typeof data === "string") return data;
+
+  // campos comuns
+  if (typeof data.message === "string" && data.message.trim()) return data.message;
+  if (typeof data.error === "string" && data.error.trim()) return data.error;
+
+  // array de erros: ["email já existe", "senha fraca"]
+  if (Array.isArray(data.errors)) {
+    return data.errors.filter(Boolean).join("\n");
+  }
+
+  // objeto de erros por campo: { email: ["já existe"], password: ["muito curta"] }
+  if (data.errors && typeof data.errors === "object") {
+    const parts: string[] = [];
+    for (const [field, msgs] of Object.entries<any>(data.errors)) {
+      if (Array.isArray(msgs)) parts.push(`${field}: ${msgs.join(", ")}`);
+      else if (msgs) parts.push(`${field}: ${String(msgs)}`);
+    }
+    if (parts.length) return parts.join("\n");
+  }
+
+  return fallback;
+}
+
 export function useCreateUser() {
-  const router = useRouter()
+  const router = useRouter();
+
   const form = useForm<CreateUserFormSchema>({
     resolver: zodResolver(createUserFormSchema),
   });
@@ -19,19 +54,18 @@ export function useCreateUser() {
     mutationFn: (data: CreateUserFormSchema) => postUser(data),
     mutationKey: ["user"],
     onSuccess: () => {
-      console.log("Sucesso");
-      toast.success("Conta criada com sucesso")
-      router.push(`/br/auth/sign-in`)
+      toast.success("Conta criada com sucesso");
+      router.push(`/br/auth/sign-in`);
     },
     onError: (err) => {
-     console.log("Erro",err);
-     toast.error("Erro ao criar conta" )
+      const msg = extractErrorMessage(err);
+      console.log("Erro", err);
+      toast.error(msg);
     },
   });
 
   const onSubmit = (data: CreateUserFormSchema) => {
-    console.log('enviando dados de cadastro:',data);
-    
+    console.log("enviando dados de cadastro:", data);
     mutate(data);
   };
 
