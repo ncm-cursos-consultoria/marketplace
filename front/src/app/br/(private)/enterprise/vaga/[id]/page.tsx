@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/service/api";
 import { MapPin, Building2, Briefcase, Eye, CalendarClock, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { htmlToText } from "@/utils/htmlformat";
 // import { Button } from "@/components/ui/button"; // se quiser CTA
 // import { UseUserCandidate } from "@/context/user-candidate.context"; // somente para candidato
 // import { useMutation, useQueryClient } from "@tanstack/react-query"; // somente para CTA
@@ -195,7 +196,7 @@ export default function EnterpriseJobPage() {
           </h2>
           {data.description ? (
             <div className="prose prose-slate max-w-none">
-              <p className="whitespace-pre-line">{data.description}</p>
+              <p className="whitespace-pre-line">{htmlToText(data.description)}</p>
             </div>
           ) : (
             <p className="text-sm text-gray-600">Sem descrição informada.</p>
