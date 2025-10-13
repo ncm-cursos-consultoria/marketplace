@@ -106,7 +106,7 @@ public class AuthService {
 
         if (user instanceof UserCandidate userCandidate) {
             hasCurriculumVitae = userCandidate.getCurriculumVitae() != null;
-            hasDisc = userCandidate.getDiscs().stream().anyMatch(Disc::getIsActive);
+            hasDisc = userCandidate.getDiscs() != null ? userCandidate.getDiscs().stream().anyMatch(Disc::getIsActive) : Boolean.FALSE;
             cpf = userCandidate.getCpf();
             tags = TagMapper.toResponseFromUserCandidate(userCandidate.getTagUserCandidates());
         } else if (user instanceof UserEnterprise userEnterprise) {
