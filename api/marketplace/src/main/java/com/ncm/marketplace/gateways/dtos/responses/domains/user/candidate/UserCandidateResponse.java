@@ -31,7 +31,7 @@ public class UserCandidateResponse {
     private String profilePictureUrl;
     private String curriculumVitaeUrl;
     private String addressId;
-//    private String discId;
+    private String discId;
     private UserTypeEnum type;
     private String linkedInUrl;
     private String githubUrl;
