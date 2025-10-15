@@ -26,4 +26,5 @@ public class EnterpriseResponse {
     private String missionStatement;
     private String coreValues;
     private String benefits;
+    private Boolean canUploadModules;
 }
