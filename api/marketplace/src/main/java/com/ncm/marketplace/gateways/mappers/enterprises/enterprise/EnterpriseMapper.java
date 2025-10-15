@@ -51,6 +51,10 @@ public class EnterpriseMapper {
                 .addressId(enterprise.getAddress() != null
                         ? enterprise.getAddress().getId()
                         : null)
+                .missionStatement(enterprise.getMissionStatement())
+                .coreValues(enterprise.getCoreValues())
+                .benefits(enterprise.getBenefits())
+                .canUploadModules(enterprise.getCanUploadModules())
                 .build();
     }
 

@@ -23,4 +23,8 @@ public class EnterpriseResponse {
     private String plan;
     private String profilePictureUrl;
     private String addressId;
+    private String missionStatement;
+    private String coreValues;
+    private String benefits;
+    private Boolean canUploadModules;
 }

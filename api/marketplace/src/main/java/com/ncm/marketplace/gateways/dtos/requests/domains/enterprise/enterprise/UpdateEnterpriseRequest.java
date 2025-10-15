@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,4 +24,10 @@ public class UpdateEnterpriseRequest {
     @NotEmpty
     private String email;
     private LocalDate birthday;
+    @Size(max = 1000)
+    private String missionStatement;
+    @Size(max = 1000)
+    private String coreValues;
+    @Size(max = 1000)
+    private String benefits;
 }

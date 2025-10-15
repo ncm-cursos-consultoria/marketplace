@@ -44,6 +44,14 @@ public class Enterprise {
     private String cnpj;
     @Builder.Default
     private String plan = PlansEnum.BASIC.getName();
+    @Column(length = 1000)
+    private String missionStatement;
+    @Column(length = 1000)
+    private String coreValues;
+    @Column(length = 1000)
+    private String benefits;
+    @Builder.Default
+    private Boolean canUploadModules = Boolean.FALSE;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profilePictureId", referencedColumnName = "id")
