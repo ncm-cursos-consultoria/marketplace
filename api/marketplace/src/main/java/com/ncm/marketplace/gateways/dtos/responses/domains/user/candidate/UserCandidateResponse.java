@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ncm.marketplace.domains.enums.DiscEnum;
 import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.gateways.dtos.responses.domains.others.tag.TagResponse;
@@ -31,6 +32,7 @@ public class UserCandidateResponse {
     private String profilePictureUrl;
     private String curriculumVitaeUrl;
     private String addressId;
+    private DiscEnum discTag;
     private String discId;
     private UserTypeEnum type;
     private String linkedInUrl;

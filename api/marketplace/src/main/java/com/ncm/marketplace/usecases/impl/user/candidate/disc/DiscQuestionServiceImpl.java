@@ -12,7 +12,7 @@ import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.disc.D
 import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.DiscQuestionService;
 import com.ncm.marketplace.usecases.services.command.user.candidate.disc.DiscQuestionCommandService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.disc.DiscQuestionQueryService;
-import com.ncm.marketplace.usecases.services.specification.user.candidate.disc.DiscSpecification;
+import com.ncm.marketplace.usecases.services.specification.user.candidate.disc.DiscQuestionSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,7 +33,7 @@ import static com.ncm.marketplace.gateways.mappers.user.candidate.disc.DiscQuest
 public class DiscQuestionServiceImpl implements DiscQuestionService {
     private final DiscQuestionCommandService discQuestionCommandService;
     private final DiscQuestionQueryService discQuestionQueryService;
-    private final DiscSpecification discSpecification;
+    private final DiscQuestionSpecification discQuestionSpecification;
 
     @Transactional
     @Override
@@ -54,8 +53,13 @@ public class DiscQuestionServiceImpl implements DiscQuestionService {
     }
 
     @Override
+    public List<DiscQuestionResponse> findAll() {
+        return toResponse(discQuestionQueryService.findAll());
+    }
+
+    @Override
     public List<DiscQuestionResponse> findAll(DiscQuestionSpecificationRequest specificationRequest) {
-        Specification<DiscQuestion> specification = discSpecification.toSpecification(specificationRequest);
+        Specification<DiscQuestion> specification = discQuestionSpecification.toSpecification(specificationRequest);
         return toResponse(discQuestionQueryService.findAll(specification));
     }
 
@@ -76,34 +80,50 @@ public class DiscQuestionServiceImpl implements DiscQuestionService {
                 .collect(Collectors.toSet());
         for (String name : dominanceNames) {
             if (!discQuestionQueryService.existsByNameAndType(name, DiscEnum.DOMINANCE)) {
+                log.info("Creating {} {} questions...", name, DiscEnum.DOMINANCE);
                 save(CreateDiscQuestionRequest.builder()
                         .name(name)
                         .type(DiscEnum.DOMINANCE)
                         .build());
+                log.info("{} question {} created ✅", DiscEnum.DOMINANCE, name);
+            } else {
+                log.info("{} question {} already exist ✅", DiscEnum.DOMINANCE, name);
             }
         }
         for (String name : influencingNames) {
             if (!discQuestionQueryService.existsByNameAndType(name, DiscEnum.INFLUENCING)) {
+                log.info("Creating {} {} questions...", name, DiscEnum.INFLUENCING);
                 save(CreateDiscQuestionRequest.builder()
                         .name(name)
                         .type(DiscEnum.INFLUENCING)
                         .build());
+                log.info("{} question {} created ✅", DiscEnum.INFLUENCING, name);
+            } else {
+                log.info("{} question {} already exist ✅", DiscEnum.INFLUENCING, name);
             }
         }
         for (String name : steadinessNames) {
             if (!discQuestionQueryService.existsByNameAndType(name, DiscEnum.STEADINESS)) {
+                log.info("Creating {} {} questions...", name, DiscEnum.STEADINESS);
                 save(CreateDiscQuestionRequest.builder()
                         .name(name)
                         .type(DiscEnum.STEADINESS)
                         .build());
+                log.info("{} question {} created ✅", DiscEnum.STEADINESS, name);
+            } else {
+                log.info("{} question {} already exist ✅", DiscEnum.STEADINESS, name);
             }
         }
         for (String name : complianceNames) {
             if (!discQuestionQueryService.existsByNameAndType(name, DiscEnum.COMPLIANCE)) {
+                log.info("Creating {} {} questions...", name, DiscEnum.COMPLIANCE);
                 save(CreateDiscQuestionRequest.builder()
                         .name(name)
                         .type(DiscEnum.COMPLIANCE)
                         .build());
+                log.info("{} question {} created ✅", DiscEnum.COMPLIANCE, name);
+            } else {
+                log.info("{} question {} already exist ✅", DiscEnum.COMPLIANCE, name);
             }
         }
     }

@@ -6,6 +6,7 @@ import com.ncm.marketplace.domains.user.candidate.disc.Disc;
 import com.ncm.marketplace.domains.user.candidate.disc.DiscQuestion;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Check;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -26,7 +27,9 @@ public class DiscDiscQuestion {
     private Instant createdAt;
     @UpdateTimestamp
     private Instant updatedAt;
-    private Integer value;
+    @Column(nullable = false)
+    @Check(constraints = "score >= 1 AND score <= 4")
+    private Integer score;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discId", referencedColumnName = "id")

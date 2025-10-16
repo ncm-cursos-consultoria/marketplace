@@ -1,8 +1,29 @@
+"use client";
 // Página estática inspirada na listagem de oportunidades
 // Fonte de dados: Relatório DISC — Sr. Nivaldo Menezes (PDF)
 // — Apenas o conteúdo principal; o <aside> já existe no layout.tsx
+import { useRouter } from 'next/navigation';
+import { UseUserCandidate } from '@/context/user-candidate.context';
 
 export default function Page() {
+  const { userCandidate } = UseUserCandidate();
+
+  const router = useRouter();
+  const handleHistoryClick = () => {
+    router.push('/disc/history');
+  };
+
+  const handleNewTestClick = () => {
+    const userId = userCandidate?.id;
+
+    if (!userId) {
+      console.error("Usuário não encontrado, não é possível iniciar o teste.");
+      router.push('br/auth/sign-in');
+      return;
+    }
+
+    router.push(`/br/candidato/oportunidades/teste-comportamental/${userId}/new`);
+  };
   // ====== DADOS ESTÁTICOS (extraídos do PDF) ======
   const meta = {
     nome: "Sr. Nivaldo Menezes",
@@ -47,6 +68,20 @@ export default function Page() {
   // ====== UI ======
   return (
     <main className="p-6 lg:p-10 space-y-8">
+      <div className="flex justify-end items-end space-x-4">
+        <button
+          onClick={handleHistoryClick}
+          className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+        >
+          Ver Histórico
+        </button>
+        <button
+          onClick={handleNewTestClick}
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
+        >
+          Fazer Novo Teste
+        </button>
+      </div>
       {/* Cabeçalho */}
       <header className="space-y-1">
         <h1 className="text-2xl lg:text-3xl font-semibold text-gray-900">

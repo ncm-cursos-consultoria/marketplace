@@ -1,11 +1,11 @@
 package com.ncm.marketplace.usecases.services.security;
 
+import com.ncm.marketplace.domains.enums.DiscEnum;
 import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.domains.user.User;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.domains.user.UserPartner;
-import com.ncm.marketplace.domains.user.candidate.disc.Disc;
 import com.ncm.marketplace.exceptions.InvalidCredentialsException;
 import com.ncm.marketplace.exceptions.UserBlockedException;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
@@ -87,6 +87,7 @@ public class AuthService {
         Boolean hasCurriculumVitae = null;
         Boolean hasDisc = null;
         List<TagResponse> tags = null;
+        DiscEnum discTag = null;
 
         Object details = auth.getDetails();
         if (details instanceof java.util.Map<?,?> map) {
@@ -106,9 +107,10 @@ public class AuthService {
 
         if (user instanceof UserCandidate userCandidate) {
             hasCurriculumVitae = userCandidate.getCurriculumVitae() != null;
-            hasDisc = userCandidate.getDiscs() != null ? userCandidate.getDiscs().stream().anyMatch(Disc::getIsActive) : Boolean.FALSE;
+            hasDisc = (userCandidate.getDiscs() != null && !userCandidate.getDiscs().isEmpty()) ? Boolean.TRUE : Boolean.FALSE;
             cpf = userCandidate.getCpf();
             tags = TagMapper.toResponseFromUserCandidate(userCandidate.getTagUserCandidates());
+            discTag = userCandidate.getDiscTag();
         } else if (user instanceof UserEnterprise userEnterprise) {
             enterpriseId = userEnterprise.getEnterprise() != null
                     ? userEnterprise.getEnterprise().getId()
@@ -135,6 +137,7 @@ public class AuthService {
                 .hasCurriculumVitae(hasCurriculumVitae)
                 .hasDisc(hasDisc)
                 .tags(tags)
+                .discTag(discTag)
                 .build();
     }
 

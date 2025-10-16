@@ -9,7 +9,7 @@ import com.ncm.marketplace.usecases.interfaces.others.CrudPartner;
 import com.ncm.marketplace.usecases.interfaces.others.PlanService;
 import com.ncm.marketplace.usecases.interfaces.others.TagService;
 import com.ncm.marketplace.usecases.interfaces.thirdParty.mercadoPago.MercadoPagoService;
-import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.CrudDisc;
+import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.DiscService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class Initializer implements ApplicationRunner {
     private final CrudJobOpening crudJobOpening;
     private final CrudAddress crudAddress;
     private final CrudPartner crudPartner;
-    private final CrudDisc crudDisc;
+    private final DiscService discService;
     private final TagService tagService;
 
     @Override

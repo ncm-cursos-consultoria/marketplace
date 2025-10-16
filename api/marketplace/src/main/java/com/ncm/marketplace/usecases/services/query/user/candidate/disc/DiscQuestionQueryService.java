@@ -27,6 +27,14 @@ public class DiscQuestionQueryService {
                 .orElseThrow(() -> new NotFoundException("Question not found"));
     }
 
+    public List<DiscQuestion> findAll() {
+        return discQuestionRepository.findAll();
+    }
+
+    public Long count() {
+        return discQuestionRepository.count();
+    }
+
     public List<DiscQuestion> findAll(Specification<DiscQuestion> specification) {
         return discQuestionRepository.findAll(specification);
     }

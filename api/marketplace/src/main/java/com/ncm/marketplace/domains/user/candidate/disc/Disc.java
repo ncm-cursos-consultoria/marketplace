@@ -32,8 +32,6 @@ public class Disc {
     private Instant updatedAt;
     @Enumerated(EnumType.STRING)
     private DiscEnum main;
-    @Builder.Default
-    private Boolean isActive = Boolean.TRUE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
