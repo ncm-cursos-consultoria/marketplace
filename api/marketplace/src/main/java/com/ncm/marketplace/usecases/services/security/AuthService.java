@@ -6,6 +6,7 @@ import com.ncm.marketplace.domains.user.User;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.domains.user.UserPartner;
+import com.ncm.marketplace.domains.user.candidate.disc.Disc;
 import com.ncm.marketplace.exceptions.InvalidCredentialsException;
 import com.ncm.marketplace.exceptions.UserBlockedException;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
@@ -85,9 +86,11 @@ public class AuthService {
         String profilePictureUrl = null;
         String cpf = null;
         Boolean hasCurriculumVitae = null;
+        String curriculumVitaeUrl = null;
         Boolean hasDisc = null;
-        List<TagResponse> tags = null;
         DiscEnum discTag = null;
+        String discId = null;
+        List<TagResponse> tags = null;
 
         Object details = auth.getDetails();
         if (details instanceof java.util.Map<?,?> map) {
@@ -106,8 +109,20 @@ public class AuthService {
                 : null;
 
         if (user instanceof UserCandidate userCandidate) {
-            hasCurriculumVitae = userCandidate.getCurriculumVitae() != null;
-            hasDisc = (userCandidate.getDiscs() != null && !userCandidate.getDiscs().isEmpty()) ? Boolean.TRUE : Boolean.FALSE;
+            if (userCandidate.getCurriculumVitae() != null) {
+                hasCurriculumVitae = Boolean.TRUE;
+                curriculumVitaeUrl = userCandidate.getCurriculumVitae().getPath();
+            } else {
+                hasCurriculumVitae = Boolean.FALSE;
+            }
+            if (userCandidate.getDiscs() != null && !userCandidate.getDiscs().isEmpty()) {
+                hasDisc = Boolean.TRUE;
+                discId = userCandidate.getDiscs().stream()
+                        .max(Comparator.comparing(Disc::getCreatedAt))
+                        .stream().findFirst().get().getId();
+            } else {
+                hasDisc = Boolean.FALSE;
+            }
             cpf = userCandidate.getCpf();
             tags = TagMapper.toResponseFromUserCandidate(userCandidate.getTagUserCandidates());
             discTag = userCandidate.getDiscTag();
@@ -135,9 +150,11 @@ public class AuthService {
                 .enterpriseId(enterpriseId)
                 .partnerId(partnerId)
                 .hasCurriculumVitae(hasCurriculumVitae)
+                .curriculumVitaeUrl(curriculumVitaeUrl)
                 .hasDisc(hasDisc)
-                .tags(tags)
                 .discTag(discTag)
+                .discId(discId)
+                .tags(tags)
                 .build();
     }
 

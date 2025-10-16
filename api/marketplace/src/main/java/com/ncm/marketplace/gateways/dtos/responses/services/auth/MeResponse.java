@@ -27,9 +27,11 @@ public class MeResponse {
     private String profilePictureUrl;
     private UserTypeEnum type;
     private DiscEnum discTag;
+    private String discId;
     private String enterpriseId;
     private String partnerId;
     private Boolean hasCurriculumVitae;
+    private String curriculumVitaeUrl;
     private Boolean hasDisc;
     private List<TagResponse> tags;
 }
