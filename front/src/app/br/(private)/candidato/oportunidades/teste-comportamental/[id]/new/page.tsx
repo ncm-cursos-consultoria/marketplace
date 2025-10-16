@@ -9,8 +9,8 @@ import { useRouter } from 'next/navigation';
 import { UseUserCandidate } from '@/context/user-candidate.context'; // 1. Importe o hook do contexto
 
 // Importa as funções que chamam a API (você já as criou!)
-import { getAllDiscQuestions } from '../../../../../../../../service/user/disc/get-all-disc-questions'; // Ajuste o caminho se necessário
-import { postDisc } from '../../../../../../../../service/user/disc/post-create-disc';
+import { getAllDiscQuestions } from "@/service/user/disc/get-all-disc-questions"; // Ajuste o caminho se necessário
+import { postDisc } from "@/service/user/disc/post-create-disc";
 
 // Tipos para os dados (como DTOs no Java)
 interface Question {
