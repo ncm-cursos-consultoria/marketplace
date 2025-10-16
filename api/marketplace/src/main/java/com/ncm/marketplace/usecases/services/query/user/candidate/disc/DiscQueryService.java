@@ -30,7 +30,8 @@ public class DiscQueryService {
     }
 
     public List<Disc> findAll(Specification<Disc> specification) {
-        return discRepository.findAll(specification);
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        return discRepository.findAll(specification, sort);
     }
 
     public Page<Disc> findAll(Pageable pageable) {
