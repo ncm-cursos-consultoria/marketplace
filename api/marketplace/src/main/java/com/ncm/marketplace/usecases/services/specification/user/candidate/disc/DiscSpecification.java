@@ -19,7 +19,7 @@ public class DiscSpecification {
             } else {
                 assert query != null;
                 query.distinct(true);
-                return root.get("userCandidate").in(userIds);
+                return root.get("userCandidate").get("id").in(userIds);
             }
         });
     }
