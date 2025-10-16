@@ -1,11 +1,25 @@
 import { api } from "../../api";
 
-export const getUniqueDisc = async (discId: string) => {
+export interface DiscResultResponse {
+  meta: {
+    nome: string;
+    data: string;
+    origem: string;
+    titulo: string;
+  };
+  voceNoDisc?: string;
+  mascaraPostural?: string;
+  intimo?: string;
+  posturaUsual?: string;
+  aconselhamentoAdicional?: string;
+}
+
+export const getUniqueDisc = async (discId: string): Promise<DiscResultResponse> => {
   try {
-    const res = await api.get(`/disc/${discId}`);
+    const res = await api.get<DiscResultResponse>(`/disc/${discId}`);
     return res.data;
   } catch (err) {
-    console.log(err);
-    throw new Error("erro get unique disc");
+    console.error(`Erro ao buscar detalhes do DISC ${discId}:`, err);
+    throw new Error("Erro ao buscar detalhes do teste DISC");
   }
 };

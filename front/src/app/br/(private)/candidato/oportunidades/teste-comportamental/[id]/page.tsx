@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UseUserCandidate } from "@/context/user-candidate.context";
-import { getUniqueDisc } from "@/service/user/disc/get-unique-disc"; // Ajuste o caminho
+import { getUniqueDisc } from "@/service/user/disc/get-unique-disc";
 
 // Tipos para os dados da API (como DTOs do Java)
 interface DiscResult {
