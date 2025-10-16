@@ -19,6 +19,7 @@ interface userCandidateProviderProps {
   setUserCandidate: Dispatch<SetStateAction<UserCandidateProps | null>>;
   logout: (redirectTo?: string) => Promise<void>;
   isLoggingOut: boolean;
+  isLoading: boolean;
 }
 
 const userCandidateContext = createContext<userCandidateProviderProps | undefined>(undefined);
