@@ -10,6 +10,7 @@ public interface DiscQuestionService {
     DiscQuestionResponse save(CreateDiscQuestionRequest request);
     void deleteById(String id);
     DiscQuestionResponse findById(String id);
+    List<DiscQuestionResponse> findAll();
     List<DiscQuestionResponse> findAll(DiscQuestionSpecificationRequest specificationRequest);
     void init();
 }

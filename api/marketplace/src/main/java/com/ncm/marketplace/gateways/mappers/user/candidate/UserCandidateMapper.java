@@ -2,12 +2,14 @@ package com.ncm.marketplace.gateways.mappers.user.candidate;
 
 import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
+import com.ncm.marketplace.domains.user.candidate.disc.Disc;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateListResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
 import com.ncm.marketplace.gateways.mappers.others.tag.TagMapper;
 import org.springframework.data.domain.Page;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,6 +48,11 @@ public class UserCandidateMapper {
                 .curriculumVitaeUrl(userCandidate.getCurriculumVitae() != null
                         ? userCandidate.getCurriculumVitae().getPath()
                         : null)
+                .discTag(userCandidate.getDiscTag())
+                .discId(userCandidate.getDiscs().stream()
+                        .max(Comparator.comparing(Disc::getCreatedAt))
+                        .map(Disc::getId)
+                        .orElse(null))
                 .type(UserTypeEnum.CANDIDATE)
                 .linkedInUrl(userCandidate.getLinkedInUrl())
                 .githubUrl(userCandidate.getGithubUrl())

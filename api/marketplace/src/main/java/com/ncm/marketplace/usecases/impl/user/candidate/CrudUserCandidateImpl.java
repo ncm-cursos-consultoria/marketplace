@@ -1,8 +1,6 @@
 package com.ncm.marketplace.usecases.impl.user.candidate;
 
 import com.ncm.marketplace.domains.enterprise.JobOpening;
-import com.ncm.marketplace.domains.enums.FilePathEnum;
-import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.domains.enums.PartnerStatusEnum;
 import com.ncm.marketplace.domains.others.Address;
@@ -12,25 +10,21 @@ import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJob
 import com.ncm.marketplace.domains.user.User;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.exceptions.BadRequestException;
-import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
-import com.ncm.marketplace.gateways.dtos.requests.domains.others.file.CreateFileRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.CreateDiscRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
+import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.disc.DiscResponse;
 import com.ncm.marketplace.gateways.mappers.others.address.AddressMapper;
-import com.ncm.marketplace.usecases.impl.others.CrudAddressImpl;
-import com.ncm.marketplace.usecases.impl.others.CrudFileImpl;
-import com.ncm.marketplace.usecases.interfaces.others.CrudFile;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
+import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.DiscService;
 import com.ncm.marketplace.usecases.services.command.others.AddressCommandService;
 import com.ncm.marketplace.usecases.services.command.relationship.partner.PartnerUserCandidateCommandService;
 import com.ncm.marketplace.usecases.services.command.user.candidate.UserCandidateCommandService;
-import com.ncm.marketplace.usecases.services.fileStorage.FileStorageService;
 import com.ncm.marketplace.usecases.services.query.enterprises.JobOpeningQueryService;
 import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
-import com.ncm.marketplace.usecases.services.query.relationship.user.candidate.UserCandidateJobOpeningQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
 import com.ncm.marketplace.usecases.services.specification.user.candidate.UserCandidateSpecification;
@@ -40,7 +34,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -61,13 +54,10 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
     private final UserQueryService userQueryService;
     private final PartnerQueryService partnerQueryService;
     private final PartnerUserCandidateCommandService partnerUserCandidateCommandService;
-    private final FileStorageService fileStorageService;
-    private final CrudFile cruFile;
     private final AddressCommandService addressCommandService;
-    private final CrudAddressImpl crudAddressImpl;
     private final UserCandidateSpecification userCandidateSpecification;
-    private final UserCandidateJobOpeningQueryService userCandidateJobOpeningQueryService;
     private final JobOpeningQueryService jobOpeningQueryService;
+    private final DiscService discService;
 
     @Transactional
     @Override
@@ -196,5 +186,13 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
             addressCommandService.save(address);
         }
         return toResponse(user);
+    }
+
+    @Transactional
+    @Override
+    public UserCandidateResponse addDisc(String id, CreateDiscRequest request) {
+        request.setUserId(id);
+        DiscResponse discResponse = discService.save(request);
+        return toResponse(userCandidateQueryService.findByIdOrThrow(discResponse.getUserId()));
     }
 }

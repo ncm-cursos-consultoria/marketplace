@@ -17,6 +17,8 @@ export interface UserCandidateProps {
   birthday?: string;
   curriculumVitaeUrl? : string
   hasCurriculumVitaeUrl?: boolean
+  hasDisc?: boolean
+  discId?: string
 }
 
 export interface UserEnterpriseProps {

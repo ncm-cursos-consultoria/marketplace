@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.dtos.responses.services.auth;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ncm.marketplace.domains.enums.DiscEnum;
 import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.gateways.dtos.responses.domains.others.tag.TagResponse;
 import lombok.Builder;
@@ -25,9 +26,12 @@ public class MeResponse {
     private LocalDate birthday;
     private String profilePictureUrl;
     private UserTypeEnum type;
+    private DiscEnum discTag;
+    private String discId;
     private String enterpriseId;
     private String partnerId;
     private Boolean hasCurriculumVitae;
+    private String curriculumVitaeUrl;
     private Boolean hasDisc;
     private List<TagResponse> tags;
 }

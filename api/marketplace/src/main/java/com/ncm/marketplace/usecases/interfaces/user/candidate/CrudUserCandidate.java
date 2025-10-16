@@ -5,6 +5,7 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateA
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.CreateDiscRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
 
 import java.util.List;
@@ -17,4 +18,5 @@ public interface CrudUserCandidate {
     List<UserCandidateResponse> findAll(UserCandidateSpecificationRequest specificationRequest);
     String init();
     UserCandidateResponse addOrUpdateAddress(String id, CreateAddressRequest request);
+    UserCandidateResponse addDisc(String id, CreateDiscRequest request);
 }

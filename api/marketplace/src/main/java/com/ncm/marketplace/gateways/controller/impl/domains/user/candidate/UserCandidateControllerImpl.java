@@ -8,9 +8,9 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateU
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.CreateDiscRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
-import com.ncm.marketplace.usecases.impl.others.TagServiceImpl;
 import com.ncm.marketplace.usecases.interfaces.others.TagService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
+import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.DiscService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -28,6 +28,7 @@ import java.util.List;
 public class UserCandidateControllerImpl implements UserCandidateController {
     private final CrudUserCandidate crudUserCandidate;
     private final TagService tagService;
+    private final DiscService discService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -73,12 +74,12 @@ public class UserCandidateControllerImpl implements UserCandidateController {
         return ResponseEntity.ok(crudUserCandidate.addOrUpdateAddress(id,request));
     }
 
-    @PatchMapping("/{id}/disc")
+    @PostMapping("/{id}/disc")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Função off")
     @Override
     public ResponseEntity<UserCandidateResponse> addDisc(@PathVariable String id, @Valid @RequestBody CreateDiscRequest request) {
-        return null;
+        return ResponseEntity.ok(crudUserCandidate.addDisc(id,request));
     }
 
     @GetMapping("/{id}")

@@ -2,6 +2,7 @@ package com.ncm.marketplace.usecases.impl.catalog;
 
 import com.ncm.marketplace.domains.catalog.Module;
 import com.ncm.marketplace.domains.enterprise.Enterprise;
+import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.CreateModuleRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.ModuleSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.UpdateModuleRequest;
@@ -36,6 +37,9 @@ public class CrudModuleImpl implements CrudModule {
     public ModuleResponse save(CreateModuleRequest request) {
         Module module = toEntityCreate(request);
         Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(request.getEnterpriseId());
+        if (!enterprise.getCanUploadModules()) {
+            throw new IllegalStateException("This enterprise can't create modules");
+        }
         module.setEnterprise(enterprise);
         return toResponse(moduleCommandService.save(module));
     }
