@@ -6,14 +6,15 @@ import { UseUserCandidate } from "@/context/user-candidate.context";
 import { getUniqueDisc } from "@/service/user/disc/get-unique-disc";
 import { Section } from "@/components/disc/section";
 import { Info } from "@/components/disc/info";
+import { DiscResultResponse } from "@/service/user/disc/get-unique-disc";
 
-// Tipos para os dados da API (como DTOs do Java)
-interface DiscResult {
-  id: string;
-  createdAt: string; // Vem como string ISO da API
-  main: "DOMINANCE" | "INFLUENCING" | "STEADINESS" | "COMPLIANCE";
-  // Adicione outras propriedades aqui quando seu backend as tiver
-}
+// // Tipos para os dados da API (como DTOs do Java)
+// interface DiscResult {
+//   id: string;
+//   createdAt: string; // Vem como string ISO da API
+//   main: "DOMINANCE" | "INFLUENCING" | "STEADINESS" | "COMPLIANCE";
+//   // Adicione outras propriedades aqui quando seu backend as tiver
+// }
 
 // Dicionário de tradução para os perfis
 const discProfileTranslations = {
@@ -23,11 +24,31 @@ const discProfileTranslations = {
   COMPLIANCE: "Conforme",
 };
 
-export default function DiscResultPage({ params }: { params: { id: string } }) {
+interface DiscPageProps {
+  params: Promise<{ id: string }>;
+}
+
+// 2. USE A INTERFACE AQUI
+export default function DiscResultPage({ params }: DiscPageProps) {
   const router = useRouter();
   const { userCandidate, isLoading: isUserLoading } = UseUserCandidate();
-  const [result, setResult] = useState<DiscResult | null>(null);
+
+  const [result, setResult] = useState<DiscResultResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null); // "Memória" para o ID resolvido
+
+  // 3. PRIMEIRO useEffect: APENAS para resolver a Promise dos params
+  useEffect(() => {
+    async function resolveParams() {
+      try {
+        const resolvedParams = await params;
+        setUserId(resolvedParams.id);
+      } catch (error) {
+        console.error("Falha ao resolver parâmetros da rota:", error);
+      }
+    }
+    resolveParams();
+  }, [params]);
 
   useEffect(() => {
     if (isUserLoading) {
@@ -35,7 +56,6 @@ export default function DiscResultPage({ params }: { params: { id: string } }) {
     }
 
     const lastDiscId = userCandidate?.discId;
-    const userId = params.id;
 
     if (!lastDiscId) {
       console.log("Nenhum teste encontrado, redirecionando para a página de novo teste...");
@@ -55,14 +75,14 @@ export default function DiscResultPage({ params }: { params: { id: string } }) {
       }
       fetchResult();
     }
-  }, [userCandidate, isUserLoading, params.id, router]); // Dependências do useEffect
+  }, [userCandidate, isUserLoading, userId, router]); // Agora depende de 'userId'
 
   const handleHistoryClick = () => {
-    router.push(`/br/candidato/oportunidades/teste-comportamental/${params.id}/history`);
+    router.push(`/br/candidato/oportunidades/teste-comportamental/${userId}/history`);
   };
 
   const handleNewTestClick = () => {
-    router.push(`/br/candidato/oportunidades/teste-comportamental/${params.id}/new`);
+    router.push(`/br/candidato/oportunidades/teste-comportamental/${userId}/new`);
   };
 
   if (isLoading || isUserLoading) {
@@ -93,13 +113,13 @@ export default function DiscResultPage({ params }: { params: { id: string } }) {
       <header className="space-y-1">
         <h1 className="text-2xl lg:text-3xl font-semibold text-gray-900">
           {/* DADO DINÂMICO */}
-          {`DISC — Resultado do Teste Comportamental - (${discProfileTranslations[result.main] || result.main})`}
+          {`DISC — Resultado do Teste Comportamental - (${discProfileTranslations[result.meta.titulo] || result.meta.titulo})`}
         </h1>
         <p className="text-gray-600">Relatório Postural Expandido</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           {/* DADOS DINÂMICOS E PLACEHOLDERS */}
           <Info label="Nome" value={userCandidate?.firstName + ' ' + userCandidate?.lastName || "Não encontrado"} />
-          <Info label="Data" value={new Date(result.createdAt).toLocaleDateString('pt-BR')} />
+          <Info label="Data" value={new Date(result.meta.data).toLocaleDateString('pt-BR')} />
           <Info label="Origem" value={"NCM Marketplace"} /> {/* Placeholder */}
         </div>
       </header>

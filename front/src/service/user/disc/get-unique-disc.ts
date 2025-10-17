@@ -5,7 +5,7 @@ export interface DiscResultResponse {
     nome: string;
     data: string;
     origem: string;
-    titulo: string;
+    titulo: "DOMINANCE" | "INFLUENCING" | "STEADINESS" | "COMPLIANCE";
   };
   voceNoDisc?: string;
   mascaraPostural?: string;
