@@ -6,17 +6,19 @@ import { getAllDiscsList, DiscSnippet } from "@/service/user/disc/get-all-discs-
 import { DiscHistoryItem } from "@/components/disc/item";
 
 interface DiscHistoryPageProps {
-  id: string;
+  params: {
+    id: string;
+  };
 }
 
-export default function DiscHistoryPage({ id }: DiscHistoryPageProps) {
+// A assinatura da função deve receber o objeto 'params'
+export default function DiscHistoryPage({ params }: DiscHistoryPageProps) {
   const router = useRouter();
   const [history, setHistory] = useState<DiscSnippet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  let userId: string;
+  const userId = params.id;
 
   useEffect(() => {
-    userId = id;
     if (!userId) {
       setIsLoading(false);
       return;
