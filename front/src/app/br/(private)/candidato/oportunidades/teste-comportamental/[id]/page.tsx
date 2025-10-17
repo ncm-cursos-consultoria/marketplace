@@ -113,13 +113,13 @@ export default function DiscResultPage({ params }: DiscPageProps) {
       <header className="space-y-1">
         <h1 className="text-2xl lg:text-3xl font-semibold text-gray-900">
           {/* DADO DINÂMICO */}
-          {`DISC — Resultado do Teste Comportamental - (${discProfileTranslations[result.meta.titulo] || result.meta.titulo})`}
+          {`DISC — Resultado do Teste Comportamental - (${discProfileTranslations[result.main] || result.main})`}
         </h1>
         <p className="text-gray-600">Relatório Postural Expandido</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           {/* DADOS DINÂMICOS E PLACEHOLDERS */}
           <Info label="Nome" value={userCandidate?.firstName + ' ' + userCandidate?.lastName || "Não encontrado"} />
-          <Info label="Data" value={new Date(result.meta.data).toLocaleDateString('pt-BR')} />
+          <Info label="Data" value={new Date(result.data).toLocaleDateString('pt-BR')} />
           <Info label="Origem" value={"NCM Marketplace"} /> {/* Placeholder */}
         </div>
       </header>

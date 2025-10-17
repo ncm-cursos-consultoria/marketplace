@@ -1,12 +1,10 @@
 import { api } from "../../api";
 
 export interface DiscResultResponse {
-  meta: {
     nome: string;
     data: string;
     origem: string;
-    titulo: "DOMINANCE" | "INFLUENCING" | "STEADINESS" | "COMPLIANCE";
-  };
+    main: "DOMINANCE" | "INFLUENCING" | "STEADINESS" | "COMPLIANCE";
   voceNoDisc?: string;
   mascaraPostural?: string;
   intimo?: string;
