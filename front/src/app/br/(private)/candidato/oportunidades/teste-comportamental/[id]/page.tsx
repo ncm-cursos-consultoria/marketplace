@@ -4,14 +4,17 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UseUserCandidate } from "@/context/user-candidate.context";
 import { getUniqueDisc } from "@/service/user/disc/get-unique-disc";
+import { Section } from "@/components/disc/section";
+import { Info } from "@/components/disc/info";
+import { DiscResultResponse } from "@/service/user/disc/get-unique-disc";
 
-// Tipos para os dados da API (como DTOs do Java)
-interface DiscResult {
-  id: string;
-  createdAt: string; // Vem como string ISO da API
-  main: "DOMINANCE" | "INFLUENCING" | "STEADINESS" | "COMPLIANCE";
-  // Adicione outras propriedades aqui quando seu backend as tiver
-}
+// // Tipos para os dados da API (como DTOs do Java)
+// interface DiscResult {
+//   id: string;
+//   createdAt: string; // Vem como string ISO da API
+//   main: "DOMINANCE" | "INFLUENCING" | "STEADINESS" | "COMPLIANCE";
+//   // Adicione outras propriedades aqui quando seu backend as tiver
+// }
 
 // Dicionário de tradução para os perfis
 const discProfileTranslations = {
@@ -21,11 +24,31 @@ const discProfileTranslations = {
   COMPLIANCE: "Conforme",
 };
 
-export default function DiscResultPage({ params }: { params: { id: string } }) {
+interface DiscPageProps {
+  params: Promise<{ id: string }>;
+}
+
+// 2. USE A INTERFACE AQUI
+export default function DiscResultPage({ params }: DiscPageProps) {
   const router = useRouter();
   const { userCandidate, isLoading: isUserLoading } = UseUserCandidate();
-  const [result, setResult] = useState<DiscResult | null>(null);
+
+  const [result, setResult] = useState<DiscResultResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null); // "Memória" para o ID resolvido
+
+  // 3. PRIMEIRO useEffect: APENAS para resolver a Promise dos params
+  useEffect(() => {
+    async function resolveParams() {
+      try {
+        const resolvedParams = await params;
+        setUserId(resolvedParams.id);
+      } catch (error) {
+        console.error("Falha ao resolver parâmetros da rota:", error);
+      }
+    }
+    resolveParams();
+  }, [params]);
 
   useEffect(() => {
     if (isUserLoading) {
@@ -33,7 +56,6 @@ export default function DiscResultPage({ params }: { params: { id: string } }) {
     }
 
     const lastDiscId = userCandidate?.discId;
-    const userId = params.id;
 
     if (!lastDiscId) {
       console.log("Nenhum teste encontrado, redirecionando para a página de novo teste...");
@@ -53,14 +75,14 @@ export default function DiscResultPage({ params }: { params: { id: string } }) {
       }
       fetchResult();
     }
-  }, [userCandidate, isUserLoading, params.id, router]); // Dependências do useEffect
+  }, [userCandidate, isUserLoading, userId, router]); // Agora depende de 'userId'
 
   const handleHistoryClick = () => {
-    router.push(`/br/candidato/oportunidades/teste-comportamental/${params.id}/history`);
+    router.push(`/br/candidato/oportunidades/teste-comportamental/${userId}/history`);
   };
 
   const handleNewTestClick = () => {
-    router.push(`/br/candidato/oportunidades/teste-comportamental/${params.id}/new`);
+    router.push(`/br/candidato/oportunidades/teste-comportamental/${userId}/new`);
   };
 
   if (isLoading || isUserLoading) {
@@ -97,7 +119,7 @@ export default function DiscResultPage({ params }: { params: { id: string } }) {
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           {/* DADOS DINÂMICOS E PLACEHOLDERS */}
           <Info label="Nome" value={userCandidate?.firstName + ' ' + userCandidate?.lastName || "Não encontrado"} />
-          <Info label="Data" value={new Date(result.createdAt).toLocaleDateString('pt-BR')} />
+          <Info label="Data" value={new Date(result.data).toLocaleDateString('pt-BR')} />
           <Info label="Origem" value={"NCM Marketplace"} /> {/* Placeholder */}
         </div>
       </header>
@@ -138,39 +160,5 @@ export default function DiscResultPage({ params }: { params: { id: string } }) {
       </footer>
 
     </main>
-  );
-}
-
-function Section({
-  title,
-  children,
-  badge,
-}: {
-  title: string;
-  children: React.ReactNode;
-  badge?: string;
-}) {
-  return (
-    <section className="space-y-4">
-      <h2 className="text-xl font-semibold">{title}</h2>
-      <article className="rounded-2xl border bg-white p-5 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div />
-          {badge ? (
-            <span className="text-[10px] leading-5 rounded-full border px-2 py-0.5 text-blue-700 bg-blue-50">{badge}</span>
-          ) : null}
-        </div>
-        <div className="mt-2 space-y-2">{children}</div>
-      </article>
-    </section>
-  );
-}
-
-function Info({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl border bg-gray-50 p-3">
-      <div className="text-[11px] uppercase tracking-wide text-gray-500">{label}</div>
-      <div className="text-sm text-gray-900">{value}</div>
-    </div>
   );
 }

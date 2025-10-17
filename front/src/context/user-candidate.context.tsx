@@ -54,15 +54,15 @@ export function UserCandidateProvider({ children }: { children: React.ReactNode 
       await doLogout();
     } finally {
       setUserCandidate(null);
-      queryClient.clear(); 
-      queryClient.invalidateQueries({queryKey: ['authUser']})
+      queryClient.clear();
+      queryClient.invalidateQueries({ queryKey: ['authUser'] })
       router.replace(redirectTo);
     }
   };
 
   return (
     <userCandidateContext.Provider
-      value={{ userCandidate, setUserCandidate, logout, isLoggingOut }}
+      value={{ userCandidate, setUserCandidate, logout, isLoggingOut, isLoading }}
     >
       {children}
     </userCandidateContext.Provider>
