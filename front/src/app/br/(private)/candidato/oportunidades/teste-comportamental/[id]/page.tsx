@@ -23,13 +23,7 @@ const discProfileTranslations = {
   COMPLIANCE: "Conforme",
 };
 
-interface DiscPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function DiscResultPage({ params }: DiscPageProps) {
+export default function DiscResultPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { userCandidate, isLoading: isUserLoading } = UseUserCandidate();
   const [result, setResult] = useState<DiscResult | null>(null);

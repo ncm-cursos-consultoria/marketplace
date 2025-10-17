@@ -15,9 +15,11 @@ const discProfileTranslations = {
 };
 
 interface DiscPageProps {
-  params: {
-    id: string;
-  };
+  params: userCandidateType
+}
+
+type userCandidateType = {
+  id: string,
 }
 
 export default function DiscHistoryPage({ params }: DiscPageProps) {
