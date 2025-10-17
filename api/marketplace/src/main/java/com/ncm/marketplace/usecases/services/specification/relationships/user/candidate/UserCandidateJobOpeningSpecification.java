@@ -10,7 +10,7 @@ import java.util.List;
 public class UserCandidateJobOpeningSpecification {
     public static Specification<UserCandidateJobOpening> byUserIds(List<String> userIds) {
         return (root, query, criteriaBuilder) -> {
-            if (userIds != null && !userIds.isEmpty()) {
+            if (userIds == null || userIds.isEmpty()) {
                 return criteriaBuilder.conjunction();
             } else {
                 assert query != null;
@@ -22,6 +22,11 @@ public class UserCandidateJobOpeningSpecification {
     }
 
     public Specification<UserCandidateJobOpening> toSpecification(List<String> userIds) {
-        return byUserIds(userIds);
+        Specification<UserCandidateJobOpening> specification = (root, query, criteriaBuilder) ->
+                criteriaBuilder.conjunction();
+
+        specification = specification.and(byUserIds(userIds));
+
+        return specification;
     }
 }
