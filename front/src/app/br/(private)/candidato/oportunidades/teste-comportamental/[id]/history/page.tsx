@@ -5,7 +5,12 @@ import { useRouter } from "next/navigation";
 import { getAllDiscsList, DiscSnippet } from "@/service/user/disc/get-all-discs-list";
 import { DiscHistoryItem } from "@/components/disc/item";
 
-export default function DiscHistoryPage({ params }: { params: { id: string } }) {
+type DiscHistoryPageProps = {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export default function DiscHistoryPage({ params }: DiscHistoryPageProps) {
   const router = useRouter();
   const [history, setHistory] = useState<DiscSnippet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
