@@ -1,22 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { getAllDiscsList, DiscSnippet } from "@/service/user/disc/get-all-discs-list";
 import { DiscHistoryItem } from "@/components/disc/item";
 
-interface DiscHistoryPageProps {
-  params: {
-    id: string;
-  };
-}
-
 // A assinatura da função deve receber o objeto 'params'
-export default function DiscHistoryPage({ params }: DiscHistoryPageProps) {
+export default function DiscHistoryPage() {
   const router = useRouter();
+  const params = useParams();
+  const idParam = params?.id;
+  const userId = Array.isArray(idParam) ? idParam[0] : idParam;
+
   const [history, setHistory] = useState<DiscSnippet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const userId = params.id;
 
   useEffect(() => {
     if (!userId) {
@@ -36,7 +33,7 @@ export default function DiscHistoryPage({ params }: DiscHistoryPageProps) {
     }
 
     fetchHistory();
-  }, [id]); // O `[params.id]` diz: "rode este código de novo se o ID na URL mudar"
+  }, [userId]); // O `[params.id]` diz: "rode este código de novo se o ID na URL mudar"
 
   if (isLoading) {
     return <main className="p-10">Carregando histórico...</main>;
