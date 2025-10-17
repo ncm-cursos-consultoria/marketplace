@@ -5,17 +5,11 @@ import { useRouter } from "next/navigation";
 import { getAllDiscsList, DiscSnippet } from "@/service/user/disc/get-all-discs-list";
 import { DiscHistoryItem } from "@/components/disc/item";
 
-const discProfileTranslations = {
-  DOMINANCE: "Dominante",
-  INFLUENCING: "Influente",
-  STEADINESS: "Estável",
-  COMPLIANCE: "Conforme",
-};
-
 interface DiscHistoryPageProps {
   params: {
     id: string;
   };
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
 export default function DiscHistoryPage({ params }: DiscHistoryPageProps) {

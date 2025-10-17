@@ -3,6 +3,14 @@ import { getUniqueDisc, DiscResultResponse } from "@/service/user/disc/get-uniqu
 import { Section } from "@/components/disc/section";
 import { useState } from "react";
 import { DiscSnippet } from "@/service/user/disc/get-all-discs-list";
+
+const discProfileTranslations = {
+  DOMINANCE: "Dominante",
+  INFLUENCING: "Influente",
+  STEADINESS: "Estável",
+  COMPLIANCE: "Conforme",
+};
+
 // --- COMPONENTE DO SNIPPET (Item da Lista) ---
 export function DiscHistoryItem({ disc }: { disc: DiscSnippet }) {
   // 1. DANDO "MEMÓRIA" AO COMPONENTE:
