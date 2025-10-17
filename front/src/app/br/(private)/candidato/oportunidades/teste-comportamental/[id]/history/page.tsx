@@ -13,10 +13,10 @@ export default function DiscHistoryPage({ id }: DiscHistoryPageProps) {
   const router = useRouter();
   const [history, setHistory] = useState<DiscSnippet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  let userId: string;
 
   useEffect(() => {
-    const userId = id;
-
+    userId = id;
     if (!userId) {
       setIsLoading(false);
       return;
