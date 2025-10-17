@@ -14,15 +14,13 @@ const discProfileTranslations = {
   COMPLIANCE: "Conforme",
 };
 
-interface DiscPageProps {
-  params: userCandidateType
+interface DiscHistoryPageProps {
+  params: {
+    id: string;
+  };
 }
 
-type userCandidateType = {
-  id: string,
-}
-
-export default function DiscHistoryPage({ params }: DiscPageProps) {
+export default function DiscHistoryPage({ params }: DiscHistoryPageProps) {
   const router = useRouter();
   const [history, setHistory] = useState<DiscSnippet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
