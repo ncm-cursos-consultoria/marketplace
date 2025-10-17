@@ -2,10 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronRight } from "lucide-react";
 import { getAllDiscsList, DiscSnippet } from "@/service/user/disc/get-all-discs-list";
-import { getUniqueDisc, DiscResultResponse } from "@/service/user/disc/get-unique-disc";
-import { Section } from "@/components/disc/section";
+import { DiscHistoryItem } from "@/components/disc/item";
 
 const discProfileTranslations = {
   DOMINANCE: "Dominante",
@@ -88,111 +86,5 @@ export default function DiscHistoryPage({ params }: DiscHistoryPageProps) {
         ))}
       </div>
     </main>
-  );
-}
-
-// --- COMPONENTE DO SNIPPET (Item da Lista) ---
-function DiscHistoryItem({ disc }: { disc: DiscSnippet }) {
-  // 1. DANDO "MEMÓRIA" AO COMPONENTE:
-  //    'isExpanded' guarda se o item está aberto ou fechado. Começa como 'false'.
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  // 'details' vai guardar os dados que vêm da API quando expandimos. Começa como 'null'.
-  const [details, setDetails] = useState<DiscResultResponse | null>(null);
-
-  // 'isLoadingDetails' controla a mensagem de "Carregando..."
-  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
-
-  // 2. A NOVA FUNÇÃO DE CLIQUE:
-  const handleItemClick = async () => {
-    const shouldExpand = !isExpanded; // Inverte o estado atual
-    setIsExpanded(shouldExpand);
-
-    // Se estamos expandindo E ainda não buscamos os detalhes
-    if (shouldExpand && !details) {
-      setIsLoadingDetails(true); // Mostra "Carregando..."
-      try {
-        // Busca os dados da API
-        const data = await getUniqueDisc(disc.id);
-        setDetails(data); // Guarda os detalhes na "memória"
-      } catch (error) {
-        // Lidar com o erro, talvez mostrar uma mensagem
-        console.error(error);
-      } finally {
-        setIsLoadingDetails(false); // Esconde "Carregando..."
-      }
-    }
-  };
-
-  // Formata a data para o padrão brasileiro
-  const formattedDate = new Date(disc.createdAt).toLocaleDateString('pt-BR', {
-    day: '2-digit', month: '2-digit', year: 'numeric'
-  });
-
-  return (
-    // O container principal agora é uma 'div' normal, não um link.
-    // Usamos 'flex-col' para empilhar o header e o conteúdo detalhado.
-    <div className="flex flex-col border rounded-lg shadow-sm bg-white">
-      {/* O Header Clicável (o snippet) */}
-      <div
-        onClick={handleItemClick}
-        className="group flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50"
-      >
-        <div>
-          <p className="font-semibold text-gray-800">
-            Perfil Principal: {discProfileTranslations[disc.main] || disc.main}
-          </p>
-          <p className="text-sm text-gray-500">
-            Realizado em: {formattedDate}
-          </p>
-        </div>
-        {/* A seta agora gira 90 graus quando o item está expandido */}
-        <ChevronRight
-          className={`h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
-        />
-      </div>
-
-      {/* 3. A SEÇÃO DE DETALHES (RENDERIZAÇÃO CONDICIONAL) */}
-      {/* Esta 'div' só será renderizada se 'isExpanded' for true */}
-      {isExpanded && (
-        <div className="border-t p-4 space-y-2">
-          {isLoadingDetails && <p>Carregando detalhes...</p>}
-
-          {/* Se já carregou os detalhes, mostra os placeholders */}
-          {details && (
-            <>
-              <Section title="Você no DISC" badge="PROFILE">
-                <p className="text-sm text-gray-700 italic">
-                  [PLACEHOLDER: Aqui entrará a descrição do perfil do usuário no DISC, vinda do backend.]
-                </p>
-              </Section>
-              <Section title="Máscara Postural" badge="BEHAVIORAL">
-                <p className="text-sm text-gray-700 italic">
-                  [PLACEHOLDER: Aqui entrará a descrição da máscara postural do usuário, vinda do backend.]
-                </p>
-              </Section>
-
-              <Section title="Íntimo" badge="PERSONAL">
-                <p className="text-sm text-gray-700 italic">
-                  [PLACEHOLDER: Aqui entrará a descrição do perfil íntimo do usuário, vinda do backend.]
-                </p>
-              </Section>
-
-              <Section title="Postura Usual" badge="HABITUAL">
-                <p className="text-sm text-gray-700 italic">
-                  [PLACEHOLDER: Aqui entrará a descrição da postura usual do usuário, vinda do backend.]
-                </p>
-              </Section>
-
-              <Section title="Aconselhamento Adicional" badge="SUGGESTION">
-                <p className="text-sm text-gray-700 italic">
-                  [PLACEHOLDER: Aqui entrará a lista de aconselhamentos para o usuário, vinda do backend.]
-                </p>
-              </Section>
-            </>
-          )}
-        </div>
-      )}
-    </div>
   );
 }
