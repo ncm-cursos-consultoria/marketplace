@@ -19,7 +19,7 @@ interface DiscHistoryPageProps {
   };
 }
 
-export default function DiscHistoryPage({ params }: { params: { id: string } }) {
+export default function DiscHistoryPage({ params }: DiscHistoryPageProps) {
   const router = useRouter();
   const [history, setHistory] = useState<DiscSnippet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
