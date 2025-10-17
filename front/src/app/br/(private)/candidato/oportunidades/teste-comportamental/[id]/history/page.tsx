@@ -5,18 +5,17 @@ import { useRouter } from "next/navigation";
 import { getAllDiscsList, DiscSnippet } from "@/service/user/disc/get-all-discs-list";
 import { DiscHistoryItem } from "@/components/disc/item";
 
-type DiscHistoryPageProps = {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
+interface DiscHistoryPageProps {
+  id: string;
+}
 
-export default function DiscHistoryPage({ params }: DiscHistoryPageProps) {
+export default function DiscHistoryPage({ id }: DiscHistoryPageProps) {
   const router = useRouter();
   const [history, setHistory] = useState<DiscSnippet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const userId = params.id;
+    const userId = id;
 
     if (!userId) {
       setIsLoading(false);
@@ -35,7 +34,7 @@ export default function DiscHistoryPage({ params }: DiscHistoryPageProps) {
     }
 
     fetchHistory();
-  }, [params.id]); // O `[params.id]` diz: "rode este código de novo se o ID na URL mudar"
+  }, [id]); // O `[params.id]` diz: "rode este código de novo se o ID na URL mudar"
 
   if (isLoading) {
     return <main className="p-10">Carregando histórico...</main>;
@@ -47,7 +46,7 @@ export default function DiscHistoryPage({ params }: DiscHistoryPageProps) {
         <h1 className="text-2xl font-semibold">Histórico de Testes</h1>
         <p>Você ainda não realizou nenhum teste.</p>
         <button
-          onClick={() => router.push(`/br/candidato/oportunidades/teste-comportamental/${params.id}/new`)}
+          onClick={() => router.push(`/br/candidato/oportunidades/teste-comportamental/${userId}/new`)}
           className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
         >
           Fazer meu primeiro teste
@@ -64,7 +63,7 @@ export default function DiscHistoryPage({ params }: DiscHistoryPageProps) {
           Histórico de Testes DISC
         </h1>
         <button
-          onClick={() => router.push(`/br/candidato/oportunidades/teste-comportamental/${params.id}/new`)}
+          onClick={() => router.push(`/br/candidato/oportunidades/teste-comportamental/${userId}/new`)}
           className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
         >
           Fazer Novo Teste
