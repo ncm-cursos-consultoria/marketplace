@@ -30,4 +30,8 @@ public class UserCandidateJobOpeningQueryService {
     public Page<UserCandidateJobOpening> findAll(Pageable pageable) {
         return userCandidateJobOpeningRepository.findAll(pageable);
     }
+
+    public Boolean existsByJobOpeningAndUser(String id, String userId) {
+        return userCandidateJobOpeningRepository.existsByJobOpening_IdAndUserCandidate_Id(id, userId);
+    }
 }

@@ -10,6 +10,7 @@ import com.ncm.marketplace.domains.others.Tag;
 import com.ncm.marketplace.domains.relationships.tag.TagJobOpening;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
+import com.ncm.marketplace.exceptions.BadRequestException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.JobOpeningSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
@@ -114,8 +115,10 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
     public List<JobOpeningResponse> findAll(JobOpeningSpecificationRequest specificationRequest) {
         Specification<JobOpening> specification = jobOpeningSpecification.toSpecification(specificationRequest);
         List<JobOpeningResponse> response = toResponse(jobOpeningQueryService.findAll(specification));
+
         String authenticatedUserId = AuthService.getAuthenticatedUserId();
-        List<UserCandidateJobOpening> userJobOpenings = userCandidateJobOpeningQueryService.findAll(userCandidateJobOpeningSpecification.toSpecification(List.of(authenticatedUserId)));
+        Specification<UserCandidateJobOpening> candidateJobOpeningSpecification = userCandidateJobOpeningSpecification.toSpecification(List.of(authenticatedUserId));
+        List<UserCandidateJobOpening> userJobOpenings = userCandidateJobOpeningQueryService.findAll(candidateJobOpeningSpecification);
 
         Map<String, JobOpeningUserCandidateStatus> jobOpeningUserCandidateStatusMap = userJobOpenings.stream()
                 .collect(Collectors.toMap(userCandidateJobOpening ->
@@ -165,12 +168,16 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
     public JobOpeningUserCandidateResponse submitUserCandidateToJobOpeningById(String id, String userId) {
         JobOpening jobOpening = jobOpeningQueryService.findByIdOrThrow(id);
         UserCandidate user = userCandidateQueryService.findByIdOrThrow(userId);
-        return JobOpeningUserCandidateMapper.toResponse(
-                userCandidateJobOpeningCommandService.save(UserCandidateJobOpening.builder()
-                        .submittedAt(Instant.now())
-                        .jobOpening(jobOpening)
-                        .userCandidate(user)
-                        .build()));
+        if (!userCandidateJobOpeningQueryService.existsByJobOpeningAndUser(id, userId)) {
+            return JobOpeningUserCandidateMapper.toResponse(
+                    userCandidateJobOpeningCommandService.save(UserCandidateJobOpening.builder()
+                            .submittedAt(Instant.now())
+                            .jobOpening(jobOpening)
+                            .userCandidate(user)
+                            .build()));
+        } else {
+            throw new BadRequestException("User candidate already submitted to this job opening");
+        }
     }
 
     @Override
