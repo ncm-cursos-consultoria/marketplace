@@ -28,13 +28,12 @@ export default function DiscHistoryPage({ params }: DiscHistoryPageProps) {
   }, [params]);
 
   useEffect(() => {
-    if (!userId) {
-      setIsLoading(false);
-      return;
-    }
-
     async function fetchHistory() {
       try {
+        if (!userId) {
+          setIsLoading(false);
+          return;
+        }
         const data = await getAllDiscsList([userId]);
         setHistory(data);
       } catch (error) {
