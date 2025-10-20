@@ -6,32 +6,29 @@ import { useParams, usePathname } from "next/navigation";
 import logo from "@/assets/ncm-logo.png";
 import avatar from "@/assets/avatar.png";
 import { UseUserCandidate } from "@/context/user-candidate.context";
-import { LogOut, Loader2 } from "lucide-react";
+import { LogOut, Loader2, Home, BookCopy, Briefcase, NotebookPenIcon } from "lucide-react";
 
 type NavItem = {
-  label: string;
-  slug: "home" | "courses" | "jobs" | "user" | "teste-comportamental" | "minhas-vagas";
-  requiresId?: boolean;
+    label: string;
+    slug: "home" | "courses" | "jobs" | "teste-comportamental" | "minhas-candidaturas";
+    requiresId?: boolean;
+    icon: React.ReactNode; // Adicionando o ícone ao tipo
 };
 
 const NAV: NavItem[] = [
-  { label: "Início", slug: "home", requiresId: true },
-  { label: "Cursos", slug: "courses", requiresId: true },
-  { label: "Vagas", slug: "jobs", requiresId: true },
-  {label: "Teste Comportamental do Candidato", slug: "teste-comportamental", requiresId: true},
-  {label: "Minhas Vagas", slug: "minhas-vagas", requiresId: true}
+    { label: "Início", slug: "home", requiresId: true, icon: <Home className="h-5 w-5" /> },
+    { label: "Teste Comportamental", slug: "teste-comportamental", requiresId: true, icon: <BookCopy className="h-5 w-5" /> },
+    { label: "Cursos", slug: "courses", requiresId: true, icon: <NotebookPenIcon className="h-5 w-5" /> },
+    { label: "Vagas", slug: "jobs", requiresId: true, icon: <Briefcase className="h-5 w-5" /> },
+    { label: "Minhas Candidaturas", slug: "minhas-candidaturas", requiresId: true, icon: <Briefcase className="h-5 w-5" /> }
 ];
 
 export function Aside() {
   const { userCandidate, logout, isLoggingOut } = UseUserCandidate();
-  const pathnameRaw = usePathname();
-  const pathname = pathnameRaw || "";
+  const pathname = usePathname() || "";
   const params = useParams();
 
-  const idFromContext = userCandidate?.id;
-  const idFromParams = (params?.id as string | undefined) ?? undefined;
-  const id: string | undefined = idFromContext ?? idFromParams;
-
+  const id = userCandidate?.id || (params?.id as string | undefined);
   const base = "/br/candidato/oportunidades";
 
   const hrefFor = (slug: NavItem["slug"]) =>
@@ -42,83 +39,84 @@ export function Aside() {
 
   const itemCls = (active: boolean, disabled: boolean) =>
     [
-      "block rounded-md px-3 py-2 text-[20px] transition-colors",
-      "hover:bg-neutral-600 cursor-pointer",
-      active && "bg-neutral-800 font-semibold",
-      disabled && "opacity-60 pointer-events-none cursor-not-allowed",
+      "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-200 transition-colors",
+      "hover:bg-blue-800 hover:text-white",
+      active && "bg-gray-100 text-blue-900 font-semibold",
+      disabled && "opacity-50 pointer-events-none",
     ]
       .filter(Boolean)
       .join(" ");
 
   const handleLogout = async () => {
-    await logout("/"); 
+    await logout("/");
   };
 
   return (
-    <aside className="fixed inset-y-0 left-0 w-[300px] h-screen bg-blue-900 text-white p-6 space-y-6 overflow-y-auto z-30">
-      <Image src={logo} alt="Logo NCM" width={200} priority />
+    // 1. O container principal agora é um flex-col
+    <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col bg-blue-900 text-white md:flex">
+      {/* Seção do Logo (não muda) */}
+      <div className="px-6 py-6 border-b border-white/10">
+        <Image src={logo} alt="Logo NCM" width={200} priority />
+      </div>
 
-      <div className="flex flex-col items-start">
-        <ul className="flex flex-col gap-2 w-full">
-          {NAV.map(({ label, slug, requiresId }) => {
-            const disabled: boolean = !!(requiresId && !id);
-            const href = hrefFor(slug);
-            const active: boolean = isActive(slug);
+      {/* Seção da Navegação */}
+      <nav className="flex-1 px-4 py-4 space-y-2">
+        {NAV.map(({ label, slug, requiresId, icon }) => {
+          const disabled = !!(requiresId && !id);
+          const href = disabled ? "#" : hrefFor(slug);
+          const active = isActive(slug);
 
-            return (
-              <li key={slug}>
-                <Link
-                  href={href}
-                  aria-disabled={disabled}
-                  aria-current={active ? "page" : undefined}
-                  className={itemCls(active, disabled)}
-                  prefetch={!disabled}
-                >
-                  {label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-        <div className="mt-[350px] px-3  w-full">
-          <div className="flex items-start gap-2">
-            <Image
-              src={(userCandidate?.profilePictureUrl as any) || avatar}
-              alt="Avatar"
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
-            <Link href={`/br/candidato/oportunidades/perfil/${userCandidate?.id}`} className="flex flex-col leading-tight">
-              <div className="flex items-center gap-1">
-                <p className="font-semibold">{userCandidate?.firstName}</p>
-                <p>{userCandidate?.lastName}</p>
-              </div>
-              <p className="text-[10px]">{userCandidate?.email}</p>
+          return (
+            <li key={slug} style={{ listStyleType: 'none' }}>
+              <Link
+                href={href}
+                aria-disabled={disabled}
+                aria-current={active ? "page" : undefined}
+                className={itemCls(active, disabled)}
+              >
+                {icon}
+                <span>{label}</span>
+              </Link>
+            </li>
+          );
+        })}
+      </nav>
+
+      {/* 2. O RODAPÉ QUE SERÁ EMPURRADO PARA BAIXO */}
+      {/* A classe 'mt-auto' faz toda a mágica! */}
+      <div className="mt-auto border-t border-white/10 p-4">
+        <div className="flex items-center gap-3">
+          <Image
+            src={userCandidate?.profilePictureUrl || avatar}
+            alt="Avatar"
+            width={40}
+            height={40}
+            className="rounded-full object-cover" // object-cover evita distorção da imagem
+          />
+          <div className="flex flex-col leading-tight">
+            <Link href={id ? `/br/candidato/oportunidades/perfil/${id}` : '#'}>
+              <p className="font-semibold hover:underline">{userCandidate?.firstName} {userCandidate?.lastName}</p>
             </Link>
+            <p className="text-xs text-white/70">{userCandidate?.email}</p>
           </div>
-
-          <button
-            type="button"
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            aria-busy={isLoggingOut}
-            className="mt-4 inline-flex items-center gap-2 rounded-md bg-white/10 px-3 py-2 text-sm font-medium hover:bg-white/20 disabled:opacity-60 disabled:cursor-not-allowed w-full cursor-pointer"
-            title="Sair da conta"
-          >
-            {isLoggingOut ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Saindo...
-              </>
-            ) : (
-              <>
-                <LogOut className="h-4 w-4" />
-                Sair
-              </>
-            )}
-          </button>
         </div>
+
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-sm font-medium hover:bg-white/20 disabled:opacity-60"
+        >
+          {isLoggingOut ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" /> Saindo...
+            </>
+          ) : (
+            <>
+              <LogOut className="h-4 w-4" /> Sair
+            </>
+          )}
+        </button>
       </div>
     </aside>
   );

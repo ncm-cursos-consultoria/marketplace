@@ -34,7 +34,7 @@ export function useLogin() {
       if (userData?.id) {
         setUserCandidate(userData);
         toast.success("Login efetuado com sucesso!");
-        router.push(`/br/candidato/oportunidades/teste-comportamental/${userData.id}`);
+        router.push(`/br/candidato/oportunidades/home/${userData.id}`);
       } else {
         throw new Error("Dados do usuário não encontrados após o login.");
       }

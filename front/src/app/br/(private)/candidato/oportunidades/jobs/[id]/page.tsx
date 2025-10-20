@@ -22,11 +22,10 @@ export default function JobsPage() {
     <div className="flex min-h-screen">
       <main className="flex-1 bg-gray-100 p-8 space-y-10">
         <h1 className="text-3xl font-bold mb-4">
-          Vagas de Tecnologia em Santana de Parnaíba
+          Vagas
         </h1>
         <p className="text-gray-700 text-lg mb-10">
-          Confira as oportunidades de tecnologia disponíveis na cidade e
-          candidate-se.
+          Confira as oportunidades de tecnologia disponíveis e candidate-se.
         </p>
 
         <div className="">
