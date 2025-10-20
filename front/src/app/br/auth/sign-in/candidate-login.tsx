@@ -56,6 +56,12 @@ export function CandidateLogin() {
         </div>
 
         <div className="flex flex-col gap-4 items-center">
+          {errors.root && (
+            <p className="text-sm font-medium text-red-600 text-center">
+              {errors.root.message}
+            </p>
+          )}
+
           <Button
             className="bg-green-600 w-full py-3 text-white font-semibold rounded-md hover:bg-green-700 transition cursor-pointer"
             type="submit"
