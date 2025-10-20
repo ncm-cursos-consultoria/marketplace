@@ -60,7 +60,7 @@ export default function SignIn() {
           onClick={() => setSelectType("empresa")}
           className={btn(selectType === "empresa")}
         >
-          Empresa Parceira
+          Empresa
         </button>
       </div>
 

@@ -6,36 +6,46 @@ import { login } from "@/service/auth/login";
 import { useRouter } from "next/navigation";
 import { UseUserPartner } from "@/context/user-partner.context";
 import { me } from "@/service/auth/me";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function useLoginPartner() {
-  const { userPartner, setUserPartner } = UseUserPartner();
   const router = useRouter();
+  const { setUserPartner } = UseUserPartner();
   const queryClient = useQueryClient();
 
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
   });
+  const { setError } = form;
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync: loginMutation } = useMutation({
     mutationFn: (data: LoginFormSchema) => login(data),
-    mutationKey: ["partner-user"],
-    onSuccess: async () => {
-      const userData = await queryClient.fetchQuery({
-        queryKey: ["authUser"],
-        queryFn: me,
-      });
-      if(userData?.id) {
-        setUserPartner(userData)
-        router.push(`/br/partner/home`)
-      }
-    },
   });
 
   const onSubmit = async (data: LoginFormSchema) => {
-    console.log(data);
+    setIsProcessing(true);
+    
+    try {
+      await loginMutation(data);
 
-    mutate(data);
-  };
-
-  return { onSubmit, form, isPending };
+      const userData = await me();
+      
+      if (userData?.id) {
+        setUserPartner(userData);
+        toast.success("Login efetuado com sucesso!");
+        router.push(`/br/partner/home`);
+      } else {
+        throw new Error("Dados do usuário não encontrados após o login.");
+      }
+    } catch (error) {
+      console.error("Falha no login:", error);
+      setError("root", {
+        message: "Email ou senha inválidos. Por favor, tente novamente.",
+      });
+      setIsProcessing(false);
+    }
+  };  
+  return { onSubmit, isPending: isProcessing, form };
 }
