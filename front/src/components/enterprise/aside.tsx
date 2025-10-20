@@ -1,106 +1,122 @@
 "use client";
 
-import {
-  Briefcase,
-  Building,
-  Building2,
-  Home,
-  NotebookPenIcon,
-  Plus,
-  LogOut,
-  BookCopy,
-} from "lucide-react";
-import { NavItem } from "./nav-item";
+import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import logo from "@/assets/ncm-logo.png"; // Supondo que você tenha o logo
 import { UseUserEnteprise } from "@/context/user-enterprise.context";
 import { useQuery } from "@tanstack/react-query";
 import { getEnterprise } from "@/service/enterprise/get-enterprise";
 import { UserEnterpriseProps } from "@/utils/interfaces";
+import { LogOut, Loader2, Home, Building2, Briefcase, NotebookPenIcon } from "lucide-react";
+
+// 1. ATUALIZANDO A ESTRUTURA NAV: Adicionamos "Minhas Vagas" e a propriedade 'icon'
+type NavItem = {
+  label: string;
+  slug: "home" | "profile" | "jobs" | "module";
+  icon: React.ReactNode;
+};
+
+const NAV: NavItem[] = [
+  { label: "Início", slug: "home", icon: <Home className="h-5 w-5" /> },
+  { label: "Minha Empresa", slug: "profile", icon: <Building2 className="h-5 w-5" /> },
+  { label: "Minhas Vagas", slug: "jobs", icon: <Briefcase className="h-5 w-5" /> },
+  { label: "Portfólio de Cursos", slug: "module", icon: <NotebookPenIcon className="h-5 w-5" /> },
+];
 
 export function AsideEnterprise() {
   const { userEnterprise, logout, isLoggingOut } = UseUserEnteprise();
-  const enterpriseId = userEnterprise?.enterpriseId ?? null;
+  const pathname = usePathname() || "";
+  const enterpriseId = userEnterprise?.enterpriseId;
 
-  const { data, isLoading } = useQuery<UserEnterpriseProps>({
+  const { data: enterpriseData, isLoading } = useQuery<UserEnterpriseProps>({
     queryKey: ["enterprise", enterpriseId],
     queryFn: () => getEnterprise(enterpriseId as string),
     enabled: !!enterpriseId,
-    staleTime: 1000 * 60 * 5,
   });
 
-  if (!enterpriseId) return null;
+  const base = "/br/enterprise";
 
-  if (isLoading || !data) {
+  // Lógica de rota ativa, mais precisa
+  const isActive = (slug: NavItem["slug"]): boolean => {
+    const segments = pathname.split('/');
+    const lastSegment = segments[segments.length - 1];
+    const secondToLastSegment = segments[segments.length - 2];
+
+    if (slug === 'home') return lastSegment === enterpriseId;
+    return secondToLastSegment === slug;
+  };
+
+  // 2. ESTILO UNIFICADO: Usando a mesma lógica de classes do Aside do Candidato
+  const itemCls = (active: boolean) =>
+    [
+      "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-200 transition-colors text-lg",
+      "hover:bg-blue-800 hover:text-white",
+      active && "bg-gray-100 text-blue-900 font-semibold",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+  const handleLogout = async () => {
+    await logout("/br/auth/sign-in");
+  };
+
+  if (isLoading || !enterpriseId) {
     return (
-      <aside className="hidden md:flex md:flex-col md:w-64 bg-[#0D2E66] text-white min-h-screen sticky top-0">
-        <div className="px-6 py-6 border-b border-white/10">Carregando...</div>
-      </aside>
+        <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col bg-blue-900 text-white md:flex">
+            <div className="px-6 py-6 border-b border-white/10">Carregando...</div>
+        </aside>
     );
   }
 
   return (
-    <aside className="hidden md:flex md:flex-col md:w-72 bg-[#0D2E66] text-white min-h-screen sticky top-0">
+    // 3. LAYOUT FLEXBOX: Garante que o rodapé fique no final
+    <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col bg-blue-900 text-white md:flex">
+      {/* Seção do Logo */}
       <div className="px-6 py-6 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-white/10 flex items-center justify-center font-bold">
-            <Building />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10">
+            <Building2 />
           </div>
           <div className="leading-tight">
-            <p className="font-semibold">{data.tradeName}</p>
-            <p className="text-xs text-white/70">{data.legalName}</p>
+            <p className="font-semibold">{enterpriseData?.tradeName}</p>
+            <p className="text-xs text-white/70">{enterpriseData?.legalName}</p>
           </div>
         </div>
       </div>
 
-      <nav className="flex-1 px-2 py-4 space-y-1">
-        <NavItem
-          href={`/br/enterprise/${userEnterprise?.id}`}
-          icon={<Home className="h-4 w-4" />}
-        >
-          Início
-        </NavItem>
-        <NavItem
-          href={`/br/enterprise/profile/${userEnterprise?.enterpriseId}`}
-          icon={<Building2 className="h-4 w-4" />}
-        >
-          Minha Empresa
-        </NavItem>
-        {/* <NavItem
-          href={`/enterprise/${userEnterprise?.id}/jobs`}
-          icon={<Briefcase className="h-4 w-4" />}
-        >
-          Minhas Vagas
-        </NavItem> */}
-        <NavItem
-          href={`/br/enterprise/module/${userEnterprise?.id}`}
-          icon={<NotebookPenIcon className="h-4 w-4" />}
-        >
-          Portfólio de cursos
-        </NavItem>
-        <NavItem
-          href={`/br/enterprise/teste-comportamental/${userEnterprise?.id}`}
-          icon={<BookCopy className="h-4 w-4" />}
-        >
-          Teste comportamental
-        </NavItem>
+      {/* Seção da Navegação (Agora usando <Link> diretamente) */}
+      <nav className="flex-1 px-4 py-4">
+        <ul className="space-y-2">
+          {NAV.map(({ label, slug, icon }) => {
+            const href = slug === 'home' ? `${base}/${enterpriseId}` : `${base}/${slug}/${enterpriseId}`;
+            const active = isActive(slug);
+
+            return (
+              <li key={slug}>
+                <Link href={href} aria-current={active ? "page" : undefined} className={itemCls(active)}>
+                  {icon}
+                  <span>{label}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       </nav>
 
-      <div className="p-4 mt-auto space-y-2">
-        {/* <Link
-          href={`/enterprise/${enterpriseId}/jobs/new`}
-          className="inline-flex items-center gap-2 w-full justify-center rounded-lg bg-white text-[#0D2E66] font-medium py-2"
-        >
-          <Plus className="h-4 w-4" /> Criar nova vaga
-        </Link> */}
-
+      {/* Rodapé com Perfil e Logout (mt-auto empurra para o final) */}
+      <div className="mt-auto border-t border-white/10 p-4">
         <button
           type="button"
-          onClick={() => logout?.("/br/auth/sign-in")}
+          onClick={handleLogout}
           disabled={isLoggingOut}
-          className="inline-flex items-center gap-2 w-full justify-center rounded-lg border border-white/20 text-white font-medium py-2 hover:bg-white/10 disabled:opacity-60"
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-sm font-medium hover:bg-white/20 disabled:opacity-60"
         >
-          <LogOut className="h-4 w-4" />
-          {isLoggingOut ? "Saindo..." : "Sair"}
+          {isLoggingOut ? (
+            <><Loader2 className="h-4 w-4 animate-spin" /> Saindo...</>
+          ) : (
+            <><LogOut className="h-4 w-4" /> Sair</>
+          )}
         </button>
       </div>
     </aside>
