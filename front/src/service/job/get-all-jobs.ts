@@ -15,6 +15,13 @@ export interface JobSnippet {
   workModel: string;
   status: JobStatus;
   views: number;
+  tags: Tag[];
+}
+
+interface Tag {
+  id: string;
+  name: string;
+  type: string;
 }
 
 export const getAllJobs = async (filters: JobFilters): Promise<JobSnippet[]> => {

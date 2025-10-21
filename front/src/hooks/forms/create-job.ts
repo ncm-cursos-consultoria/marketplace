@@ -16,15 +16,14 @@ export function useCreateJob(
   setIsOpen: SetOpenCallback,
   onSuccessCallback?: () => void // <--- AQUI
 ) {
-  const params = useParams<{ id: string }>();
-  const id = params?.id;
+  const params = useParams(); // Sem o tipo genérico
   const { userEnterprise } = UseUserEnteprise();
-  const enterpriseId = userEnterprise?.enterpriseId ?? id;
+  const enterpriseId = userEnterprise?.enterpriseId ?? (params.id as string);
 
 
   const queryClient = useQueryClient();
 
-  const form = useForm<CreateJobFormSchema>({
+  const form = useForm({
     resolver: zodResolver(createJobFormSchema),
     defaultValues: {
       tagIds: [],

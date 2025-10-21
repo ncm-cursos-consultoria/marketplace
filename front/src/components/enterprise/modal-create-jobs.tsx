@@ -176,7 +176,7 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
             <div className="flex flex-col gap-1">
               <Label>Estado</Label>
               <Input
-                placeholder="Ex.: São Paulo"
+                placeholder="Ex.: SP"
                 className="border-neutral-300"
                 {...register("state")}
                 aria-invalid={!!errors.state}

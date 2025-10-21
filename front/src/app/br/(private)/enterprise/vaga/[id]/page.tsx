@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Briefcase, MapPin } from "lucide-react";
+import { Plus, Briefcase, MapPin, Tag as TagIcon } from "lucide-react";
 import { getAllJobs, JobSnippet } from "@/service/job/get-all-jobs";
 import { ModalCreateJob } from "@/components/enterprise/modal-create-jobs";
 import Link from "next/link";
@@ -24,11 +24,6 @@ const statusStyles = {
 
 type JobStatus = "ACTIVE" | "PAUSED" | "CLOSED";
 
-// Props da página, para pegar o 'id' da empresa da URL
-interface JobsPageProps {
-  params: { id: string }; // 'id' aqui é o enterpriseId
-}
-
 export default function EnterpriseJobsPage() {
   const router = useRouter();
   const params = useParams();
@@ -39,7 +34,7 @@ export default function EnterpriseJobsPage() {
   const [selectedStatus, setSelectedStatus] = useState<JobStatus>("ACTIVE");
 
   // 2. "GATILHO" (Busca de Dados):
-  //    O react-query busca os dados
+  //    O react-query busca os dados
   const { data: jobs, isLoading, isError } = useQuery({
     // A queryKey é a "identidade" desta busca.
     // Ela inclui 'enterpriseId' e 'selectedStatus'
@@ -80,10 +75,8 @@ export default function EnterpriseJobsPage() {
           <p className="text-gray-600 mt-1">Gerencie, edite e acompanhe suas vagas publicadas.</p>
         </div>
         {/* Só mostra o botão "Nova Vaga" no header se JÁ TIVER vagas */}
-        {/* O <ModalCreateJob /> vai renderizar o botão "Nova Vaga" aqui */}
-        {/* Só mostramos o botão se não houver vagas (a versão "vazia" tem o seu próprio) */}
         {jobs && jobs.length > 0 && (
-          <ModalCreateJob />
+          <ModalCreateJob onSuccess={handleJobCreateSuccess} />
         )}
       </header>
 
@@ -128,19 +121,39 @@ function JobCard({ job }: { job: JobSnippet }) {
   return (
     <Link
       href={jobDetailUrl}
-      className="bg-white border rounded-lg shadow-sm p-4 flex justify-between items-center transition-all hover:shadow-md hover:border-blue-300 cursor-pointer"
+      className="bg-white border rounded-lg shadow-sm p-4 flex justify-between items-start transition-all hover:shadow-md hover:border-blue-300 cursor-pointer"
     >
-      <div>
+      <div className="flex-1 space-y-2">
         <h3 className="font-semibold text-gray-800">{job.title}</h3>
-        <p className="text-sm text-gray-500 flex items-center gap-2 mt-1">
-          <MapPin className="h-4 w-4" />
-          {job.city} - {job.state}
-          <span className="text-gray-300">|</span>
-          <Briefcase className="h-4 w-4" />
-          {job.workModel}
+        <p className="text-sm text-gray-500 flex items-center gap-2 flex-wrap">
+          <span className="flex items-center gap-1.5">
+            <MapPin className="h-4 w-4" />
+            {job.city} - {job.state}
+          </span>
+          <span className="hidden sm:inline text-gray-300">|</span>
+          <span className="flex items-center gap-1.5">
+            <Briefcase className="h-4 w-4" />
+            {job.workModel}
+          </span>
         </p>
+
+        {/* SEÇÃO DE TAGS ADICIONADA */}
+        {job.tags && job.tags.length > 0 && (
+          <div className="flex items-center flex-wrap gap-2 pt-1">
+            {job.tags.slice(0, 3).map(tag => (
+              <span key={tag.id} className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded-full">
+                {tag.name || tag.type}
+              </span>
+            ))}
+            {job.tags.length > 3 && (
+              <span className="text-xs font-medium text-gray-500">
+                + {job.tags.length - 3} mais
+              </span>
+            )}
+          </div>
+        )}
       </div>
-      <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[job.status]}`}>
+      <span className={`ml-4 flex-shrink-0 inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[job.status]}`}>
         {statusTranslations[job.status]}
       </span>
     </Link>
