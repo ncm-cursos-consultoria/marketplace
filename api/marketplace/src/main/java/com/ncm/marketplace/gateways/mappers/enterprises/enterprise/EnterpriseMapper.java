@@ -55,6 +55,8 @@ public class EnterpriseMapper {
                 .coreValues(enterprise.getCoreValues())
                 .benefits(enterprise.getBenefits())
                 .canUploadModules(enterprise.getCanUploadModules())
+                .phone(enterprise.getPhone())
+                .website(enterprise.getWebsite())
                 .build();
     }
 

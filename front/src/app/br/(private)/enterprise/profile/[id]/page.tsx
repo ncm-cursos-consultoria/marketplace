@@ -1,30 +1,30 @@
 "use client";
 
-import { useMemo } from "react";
-import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
 import { UseUserEnteprise } from "@/context/user-enterprise.context";
 import { getEnterprise } from "@/service/enterprise/get-enterprise";
-
 import { Card } from "@/components/enterprise/profile/card";
 import { CardHeader } from "@/components/enterprise/profile/card-header";
 import { EnterpriseProfileHeader } from "./complementary/header";
-import { AboutEnterprise } from "./complementary/about";
 import { AddressEnterprise } from "./complementary/address";
 import { PagePublic } from "./complementary/page-public";
-
-import { Mail, Phone, Globe, Link as LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Mail, Phone, Globe, Pencil, Save, Loader2 } from "lucide-react";
+import { AboutEnterprise } from "./complementary/about";
+import { EnterpriseData } from "@/types/enterprise";
+import { useEditEnterprise } from "@/hooks/forms/use-edit-enterprise";
+import { getAddress } from "@/service/address/get-address";
+import { ApiAddress } from "@/types/address";
 
-type Enterprise = {
-  id: string;
-  legalName: string;
-  cnpj: string;
-  email?: string;
-  phone?: string;
-  website?: string;
-  links?: { label: string; url: string }[];
-};
+const enterpriseEditSchema = z.object({
+  tradeName: z.string().min(3, "O nome fantasia é obrigatório."),
+});
+type EnterpriseEditSchema = z.infer<typeof enterpriseEditSchema>;
 
 function formatCNPJ(cnpj?: string) {
   if (!cnpj) return "—";
@@ -56,23 +56,34 @@ function CardSkeleton() {
   return <div className="h-40 rounded-xl border bg-white shadow-sm animate-pulse" />;
 }
 
-/* ================= Page ================= */
 export default function EmpresaProfilePage() {
   const { userEnterprise } = UseUserEnteprise();
   const params = useParams<{ id: string }>();
-  const id = params?.id;
+  const enterpriseId = useMemo(() => params?.id ?? userEnterprise?.enterpriseId, [params?.id, userEnterprise?.enterpriseId]);
 
-  // fallback para o enterprise da sessão, se a rota não trouxer id
-  const enterpriseId = useMemo(() => id ?? userEnterprise?.enterpriseId, [id, userEnterprise?.enterpriseId]);
+  const [isEditing, setIsEditing] = useState(false);
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["enterprise", enterpriseId],
+  const { data: enterprise, isLoading, isError, refetch } = useQuery<EnterpriseData>({
+    queryKey: ["enterprise-profile", enterpriseId],
     queryFn: () => getEnterprise(enterpriseId as string),
     enabled: !!enterpriseId,
-    staleTime: 5 * 60 * 1000,
   });
 
-  const enterprise = data as Enterprise | undefined;
+  const addressId = enterprise?.addressId;
+
+  const { data: address, isLoading: isLoadingAddress } = useQuery<ApiAddress>({
+    queryKey: ["address", addressId],
+    queryFn: () => getAddress(addressId as string),
+    enabled: !!addressId,
+  });
+
+  const {
+    form: { register, handleSubmit, formState: { errors }, reset },
+    isPending: isUpdating,
+    onSubmit: handleUpdateSubmit
+  } = useEditEnterprise(enterprise, enterpriseId, userEnterprise?.email, setIsEditing);
 
   /* ====== Loading ====== */
   if (isLoading) {
@@ -120,116 +131,158 @@ export default function EmpresaProfilePage() {
 
   return (
     <div className="min-h-screen">
-      <div className="flex w-full">
-        <main className="flex-1">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
-            {/* Header */}
-            <EnterpriseProfileHeader cnpj={formattedCnpj} legalName={enterprise.legalName} />
+      <main className="flex-1">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+          <EnterpriseProfileHeader cnpj={formattedCnpj} legalName={enterprise?.legalName || ''} />
 
-            {/* Grid */}
+          <form onSubmit={handleSubmit(handleUpdateSubmit)}>
+            {/* Botão de Edição Global (movido para fora do card, antes do grid) */}
+            <div className="flex justify-end my-4">
+              {!isEditing ? (
+                <Button variant="outline" onClick={() => setIsEditing(true)}>
+                  <Pencil className="h-4 w-4 mr-2" /> Editar Página
+                </Button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" onClick={() => {
+                    setIsEditing(false);
+                    reset(); // Reseta o formulário para os valores originais
+                  }}>Cancelar</Button>
+                  <Button type="submit" disabled={isUpdating}>
+                    {isUpdating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                    Salvar Alterações
+                  </Button>
+                </div>
+              )}
+            </div>
+
             <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
-              {/* Coluna esquerda */}
+              {/* Coluna Esquerda */}
               <div className="lg:col-span-2 space-y-6">
-                {/* Informações básicas */}
+
+                {/* Card de Informações */}
                 <Card>
-                  <CardHeader
-                    title="Informações da empresa"
-                    subtitle="Esses dados aparecem na página pública."
-                  />
-                  <div className="text-neutral-700 text-sm">
-                    <p><span className="text-neutral-500">CNPJ</span> {formattedCnpj}</p>
-                    <p className="mt-1">
-                      <span className="text-neutral-500">Razão social</span> {enterprise.legalName}
-                    </p>
+                  <CardHeader title="Informações da empresa" subtitle="Esses dados aparecem na página pública." />
+                  <div className="mt-4 text-neutral-700 text-sm">
+                    {isEditing ? (
+                      <div className="space-y-4">
+                        {/* INPUTS DE INFORMAÇÕES */}
+                        <div>
+                          <Label htmlFor="tradeName">Nome Fantasia</Label>
+                          <Input id="tradeName" {...register("tradeName")} />
+                          {errors.tradeName && <p className="text-red-500 text-xs mt-1">{errors.tradeName.message}</p>}
+                        </div>
+                        <div>
+                          <Label htmlFor="legalName">Razão Social</Label>
+                          <Input id="legalName" {...register("legalName")} />
+                          {errors.legalName && <p className="text-red-500 text-xs mt-1">{errors.legalName.message}</p>}
+                        </div>
+                        <div>
+                          <Label htmlFor="cnpj">CNPJ (somente números)</Label>
+                          <Input id="cnpj" {...register("cnpj")} />
+                          {errors.cnpj && <p className="text-red-500 text-xs mt-1">{errors.cnpj.message}</p>}
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <p><span className="text-neutral-500">Nome Fantasia:</span> {enterprise?.tradeName}</p>
+                        <p className="mt-1"><span className="text-neutral-500">Razão Social:</span> {enterprise?.legalName}</p>
+                        <p className="mt-1"><span className="text-neutral-500">CNPJ:</span> {formattedCnpj}</p>
+                      </div>
+                    )}
                   </div>
                 </Card>
 
-                {/* Sobre */}
-                <AboutEnterprise cnpj={formattedCnpj} />
+                {/* Card "Sobre" */}
+                {/* Passamos as props 'register' e 'errors' para o componente filho */}
+                <AboutEnterprise
+                  mission={enterprise?.missionStatement}
+                  values={enterprise?.coreValues}
+                  benefits={enterprise?.benefits}
+                  isEditing={isEditing}
+                  register={register} // Passando o registro
+                  errors={errors}     // Passando os erros
+                />
 
-                {/* Endereço */}
-                <AddressEnterprise />
-
-                {/* Benefícios */}
-                <Card>
-                  <CardHeader title="Benefícios oferecidos" />
-                  <p className="text-neutral-500 text-sm">Adicione benefícios para atrair mais candidatos.</p>
-                </Card>
+                {/* Card de Endereço (não editável por aqui) */}
+                <AddressEnterprise
+                  address={address}
+                  enterpriseId={enterprise?.id}
+                />
               </div>
 
-              {/* Coluna direita */}
+              {/* Coluna Direita */}
               <div className="space-y-6">
-                {/* Contatos */}
+                {/* Card de Contatos */}
                 <Card>
                   <CardHeader title="Contatos" />
-                  <div className="space-y-3 text-neutral-700">
-                    {mail ? (
-                      <a href={`mailto:${mail}`} className="flex items-center gap-2 hover:underline">
-                        <Mail size={18} className="text-neutral-600" />
-                        {mail}
-                      </a>
-                    ) : (
-                      <div className="flex items-center gap-2 text-neutral-400">
-                        <Mail size={18} />
-                        E-mail não informado
+                  <div className="mt-4 space-y-3 text-neutral-700 text-sm">
+                    {isEditing ? (
+                      <div className="space-y-4">
+                        {/* INPUTS DE CONTATO */}
+                        <div>
+                          <Label htmlFor="email">Email</Label>
+                          <Input id="email" type="email" {...register("email")} />
+                          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+                        </div>
+                        <div>
+                          <Label htmlFor="phone">Telefone</Label>
+                          <Input id="phone" {...register("phone")} />
+                          {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
+                        </div>
+                        <div>
+                          <Label htmlFor="website">Website</Label>
+                          <Input id="website" {...register("website")} placeholder="https://..." />
+                          {errors.website && <p className="text-red-500 text-xs mt-1">{errors.website.message}</p>}
+                        </div>
                       </div>
-                    )}
-
-                    {phone ? (
-                      <a href={`tel:${phone}`} className="flex items-center gap-2 hover:underline">
-                        <Phone size={18} className="text-neutral-600" />
-                        {phone}
-                      </a>
                     ) : (
-                      <div className="flex items-center gap-2 text-neutral-400">
-                        <Phone size={18} />
-                        Telefone não informado
-                      </div>
-                    )}
+                      <div className="space-y-3">
+                        {mail ? (
+                          <a href={`mailto:${mail}`} className="flex items-center gap-2 hover:underline">
+                            <Mail size={18} className="text-neutral-600" />
+                            {mail}
+                          </a>
+                        ) : (
+                          <div className="flex items-center gap-2 text-neutral-400">
+                            <Mail size={18} />
+                            E-mail não informado
+                          </div>
+                        )}
 
-                    {website ? (
-                      <a href={website} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
-                        <Globe size={18} className="text-neutral-600" />
-                        {website.replace(/^https?:\/\//, "")}
-                      </a>
-                    ) : (
-                      <div className="flex items-center gap-2 text-neutral-400">
-                        <Globe size={18} />
-                        Site não informado
+                        {phone ? (
+                          <a href={`tel:${phone}`} className="flex items-center gap-2 hover:underline">
+                            <Phone size={18} className="text-neutral-600" />
+                            {phone}
+                          </a>
+                        ) : (
+                          <div className="flex items-center gap-2 text-neutral-400">
+                            <Phone size={18} />
+                            Telefone não informado
+                          </div>
+                        )}
+
+                        {website ? (
+                          <a href={website} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:underline">
+                            <Globe size={18} className="text-neutral-600" />
+                            {website.replace(/^https?:\/\//, "")}
+                          </a>
+                        ) : (
+                          <div className="flex items-center gap-2 text-neutral-400">
+                            <Globe size={18} />
+                            Site não informado
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
-
-                  {/* Links úteis (opcional) */}
-                  {enterprise.links && enterprise.links.length > 0 && (
-                    <div className="mt-4 border-t pt-4">
-                      <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-900">
-                        <LinkIcon className="h-4 w-4" /> Links úteis
-                      </h4>
-                      <ul className="space-y-2 text-sm">
-                        {enterprise.links.map((l, i) => (
-                          <li key={i} className="flex items-center justify-between">
-                            <span className="text-gray-700">{l.label}</span>
-                            <a
-                              className="link hover:underline"
-                              href={safeUrl(l.url)}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              Abrir
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
                 </Card>
                 <PagePublic />
               </div>
             </div>
-          </div>
-        </main>
-      </div>
+          </form>
+        </div>
+      </main>
     </div>
   );
 }

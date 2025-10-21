@@ -135,20 +135,18 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         enterprise.setMissionStatement(request.getMissionStatement());
         enterprise.setCoreValues(request.getCoreValues());
         enterprise.setBenefits(request.getBenefits());
+        enterprise.setPhone(request.getPhone());
+        enterprise.setWebsite(request.getWebsite());
 
         String legalName = request.getLegalName().trim();
         String[] nameParts = legalName.split(" ", 2);
         String firstName = nameParts[0];
         String lastName = nameParts.length > 1 ? nameParts[1] : "";
 
-        String randomPassword = randomPasswordService.generateSecurePassword();
-        String encryptedRandomPassword = passwordEncoder.encode(randomPassword);
-
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(request.getEmail());
         user.setBirthday(request.getBirthday());
-        user.setPassword(encryptedRandomPassword);
         userEnterpriseCommandService.save(user);
 
         return toResponse(enterprise);

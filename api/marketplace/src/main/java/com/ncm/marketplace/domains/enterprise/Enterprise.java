@@ -52,6 +52,8 @@ public class Enterprise {
     private String benefits;
     @Builder.Default
     private Boolean canUploadModules = Boolean.FALSE;
+    private String phone;
+    private String website;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profilePictureId", referencedColumnName = "id")

@@ -10,19 +10,24 @@ import {
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
-export function useCreateJob() {
-  const params = useParams<{ id: string }>();
-  const id = params?.id;
-  const { userEnterprise } = UseUserEnteprise();
-  const enterpriseId = userEnterprise?.enterpriseId ?? id;
+type SetOpenCallback = (isOpen: boolean) => void;
 
-  
+export function useCreateJob(
+  setIsOpen: SetOpenCallback,
+  onSuccessCallback?: () => void // <--- AQUI
+) {
+  const params = useParams(); // Sem o tipo genérico
+  const { userEnterprise } = UseUserEnteprise();
+  const enterpriseId = userEnterprise?.enterpriseId ?? (params.id as string);
+
+
   const queryClient = useQueryClient();
 
-  const form = useForm<CreateJobFormSchema>({
+  const form = useForm({
     resolver: zodResolver(createJobFormSchema),
     defaultValues: {
-      tagIds: []
+      tagIds: [],
+      salary: 0 // Adicione isso para garantir
     }
   });
 
@@ -30,12 +35,17 @@ export function useCreateJob() {
     mutationFn: (data: CreateJobFormSchema) => postJob(data),
     mutationKey: ["job"],
     onSuccess: () => {
-      queryClient.invalidateQueries({ 
-        queryKey: ["job", enterpriseId] 
+      queryClient.invalidateQueries({
+        queryKey: ["enterpriseJobs", enterpriseId], // <--- MUDANÇA
       });
-      toast.success("Sucesso ao criar nova vaga")
-      // window.location.reload()
+
+      toast.success("Sucesso ao criar nova vaga");
+      setIsOpen(false);
       form.reset();
+
+      if (onSuccessCallback) {
+        onSuccessCallback(); // <--- AQUI
+      }
     },
     onError: (err: any) => {
       const msg =
@@ -51,8 +61,7 @@ export function useCreateJob() {
       ...data,
       enterpriseId: enterpriseId
     }
-    console.log(payload);
-    
+
     mutate(payload);
   };
 

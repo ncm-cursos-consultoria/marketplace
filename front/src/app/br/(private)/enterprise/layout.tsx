@@ -8,10 +8,6 @@ export default function LayoutOportunidades({ children }: { children: React.Reac
   const { userEnterprise } = UseUserEnteprise()
   const typeUser = userEnterprise?.type
 
-
-  console.log(userEnterprise);
-
-
   if (typeUser === "CANDIDATE") {
     return (
       <div className="flex items-center justify-center min-h-screen">
