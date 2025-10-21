@@ -10,19 +10,22 @@ import {
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
-export function useCreateJob() {
+type SetOpenCallback = (isOpen: boolean) => void;
+
+export function useCreateJob(setIsOpen: SetOpenCallback) {
   const params = useParams<{ id: string }>();
   const id = params?.id;
   const { userEnterprise } = UseUserEnteprise();
   const enterpriseId = userEnterprise?.enterpriseId ?? id;
 
-  
+
   const queryClient = useQueryClient();
 
   const form = useForm<CreateJobFormSchema>({
     resolver: zodResolver(createJobFormSchema),
     defaultValues: {
-      tagIds: []
+      tagIds: [],
+      salary: 0 // Adicione isso para garantir
     }
   });
 
@@ -30,10 +33,12 @@ export function useCreateJob() {
     mutationFn: (data: CreateJobFormSchema) => postJob(data),
     mutationKey: ["job"],
     onSuccess: () => {
-      queryClient.invalidateQueries({ 
-        queryKey: ["job", enterpriseId] 
+      queryClient.invalidateQueries({
+        queryKey: ["job", enterpriseId]
       });
+      queryClient.invalidateQueries({ queryKey: ["enterpriseJobs"] });
       toast.success("Sucesso ao criar nova vaga")
+      setIsOpen(false);
       // window.location.reload()
       form.reset();
     },
@@ -51,8 +56,7 @@ export function useCreateJob() {
       ...data,
       enterpriseId: enterpriseId
     }
-    console.log(payload);
-    
+
     mutate(payload);
   };
 

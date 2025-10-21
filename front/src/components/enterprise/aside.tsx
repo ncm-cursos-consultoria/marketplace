@@ -10,17 +10,16 @@ import { getEnterprise } from "@/service/enterprise/get-enterprise";
 import { UserEnterpriseProps } from "@/utils/interfaces";
 import { LogOut, Loader2, Home, Building2, Briefcase, NotebookPenIcon } from "lucide-react";
 
-// 1. ATUALIZANDO A ESTRUTURA NAV: Adicionamos "Minhas Vagas" e a propriedade 'icon'
 type NavItem = {
   label: string;
-  slug: "home" | "profile" | "jobs" | "module";
+  slug: "home" | "profile" | "vaga" | "module";
   icon: React.ReactNode;
 };
 
 const NAV: NavItem[] = [
   { label: "Início", slug: "home", icon: <Home className="h-5 w-5" /> },
   { label: "Minha Empresa", slug: "profile", icon: <Building2 className="h-5 w-5" /> },
-  { label: "Minhas Vagas", slug: "jobs", icon: <Briefcase className="h-5 w-5" /> },
+  { label: "Minhas Vagas", slug: "vaga", icon: <Briefcase className="h-5 w-5" /> },
   { label: "Portfólio de Cursos", slug: "module", icon: <NotebookPenIcon className="h-5 w-5" /> },
 ];
 
