@@ -12,7 +12,10 @@ import { toast } from "sonner";
 
 type SetOpenCallback = (isOpen: boolean) => void;
 
-export function useCreateJob(setIsOpen: SetOpenCallback) {
+export function useCreateJob(
+  setIsOpen: SetOpenCallback,
+  onSuccessCallback?: () => void // <--- AQUI
+) {
   const params = useParams<{ id: string }>();
   const id = params?.id;
   const { userEnterprise } = UseUserEnteprise();
@@ -34,13 +37,16 @@ export function useCreateJob(setIsOpen: SetOpenCallback) {
     mutationKey: ["job"],
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["job", enterpriseId]
+        queryKey: ["enterpriseJobs", enterpriseId], // <--- MUDANÇA
       });
-      queryClient.invalidateQueries({ queryKey: ["enterpriseJobs"] });
-      toast.success("Sucesso ao criar nova vaga")
+
+      toast.success("Sucesso ao criar nova vaga");
       setIsOpen(false);
-      // window.location.reload()
       form.reset();
+
+      if (onSuccessCallback) {
+        onSuccessCallback(); // <--- AQUI
+      }
     },
     onError: (err: any) => {
       const msg =

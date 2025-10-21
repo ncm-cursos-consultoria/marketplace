@@ -12,13 +12,16 @@ export const createJobFormSchema = z.object({
 
   enterpriseId: z.string().min(1, "Empresa é obrigatória"),
   workPeriod: z.string().nonempty("Periodo é obrigatório"),   // FULL_TIME / PART_TIME
-  contractType: z.string().optional(), // CLT / PJ
+  contractType: z.preprocess(
+    (value) => (value === "" ? null : value), // Se for "", transforma em null
+    z.string().nullable().optional() // Valida como (string | null | undefined)
+  ),
   workStartTime: z.string().optional(), // "09:00"
   workEndTime: z.string().optional(),   // "18:00"
   salary: z.coerce
-    .number() // Converte o valor para número
-    .min(0, "Salário não pode ser negativo") // Valida o número
-    .default(0),
+    .number() // Converte o valor para número
+    .min(0, "Salário não pode ser negativo") // Valida o número
+    .default(0),
   tagIds: z.array(z.string()),
 });
 

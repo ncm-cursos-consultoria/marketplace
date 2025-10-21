@@ -20,15 +20,22 @@ type Tag = {
   label?: string;
 };
 
+interface ModalCreateJobProps {
+  onSuccess?: () => void;
+}
+
 function capitalize(str: string): string {
   if (!str) return str;
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function ModalCreateJob() {
+export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receba a prop
   const { userEnterprise } = UseUserEnteprise();
   const [isOpen, setIsOpen] = useState(false);
-  const { error, form, isError, isPending, onSubmit } = useCreateJob(isOpen => setIsOpen(isOpen));
+  const { error, form, isError, isPending, onSubmit } = useCreateJob(
+    (isOpen) => setIsOpen(isOpen),
+    onSuccess
+  );
   const allCurrencies = currencies.data;
   const allCountries = useMemo(() => {
     return Object.entries(getNameList()).map(([code, name]) => ({

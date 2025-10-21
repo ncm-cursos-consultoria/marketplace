@@ -55,6 +55,10 @@ export default function EnterpriseJobsPage({ params }: JobsPageProps) {
     enabled: !!enterpriseId,
   });
 
+  const handleJobCreateSuccess = () => {
+    setSelectedStatus("ACTIVE");
+  };
+
   // --- Renderização de Carregamento ---
   if (isLoading) {
     return <main className="p-10">Carregando vagas...</main>;
@@ -111,7 +115,7 @@ export default function EnterpriseJobsPage({ params }: JobsPageProps) {
           </div>
         ) : (
           <EmptyState>
-            <ModalCreateJob />
+            <ModalCreateJob onSuccess={handleJobCreateSuccess} />
           </EmptyState>
         )}
       </div>
