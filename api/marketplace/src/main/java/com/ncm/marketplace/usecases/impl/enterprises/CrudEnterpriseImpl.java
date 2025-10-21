@@ -143,14 +143,10 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         String firstName = nameParts[0];
         String lastName = nameParts.length > 1 ? nameParts[1] : "";
 
-        String randomPassword = randomPasswordService.generateSecurePassword();
-        String encryptedRandomPassword = passwordEncoder.encode(randomPassword);
-
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(request.getEmail());
         user.setBirthday(request.getBirthday());
-        user.setPassword(encryptedRandomPassword);
         userEnterpriseCommandService.save(user);
 
         return toResponse(enterprise);
