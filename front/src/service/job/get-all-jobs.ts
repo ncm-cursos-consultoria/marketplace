@@ -24,10 +24,10 @@ interface Tag {
   type: string;
 }
 
-export const getAllJobs = async (filters: JobFilters): Promise<JobSnippet[]> => {
+export const getAllJobs = async (filters?: Partial<JobFilters>): Promise<JobSnippet[]> => {
   try {
     const { data } = await api.get("/job-opening", {
-      params: filters,
+      params: filters, // O Axios já sabe lidar com 'params' undefined
     });
     return data;
   } catch (error) {
