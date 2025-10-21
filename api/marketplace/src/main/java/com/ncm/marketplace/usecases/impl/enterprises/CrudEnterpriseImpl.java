@@ -135,6 +135,8 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         enterprise.setMissionStatement(request.getMissionStatement());
         enterprise.setCoreValues(request.getCoreValues());
         enterprise.setBenefits(request.getBenefits());
+        enterprise.setPhone(request.getPhone());
+        enterprise.setWebsite(request.getWebsite());
 
         String legalName = request.getLegalName().trim();
         String[] nameParts = legalName.split(" ", 2);
