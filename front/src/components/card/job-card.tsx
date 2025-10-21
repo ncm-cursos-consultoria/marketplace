@@ -3,6 +3,7 @@
 import { ModalCandidate } from "@/app/br/(private)/candidato/oportunidades/modal-candidate";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import type { ApiJob } from "@/service/job/get-all-jobs";
 import { htmlToText } from "@/utils/htmlformat";
 import { MapPin, Briefcase, Clock } from "lucide-react";
 import Link from "next/link";
@@ -12,23 +13,6 @@ type ApiCurrency = {
   code: string;
   symbol: string;
   displayName: string;
-};
-
-type ApiJob = {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  title: string;
-  salary: number;
-  currency: ApiCurrency;
-  description: string;
-  status: "ACTIVE" | "PAUSED" | "CLOSED" | string;
-  country: string;
-  state: string;
-  city: string;
-  workModel: "ON_SITE" | "HYBRID" | "REMOTE" | string;
-  views: number;
-  enterpriseId: string;
 };
 
 interface JobCardListProps {

@@ -15,9 +15,6 @@ export default function JobsPage() {
     queryFn: () => getAllJobs()
   })
 
-  console.log(jobs);
-  
-
   return (
     <div className="flex min-h-screen">
       <main className="flex-1 bg-gray-100 p-8 space-y-10">
