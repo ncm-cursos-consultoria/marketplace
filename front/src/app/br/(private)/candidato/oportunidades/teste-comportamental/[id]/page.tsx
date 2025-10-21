@@ -119,7 +119,7 @@ export default function DiscResultPage({ params }: DiscPageProps) {
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           {/* DADOS DINÂMICOS E PLACEHOLDERS */}
           <Info label="Nome" value={userCandidate?.firstName + ' ' + userCandidate?.lastName || "Não encontrado"} />
-          <Info label="Data" value={new Date(result.data).toLocaleDateString('pt-BR')} />
+          <Info label="Data" value={new Date(result.createdAt).toLocaleDateString('pt-BR')} />
           <Info label="Origem" value={"NCM Marketplace"} /> {/* Placeholder */}
         </div>
       </header>

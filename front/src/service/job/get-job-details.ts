@@ -1,9 +1,5 @@
-// src/service/job/get-job-details.ts
-
 import { api } from "../api";
 // Importe o snippet da sua lista de vagas
-import type { JobSnippet } from "./get-all-jobs";
-// Importe nossos novos tipos de domínio
 import type { 
   Tag, 
   Currency,
@@ -44,12 +40,6 @@ export interface JobFull {
   tags: Tag[];               // 'List<TagResponse>'
 }
 
-// A sua função de serviço.
-// Note que 'JobFull' agora é muito mais completa,
-// mas ela não precisa estender 'JobSnippet' se ela já
-// contém todos os campos do snippet.
-// Se 'JobSnippet' tiver campos que 'JobFull' não tem (o que é raro),
-// você pode voltar a usar 'extends JobSnippet'.
 export const getJobDetails = async (jobId: string): Promise<JobFull> => {
   const { data } = await api.get(`/job-opening/${jobId}`);
   return data as JobFull;
