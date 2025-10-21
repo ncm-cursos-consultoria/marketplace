@@ -1,13 +1,12 @@
-// .../enterprise/jobs/[id]/page.tsx
-
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Briefcase, MapPin } from "lucide-react";
 import { getAllJobs, JobSnippet } from "@/service/job/get-all-jobs";
 import { ModalCreateJob } from "@/components/enterprise/modal-create-jobs";
+import Link from "next/link";
 
 // Dicionário de tradução para os status
 const statusTranslations = {
@@ -30,9 +29,10 @@ interface JobsPageProps {
   params: { id: string }; // 'id' aqui é o enterpriseId
 }
 
-export default function EnterpriseJobsPage({ params }: JobsPageProps) {
+export default function EnterpriseJobsPage() {
   const router = useRouter();
-  const enterpriseId = params.id;
+  const params = useParams();
+  const enterpriseId = params.id as string;
   const queryClient = useQueryClient();
 
   // 1. "MEMÓRIA" (Estado): Para guardar qual filtro de status está ativo
@@ -44,13 +44,13 @@ export default function EnterpriseJobsPage({ params }: JobsPageProps) {
     // A queryKey é a "identidade" desta busca.
     // Ela inclui 'enterpriseId' e 'selectedStatus'
     queryKey: ["enterpriseJobs", enterpriseId, selectedStatus],
-    
+
     // A função que realmente busca os dados
     queryFn: () => getAllJobs({
       enterpriseIds: [enterpriseId],
       jobOpeningStatuses: [selectedStatus],
     }),
-    
+
     // Só executa se o enterpriseId existir
     enabled: !!enterpriseId,
   });
@@ -93,11 +93,10 @@ export default function EnterpriseJobsPage({ params }: JobsPageProps) {
           <button
             key={status}
             onClick={() => setSelectedStatus(status)}
-            className={`px-4 py-2 text-sm font-medium ${
-              selectedStatus === status
-                ? "border-b-2 border-blue-600 text-blue-600"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
+            className={`px-4 py-2 text-sm font-medium ${selectedStatus === status
+              ? "border-b-2 border-blue-600 text-blue-600"
+              : "text-gray-500 hover:text-gray-700"
+              }`}
           >
             {statusTranslations[status]}
           </button>
@@ -125,8 +124,12 @@ export default function EnterpriseJobsPage({ params }: JobsPageProps) {
 
 // --- Componente do Card da Vaga (Snippet) ---
 function JobCard({ job }: { job: JobSnippet }) {
+  const jobDetailUrl = `/br/enterprise/job-details/${job.id}`;
   return (
-    <div className="bg-white border rounded-lg shadow-sm p-4 flex justify-between items-center">
+    <Link
+      href={jobDetailUrl}
+      className="bg-white border rounded-lg shadow-sm p-4 flex justify-between items-center transition-all hover:shadow-md hover:border-blue-300 cursor-pointer"
+    >
       <div>
         <h3 className="font-semibold text-gray-800">{job.title}</h3>
         <p className="text-sm text-gray-500 flex items-center gap-2 mt-1">
@@ -140,7 +143,7 @@ function JobCard({ job }: { job: JobSnippet }) {
       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[job.status]}`}>
         {statusTranslations[job.status]}
       </span>
-    </div>
+    </Link>
   );
 }
 
