@@ -8,5 +8,5 @@ import java.util.List;
 @Getter
 @Setter
 public class ModuleSpecificationRequest {
-    private List<String> enterpriseIds;
+//    private List<String> enterpriseIds;
 }

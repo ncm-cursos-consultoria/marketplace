@@ -22,6 +22,11 @@ public class DiscMapper {
                 .createdAt(disc.getCreatedAt())
                 .updatedAt(disc.getUpdatedAt())
                 .main(disc.getMain())
+                .yourDiscProfile(disc.getYourDiscProfile())
+                .publicProfile(disc.getPublicProfile())
+                .privateSelf(disc.getPrivateSelf())
+                .naturalBehavior(disc.getNaturalBehavior())
+                .developmentTips(disc.getDevelopmentTips())
                 .userId(disc.getUserCandidate() != null
                         ? disc.getUserCandidate().getId()
                         : null)

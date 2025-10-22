@@ -19,5 +19,10 @@ public class DiscResponse {
     private Instant createdAt;
     private Instant updatedAt;
     private DiscEnum main;
+    private String yourDiscProfile;
+    private String publicProfile;
+    private String privateSelf;
+    private String naturalBehavior;
+    private String developmentTips;
     private String userId;
 }

@@ -12,8 +12,10 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.Di
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.UpdateDiscRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.disc.DiscListResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.disc.DiscResponse;
+import com.ncm.marketplace.gateways.dtos.responses.services.gemini.GeminiDiscReport;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.DiscService;
 import com.ncm.marketplace.usecases.services.command.user.candidate.disc.DiscCommandService;
+import com.ncm.marketplace.usecases.services.gemini.GeminiService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.disc.DiscQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.disc.DiscQuestionQueryService;
@@ -41,6 +43,7 @@ public class DiscServiceServiceImpl implements DiscService {
     private final DiscQueryService discQueryService;
     private final DiscQuestionQueryService discQuestionQueryService;
     private final DiscSpecification discSpecification;
+    private final GeminiService geminiService;
 
     @Transactional
     @Override
@@ -48,6 +51,7 @@ public class DiscServiceServiceImpl implements DiscService {
         UserCandidate user = userCandidateQueryService.findByIdOrThrow(request.getUserId());
         Disc newDisc = Disc.builder().build();
         Map<DiscEnum, Integer> mainScoreMap = new HashMap<>();
+        Map<String, Integer> questionScores = new HashMap<>();
         List<DiscQuestion> allQuestions = discQuestionQueryService.findAll();
 
         if (allQuestions.size() != request.getQuestions().size()) {
@@ -69,6 +73,7 @@ public class DiscServiceServiceImpl implements DiscService {
                             .build()
             );
             mainScoreMap.merge(discQuestion.getType(), answeredQuestion.getScore(), Integer::sum);
+            questionScores.put(discQuestion.getName(), answeredQuestion.getScore());
         }
 
         mainScoreMap.entrySet().stream()
@@ -78,8 +83,23 @@ public class DiscServiceServiceImpl implements DiscService {
                     user.setDiscTag(maxEntry.getKey());
                 });
 
+        try {
+            GeminiDiscReport report = geminiService.generateDiscReport(questionScores);
+
+            newDisc.setYourDiscProfile(report.getYourDiscProfile());
+            newDisc.setPublicProfile(report.getPublicProfile());
+            newDisc.setPrivateSelf(report.getPrivateSelf());
+            newDisc.setNaturalBehavior(report.getNaturalBehavior());
+            newDisc.setDevelopmentTips(report.getDevelopmentTips());
+
+        } catch (Exception e) {
+            log.error("Falha ao gerar relatório Gemini, salvando DISC sem relatório. {}", e.getMessage());
+        }
+
         newDisc.setUserCandidate(user);
-        return toResponse(discCommandService.save(newDisc));
+        Disc savedDisc = discCommandService.saveAndFlush(newDisc);
+        user.getDiscs().add(savedDisc);
+        return toResponse(savedDisc);
     }
 
     @Transactional
