@@ -62,7 +62,7 @@ export function DiscHistoryItem({ disc }: { disc: DiscSnippet }) {
           <p className="font-semibold text-gray-800">
             Perfil Principal: {discProfileTranslations[disc.main] || disc.main}
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-base text-gray-500">
             Realizado em: {formattedDate}
           </p>
         </div>
@@ -81,32 +81,32 @@ export function DiscHistoryItem({ disc }: { disc: DiscSnippet }) {
           {/* Se já carregou os detalhes, mostra os placeholders */}
           {details && (
             <>
-              <Section title="Você no DISC" badge="PROFILE">
-                <p className="text-sm text-gray-700 italic">
-                  [PLACEHOLDER: Aqui entrará a descrição do perfil do usuário no DISC, vinda do backend.]
+              <Section title="Você no DISC">
+                <p className="text-base text-gray-700 italic">
+                  {details.yourDiscProfile || "Carregando..."}
                 </p>
               </Section>
-              <Section title="Máscara Postural" badge="BEHAVIORAL">
-                <p className="text-sm text-gray-700 italic">
-                  [PLACEHOLDER: Aqui entrará a descrição da máscara postural do usuário, vinda do backend.]
-                </p>
-              </Section>
-
-              <Section title="Íntimo" badge="PERSONAL">
-                <p className="text-sm text-gray-700 italic">
-                  [PLACEHOLDER: Aqui entrará a descrição do perfil íntimo do usuário, vinda do backend.]
+              <Section title="Máscara Postural">
+                <p className="text-base text-gray-700 italic">
+                  {details.publicProfile || "Carregando..."}
                 </p>
               </Section>
 
-              <Section title="Postura Usual" badge="HABITUAL">
-                <p className="text-sm text-gray-700 italic">
-                  [PLACEHOLDER: Aqui entrará a descrição da postura usual do usuário, vinda do backend.]
+              <Section title="Íntimo">
+                <p className="text-base text-gray-700 italic">
+                  {details.privateSelf || "Carregando..."}
                 </p>
               </Section>
 
-              <Section title="Aconselhamento Adicional" badge="SUGGESTION">
-                <p className="text-sm text-gray-700 italic">
-                  [PLACEHOLDER: Aqui entrará a lista de aconselhamentos para o usuário, vinda do backend.]
+              <Section title="Postura Usual">
+                <p className="text-base text-gray-700 italic">
+                  {details.naturalBehavior || "Carregando..."}
+                </p>
+              </Section>
+
+              <Section title="Aconselhamento Adicional">
+                <p className="text-base text-gray-700 italic">
+                  {details.developmentTips || "Carregando..."}
                 </p>
               </Section>
             </>
