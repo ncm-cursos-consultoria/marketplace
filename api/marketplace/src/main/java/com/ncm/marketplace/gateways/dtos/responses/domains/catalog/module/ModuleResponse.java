@@ -19,5 +19,5 @@ public class ModuleResponse {
     private Instant updatedAt;
     private String title;
     private String description;
-    private String enterprise;
+//    private String enterpriseId;
 }

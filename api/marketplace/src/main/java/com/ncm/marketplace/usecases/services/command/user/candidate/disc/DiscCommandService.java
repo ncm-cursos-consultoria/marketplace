@@ -16,6 +16,10 @@ public class DiscCommandService {
         return discRepository.save(disc);
     }
 
+    public Disc saveAndFlush(Disc disc) {
+        return discRepository.saveAndFlush(disc);
+    }
+
     public void deleteById(String id) {
         discRepository.deleteById(id);
     }

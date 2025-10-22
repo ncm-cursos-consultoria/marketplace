@@ -37,10 +37,10 @@ public class Module {
     @JsonBackReference("courses-module")
     private Set<Course> courses = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "enterpriseId", referencedColumnName = "id", nullable = false)
-    @JsonManagedReference("modules-enterprise")
-    private Enterprise enterprise;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "enterpriseId", referencedColumnName = "id", nullable = false)
+//    @JsonManagedReference("modules-enterprise")
+//    private Enterprise enterprise;
 
     @Builder.Default
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL)

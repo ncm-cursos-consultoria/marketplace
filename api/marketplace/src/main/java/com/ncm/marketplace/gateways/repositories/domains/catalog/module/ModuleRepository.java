@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.List;
 
 public interface ModuleRepository extends JpaRepository<Module, String>, JpaSpecificationExecutor<Module> {
-    Boolean existsByEnterprise_Id(String enterpriseId);
-    List<Module> findAllByEnterprise_Id(String id);
+//    Boolean existsByEnterprise_Id(String enterpriseId);
+//    List<Module> findAllByEnterprise_Id(String id);
 }

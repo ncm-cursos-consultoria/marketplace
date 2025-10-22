@@ -230,13 +230,12 @@ const discProfileTranslations: Record<string, string> = {
 };
 
 // Componente auxiliar para as seções do DISC
-function Section({ title, badge, children }: { title: string; badge: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <section className="bg-white p-4 sm:p-6 border rounded-lg shadow-sm">
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
                 <span className="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">
-                    {badge}
                 </span>
             </div>
             <div className="mt-4">{children}</div>
@@ -285,29 +284,29 @@ function DiscProfileTab({ candidate }: { candidate: JobCandidate }) {
             </header>
             
             <div className="space-y-4">
-                <Section title="Você no DISC" badge="PROFILE">
+                <Section title="Você no DISC">
                     <p className="text-sm text-gray-700 italic">
-                        [PLACEHOLDER: Descrição do perfil do usuário no DISC, vinda do backend.]
+                        {result.yourDiscProfile || "Carregando..."}
                     </p>
                 </Section>
-                <Section title="Máscara Postural" badge="BEHAVIORAL">
+                <Section title="Máscara Postural">
                     <p className="text-sm text-gray-700 italic">
-                        [PLACEHOLDER: Descrição da máscara postural do usuário, vinda do backend.]
+                        {result.publicProfile || "Carregando..."}
                     </p>
                 </Section>
-                <Section title="Íntimo" badge="PERSONAL">
+                <Section title="Íntimo">
                     <p className="text-sm text-gray-700 italic">
-                        [PLACEHOLDER: Descrição do perfil íntimo do usuário, vinda do backend.]
+                        {result.privateSelf || "Carregando..."}
                     </p>
                 </Section>
-                 <Section title="Postura Usual" badge="HABITUAL">
+                 <Section title="Postura Usual">
                     <p className="text-sm text-gray-700 italic">
-                        [PLACEHOLDER: Descrição da postura usual do usuário, vinda do backend.]
+                        {result.naturalBehavior || "Carregando..."}
                     </p>
                 </Section>
-                <Section title="Aconselhamento Adicional" badge="SUGGESTION">
+                <Section title="Aconselhamento Adicional">
                     <p className="text-sm text-gray-700 italic">
-                        [PLACEHOLDER: Lista de aconselhamentos para o usuário, vinda do backend.]
+                        {result.developmentTips || "Carregando..."}
                     </p>
                 </Section>
             </div>

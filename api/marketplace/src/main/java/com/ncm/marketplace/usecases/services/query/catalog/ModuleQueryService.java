@@ -27,15 +27,19 @@ public class ModuleQueryService {
         return moduleRepository.findAll(specification);
     }
 
+    public List<Module> findAll() {
+        return moduleRepository.findAll();
+    }
+
     public Page<Module> findAll(Pageable pageable) {
         return moduleRepository.findAll(pageable);
     }
 
-    public Boolean existsByEnterpriseId(String enterpriseId) {
-        return moduleRepository.existsByEnterprise_Id(enterpriseId);
-    }
-
-    public List<Module> findAllByEnterpriseId(String id) {
-        return moduleRepository.findAllByEnterprise_Id(id);
-    }
+//    public Boolean existsByEnterpriseId(String enterpriseId) {
+//        return moduleRepository.existsByEnterprise_Id(enterpriseId);
+//    }
+//
+//    public List<Module> findAllByEnterpriseId(String id) {
+//        return moduleRepository.findAllByEnterprise_Id(id);
+//    }
 }

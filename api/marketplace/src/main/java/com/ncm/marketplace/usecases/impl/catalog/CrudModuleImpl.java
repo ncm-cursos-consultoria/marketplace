@@ -36,11 +36,11 @@ public class CrudModuleImpl implements CrudModule {
     @Override
     public ModuleResponse save(CreateModuleRequest request) {
         Module module = toEntityCreate(request);
-        Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(request.getEnterpriseId());
-        if (!enterprise.getCanUploadModules()) {
-            throw new IllegalStateException("This enterprise can't create modules");
-        }
-        module.setEnterprise(enterprise);
+//        Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(request.getEnterpriseId());
+//        if (!enterprise.getCanUploadModules()) {
+//            throw new IllegalStateException("This enterprise can't create modules");
+//        }
+//        module.setEnterprise(enterprise);
         return toResponse(moduleCommandService.save(module));
     }
 
@@ -75,12 +75,12 @@ public class CrudModuleImpl implements CrudModule {
     @Transactional
     @Override
     public String init(String enterpriseId) {
-        List<Module> modules = moduleQueryService.findAllByEnterpriseId(enterpriseId);
+        List<Module> modules = moduleQueryService.findAll();
         if (modules.isEmpty()) {
             ModuleResponse module = save(CreateModuleRequest.builder()
                     .title("Module 001")
                     .description("Module 001 description")
-                    .enterpriseId(enterpriseId)
+//                    .enterpriseId(enterpriseId)
                     .build());
             log.info("Module created ✅");
             return module.getId();
@@ -90,8 +90,8 @@ public class CrudModuleImpl implements CrudModule {
         }
     }
 
-    @Override
-    public List<ModuleResponse> findAllByEnterpriseId(String id) {
-        return toResponse(moduleQueryService.findAllByEnterpriseId(id));
-    }
+//    @Override
+//    public List<ModuleResponse> findAllByEnterpriseId(String id) {
+//        return toResponse(moduleQueryService.findAllByEnterpriseId(id));
+//    }
 }

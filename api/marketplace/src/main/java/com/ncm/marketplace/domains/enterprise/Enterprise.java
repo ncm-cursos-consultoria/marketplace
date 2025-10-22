@@ -73,10 +73,10 @@ public class Enterprise {
     @JsonBackReference("partner-enterprise")
     private Partner partner;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference("modules-enterprise")
-    private Set<Module> modules = new HashSet<>();
+//    @Builder.Default
+//    @OneToMany(mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JsonBackReference("modules-enterprise")
+//    private Set<Module> modules = new HashSet<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)

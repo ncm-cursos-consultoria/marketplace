@@ -50,7 +50,7 @@ public class UserCandidateMapper {
                         : null)
                 .discTag(userCandidate.getDiscTag())
                 .discId(userCandidate.getDiscs().stream()
-                        .max(Comparator.comparing(Disc::getCreatedAt))
+                        .max(Comparator.comparing(Disc::getCreatedAt, Comparator.nullsFirst(Comparator.naturalOrder())))
                         .map(Disc::getId)
                         .orElse(null))
                 .type(UserTypeEnum.CANDIDATE)

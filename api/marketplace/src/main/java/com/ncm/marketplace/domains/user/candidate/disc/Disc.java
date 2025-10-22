@@ -32,6 +32,16 @@ public class Disc {
     private Instant updatedAt;
     @Enumerated(EnumType.STRING)
     private DiscEnum main;
+    @Column(length = 2000)
+    private String yourDiscProfile;
+    @Column(length = 2000)
+    private String publicProfile;
+    @Column(length = 2000)
+    private String privateSelf;
+    @Column(length = 2000)
+    private String naturalBehavior;
+    @Column(length = 2000)
+    private String developmentTips;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)

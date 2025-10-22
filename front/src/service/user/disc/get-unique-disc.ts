@@ -11,11 +11,11 @@ export interface DiscResultResponse {
   createdAt: string; // Vem como string ISO da API
   main: DiscProfileType;
   // Exemplo de como os dados podem vir no futuro:
-  // profileDescription: string;
-  // maskDescription: string;
-  // personalDescription: string;
-  // usualBehaviorDescription: string;
-  // additionalAdvice: string[];
+  yourDiscProfile: string;
+  publicProfile: string;
+  privateSelf: string;
+  naturalBehavior: string;
+  developmentTips: string;
 }
 
 export const getUniqueDisc = async (discId: string): Promise<DiscResultResponse> => {

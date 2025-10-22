@@ -14,5 +14,5 @@ public interface ModuleController {
     ResponseEntity<ModuleResponse> update(String id, UpdateModuleRequest request);
     ResponseEntity<ModuleResponse> findById(String id);
     ResponseEntity<List<ModuleResponse>> findAll(ModuleSpecificationRequest specificationRequest);
-    ResponseEntity<List<ModuleResponse>> findAllByEnterpriseId(String id);
+//    ResponseEntity<List<ModuleResponse>> findAllByEnterpriseId(String id);
 }

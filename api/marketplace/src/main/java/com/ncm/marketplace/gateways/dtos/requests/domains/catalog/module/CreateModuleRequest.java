@@ -16,6 +16,6 @@ public class CreateModuleRequest {
     private String title;
     @Size(max = 500)
     private String description;
-    @NotEmpty
-    private String enterpriseId;
+//    @NotEmpty
+//    private String enterpriseId;
 }
