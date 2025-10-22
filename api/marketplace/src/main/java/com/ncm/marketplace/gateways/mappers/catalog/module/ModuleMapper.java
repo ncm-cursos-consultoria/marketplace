@@ -24,6 +24,7 @@ public class ModuleMapper {
                 .updatedAt(module.getUpdatedAt())
                 .title(module.getTitle())
                 .description(module.getDescription())
+                .courseCount(module.getCourses().size())
 //                .enterpriseId(module.getEnterprise() != null
 //                        ? module.getEnterprise().getId()
 //                        : null)
