@@ -1,8 +1,5 @@
 import { UseUserEnteprise } from "@/context/user-enterprise.context";
-import { getModules } from "@/service/module/get-modules-enterprise";
-import { materials } from "@/utils/jobs-simulate";
 import { useQuery } from "@tanstack/react-query";
-import { PlayCircle, Plus } from "lucide-react";
 import { Modal } from "../modal";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -11,6 +8,7 @@ import { useCreateModule } from "@/hooks/forms/create-module";
 import ncm from "@/assets/logo-ncm-horizontal.svg"
 import Image from "next/image";
 import Link from "next/link";
+import { getAllModules } from "@/service/module/get-all-modules";
 
 export function CardMaterial() {
   const { userEnterprise } = UseUserEnteprise();
@@ -20,7 +18,7 @@ export function CardMaterial() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["module", enterpriseId],
-    queryFn: () => getModules(enterpriseId!),
+    queryFn: () => getAllModules(),
     enabled: !!enterpriseId,
   });
 
@@ -29,17 +27,17 @@ export function CardMaterial() {
       <div className="">
         <Modal
           title={"+"}
-          headerTitle="Crie um módulo"
+          headerTitle="Crie um curso"
           className="bg-neutral-400 h-[300px] w-[300px] rounded-md text-[60px] text-white cursor-pointer hover:bg-neutral-500"
         >
           <div>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
               <div>
-                <Label>Títlo do módulo</Label>
+                <Label>Títlo do curso</Label>
                 <Input {...register("title")} className="border border-neutral-400"/>
               </div>
               <div>
-                <Label>Descrição do módulo</Label>
+                <Label>Descrição do curso</Label>
                 <Input {...register("description")}  className="border border-neutral-400" />
               </div>
               <Button className="bg-blue-600 text-white cursor-pointer w-full" disabled={isPending} type="submit">
@@ -74,17 +72,17 @@ export function CardMaterial() {
       <div className="">
         <Modal
           title={"+"}
-          headerTitle="Crie um módulo"
+          headerTitle="Crie um curso"
           className="bg-neutral-400 h-[280px] w-[300px] rounded-md text-[60px] text-white cursor-pointer hover:bg-neutral-500"
         >
           <div>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
               <div>
-                <Label>Títlo do módulo</Label>
+                <Label>Títlo do curso</Label>
                 <Input {...register("title")}  className="border border-neutral-400"/>
               </div>
               <div>
-                <Label>Descrição do módulo</Label>
+                <Label>Descrição do curso</Label>
                 <Input {...register("description")}  className="border border-neutral-400"/>
               </div>
               <Button className="bg-blue-600 text-white cursor-pointer w-full" disabled={isPending} type="submit">

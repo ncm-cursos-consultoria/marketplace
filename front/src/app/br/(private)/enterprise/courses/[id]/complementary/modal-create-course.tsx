@@ -15,8 +15,8 @@ export function ModalCreateCourse({ moduleId }: modalCreateCourseProps) {
 
   return (
     <Modal
-      title="Criar novo curso"
-      headerTitle="Crie seu novo curso"
+      title="Criar nova aula"
+      headerTitle="Crie uma nova aula"
       className="bg-blue-600 font-semibold text-white p-2 rounded-md hover:bg-blue-700 cursor-pointer"
     >
       <div>
@@ -34,7 +34,7 @@ export function ModalCreateCourse({ moduleId }: modalCreateCourseProps) {
             <Input {...register("videoUrl")} className="border border-neutral-400"/>
           </div>
           <Button className="bg-blue-600 text-white w-full hover:bg-blue-700 cursor-pointer">
-            {isPending ? "Carregando..." : "Criar curso"}
+            {isPending ? "Carregando..." : "Criar aula"}
           </Button>
         </form>
       </div>

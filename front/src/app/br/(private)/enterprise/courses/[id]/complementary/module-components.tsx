@@ -36,7 +36,7 @@ export function ModuleCard({ module, onOpen }: { module: Module; onOpen: () => v
         <div className="flex items-start justify-between gap-2">
           <h3 className="line-clamp-1 text-base font-semibold">{module.title}</h3>
           <Badge variant="secondary" className="whitespace-nowrap">
-            {module.coursesCount ?? 0} curso(s)
+            {module.coursesCount ?? 0} aula(s)
           </Badge>
         </div>
         {module.description ? (
