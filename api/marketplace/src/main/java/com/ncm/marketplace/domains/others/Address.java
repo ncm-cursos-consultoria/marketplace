@@ -26,7 +26,6 @@ public class Address {
     private Instant createdAt;
     @UpdateTimestamp
     private Instant updatedAt;
-    @Column(length = 2)
     private String country;
     private String state;
     private String city;
