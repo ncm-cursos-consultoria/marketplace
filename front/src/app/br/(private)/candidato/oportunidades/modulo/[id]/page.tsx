@@ -115,7 +115,7 @@ function Header({ title }: { title?: string }) {
   return (
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
       <h1 className="text-2xl font-bold tracking-tight inline-flex items-center gap-2">
-        <BookOpen className="h-6 w-6" /> {title ? `Cursos – ${title}` : "Cursos do módulo"}
+        <BookOpen className="h-6 w-6" /> {title ? `Cursos – ${title}` : "Aulas do módulo"}
       </h1>
     </div>
   );

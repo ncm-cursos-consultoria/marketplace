@@ -60,7 +60,7 @@ export default function CoursesByModulePage() {
     <div className="w-full pr-4 lg:pr-0 flex items-start justify-between flex-col p-10">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Link href={`/br/enterprise/${userEnterprise?.enterpriseId ?? ''}`}>
+          <Link href={`/br/enterprise/module/${userEnterprise?.enterpriseId ?? ''}`}>
             <Button variant="outline" size="sm">
               <ArrowLeft className="mr-1 h-4 w-4" /> Voltar
             </Button>
@@ -69,7 +69,7 @@ export default function CoursesByModulePage() {
           <h1 className="text-2xl font-bold tracking-tight inline-flex items-center gap-2">
             <Layers className="h-6 w-6" /> {module?.title ?? 'Módulo'}
             <Badge variant="secondary" className="ml-1">
-              {module?.coursesCount ?? totalCourses} curso(s)
+              {module?.coursesCount ?? totalCourses} aula(s)
             </Badge>
           </h1>
 
@@ -100,13 +100,13 @@ export default function CoursesByModulePage() {
             )}
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant="secondary">{totalCourses} curso(s)</Badge>
+            <Badge variant="secondary">{totalCourses} aula(s)</Badge>
           </div>
         </div>
       </div>
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold">Cursos do módulo</h2>
+        <h2 className="text-xl font-semibold">Aulas do curso</h2>
         <div className="w-full max-w-sm">
           <Input
             value={search}
