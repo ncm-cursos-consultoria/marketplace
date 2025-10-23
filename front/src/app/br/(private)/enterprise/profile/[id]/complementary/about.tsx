@@ -32,7 +32,6 @@ export function AboutEnterprise({
     <Card>
       <CardHeader
         title="Sobre a empresa"
-        subtitle="Missão, valores e benefícios."
       />
       <div className="mt-4 space-y-4 text-sm text-neutral-700">
         {isEditing ? (

@@ -27,6 +27,10 @@ export function CandidateCard({ candidate, jobTags }: CandidateCardProps) {
  // Lógica de Negócio: Calcula as tags em comum
  const commonTags = useMemo(() => {
    const jobTagIds = new Set(jobTags.map(tag => tag.id));
+   // CORREÇÃO AQUI: Verifica se candidate.tags é um array antes de filtrar
+   if (!Array.isArray(candidate.tags)) {
+     return []; // Retorna um array vazio se não houver tags
+   }
    return candidate.tags.filter(tag => jobTagIds.has(tag.id));
  }, [candidate.tags, jobTags]);
 
