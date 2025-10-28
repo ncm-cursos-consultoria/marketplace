@@ -37,6 +37,8 @@
     "zod": "^4.0.17"
   },
   "devDependencies": {
+    "@mercadopago/sdk-js": "^0.0.3",
+    "@mercadopago/sdk-react": "^1.0.6",
     "@tailwindcss/postcss": "^4",
     "@types/country-list": "^2.1.4",
     "@types/node": "^20",

@@ -22,6 +22,11 @@ public class MercadoPagoCustomerQueryService {
                 .orElseThrow(() -> new NotFoundException("MP customer not found"));
     }
 
+    public MercadoPagoCustomer findByEnterpriseOrNull(String id) {
+        return mpCustomerRepository.findByEnterprise_Id(id)
+                .orElse(null);
+    }
+
     public List<MercadoPagoCustomer> findAll() {
         return mpCustomerRepository.findAll();
     }

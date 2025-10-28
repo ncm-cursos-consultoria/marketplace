@@ -37,21 +37,31 @@ export function AsideEnterprise() {
   const base = "/br/enterprise";
 
   // Lógica de rota ativa, mais precisa
-  const isActive = (slug: NavItem["slug"]): boolean => {
-    const segments = pathname.split('/');
-    const lastSegment = segments[segments.length - 1];
-    const secondToLastSegment = segments[segments.length - 2];
+  // Dentro de AsideEnterprise.tsx
 
-    if (slug === 'home') return lastSegment === enterpriseId;
-    return secondToLastSegment === slug;
+  const isActive = (slug: NavItem["slug"]): boolean => {
+    // Calcula o caminho esperado para a página inicial
+    const homePath = `${base}/${enterpriseId}`;
+
+    if (slug === 'home') {
+      // Verifica se o pathname ATUAL é EXATAMENTE igual ao homePath
+      return pathname === homePath;
+    } else {
+      // Para outros slugs, a lógica de verificar o penúltimo segmento está correta
+      const segments = pathname.split('/');
+      // Garante que haja segmentos suficientes antes de acessar
+      const secondToLastSegment = segments.length > 2 ? segments[segments.length - 2] : null;
+      return secondToLastSegment === slug;
+    }
   };
 
   // 2. ESTILO UNIFICADO: Usando a mesma lógica de classes do Aside do Candidato
   const itemCls = (active: boolean) =>
     [
-      "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-200 transition-colors text-lg",
-      "hover:bg-blue-800 hover:text-white",
-      active && "bg-gray-100 text-blue-900 font-semibold",
+      "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors text-lg",
+      active
+        ? "bg-gray-100 text-blue-900 font-semibold"
+        : "text-gray-200 hover:bg-blue-800 hover:text-white",
     ]
       .filter(Boolean)
       .join(" ");
@@ -62,9 +72,9 @@ export function AsideEnterprise() {
 
   if (isLoading || !enterpriseId) {
     return (
-        <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col bg-blue-900 text-white md:flex">
-            <div className="px-6 py-6 border-b border-white/10">Carregando...</div>
-        </aside>
+      <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col bg-blue-900 text-white md:flex">
+        <div className="px-6 py-6 border-b border-white/10">Carregando...</div>
+      </aside>
     );
   }
 

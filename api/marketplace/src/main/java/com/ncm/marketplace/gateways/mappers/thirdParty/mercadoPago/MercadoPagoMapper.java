@@ -90,4 +90,16 @@ public class MercadoPagoMapper {
                 .status("authorized")
                 .build();
     }
+
+    public static CreateMercadoPagoSignatureRequest toSignatureRequest(MercadoPagoPlan planEntity) {
+        if (planEntity == null) {
+            return null;
+        }
+
+        return CreateMercadoPagoSignatureRequest.builder()
+                .preapprovalPlanId(planEntity.getMercadoPagoId())
+                .reason(planEntity.getReason())
+                .status("authorized")
+                .build();
+    }
 }
