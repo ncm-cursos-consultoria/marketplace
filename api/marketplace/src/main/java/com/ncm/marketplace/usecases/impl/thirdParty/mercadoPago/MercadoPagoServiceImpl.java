@@ -176,13 +176,18 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
             Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(id);
             Plan plan = planQueryService.findByNameOrThrow(PlansEnum.STANDARD.getName());
             enterprise.setPlan(PlansEnum.STANDARD.getName());
-            PlanEnterprise planEnterprise = PlanEnterprise.builder()
-                    .plan(plan)
-                    .endDate(LocalDate.now().plusMonths(1))
-                    .enterprise(enterprise)
-                    .build();
-            planEnterpriseCommandService.save(planEnterprise);
-            enterprise.setPlanEnterprise(planEnterprise);
+            if (enterprise.getPlanEnterprise() != null) {
+                enterprise.getPlanEnterprise().setPlan(plan);
+                enterprise.getPlanEnterprise().setEndDate(LocalDate.now().plusMonths(1));
+            } else {
+                PlanEnterprise planEnterprise = PlanEnterprise.builder()
+                        .plan(plan)
+                        .endDate(LocalDate.now().plusMonths(1))
+                        .enterprise(enterprise)
+                        .build();
+                planEnterpriseCommandService.save(planEnterprise);
+                enterprise.setPlanEnterprise(planEnterprise);
+            }
 
             String bearerToken = "Bearer " + accessToken;
             mercadoPagoClient.saveSignature(request,bearerToken);
