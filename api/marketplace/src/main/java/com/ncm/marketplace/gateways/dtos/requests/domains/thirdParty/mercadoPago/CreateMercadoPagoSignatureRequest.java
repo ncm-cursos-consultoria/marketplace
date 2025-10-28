@@ -29,4 +29,6 @@ public class CreateMercadoPagoSignatureRequest {
     // (Opcional) Motivo da assinatura, pode ser o mesmo do plano.
     @JsonProperty("reason")
     private String reason;
+    @JsonProperty("setup_fee")
+    private Integer setupFee;
 }

@@ -100,6 +100,7 @@ public class MercadoPagoMapper {
                 .preapprovalPlanId(planEntity.getMercadoPagoId())
                 .reason(planEntity.getReason())
                 .status("authorized")
+                .setupFee(1)
                 .build();
     }
 }
