@@ -8,8 +8,8 @@ import { EnterpriseEditSchema } from "@/hooks/schemas/enterprise/enterprise-edit
 
 // 3. Atualize a interface de props
 interface AboutEnterpriseProps {
-  mission?: string | null;
-  values?: string | null;
+  missionStatement?: string | null;
+  coreValues?: string | null;
   benefits?: string | null;
   isEditing: boolean;
   register: UseFormRegister<EnterpriseEditSchema>; // <-- ADICIONE
@@ -18,15 +18,15 @@ interface AboutEnterpriseProps {
 
 // 4. Receba as novas props
 export function AboutEnterprise({ 
-  mission, 
-  values, 
+  missionStatement, 
+  coreValues, 
   benefits, 
   isEditing, 
   register, 
   errors 
 }: AboutEnterpriseProps) {
 
-  const hasContent = !!(mission || values || benefits);
+  const hasContent = !!(missionStatement || coreValues || benefits);
 
   return (
     <Card>
@@ -65,16 +65,16 @@ export function AboutEnterprise({
           <>
             {hasContent ? (
               <div className="space-y-3">
-                {mission && (
+                {missionStatement && (
                   <div>
                     <h4 className="font-semibold text-neutral-800">Nossa Missão</h4>
-                    <p className="text-neutral-600 whitespace-pre-wrap">{mission}</p>
+                    <p className="text-neutral-600 whitespace-pre-wrap">{missionStatement}</p>
                   </div>
                 )}
-                {values && (
+                {coreValues && (
                   <div>
                     <h4 className="font-semibold text-neutral-800">Nossos Valores</h4>
-                    <p className="text-neutral-600 whitespace-pre-wrap">{values}</p>
+                    <p className="text-neutral-600 whitespace-pre-wrap">{coreValues}</p>
                   </div>
                 )}
                  {benefits && (

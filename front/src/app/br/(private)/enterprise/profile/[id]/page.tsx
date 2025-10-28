@@ -20,6 +20,7 @@ import { EnterpriseData } from "@/types/enterprise";
 import { useEditEnterprise } from "@/hooks/forms/use-edit-enterprise";
 import { getAddress } from "@/service/address/get-address";
 import { ApiAddress } from "@/types/address";
+import { PlanCard } from "@/components/enterprise/profile/plan-card";
 
 const enterpriseEditSchema = z.object({
   tradeName: z.string().min(3, "O nome fantasia é obrigatório."),
@@ -162,7 +163,7 @@ export default function EmpresaProfilePage() {
 
                 {/* Card de Informações */}
                 <Card>
-                  <CardHeader title="Informações da empresa" subtitle="Esses dados aparecem na página pública." />
+                  <CardHeader title="Informações da empresa" />
                   <div className="mt-4 text-neutral-700 text-sm">
                     {isEditing ? (
                       <div className="space-y-4">
@@ -196,8 +197,8 @@ export default function EmpresaProfilePage() {
                 {/* Card "Sobre" */}
                 {/* Passamos as props 'register' e 'errors' para o componente filho */}
                 <AboutEnterprise
-                  mission={enterprise?.missionStatement}
-                  values={enterprise?.coreValues}
+                  missionStatement={enterprise?.missionStatement}
+                  coreValues={enterprise?.coreValues}
                   benefits={enterprise?.benefits}
                   isEditing={isEditing}
                   register={register} // Passando o registro
@@ -277,6 +278,7 @@ export default function EmpresaProfilePage() {
                     )}
                   </div>
                 </Card>
+                <PlanCard plan={enterprise.plan} enterpriseId={enterpriseId!} />
                 <PagePublic />
               </div>
             </div>

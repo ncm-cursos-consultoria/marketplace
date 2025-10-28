@@ -6,7 +6,6 @@ export type EnterpriseData = {
   legalName: string;
   tradeName: string;
   cnpj: string;
-  plan: string;
   profilePictureUrl?: string;
   missionStatement?: string;
   coreValues?: string;
@@ -15,4 +14,5 @@ export type EnterpriseData = {
   phone?: string;
   website?: string;
   addressId?: any;
+  plan: 'BASIC' | 'STANDARD' | 'PREMIUM';
 };
