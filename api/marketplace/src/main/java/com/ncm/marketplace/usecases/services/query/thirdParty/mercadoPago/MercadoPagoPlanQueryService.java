@@ -1,5 +1,6 @@
 package com.ncm.marketplace.usecases.services.query.thirdParty.mercadoPago;
 
+import com.ncm.marketplace.domains.enums.MercadoPagoPlanTypeEnum;
 import com.ncm.marketplace.domains.thirdParty.mercadoPago.MercadoPagoPlan;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.thirdParty.mercadoPago.MercadoPagoPlanRepository;
@@ -25,5 +26,15 @@ public class MercadoPagoPlanQueryService {
 
     public List<MercadoPagoPlan> findAll() {
         return mercadoPagoPlanRepository.findAll();
+    }
+
+    public MercadoPagoPlan findByMercadoPagoIdOrNull(String mercadoPagoId) {
+        return mercadoPagoPlanRepository.findByMercadoPagoId(mercadoPagoId)
+                .orElse(null);
+    }
+
+    public MercadoPagoPlan findByType(MercadoPagoPlanTypeEnum planType) {
+        return mercadoPagoPlanRepository.findByType(planType)
+                .orElse(null);
     }
 }
