@@ -18,14 +18,13 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateA
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.file.CreateFileRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.thirdParty.mercadoPago.CreateMercadoPagoCustomerRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.enterprise.EnterpriseResponse;
-import com.ncm.marketplace.gateways.mappers.enterprises.enterprise.EnterpriseMapper;
 import com.ncm.marketplace.gateways.mappers.others.address.AddressMapper;
 import com.ncm.marketplace.gateways.mappers.thirdParty.mercadoPago.MercadoPagoMapper;
 import com.ncm.marketplace.gateways.mappers.user.enterprise.UserEnterpriseMapper;
 import com.ncm.marketplace.usecases.impl.relationships.plan.enterprise.PlanEnterpriseServiceImpl;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
 import com.ncm.marketplace.usecases.interfaces.others.CrudFile;
-import com.ncm.marketplace.usecases.interfaces.thirdParty.mercadoPago.MercadoPagoService;
+import com.ncm.marketplace.usecases.interfaces.thirdParty.MercadoPagoService;
 import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.others.AddressCommandService;
 import com.ncm.marketplace.usecases.services.command.relationship.partner.PartnerEnterpriseCommandService;

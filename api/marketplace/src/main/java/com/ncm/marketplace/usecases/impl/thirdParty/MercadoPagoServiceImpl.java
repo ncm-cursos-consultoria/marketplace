@@ -1,4 +1,4 @@
-package com.ncm.marketplace.usecases.impl.thirdParty.mercadoPago;
+package com.ncm.marketplace.usecases.impl.thirdParty;
 
 import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enums.MercadoPagoPlanTypeEnum;
@@ -13,7 +13,7 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.thirdParty.mercadoPago
 import com.ncm.marketplace.gateways.dtos.requests.domains.thirdParty.mercadoPago.CreateMercadoPagoSignatureRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.thirdParty.mercadoPago.customer.*;
 import com.ncm.marketplace.gateways.mappers.others.address.AddressMapper;
-import com.ncm.marketplace.usecases.interfaces.thirdParty.mercadoPago.MercadoPagoService;
+import com.ncm.marketplace.usecases.interfaces.thirdParty.MercadoPagoService;
 import com.ncm.marketplace.usecases.services.command.others.AddressCommandService;
 import com.ncm.marketplace.usecases.services.command.relationship.plan.enterprise.PlanEnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.thirdParty.mercadoPago.MercadoPagoCustomerCommandService;

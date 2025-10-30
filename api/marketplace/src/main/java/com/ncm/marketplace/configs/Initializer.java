@@ -8,7 +8,7 @@ import com.ncm.marketplace.usecases.interfaces.others.CrudAddress;
 import com.ncm.marketplace.usecases.interfaces.others.CrudPartner;
 import com.ncm.marketplace.usecases.interfaces.others.PlanService;
 import com.ncm.marketplace.usecases.interfaces.others.TagService;
-import com.ncm.marketplace.usecases.interfaces.thirdParty.mercadoPago.MercadoPagoService;
+import com.ncm.marketplace.usecases.interfaces.thirdParty.MercadoPagoService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.DiscService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
 import lombok.RequiredArgsConstructor;

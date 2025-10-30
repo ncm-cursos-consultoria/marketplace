@@ -32,6 +32,7 @@ public class JobOpeningSnippetResponse {
     private Integer views;
     private String enterpriseLegalName;
     private Boolean thirdParty;
+    private String thirdPartyId;
     private WorkPeriodEnum workPeriod;
     private LocalTime workStartTime;
     private LocalTime workEndTime;
