@@ -15,4 +15,5 @@ public class JobOpeningSpecificationRequest {
     private List<JobOpeningStatusEnum> jobOpeningStatuses;
     private List<JobOpeningUserCandidateStatus> jobOpeningUserCandidateStatuses;
     private List<Boolean> thirdParty;
+    private String searchQuery;
 }
