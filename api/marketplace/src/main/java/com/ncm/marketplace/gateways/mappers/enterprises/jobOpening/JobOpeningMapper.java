@@ -1,13 +1,17 @@
 package com.ncm.marketplace.gateways.mappers.enterprises.jobOpening;
 
 import com.ncm.marketplace.domains.enterprise.JobOpening;
+import com.ncm.marketplace.domains.enums.SeniorityLevelEnum;
+import com.ncm.marketplace.domains.enums.WorkModelEnum;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.CurrencyResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningSnippetResponse;
+import com.ncm.marketplace.gateways.dtos.responses.services.quickin.QuickinJobDoc;
 import com.ncm.marketplace.gateways.mappers.others.tag.TagMapper;
 import org.springframework.data.domain.Page;
 
+import java.util.Arrays;
 import java.util.Currency;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +29,7 @@ public class JobOpeningMapper {
                 .city(request.getCity())
                 .workModel(request.getWorkModel())
                 .thirdParty(request.getThirdParty())
+                .thirdPartyId(request.getThirdPartyId())
                 .url(request.getUrl())
                 .workPeriod(request.getWorkPeriod())
                 .contractType(request.getContractType())
@@ -59,6 +64,7 @@ public class JobOpeningMapper {
                         ? jobOpening.getEnterprise().getLegalName()
                         : null)
                 .thirdParty(jobOpening.getThirdParty())
+                .thirdPartyId(jobOpening.getThirdPartyId())
                 .url(jobOpening.getUrl())
                 .workPeriod(jobOpening.getWorkPeriod())
                 .contractType(jobOpening.getContractType())
@@ -102,6 +108,7 @@ public class JobOpeningMapper {
                         ? jobOpening.getEnterprise().getLegalName()
                         : null)
                 .thirdParty(jobOpening.getThirdParty())
+                .thirdPartyId(jobOpening.getThirdPartyId())
                 .workPeriod(jobOpening.getWorkPeriod())
                 .workStartTime(jobOpening.getWorkStartTime())
                 .workEndTime(jobOpening.getWorkEndTime())
@@ -121,5 +128,41 @@ public class JobOpeningMapper {
 
     public static Page<JobOpeningSnippetResponse> toSnippetResponse(Page<JobOpening> jobOpenings) {
         return jobOpenings.map(JobOpeningMapper::toSnippetResponse);
+    }
+
+    public static JobOpening quickinToJobOpeningEntity(QuickinJobDoc quickinJobDoc) {
+        return JobOpening.builder()
+                .title(quickinJobDoc.getTitle())
+                .description(quickinJobDoc.getDescription())
+                .city(quickinJobDoc.getCity())
+                .state(quickinJobDoc.getState())
+                .country(quickinJobDoc.getCountry())
+                .salary(quickinJobDoc.getRemuneration())
+                .currencyCode(quickinJobDoc.getCurrency())
+                .workModel(Arrays.stream(WorkModelEnum.values())
+                        .filter(enumValue -> enumValue.name().equalsIgnoreCase(quickinJobDoc.getWorkplace_type()))
+                        .findFirst()
+                        .orElse(WorkModelEnum.ON_SITE))
+                .thirdPartyId(quickinJobDoc.get_id())
+                .thirdParty(Boolean.TRUE)
+                .url(quickinJobDoc.getCareer_url())
+                .seniority(mapSeniority(quickinJobDoc.getExperience_level()))
+                .build();
+    }
+
+    public static SeniorityLevelEnum mapSeniority(String quickinLevel) {
+        if (quickinLevel == null || quickinLevel.isBlank()) {
+            return null;
+        }
+
+        String level = quickinLevel.toLowerCase();
+
+        return switch (level) {
+            case "senior" -> SeniorityLevelEnum.SENIOR;
+            case "mid_level" -> SeniorityLevelEnum.MID_LEVEL;
+            case "entry_level" -> SeniorityLevelEnum.JUNIOR;
+            case "trainee", "student_college" -> SeniorityLevelEnum.INTERN;
+            default -> null;
+        };
     }
 }

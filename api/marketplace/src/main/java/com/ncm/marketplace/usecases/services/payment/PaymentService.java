@@ -5,19 +5,15 @@ import com.ncm.marketplace.domains.enums.MercadoPagoPlanTypeEnum;
 import com.ncm.marketplace.domains.thirdParty.mercadoPago.MercadoPagoCustomer;
 import com.ncm.marketplace.domains.thirdParty.mercadoPago.MercadoPagoPlan;
 import com.ncm.marketplace.exceptions.IllegalStateException;
-import com.ncm.marketplace.gateways.dtos.requests.domains.thirdParty.mercadoPago.CreateMercadoPagoPlanRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.thirdParty.mercadoPago.CreateMercadoPagoSignatureRequest;
-import com.ncm.marketplace.gateways.dtos.responses.domains.thirdParty.mercadoPago.customer.MercadoPagoPlanApiResponse;
-import com.ncm.marketplace.gateways.dtos.responses.domains.thirdParty.mercadoPago.customer.MercadoPagoPlanResponse;
 import com.ncm.marketplace.gateways.mappers.thirdParty.mercadoPago.MercadoPagoMapper;
-import com.ncm.marketplace.usecases.interfaces.thirdParty.mercadoPago.MercadoPagoService;
+import com.ncm.marketplace.usecases.interfaces.thirdParty.MercadoPagoService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.thirdParty.mercadoPago.MercadoPagoPlanQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

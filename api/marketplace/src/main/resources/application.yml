@@ -84,3 +84,10 @@ gemini:
   api:
     url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-09-2025:generateContent"
     key: ${GEMINI_API_KEY}
+quickin:
+  api:
+    url: "https://api.quickin.io"
+    token: ${QUICKIN_TOKEN}
+    account-id: ${QUICKIN_ACCOUNT_ID}
+    company-id: ${QUICKIN_COMPANY_ID}
+    candidatura-id: ${QUICKIN_CANDIDATURA_ID}

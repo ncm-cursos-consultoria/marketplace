@@ -38,6 +38,7 @@ public class CreateJobOpeningRequest {
     @NotEmpty
     private String enterpriseId;
     private Boolean thirdParty;
+    private String thirdPartyId;
     private String url;
     @NotNull
     private WorkPeriodEnum workPeriod;

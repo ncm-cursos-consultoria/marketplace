@@ -1,4 +1,4 @@
-package com.ncm.marketplace.usecases.interfaces.thirdParty.mercadoPago;
+package com.ncm.marketplace.usecases.interfaces.thirdParty;
 
 import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enums.MercadoPagoPlanTypeEnum;

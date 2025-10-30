@@ -35,6 +35,7 @@ public class JobOpeningResponse {
     private String enterpriseId;
     private String enterpriseLegalName;
     private Boolean thirdParty;
+    private String thirdPartyId;
     private String url;
     private WorkPeriodEnum workPeriod;
     private ContractTypeEnum contractType;
