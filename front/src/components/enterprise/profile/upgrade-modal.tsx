@@ -27,6 +27,9 @@ const MERCADO_PAGO_PUBLIC_KEY = process.env.NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY;
 
 // Função para chamar o backend (sem alterações)
 async function subscribeToStandardPlan(enterpriseId: string, cardTokenId: string): Promise<void> {
+    console.log("Card Token Id: ", cardTokenId);
+    console.log("Public Token utilized: ", MERCADO_PAGO_PUBLIC_KEY);
+    
     await api.post(`/payment/enterprise/${enterpriseId}/subscribe`, null, {
         params: { cardTokenId }
     });

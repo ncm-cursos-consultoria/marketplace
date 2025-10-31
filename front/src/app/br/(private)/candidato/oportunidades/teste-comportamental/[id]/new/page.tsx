@@ -1,31 +1,26 @@
-// front/src/app/disc/new/page.tsx
-
-// Diretiva do Next.js que diz: "Este componente roda no navegador do cliente"
-// Isso é necessário para usar 'useState', 'useEffect' e lidar com cliques.
 'use client';
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { UseUserCandidate } from '@/context/user-candidate.context'; // 1. Importe o hook do contexto
-
-// Importa as funções que chamam a API (você já as criou!)
 import { getAllDiscQuestions } from "@/service/user/disc/get-all-disc-questions"; // Ajuste o caminho se necessário
-import { postDisc } from "@/service/user/disc/post-create-disc";
+import { postDisc, postDiscProps } from "@/service/user/disc/post-create-disc";
+import { toast } from "sonner";
 
-// Tipos para os dados (como DTOs no Java)
 interface Question {
     id: string;
     name: string;
 }
 
 interface Answers {
-    // A chave será o ID da questão, o valor será o score (número)
     [questionId: string]: number;
 }
 
 export default function NewDiscTestPage() {
     const { userCandidate } = UseUserCandidate(); // 2. Use o hook para pegar os dados do usuário
     const router = useRouter();
+    const queryClient = useQueryClient();
 
     // "Memória" do componente (Estado)
     const [questions, setQuestions] = useState<Question[]>([]);
@@ -41,14 +36,13 @@ export default function NewDiscTestPage() {
                 setQuestions(questionList);
             } catch (error) {
                 console.error("Falha ao carregar perguntas:", error);
-                // Aqui você poderia mostrar uma mensagem de erro na tela
+                toast.error("Falha ao carregar as perguntas do teste.");
             } finally {
                 setIsLoading(false);
             }
         }
-
         fetchQuestions();
-    }, []); // O `[]` vazio significa "rode este código apenas uma vez"
+    }, []);
 
     // Função chamada toda vez que o usuário muda o score de uma pergunta
     const handleScoreChange = (questionId: string, score: number) => {
@@ -61,37 +55,51 @@ export default function NewDiscTestPage() {
         }
     };
 
+    const { mutate: submitTest, isPending } = useMutation({
+        mutationFn: ({ userId, payload }: { userId: string, payload: postDiscProps }) => {
+            // A função que realmente chama a API
+            return postDisc(userId, payload);
+        },
+        onSuccess: (dataDoNovoDisc) => {
+            toast.success("Teste enviado com sucesso!");            
+            queryClient.invalidateQueries({ queryKey: ["authUser"] });
+            if (userCandidate?.id) {
+                router.push(`/br/candidato/oportunidades/teste-comportamental/${userCandidate.id}`);
+            }
+        },
+        onError: (error) => {
+            console.error("Falha ao enviar o teste:", error);
+            toast.error("Ocorreu um erro ao enviar seu teste. Tente novamente.");
+        }
+    });
+
     // Função chamada ao clicar no botão "Finalizar Teste"
-    const handleSubmit = async () => {
-        // Pega o userId (do contexto de autenticação, por exemplo)
+    const handleSubmit = () => {
         const userId = userCandidate?.id;
 
-        // Validação: Garante que temos um ID de usuário antes de prosseguir
         if (!userId) {
-            alert("Usuário não autenticado. Por favor, faça login novamente.");
-            router.push('/auth/sign-in'); // Redireciona para o login
+            toast.error("Usuário não autenticado. Faça login novamente.");
+            router.push('/auth/sign-in');
             return;
         }
-        // Transforma o objeto de respostas no formato de lista que a API espera
+        
         const formattedAnswers = Object.entries(answers).map(([id, score]) => ({
             id,
             score,
         }));
 
-        // Validação final
         if (formattedAnswers.length !== questions.length) {
-            alert("Por favor, responda todas as perguntas.");
+            toast.warning("Por favor, responda todas as perguntas.");
             return;
         }
 
-        try {
-            await postDisc(userId, { questions: formattedAnswers });
-            alert("Teste enviado com sucesso!");
-            router.push(`/br/candidato/oportunidades/teste-comportamental/${userId}`); // Redireciona para a página de resultado
-        } catch (error) {
-            console.error("Falha ao enviar o teste:", error);
-            alert("Ocorreu um erro ao enviar seu teste. Tente novamente.");
-        }
+        // Crie o payload que bate com a interface 'postDiscProps'
+        const payload: postDiscProps = {
+            questions: formattedAnswers
+        };
+
+        // Chame a mutação
+        submitTest({ userId, payload });
     };
 
     if (isLoading) {
@@ -99,8 +107,6 @@ export default function NewDiscTestPage() {
     }
 
     const itemsPerColumn = Math.ceil(questions.length / 4);
-
-    // Cria 4 arrays separados, um para cada coluna
     const columns = Array.from({ length: 4 }, (_, colIndex) =>
         questions.slice(colIndex * itemsPerColumn, (colIndex + 1) * itemsPerColumn)
     );
@@ -144,9 +150,11 @@ export default function NewDiscTestPage() {
             <div className="flex justify-end pt-4">
                 <button
                     onClick={handleSubmit}
-                    className="rounded-md bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-500"
+                    disabled={isPending} // 7. DESABILITA O BOTÃO DURANTE O ENVIO
+                    className="rounded-md bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                    Finalizar Teste
+                    {/* 8. MOSTRA TEXTO DE LOADING */}
+                    {isPending ? "Enviando..." : "Finalizar Teste"}
                 </button>
             </div>
         </main>
