@@ -43,7 +43,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,
                                 "/user/candidate",
                                 "/enterprise/with-user",
-                                "/partner/with-enterprise-and-user"
+                                "/partner/with-enterprise-and-user",
+                                "/stripe/webhook"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

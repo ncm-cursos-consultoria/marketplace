@@ -14,6 +14,7 @@ public interface CrudEnterprise {
     EnterpriseResponse saveWithUser(CreateEnterpriseAndUserEnterpriseRequest request);
     void deleteById(String id);
     EnterpriseResponse update(String id, UpdateEnterpriseRequest request);
+    void updateEnterprisePlan(String id, String planId);
     EnterpriseResponse findById(String id);
     EnterpriseResponse findByCnpj(String cnpj);
     List<EnterpriseResponse> findAll();
