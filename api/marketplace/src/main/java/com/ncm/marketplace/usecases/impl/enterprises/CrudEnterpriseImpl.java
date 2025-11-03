@@ -4,6 +4,7 @@ import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enums.FilePathEnum;
 import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.domains.enums.PartnerStatusEnum;
+import com.ncm.marketplace.domains.enums.PlansEnum;
 import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.domains.others.File;
 import com.ncm.marketplace.domains.others.Partner;
@@ -11,6 +12,7 @@ import com.ncm.marketplace.domains.others.Plan;
 import com.ncm.marketplace.domains.relationships.partner.PartnerEnterprise;
 import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.exceptions.BadRequestException;
+import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseAndUserEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.CreateEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.UpdateEnterpriseRequest;
@@ -43,6 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -149,6 +152,26 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         userEnterpriseCommandService.save(user);
 
         return toResponse(enterprise);
+    }
+
+    @Transactional
+    @Override
+    public void updateEnterprisePlan(String id, String planName) {
+        Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(id);
+        Plan plan = planQueryService.findByNameOrThrow(planName);
+        String oldPlanName = enterprise.getPlan();
+        enterprise.setPlan(plan.getName());
+        enterprise.getPlanEnterprise().setPlan(plan);
+        if (oldPlanName != null && !oldPlanName.equals(plan.getName())) {
+            if (planName.equals(PlansEnum.BASIC.getName())) {
+                enterprise.getPlanEnterprise().setEndDate(null);
+            } else if (planName.equals(PlansEnum.STANDARD.getName())) {
+                enterprise.getPlanEnterprise().setEndDate(LocalDate.now().plusMonths(1));
+            } else {
+                throw new IllegalStateException("Unsupported plan: " + planName);
+            }
+        }
+        enterprise.getPlanEnterprise().setEndDate(LocalDate.now().plusMonths(1));
     }
 
     @Override

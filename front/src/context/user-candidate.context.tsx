@@ -33,7 +33,7 @@ export function UserCandidateProvider({ children }: { children: React.ReactNode 
     queryKey: ["authUser"],
     queryFn: me,
     retry: false,
-    staleTime: 1000 * 60 * 5,
+    // staleTime: 1000 * 60 * 5,
   });
 
   useEffect(() => {

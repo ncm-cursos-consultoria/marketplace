@@ -6,7 +6,9 @@ import com.ncm.marketplace.gateways.repositories.domains.relationship.plan.enter
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -20,5 +22,9 @@ public class PlanEnterpriseQueryService {
 
     public List<PlanEnterprise> findAll() {
         return planEnterpriseRepository.findAll();
+    }
+
+    public Set<PlanEnterprise> findAllByDueEndDate() {
+        return planEnterpriseRepository.findAllByEndDateBefore(LocalDate.now());
     }
 }

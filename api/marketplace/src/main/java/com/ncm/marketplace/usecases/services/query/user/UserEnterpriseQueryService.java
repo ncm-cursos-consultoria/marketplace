@@ -37,4 +37,9 @@ public class UserEnterpriseQueryService {
     public Boolean existsByEmail(String email) {
         return userEnterpriseRepository.existsByEmail(email);
     }
+
+    public UserEnterprise findByStripeCustomerIdOrThrow(String stripeCustomerId) {
+        return userEnterpriseRepository.findByStripeCustomerId(stripeCustomerId)
+                .orElseThrow(() -> new NotFoundException("User Enterprise not found"));
+    }
 }

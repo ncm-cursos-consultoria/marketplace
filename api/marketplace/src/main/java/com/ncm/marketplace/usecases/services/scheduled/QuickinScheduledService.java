@@ -1,4 +1,4 @@
-package com.ncm.marketplace.usecases.impl.thirdParty;
+package com.ncm.marketplace.usecases.services.scheduled;
 
 import com.ncm.marketplace.domains.enterprise.JobOpening;
 import com.ncm.marketplace.domains.enums.JobOpeningStatusEnum;
@@ -25,7 +25,7 @@ import static com.ncm.marketplace.gateways.mappers.enterprises.jobOpening.JobOpe
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class QuickinSyncService {
+public class QuickinScheduledService {
 
     private final QuickinApiClient quickinApiClient;
     private final JobOpeningQueryService jobOpeningQueryService;

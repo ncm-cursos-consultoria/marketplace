@@ -91,3 +91,9 @@ quickin:
     account-id: ${QUICKIN_ACCOUNT_ID}
     company-id: ${QUICKIN_COMPANY_ID}
     candidatura-id: ${QUICKIN_CANDIDATURA_ID}
+stripe:
+  api:
+    secret-key: ${STRIPE_SECRET_KEY} # Pega da variável de ambiente
+    publishable-key: ${STRIPE_PUBLISHABLE_KEY}
+  price-id: ${STRIPE_PRICE_ID}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET}

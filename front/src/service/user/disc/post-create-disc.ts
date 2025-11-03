@@ -1,6 +1,6 @@
 import { api } from "../../api";
 
-interface postDiscProps {
+export interface postDiscProps {
   questions: postDiscQuestionProps[];
 }
 
