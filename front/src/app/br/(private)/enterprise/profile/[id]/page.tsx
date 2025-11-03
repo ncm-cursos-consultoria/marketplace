@@ -278,7 +278,11 @@ export default function EmpresaProfilePage() {
                     )}
                   </div>
                 </Card>
-                <PlanCard plan={enterprise.plan} enterpriseId={enterpriseId!} />
+                <PlanCard
+                  enterprise={enterprise} // <-- MUDANÇA 1: Passe o objeto inteiro
+                  address={address}       // <-- MUDANÇA 2: Passe o endereço
+                  enterpriseId={enterpriseId!}
+                />
                 <PagePublic />
               </div>
             </div>
