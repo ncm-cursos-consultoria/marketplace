@@ -75,8 +75,9 @@ public class JobOpeningControllerImpl implements JobOpeningController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Find all enterprises in a list")
     @Override
-    public ResponseEntity<List<JobOpeningResponse>> findAll(JobOpeningSpecificationRequest specificationRequest) {
-        return ResponseEntity.ok(crudJobOpening.findAll(specificationRequest));
+    public ResponseEntity<List<JobOpeningResponse>> findAll(JobOpeningSpecificationRequest specificationRequest,
+                                                            @RequestParam(required = false) Boolean affinity) {
+        return ResponseEntity.ok(crudJobOpening.findAll(specificationRequest, affinity));
     }
 
     @GetMapping("/enterprise/{id}")

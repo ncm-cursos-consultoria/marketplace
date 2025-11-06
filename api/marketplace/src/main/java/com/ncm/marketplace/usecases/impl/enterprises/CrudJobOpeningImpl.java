@@ -112,13 +112,23 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
     }
 
     @Override
-    public List<JobOpeningResponse> findAll(JobOpeningSpecificationRequest specificationRequest) {
+    public List<JobOpeningResponse> findAll(JobOpeningSpecificationRequest specificationRequest, Boolean affinity) {
         Specification<JobOpening> specification = jobOpeningSpecification.toSpecification(specificationRequest);
         List<JobOpeningResponse> response = toResponse(jobOpeningQueryService.findAll(specification));
 
         String authenticatedUserId = AuthService.getAuthenticatedUserId();
         Specification<UserCandidateJobOpening> candidateJobOpeningSpecification = userCandidateJobOpeningSpecification.toSpecification(List.of(authenticatedUserId));
         List<UserCandidateJobOpening> userJobOpenings = userCandidateJobOpeningQueryService.findAll(candidateJobOpeningSpecification);
+        UserCandidate candidate = null;
+        Set<String> userTagIds = new HashSet<>();
+        if (affinity == null) {
+            affinity = Boolean.FALSE;
+        }
+
+        if (affinity) {
+            candidate = userCandidateQueryService.findByIdOrThrow(authenticatedUserId);
+            candidate.getTagUserCandidates().forEach(tagUserCandidate -> userTagIds.add(tagUserCandidate.getTag().getId()));
+        }
 
         Map<String, JobOpeningUserCandidateStatus> jobOpeningUserCandidateStatusMap = userJobOpenings.stream()
                 .collect(Collectors.toMap(userCandidateJobOpening ->
@@ -128,6 +138,30 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
             if (jobOpeningUserCandidateStatusMap.containsKey(jobOpeningResponse.getId())) {
                 jobOpeningResponse.setMyApplicationStatus(jobOpeningUserCandidateStatusMap.get(jobOpeningResponse.getId()));
             }
+            Integer totalJobOpeningTags;
+            Integer totalCompatibleTags = 0;
+            if (affinity && !userTagIds.isEmpty() && !jobOpeningResponse.getTags().isEmpty()) {
+                totalJobOpeningTags = jobOpeningResponse.getTags().size();
+                long compatibleCount = jobOpeningResponse.getTags().stream()
+                        .filter(tagResponse -> userTagIds.contains(tagResponse.getId()))
+                        .count();
+
+                totalCompatibleTags = (int) compatibleCount;
+
+                if (totalJobOpeningTags > 0) {
+                    double affinityScore = ((double) totalCompatibleTags / totalJobOpeningTags) * 100.0;
+                    jobOpeningResponse.setAffinity(affinityScore);
+                } else {
+                    jobOpeningResponse.setAffinity((double) 0);
+                }
+            } else {
+                jobOpeningResponse.setAffinity((double) 0);
+            }
+        }
+
+        if (affinity) {
+            response.sort(Comparator.comparing(JobOpeningResponse::getAffinity).reversed());
+            return response;
         }
 
         return response;

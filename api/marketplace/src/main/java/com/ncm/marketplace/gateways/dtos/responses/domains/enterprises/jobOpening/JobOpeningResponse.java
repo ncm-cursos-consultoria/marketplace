@@ -42,5 +42,6 @@ public class JobOpeningResponse {
     private LocalTime workStartTime;
     private LocalTime workEndTime;
     private JobOpeningUserCandidateStatus myApplicationStatus;
+    private Double affinity;
     private List<TagResponse> tags;
 }
