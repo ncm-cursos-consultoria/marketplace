@@ -2,7 +2,7 @@ import { Tag } from "@/types/domain";
 import { api } from "../api";
 
 // 1. DEFINA O TIPO COMPLETO AQUI
-type ApiCurrency = {
+export type ApiCurrency = {
   code: string;
   symbol: string;
   displayName: string;
@@ -26,11 +26,22 @@ export type ApiJob = {
   tags: Tag[]; // Não se esqueça de incluir as tags se elas vierem da API
 };
 
-type JobStatus = "ACTIVE" | "PAUSED" | "CLOSED";
+export type JobOpeningUserCandidateStatus = 
+    "UNDER_REVIEW" |
+    "SELECTED" |
+    "NOT_SELECTED" |
+    "APPROVED" |
+    "REJECTED";
 
-interface JobFilters {
+export type JobStatus = "ACTIVE" | "PAUSED" | "CLOSED";
+
+export interface JobFilters {
   enterpriseIds?: string[];
   jobOpeningStatuses?: JobStatus[];
+  userIds?: string[];
+  jobOpeningUserCandidateStatuses?: JobOpeningUserCandidateStatus[];
+  thirdParty?: string[];
+  searchQuery?: string;
 }
 
 // 2. ATUALIZE O TIPO DE RETORNO DA FUNÇÃO
