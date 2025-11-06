@@ -3,9 +3,10 @@
 import { ModalCandidate } from "@/app/br/(private)/candidato/oportunidades/modal-candidate";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { ApiJob } from "@/service/job/get-all-jobs";
+import { getApplicationStatusStyle, type ApiJob } from "@/service/job/get-all-jobs";
+import { affinityClass } from "@/utils/affinity-class";
 import { htmlToText } from "@/utils/htmlformat";
-import { MapPin, Briefcase, Clock } from "lucide-react";
+import { MapPin, Briefcase, Clock, Zap } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -50,6 +51,10 @@ function JobCardItem({
   const workLabel = workModelLabel(job.workModel);
   const statusBadge = statusBadgeView(job.status);
   const updatedAt = safeFormatDate(job.updatedAt);
+  const affinityColors = affinityClass(job.affinity);
+  const applicationStatus = job.myApplicationStatus
+    ? getApplicationStatusStyle(job.myApplicationStatus)
+    : null;
 
   const handleApply = () => {
     if (onApply) {
@@ -64,9 +69,34 @@ function JobCardItem({
       href={`/br/candidato/oportunidades/vaga/${job.id}`}
       className="flex flex-col rounded-xl border bg-white p-5 shadow transition hover:shadow-md"
     >
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <h2 className="line-clamp-1 text-xl font-semibold">{job.title}</h2>
-        {statusBadge}
+      <div className="mb-3 flex items-start justify-between gap-2">
+        {/* Coluna da Esquerda: Título e Afinidade */}
+        <div className="flex flex-col gap-2 min-w-0">
+          <h2 className="line-clamp-2 text-xl font-semibold">{job.title}</h2>
+
+          <div className="flex items-center gap-2">
+            {/* Badge de Afinidade */}
+            {job.affinity > 0 && (
+              <Badge
+                variant="secondary"
+                className={`flex items-center gap-1 border ${affinityColors}`}
+              >
+                <Zap className="h-3 w-3" />
+                {job.affinity}% Afinidade
+              </Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Coluna da Direita: Status da Candidatura */}
+        {applicationStatus && (
+          <Badge
+            variant="secondary"
+            className={`border flex-shrink-0 ${applicationStatus.className}`}
+          >
+            {applicationStatus.text}
+          </Badge>
+        )}
       </div>
 
       <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">

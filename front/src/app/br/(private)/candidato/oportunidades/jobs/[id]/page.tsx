@@ -17,7 +17,6 @@ import {
 } from "@/service/job/get-all-jobs";
 
 export default function JobsPage() {
-  
   // 6. Estado para o que o usuário digita no input
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -36,6 +35,7 @@ export default function JobsPage() {
       // 10. Monta o objeto de parâmetros para a API
       const params: JobFilters = {
         searchQuery: debouncedSearchQuery || undefined, // Envia undefined se for vazio
+        affinity: true,
       };
       return getAllJobs(params);
     }

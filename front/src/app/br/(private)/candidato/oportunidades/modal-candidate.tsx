@@ -3,11 +3,14 @@
 import { useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { Modal } from "@/components/modal";
+import { Badge } from "@/components/ui/badge";
 import { UseUserCandidate } from "@/context/user-candidate.context";
 import { api } from "@/service/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader2, Upload, Send } from "lucide-react";
+import { getUniqueJob } from "@/service/job/get-unique-job";
+import { getApplicationStatusStyle } from "@/service/job/get-all-jobs";
 
 interface modalCandidateProps {
   title: string;
@@ -21,6 +24,16 @@ export function ModalCandidate({ title }: modalCandidateProps) {
 
   const [file, setFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const { data: jobData, isLoading: isLoadingJob } = useQuery({
+    queryKey: ['job-opening', jobOpeningId],
+    queryFn: () => getUniqueJob(jobOpeningId),
+    enabled: !!jobOpeningId,
+  });
+
+  const applicationStatus = jobData?.myApplicationStatus 
+    ? getApplicationStatusStyle(jobData.myApplicationStatus) 
+    : null;
 
   const hasCV =
     (userCandidate as any)?.hasCurriculumVitae ??
@@ -104,6 +117,30 @@ export function ModalCandidate({ title }: modalCandidateProps) {
     e.preventDefault();
     submitApplication();
     window.location.reload();
+  }
+
+  if (isLoadingJob) {
+    // Se está carregando os dados da vaga, mostra um botão desabilitado
+    return (
+      <button
+        disabled
+        className="bg-gray-400 rounded-md p-2 font-semibold text-white cursor-wait"
+      >
+        <Loader2 className="h-4 w-4 animate-spin" />
+      </button>
+    );
+  }
+
+  // Se JÁ SE CANDIDATOU, mostra o Badge de Status
+  if (applicationStatus) {
+    return (
+      <Badge
+        variant="secondary"
+        className={`border text-sm ${applicationStatus.className}`}
+      >
+        {applicationStatus.text}
+      </Badge>
+    );
   }
 
   return (
