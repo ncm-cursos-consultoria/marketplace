@@ -31,7 +31,7 @@ export function SecondCol() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm p-5">
+      {/* <div className="bg-white rounded-2xl shadow-sm p-5">
         <p className="font-medium">Disponibilidade</p>
         <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
           <div className="rounded-xl border p-3">Remoto</div>
@@ -39,7 +39,7 @@ export function SecondCol() {
           <div className="rounded-xl border p-3">PJ</div>
           <div className="rounded-xl border p-3">Alocado (SP) opcional</div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
