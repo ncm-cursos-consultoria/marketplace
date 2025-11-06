@@ -106,10 +106,6 @@ export function ModalUpdateUser() {
               <Input {...register("lastName")} disabled={loading} />
             </div>
             <div>
-              <Label>Email</Label>
-              <Input type="email" {...register("email")} disabled={loading} />
-            </div>
-            <div>
               <Label>Data de nascimento</Label>
               <Input {...register("birthday")} disabled={loading} />
             </div>

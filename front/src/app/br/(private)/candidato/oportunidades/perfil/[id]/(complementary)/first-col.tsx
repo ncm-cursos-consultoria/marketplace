@@ -1,118 +1,668 @@
-import { Github, Globe2, Linkedin, Mail, Phone, Users2 } from "lucide-react";
-import Image from "next/image";
+"use client";
 
-interface firstColProps {
-  firstName?: string;
-  lastName?: string;
-  firstLink?: string;
-  secondLink?: string;
-  email?: string;
-  profileImg?: string;
-  linkedInUrl?: string;
-  githubUrl?: string;
+import { useMemo, useState } from "react";
+import Image from "next/image";
+import {
+  Github,
+  Globe2,
+  Linkedin,
+  Mail,
+  Phone,
+  Users2,
+  FileText,
+  MapPin,
+  Pencil,
+  Loader2
+} from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+
+// --- Imports dos Tipos ---
+import { updateCandidateTags, UserCandidateResponse } from "@/service/user/update-candidate-tags"; // Ajuste o path se necessário
+import { ApiAddress } from "@/types/address";
+// Ajuste o path para o seu serviço de patch. O nome no seu import estava 'create-or-update'
+import { patchUserAddress } from "@/service/user/create-or-update-candidate-address";
+
+// --- Imports de UI ---
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { getAllTags, GetTagParams, TagResponse } from "@/service/tag/get-all-tags";
+import { ScrollArea } from "@/components/ui/scroll-area"; // <-- CORREÇÃO AQUI
+import { Checkbox } from "@/components/ui/checkbox";
+
+// --- SKELETONS (Componentes de Carregamento) ---
+function SkeletonCard() {
+  return <div className="bg-white rounded-2xl shadow-sm p-6 h-48 w-full animate-pulse" />;
+}
+function SkeletonArticle() {
+  return <div className="bg-white rounded-2xl shadow-sm p-6 h-32 w-full animate-pulse" />;
 }
 
-export function FirstCol({
-  email,
-  firstLink,
-  firstName,
-  lastName,
-  profileImg,
-  secondLink,
-  linkedInUrl,
-  githubUrl,
-}: firstColProps) {
+// --- Props do Componente Principal ---
+interface FirstColProps {
+  user?: UserCandidateResponse;
+  address?: ApiAddress;
+  isLoading: boolean;
+}
+
+// -----------------------------------------------------------------
+// --- COMPONENTE INTERNO: AddressBlock ---
+// -----------------------------------------------------------------
+function AddressBlock({ address }: { address?: ApiAddress }) {
+  if (!address) {
+    return <span className="text-sm text-neutral-400">Endereço não informado</span>;
+  }
+
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex gap-5">
-        <div className="bg-white rounded-2xl shadow-sm p-6 h-[35vh] w-[35vw]">
-          <h3 className="text-sm font-semibold text-neutral-700">Sobre</h3>
-          <dl className="mt-5 space-y-3 text-sm text-neutral-700">
-            <div className="flex items-center gap-2">
-              <Github className="h-4 w-4" />{" "}
-              {githubUrl ? (
-                <a className="text-blue-600 hover:underline" href={githubUrl}>
-                  {githubUrl}
-                </a>
-              ) : (
-                <div className="text-blue-600 hover:underline">
-                  Sem link
-                </div>
+    <div className="space-y-2 text-sm text-neutral-700">
+      {/* Rua e Número */}
+      {address.street && (
+        <p className="flex items-start gap-2">
+          <MapPin className="h-4 w-4 flex-shrink-0 text-neutral-500 mt-0.5" />
+          <span>
+            {address.street}
+            {address.number ? `, ${address.number}` : ''}
+          </span>
+        </p>
+      )}
+
+      {/* Complemento */}
+      {address.addressLine2 && (
+        <p className="pl-6">{address.addressLine2}</p>
+      )}
+
+      {/* Bairro */}
+      {address.district && (
+        <p className="pl-6">{address.district}</p>
+      )}
+
+      {/* Cidade e Estado */}
+      {address.city && (
+        <p className="pl-6">
+          {address.city}
+          {address.state ? ` - ${address.state}` : ''}
+        </p>
+      )}
+
+      {/* CEP */}
+      {address.zip && (
+        <p className="pl-6">CEP: {address.zip}</p>
+      )}
+
+      {/* País */}
+      {address.country && (
+        <p className="pl-6">{address.country}</p>
+      )}
+    </div>
+  );
+}
+
+// -----------------------------------------------------------------
+// --- LÓGICA DO MODAL (Schema e Tipo) ---
+// -----------------------------------------------------------------
+const addressSchema = z.object({
+  country: z.string().min(1, "País é obrigatório"),
+  state: z.string().min(1, "Estado é obrigatório"),
+  city: z.string().min(1, "Cidade é obrigatória"),
+  district: z.string().min(1, "Bairro é obrigatório"),
+  zip: z.string().min(1, "CEP é obrigatório"),
+  street: z.string().min(1, "Rua é obrigatória"),
+  number: z.string().min(1, "Número é obrigatório"),
+  addressLine2: z.string().optional(),
+});
+
+type AddressFormData = z.infer<typeof addressSchema>;
+
+interface AddressModalProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  userId: string;
+  currentAddress?: ApiAddress;
+}
+
+// -----------------------------------------------------------------
+// --- COMPONENTE INTERNO: AddressModal ---
+// -----------------------------------------------------------------
+function AddressModal({ isOpen, setIsOpen, userId, currentAddress }: AddressModalProps) {
+  const queryClient = useQueryClient();
+
+  const form = useForm<AddressFormData>({
+    resolver: zodResolver(addressSchema),
+    defaultValues: {
+      country: currentAddress?.country || "Brasil",
+      state: currentAddress?.state || "",
+      city: currentAddress?.city || "",
+      district: currentAddress?.district || "",
+      zip: currentAddress?.zip || "",
+      street: currentAddress?.street || "",
+      number: currentAddress?.number || "",
+      addressLine2: currentAddress?.addressLine2 || "",
+    },
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: patchUserAddress,
+    onSuccess: () => {
+      toast.success("Endereço atualizado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ['authUser'] });
+      // Também é bom invalidar a query de endereço diretamente, se ela existir
+      queryClient.invalidateQueries({ queryKey: ['userAddress'] });
+      setIsOpen(false);
+    },
+    onError: (error) => {
+      toast.error("Falha ao atualizar o endereço. Tente novamente.");
+      console.error(error);
+    }
+  });
+
+  function onSubmit(data: AddressFormData) {
+    mutate({ userId, data });
+  }
+
+  // --- O JSX DO MODAL (que estava faltando) ---
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>Atualizar Endereço</DialogTitle>
+          <DialogDescription>
+            Insira os dados do seu endereço principal.
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="street"
+                render={({ field }) => ( // Sem o 'any', pois 'form.control' está tipado
+                  <FormItem>
+                    <FormLabel>Rua</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Av. Paulista" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="number"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Número</FormLabel>
+                    <FormControl>
+                      <Input placeholder="1000" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="addressLine2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Complemento (Opcional)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Apto 101, Bloco A" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="district"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bairro</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Bela Vista" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cidade</FormLabel>
+                    <FormControl>
+                      <Input placeholder="São Paulo" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-            <div className="flex items-center gap-2">
-              <Linkedin className="h-4 w-4" />{" "}
-              {linkedInUrl ? (
-                <a className="text-blue-600 hover:underline" href={linkedInUrl}>
-                  {linkedInUrl}
-                </a>
-              ) : (
-                <div className="text-blue-600 hover:underline">
-                  Sem link
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="state"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Estado</FormLabel>
+                    <FormControl>
+                      <Input placeholder="SP" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="zip"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>CEP</FormLabel>
+                    <FormControl>
+                      <Input placeholder="01310-100" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>País</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Brasil" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <DialogFooter className="pt-4">
+              <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>Cancelar</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvar Alterações"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+interface SkillsModalProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  user: UserCandidateResponse; // Passamos o usuário inteiro
+}
+
+function SkillsModal({ isOpen, setIsOpen, user }: SkillsModalProps) {
+  const queryClient = useQueryClient();
+  const params: GetTagParams = {};
+
+  // 1. Busca todas as tags disponíveis (sem alteração)
+  const { data: allTags, isLoading: isLoadingTags } = useQuery({
+    queryKey: ['allTags'],
+    queryFn: () => getAllTags(params),
+  });
+
+  // 2. Cria um Set com os IDs das tags que o usuário JÁ POSSUI (sem alteração)
+  const userTagIds = useMemo(() => {
+    return new Set(user.tags?.map(tag => tag.id) || []);
+  }, [user.tags]);
+
+
+  // 3. Mutação para ADICIONAR ou REMOVER uma tag
+  const { mutate, isPending, variables } = useMutation({
+    mutationFn: updateCandidateTags,
+
+    // --- ATUALIZAÇÃO OTIMISTA ---
+    onMutate: async (variablesSent) => {
+      const { tagId, action } = variablesSent;
+
+      // 3.1. Cancela queries pendentes do 'authUser'
+      await queryClient.cancelQueries({ queryKey: ['authUser', user.id] });
+
+      // 3.2. Pega um snapshot dos dados atuais
+      const previousUserData = queryClient.getQueryData<UserCandidateResponse>(['authUser', user.id]);
+      if (!previousUserData) return; // Se não houver dados, não faz nada
+
+      // 3.3. ATUALIZA O CACHE IMEDIATAMENTE (A UI MUDA AGORA)
+      queryClient.setQueryData<UserCandidateResponse>(['authUser', user.id], (oldData) => {
+        if (!oldData) return oldData;
+
+        let newTags = [...(oldData.tags || [])];
+
+        if (action === 'ADD') {
+          // Encontra o objeto da tag inteira para adicionar
+          const tagToAdd = allTags?.find(t => t.id === tagId);
+          if (tagToAdd && !newTags.find(t => t.id === tagId)) {
+            newTags.push(tagToAdd);
+          }
+        } else { // Ação é 'REMOVE'
+          // Filtra a tag removida
+          newTags = newTags.filter(t => t.id !== tagId);
+        }
+
+        return { ...oldData, tags: newTags };
+      });
+
+      // 3.4. Retorna o snapshot para usar no 'onError'
+      return { previousUserData };
+    },
+
+    // 3.5. Em caso de erro, reverte a mudança
+    onError: (error, variables, context) => {
+      toast.error("Não foi possível atualizar a tag. Revertendo.");
+      // Reverte o cache para o estado anterior
+      if (context?.previousUserData) {
+        queryClient.setQueryData(['authUser', user.id], context.previousUserData);
+      }
+    },
+
+    // 3.6. onSuccess agora é silencioso. A UI já mudou.
+    onSuccess: () => {
+      // Não fazemos nada. A mudança já está na tela.
+    },
+    // NÃO invalidamos aqui, vamos invalidar ao fechar o modal.
+  });
+
+  // 4. Função de clique (sem alteração)
+  const handleTagChange = (tag: TagResponse, isChecked: boolean) => {
+    mutate({
+      id: user.id,
+      tagId: tag.id,
+      action: isChecked ? 'ADD' : 'REMOVE',
+    });
+  };
+
+  // 5. NOVA FUNÇÃO: Invalida a query QUANDO O MODAL FECHAR
+  const handleModalClose = (open: boolean) => {
+    if (!open) {
+      // O modal está fechando. Agora sim, invalidamos a query
+      // para garantir que os dados fiquem 100% sincronizados.
+      queryClient.invalidateQueries({ queryKey: ['authUser', user.id] });
+    }
+    setIsOpen(open);
+  };
+
+  // 6. JSX (Modificado para usar o novo handleModalClose)
+  return (
+    <Dialog open={isOpen} onOpenChange={handleModalClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Atualizar Habilidades</DialogTitle>
+          <DialogDescription>
+            Selecione as tecnologias e habilidades que você domina.
+          </DialogDescription>
+        </DialogHeader>
+
+        <ScrollArea className="h-72 w-full pr-4">
+          <div className="space-y-4">
+            {isLoadingTags && (
+              <div className="flex items-center justify-center h-48">
+                <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+              </div>
+            )}
+
+            {allTags?.map((tag) => {
+              const isTagPending = isPending && variables?.tagId === tag.id;
+
+              return (
+                <div key={tag.id} className="flex items-center justify-between">
+                  <label
+                    htmlFor={tag.id}
+                    className="text-sm font-medium text-neutral-800 cursor-pointer"
+                  >
+                    {tag.name}
+                  </label>
+                  <div className="flex items-center gap-2">
+                    {isTagPending && (
+                      <Loader2 className="h-4 w-4 animate-spin text-neutral-400" />
+                    )}
+                    <Checkbox
+                      id={tag.id}
+                      // O 'checked' vem do Set (agora atualizado otimistamente)
+                      checked={userTagIds.has(tag.id)}
+                      onCheckedChange={(isChecked) => handleTagChange(tag, isChecked as boolean)}
+                      // Desabilita apenas o checkbox que está sendo salvo
+                      disabled={isTagPending}
+                    />
+                  </div>
                 </div>
-              )}
+              );
+            })}
+          </div>
+        </ScrollArea>
+        <DialogFooter>
+          <Button type="button" onClick={() => handleModalClose(false)}>
+            Fechar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function FirstCol({ user, address, isLoading }: FirstColProps) {
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [isSkillsModalOpen, setIsSkillsModalOpen] = useState(false);
+
+  // --- ESTADO DE CARREGAMENTO ---
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-6 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+        <SkeletonArticle />
+      </div>
+    );
+  }
+
+  // --- ESTADO DE ERRO OU VAZIO ---
+  if (!user) {
+    return <p>Carregando...</p>;
+  }
+
+  // --- RENDERIZAÇÃO COM DADOS REAIS ---
+  return (
+    <div className="flex flex-col gap-6 w-full">
+
+      {/* --- LINHA 1: GRID DE DUAS COLUNAS --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {/* --- CARD 1: ENDEREÇO E CONTATO --- */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 w-full h-full flex flex-col md:flex-row gap-6">
+
+          {/* Coluna da Esquerda: Endereço */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-neutral-700">Endereço</h3>
+              {/* Botão de Edição (Caneta) */}
+              <button
+                onClick={() => setIsAddressModalOpen(true)}
+                className="text-neutral-500 hover:text-blue-600 transition-colors"
+                aria-label="Editar endereço"
+              >
+                <Pencil className="h-4 w-4" />
+              </button>
             </div>
-            <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4" /> {email}
-            </div>
-          </dl>
+            <AddressBlock address={address} />
+          </div>
+
+          {/* Divisor (opcional, bom para mobile) */}
+          <div className="border-b md:border-b-0 md:border-l border-neutral-200"></div>
+
+          {/* Coluna da Direita: Links e Contato */}
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-semibold text-neutral-700">Links e Contato</h3>
+            <dl className="mt-5 space-y-4 text-sm text-neutral-700">
+
+              {/* GitHub */}
+              <div className="flex items-center gap-2">
+                <Github className="h-4 w-4 flex-shrink-0" />
+                {user.githubUrl ? (
+                  <a className="text-blue-600 hover:underline truncate" href={user.githubUrl} target="_blank" rel="noreferrer">
+                    {user.githubUrl.replace("https://", "")}
+                  </a>
+                ) : (
+                  <span className="text-neutral-400">GitHub não informado</span>
+                )}
+              </div>
+
+              {/* LinkedIn */}
+              <div className="flex items-center gap-2">
+                <Linkedin className="h-4 w-4 flex-shrink-0" />
+                {user.linkedInUrl ? (
+                  <a className="text-blue-600 hover:underline truncate" href={user.linkedInUrl} target="_blank" rel="noreferrer">
+                    {user.linkedInUrl.replace("https://", "")}
+                  </a>
+                ) : (
+                  <span className="text-neutral-400">LinkedIn não informado</span>
+                )}
+              </div>
+
+              {/* My Site */}
+              <div className="flex items-center gap-2">
+                <Globe2 className="h-4 w-4 flex-shrink-0" />
+                {user.mySiteUrl ? (
+                  <a className="text-blue-600 hover:underline truncate" href={user.mySiteUrl} target="_blank" rel="noreferrer">
+                    {user.mySiteUrl.replace("https://", "")}
+                  </a>
+                ) : (
+                  <span className="text-neutral-400">Site pessoal não informado</span>
+                )}
+              </div>
+
+              {/* Currículo */}
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 flex-shrink-0" />
+                {user.curriculumVitaeUrl ? (
+                  <a className="text-blue-600 hover:underline truncate" href={user.curriculumVitaeUrl} target="_blank" rel="noreferrer">
+                    Visualizar Currículo
+                  </a>
+                ) : (
+                  <span className="text-neutral-400">Currículo não informado</span>
+                )}
+              </div>
+
+              {/* Email */}
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{user.email}</span>
+              </div>
+
+              {/* Telefone */}
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4 flex-shrink-0" />
+                {user.phoneNumber ? (
+                  <span className="truncate">{user.phoneNumber}</span>
+                ) : (
+                  <span className="text-neutral-400">Telefone não informado</span>
+                )}
+              </div>
+            </dl>
+          </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-6 h-[35vh]">
+        {/* --- CARD 2: STATUS DO PERFIL --- */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 w-full h-full">
           <div className="flex items-start justify-between">
             <h3 className="text-sm font-semibold text-neutral-700">
               Status do Perfil
             </h3>
-            <span className="text-[11px] px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">
-              ACTIVE
+            <span className={`text-[11px] px-2 py-1 rounded-full ${user.isBlocked
+              ? "bg-red-100 text-red-700"
+              : "bg-emerald-100 text-emerald-700"
+              }`}>
+              {user.isBlocked ? "INATIVO" : "ATIVO"}
             </span>
           </div>
           <p className="mt-3 text-sm text-neutral-700">
-            Seu perfil está visível para recrutadores e empresas parceiras.
+            {user.isBlocked
+              ? "Seu perfil não está visível para recrutadores."
+              : "Seu perfil está visível para recrutadores e empresas parceiras."
+            }
           </p>
-          <div className="mt-4 rounded-xl border p-4 flex items-center gap-3">
-            <Users2 className="h-5 w-5 text-blue-600" />
-            <div>
-              <p className="text-sm font-medium">
-                Preferências de oportunidade
-              </p>
-              <p className="text-xs text-neutral-600">
-                Remoto • Pleno • React, NestJS, PostgreSQL
-              </p>
+
+          <div className="mt-4 rounded-xl border p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-start gap-3">
+                <Users2 className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm font-medium">
+                  Habilidades
+                </p>
+              </div>
+              {/* 9. Botão de Edição (Caneta) para Habilidades */}
+              <button
+                onClick={() => setIsSkillsModalOpen(true)}
+                className="text-neutral-500 hover:text-blue-600 transition-colors"
+                aria-label="Editar habilidades"
+              >
+                <Pencil className="h-4 w-4" />
+              </button>
             </div>
+
+            {/* Lista de Habilidades */}
+            {user.tags && user.tags.length > 0 ? (
+              <div className="flex flex-wrap gap-1">
+                {user.tags.map((tag) => (
+                  <span key={tag.id} className="text-xs text-neutral-600 bg-neutral-100 px-2 py-0.5 rounded-full">
+                    {tag.name}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-neutral-600">
+                Nenhuma habilidade definida.
+              </p>
+            )}
           </div>
-          <button className="mt-4 w-full h-10 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-sm">
-            Atualizar preferências
-          </button>
         </div>
       </div>
 
-      <div className="">
-        <article className="bg-white rounded-2xl shadow-sm p-5 w-full">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full overflow-hidden bg-neutral-200">
-              <Image src="/favicon.ico" alt="avatar" width={40} height={40} />
-            </div>
-            <div>
-              <p className="text-sm font-medium">Levi Yuki Utima</p>
-              <p className="text-xs text-neutral-500">Atualizado há 1 semana</p>
-            </div>
-          </div>
-          <p className="mt-4 text-sm leading-6 text-neutral-800">
-            Concluí o curso de Arquitetura Limpa com foco em NestJS e apliquei
-            no serviço de verificação de posts (crawler + IA) — performance
-            melhorou 38%.
+      {/* --- LINHA 2: CARD "SOBRE" --- */}
+      {user.about && (
+        <article className="bg-white rounded-2xl shadow-sm p-6 w-full">
+          <h3 className="text-sm font-semibold text-neutral-700">
+            Sobre {user.firstName}
+          </h3>
+          <p className="mt-4 text-sm leading-6 text-neutral-800 whitespace-pre-wrap">
+            {user.about}
           </p>
-          <div className="mt-4 flex items-center gap-2 text-xs">
-            <span className="px-2 py-1 rounded-full bg-blue-100 text-blue-700">
-              Curso
-            </span>
-            <span className="px-2 py-1 rounded-full bg-neutral-100 text-neutral-700">
-              NestJS
-            </span>
-          </div>
         </article>
-      </div>
+      )}
+
+      {/* --- Renderiza o Modal --- */}
+      <AddressModal
+        isOpen={isAddressModalOpen}
+        setIsOpen={setIsAddressModalOpen}
+        userId={user.id}
+        currentAddress={address}
+      />
+
+      {/* 10. Renderiza o novo Modal de Habilidades */}
+      <SkillsModal
+        isOpen={isSkillsModalOpen}
+        setIsOpen={setIsSkillsModalOpen}
+        user={user}
+      />
+
     </div>
   );
 }
