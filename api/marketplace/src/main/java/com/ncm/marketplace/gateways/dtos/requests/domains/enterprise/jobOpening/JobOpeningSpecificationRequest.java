@@ -16,4 +16,5 @@ public class JobOpeningSpecificationRequest {
     private List<JobOpeningUserCandidateStatus> jobOpeningUserCandidateStatuses;
     private List<Boolean> thirdParty;
     private String searchQuery;
+    private Boolean affinity;
 }

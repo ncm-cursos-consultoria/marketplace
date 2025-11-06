@@ -13,7 +13,7 @@ public interface CrudJobOpening {
     void deleteById(String id);
     JobOpeningResponse update(String id, UpdateJobOpeningRequest request);
     JobOpeningResponse findById(String id);
-    List<JobOpeningResponse> findAll(JobOpeningSpecificationRequest specificationRequest);
+    List<JobOpeningResponse> findAll(JobOpeningSpecificationRequest specificationRequest, Boolean affinity);
     void init(String enterpriseId);
     List<JobOpeningResponse> findAllByEnterpriseId(String id);
     JobOpeningUserCandidateResponse submitUserCandidateToJobOpeningById(String id, String userId);

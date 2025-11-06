@@ -16,7 +16,7 @@ public interface JobOpeningController {
     ResponseEntity<JobOpeningResponse> update(String id, UpdateJobOpeningRequest request);
     ResponseEntity<JobOpeningResponse> updateTags(String id, String tagId, ActionEnum action);
     ResponseEntity<JobOpeningResponse> findById(String id);
-    ResponseEntity<List<JobOpeningResponse>> findAll(JobOpeningSpecificationRequest specificationRequest);
+    ResponseEntity<List<JobOpeningResponse>> findAll(JobOpeningSpecificationRequest specificationRequest, Boolean affinity);
     ResponseEntity<List<JobOpeningResponse>> findAllByEnterpriseId(String id);
     ResponseEntity<List<JobOpeningResponse>> findAllThirdParty();
     ResponseEntity<JobOpeningUserCandidateResponse> submitUserCandidateToJobOpeningById(String id, String userId);

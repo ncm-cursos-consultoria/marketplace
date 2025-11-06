@@ -69,6 +69,8 @@ function dateTimePtBr(iso: string) {
 }
 
 export default function MinhasVagasPage() {
+  console.log("Mihas vafas");
+  
   const { userCandidate } = UseUserCandidate();
   const userId = userCandidate?.id; // <- ajuste se seu contexto expõe outro campo
 
