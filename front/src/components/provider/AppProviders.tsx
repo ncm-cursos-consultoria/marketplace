@@ -30,7 +30,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
           <UserPartnerProvider>
             {children} {/* <--- Suas páginas (layout, page, etc) */}
             {/* 3. Coloque os componentes "globais" aqui */}
-            <Toaster position="top-right" richColors />
+            <Toaster position="bottom-right" richColors />
             <NextNProgressBar
               color="#2563eb" // Cor azul do seu logo
               startPosition={0.3}
