@@ -1,8 +1,7 @@
 package com.ncm.marketplace.usecases.impl.others;
 
 import com.ncm.marketplace.domains.enterprise.JobOpening;
-import com.ncm.marketplace.domains.enums.ActionEnum;
-import com.ncm.marketplace.domains.enums.SkillTypeEnum;
+import com.ncm.marketplace.domains.enums.*;
 import com.ncm.marketplace.domains.others.Tag;
 import com.ncm.marketplace.domains.relationships.tag.TagJobOpening;
 import com.ncm.marketplace.domains.relationships.tag.TagUserCandidate;
@@ -35,8 +34,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.ncm.marketplace.domains.enums.SkillTypeEnum.*;
 import static com.ncm.marketplace.gateways.mappers.others.tag.TagMapper.*;
@@ -94,12 +96,21 @@ public class TagServiceImpl implements TagService {
     @Override
     public void init() {
         HashMap<String, SkillTypeEnum> tags = new HashMap<>();
-        tags.put("Java Spring Boot", HARD_SKILL);
-        tags.put("React", HARD_SKILL);
-        tags.put("Next.js", HARD_SKILL);
-        tags.put("Liderança", SOFT_SKILL);
-        tags.put("Trabalho em equipe", SOFT_SKILL);
-        tags.put("Iniciativa", SOFT_SKILL);
+        Set<String> hardSkillTagNames = Arrays.stream(TagHardSkillEnum.values())
+                .map(TagHardSkillEnum::getName)
+                .collect(Collectors.toSet());
+
+        Set<String> softSkillTagNames = Arrays.stream(TagSoftSkillEnum.values())
+                .map(TagSoftSkillEnum::getName)
+                .collect(Collectors.toSet());
+
+        hardSkillTagNames.forEach(hardSkillName -> {
+            tags.put(hardSkillName, HARD_SKILL);
+        });
+
+        softSkillTagNames.forEach(softSkillName -> {
+            tags.put(softSkillName, SOFT_SKILL);
+        });
 
         tags.forEach(
                 (name, type) -> {

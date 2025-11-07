@@ -3,14 +3,12 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/service/api";
-import { UseUserEnteprise } from "@/context/user-enterprise.context";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Clock, ChevronRight, Plus } from "lucide-react";
+import { MapPin, ChevronRight, Zap } from "lucide-react";
 import { UseUserCandidate } from "@/context/user-candidate.context";
-// opcional: seu modal de criar vaga
-// import { ModalCreateJob } from "@/components/enterprise/modal-create-jobs";
+import { affinityClass } from "@/utils/affinity-class";
+import { ApiJob, getAllJobs, getApplicationStatusStyle, JobOpeningUserCandidateStatus } from "@/service/job/get-all-jobs";
 
 type Currency = {
   code: string;
@@ -18,20 +16,7 @@ type Currency = {
   displayName: string;
 };
 
-type JobOpening = {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  title: string;
-  salary: number;
-  currency: Currency;
-  status: "ACTIVE" | "PAUSED" | "CLOSED" | string;
-  country: string;
-  state: string;
-  city: string;
-  workModel?: "ON_SITE" | "HYBRID" | "REMOTE" | string;
-  views?: number;
-};
+// --- FUNÇÕES HELPER (Colocadas aqui para o código ser completo) ---
 
 const statusStyle: Record<string, string> = {
   ACTIVE: "bg-emerald-100 text-emerald-700",
@@ -68,34 +53,82 @@ function dateTimePtBr(iso: string) {
   }).format(d);
 }
 
+// 5. Ordem desejada das seções
+const statusOrder: JobOpeningUserCandidateStatus[] = [
+  "APPROVED",
+  "SELECTED",
+  "UNDER_REVIEW",
+  "NOT_SELECTED",
+  "REJECTED"
+];
+
+// --- COMPONENTE PRINCIPAL ---
+
 export default function MinhasVagasPage() {
   const { userCandidate } = UseUserCandidate();
-  const userId = userCandidate?.id; // <- ajuste se seu contexto expõe outro campo
+  const userId = userCandidate?.id;
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["job-openings-by-user", userId],
     enabled: !!userId,
     queryFn: async () => {
-      // suporta um ou vários ids (ex.: [id1, id2])
       const usersParam = Array.isArray(userId) ? userId.join(",") : userId!;
-      const { data } = await api.get<JobOpening[]>(`/job-opening?userIds=${userId}`);
-      return data;
+
+      // 3. CORREÇÃO DO ERRO 1: Chame 'getAllJobs' e retorne o resultado diretamente.
+      const jobsData = await getAllJobs({ // <-- Renomeado para 'jobsData'
+        userIds: [usersParam],
+        affinity: true,
+      });
+      console.log("Fetched Job data: ", jobsData);
+
+      return jobsData; // <-- Retorna a lista
     },
-    staleTime: 1000 * 60 * 5,
+    // staleTime: 1000 * 60 * 1,
   });
 
-  console.log(data);
-  
+  // 7. AGRUPAR OS RESULTADOS POR STATUS
+  const groupedJobs = useMemo(() => {
+    if (!Array.isArray(data)) {
+      return new Map<JobOpeningUserCandidateStatus, ApiJob[]>();
+    }
 
-  const salaryFmt = useMemo(
-    () =>
-      new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-        maximumFractionDigits: 0,
-      }),
-    []
-  );
+    // Agrupa todas as vagas pelo status da aplicação
+    const groups = new Map<JobOpeningUserCandidateStatus, ApiJob[]>();
+    for (const job of data) {
+      // Usa 'OUTROS' se o status for nulo/desconhecido
+      const status = job.myApplicationStatus || "UNDER_REVIEW";
+      if (!groups.has(status)) {
+        groups.set(status, []);
+      }
+      groups.get(status)!.push(job);
+    }
+    return groups;
+  }, [data]);
+
+  // 8. Criar a lista de seções para renderizar, NA ORDEM CORRETA
+  const sectionsToRender = statusOrder
+    .map(status => {
+      const jobsInGroup = groupedJobs.get(status);
+      if (jobsInGroup && jobsInGroup.length > 0) {
+        // Pega o nome e cor do 'util'
+        const statusInfo = getApplicationStatusStyle(status);
+        return {
+          status: status,
+          title: statusInfo.text,
+          className: statusInfo.className,
+          jobs: jobsInGroup,
+        };
+      }
+      return null;
+    })
+    .filter(Boolean) as { // Filtra os grupos nulos
+      status: string;
+      title: string;
+      className: string;
+      jobs: ApiJob[];
+    }[];
+
+  // --- RENDERIZAÇÃO DE LOADING / ERRO ---
 
   if (!userId) {
     return (
@@ -134,7 +167,7 @@ export default function MinhasVagasPage() {
     );
   }
 
-  const jobs = Array.isArray(data) ? data : [];
+  // --- RENDERIZAÇÃO PRINCIPAL ---
 
   return (
     <section className="mx-auto max-w-5xl p-6">
@@ -142,63 +175,91 @@ export default function MinhasVagasPage() {
         <h1 className="text-xl font-semibold">Minhas vagas</h1>
       </div>
 
-      {jobs.length === 0 ? (
+      {!isLoading && sectionsToRender.length === 0 ? (
         <div className="rounded-xl border bg-white p-8 text-center shadow-sm">
           <p className="text-neutral-700">
             Você ainda não se candidatou a nenhuma vaga.
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {jobs.map((v) => (
-            <Link
-              key={v.id}
-              href={`/br/candidato/oportunidades/vaga/${v.id}`}
-              className="group block rounded-xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="p-4 md:p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <h3 className="font-semibold text-gray-900 truncate">
-                      {v.title}
-                    </h3>
+        // Renderiza cada seção
+        <div className="space-y-8">
+          {sectionsToRender.map((section) => (
+            <section key={section.status}>
+              {/* Título da Seção (Ex: "Aprovado", "Em Análise") */}
+              <Badge
+                variant="secondary"
+                // Adicionei padding e tamanho de fonte para destacar
+                className={`text-md font-semibold mb-3 border px-4 py-1 ${section.className}`}
+              >
+                {section.title}
+              </Badge>
+              <div className="space-y-3">
+                {section.jobs.map((v) => {
+                  // Pega a cor da afinidade
+                  const affinityColors = affinityClass(v.affinity);
 
-                    <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-gray-600">
-                      <span className="inline-flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {v.city} - {v.state}
-                      </span>
+                  return (
+                    <Link
+                      key={v.id}
+                      href={`/br/candidato/oportunidades/vaga/${v.id}`}
+                      className="group block rounded-xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                    >
+                      <div className="p-4 md:p-5">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="min-w-0">
 
-                      <span className="inline-flex items-center gap-1">
-                        {moneyFmt(v.currency, v.salary)}
-                      </span>
+                            {/* Grupo de Título e Afinidade */}
+                            <div className="flex items-center gap-3 flex-wrap mb-1">
+                              <h3 className="font-semibold text-gray-900 truncate">
+                                {v.title}
+                              </h3>
+                              {v.affinity > 0 && (
+                                <span
+                                  className={`flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium ${affinityColors}`}
+                                >
+                                  <Zap className="h-3 w-3" />
+                                  {v.affinity}% Afinidade
+                                </span>
+                              )}
+                            </div>
 
-                      <Badge
-                        variant="secondary"
-                        className={`
-                          ${statusStyle[(v.status || "").toUpperCase()] ?? "bg-slate-100 text-slate-700"}
-                        `}
-                      >
-                        {v.status === "ACTIVE" ? "Ativa" : v.status}
-                      </Badge>
+                            {/* Detalhes (Local, Salário, Status da VAGA) */}
+                            <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                              <span className="inline-flex items-center gap-1">
+                                <MapPin className="h-4 w-4" />
+                                {v.city} - {v.state}
+                              </span>
+                              <span className="inline-flex items-center gap-1">
+                                {moneyFmt(v.currency, v.salary)}
+                              </span>
 
-                      {v.workModel && (
-                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
-                          {workModelLabel[v.workModel] ?? v.workModel}
-                        </span>
-                      )}
+                              {/* Badge do Status da VAGA (Ex: ATIVA, PAUSADA) */}
+                              <Badge
+                                variant="secondary"
+                                className={`
+                                  ${statusStyle[(v.status || "").toUpperCase()] ?? "bg-slate-100 text-slate-700"}
+                                `}
+                              >
+                                {v.status === "ACTIVE" ? "Ativa" : v.status}
+                              </Badge>
 
-                      <span className="inline-flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        <time dateTime={v.updatedAt}>{dateTimePtBr(v.updatedAt)}</time>
-                      </span>
-                    </div>
-                  </div>
+                              {v.workModel && (
+                                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
+                                  {workModelLabel[v.workModel] ?? v.workModel}
+                                </span>
+                              )}
+                            </div>
+                          </div>
 
-                  <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600" />
-                </div>
+                          <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600" />
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
-            </Link>
+            </section>
           ))}
         </div>
       )}

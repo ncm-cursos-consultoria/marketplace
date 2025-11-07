@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Image from "next/image";
 import {
   Github,
   Globe2,
@@ -12,21 +11,17 @@ import {
   FileText,
   MapPin,
   Pencil,
-  Loader2
+  Loader2,
+  Search
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
-// --- Imports dos Tipos ---
 import { updateCandidateTags, UserCandidateResponse } from "@/service/user/update-candidate-tags"; // Ajuste o path se necessário
 import { ApiAddress } from "@/types/address";
-// Ajuste o path para o seu serviço de patch. O nome no seu import estava 'create-or-update'
 import { patchUserAddress } from "@/service/user/create-or-update-candidate-address";
-
-// --- Imports de UI ---
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -313,16 +308,42 @@ function SkillsModal({ isOpen, setIsOpen, user }: SkillsModalProps) {
   const queryClient = useQueryClient();
   const params: GetTagParams = {};
 
-  // 1. Busca todas as tags disponíveis (sem alteração)
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Busca todas as tags disponíveis (sem alteração)
   const { data: allTags, isLoading: isLoadingTags } = useQuery({
     queryKey: ['allTags'],
     queryFn: () => getAllTags(params),
   });
 
-  // 2. Cria um Set com os IDs das tags que o usuário JÁ POSSUI (sem alteração)
+  // Cria um Set com os IDs das tags que o usuário JÁ POSSUI (sem alteração)
   const userTagIds = useMemo(() => {
     return new Set(user.tags?.map(tag => tag.id) || []);
   }, [user.tags]);
+
+  // --- 1. LÓGICA DE FILTRO E SEPARAÇÃO ATUALIZADA ---
+  // Filtra E separa as tags em duas colunas
+  const { hardSkills, softSkills, totalFiltered } = useMemo(() => {
+    const hard: TagResponse[] = [];
+    const soft: TagResponse[] = [];
+    if (!allTags) return { hardSkills: hard, softSkills: soft, totalFiltered: 0 };
+
+    const filtered = allTags.filter(tag =>
+      tag.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Separa as tags filtradas em duas listas
+    filtered.forEach(tag => {
+      // Ajuste 'HARD_SKILL' e 'SOFT_SKILL' se os 'types' no DB forem diferentes
+      if (tag.type === 'HARD_SKILL') {
+        hard.push(tag);
+      } else if (tag.type === 'SOFT_SKILL') {
+        soft.push(tag);
+      }
+    });
+
+    return { hardSkills: hard, softSkills: soft, totalFiltered: filtered.length };
+  }, [allTags, searchTerm]);
 
 
   // 3. Mutação para ADICIONAR ou REMOVER uma tag
@@ -402,7 +423,8 @@ function SkillsModal({ isOpen, setIsOpen, user }: SkillsModalProps) {
   // 6. JSX (Modificado para usar o novo handleModalClose)
   return (
     <Dialog open={isOpen} onOpenChange={handleModalClose}>
-      <DialogContent className="sm:max-w-md">
+      {/* 2.1 Aumentar a largura do modal */}
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Atualizar Habilidades</DialogTitle>
           <DialogDescription>
@@ -410,56 +432,133 @@ function SkillsModal({ isOpen, setIsOpen, user }: SkillsModalProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="h-72 w-full pr-4">
-          <div className="space-y-4">
-            {isLoadingTags && (
-              <div className="flex items-center justify-center h-48">
-                <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+        {/* Input de Pesquisa (sem alteração) */}
+        <div className="relative">
+          <Input
+            placeholder="Pesquisar habilidades..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+        </div>
+
+        <ScrollArea className="h-72 w-full">
+          {/* 2.2 Estado de Carregamento Centralizado */}
+          {isLoadingTags && (
+            <div className="flex items-center justify-center h-48">
+              <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+            </div>
+          )}
+
+          {/* 2.3 Estado de Pesquisa Vazia */}
+          {!isLoadingTags && totalFiltered === 0 && (
+            <p className="text-center text-sm text-neutral-500 py-4">
+              {searchTerm
+                ? `Nenhuma habilidade encontrada para "${searchTerm}"`
+                : "Nenhuma habilidade encontrada."
+              }
+            </p>
+          )}
+
+          {/* 2.4 Grid de Duas Colunas */}
+          {!isLoadingTags && totalFiltered > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 pr-4">
+
+              {/* --- Coluna de Hard Skills --- */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-neutral-800 border-b pb-1">
+                  Hard Skills (Técnicas)
+                </h4>
+                {hardSkills.length === 0 && (
+                  <p className="text-sm text-neutral-500 py-2">
+                    {searchTerm ? 'Nenhuma encontrada' : 'Nenhuma'}
+                  </p>
+                )}
+                {hardSkills.map((tag) => {
+                  const isTagPending = isPending && variables?.tagId === tag.id;
+                  return (
+                    <div key={tag.id} className="flex items-center justify-between">
+                      <label htmlFor={tag.id} className="text-sm font-medium text-neutral-800 cursor-pointer">
+                        {tag.name}
+                      </label>
+                      <div className="flex items-center gap-2">
+                        {isTagPending && <Loader2 className="h-4 w-4 animate-spin text-neutral-400" />}
+                        <Checkbox
+                          id={tag.id}
+                          checked={userTagIds.has(tag.id)}
+                          onCheckedChange={(isChecked) => handleTagChange(tag, isChecked as boolean)}
+                          disabled={isTagPending}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            )}
 
-            {allTags?.map((tag) => {
-              const isTagPending = isPending && variables?.tagId === tag.id;
+              {/* --- Coluna de Soft Skills --- */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-neutral-800 border-b pb-1">
+                  Soft Skills (Comportamentais)
+                </h4>
+                {softSkills.length === 0 && (
+                  <p className="text-sm text-neutral-500 py-2">
+                    {searchTerm ? 'Nenhuma encontrada' : 'Nenhuma'}
+                  </p>
+                )}
+                {softSkills.map((tag) => {
+                  const isTagPending = isPending && variables?.tagId === tag.id;
+                  return (
+                    <div key={tag.id} className="flex items-center justify-between">
+                      <label htmlFor={tag.id} className="text-sm font-medium text-neutral-800 cursor-pointer">
+                        {tag.name}
+                      </label>
+                      <div className="flex items-center gap-2">
+                        {isTagPending && <Loader2 className="h-4 w-4 animate-spin text-neutral-400" />}
+                        <Checkbox
+                          id={tag.id}
+                          checked={userTagIds.has(tag.id)}
+                          onCheckedChange={(isChecked) => handleTagChange(tag, isChecked as boolean)}
+                          disabled={isTagPending}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
 
-              return (
-                <div key={tag.id} className="flex items-center justify-between">
-                  <label
-                    htmlFor={tag.id}
-                    className="text-sm font-medium text-neutral-800 cursor-pointer"
-                  >
-                    {tag.name}
-                  </label>
-                  <div className="flex items-center gap-2">
-                    {isTagPending && (
-                      <Loader2 className="h-4 w-4 animate-spin text-neutral-400" />
-                    )}
-                    <Checkbox
-                      id={tag.id}
-                      // O 'checked' vem do Set (agora atualizado otimistamente)
-                      checked={userTagIds.has(tag.id)}
-                      onCheckedChange={(isChecked) => handleTagChange(tag, isChecked as boolean)}
-                      // Desabilita apenas o checkbox que está sendo salvo
-                      disabled={isTagPending}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </ScrollArea>
-        <DialogFooter>
-          <Button type="button" onClick={() => handleModalClose(false)}>
-            Fechar
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
+            </div>
+          )}
+      </ScrollArea>
+      <DialogFooter>
+        <Button type="button" onClick={() => handleModalClose(false)}>
+          Fechar
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+    </Dialog >
+  );
 }
 
 export function FirstCol({ user, address, isLoading }: FirstColProps) {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isSkillsModalOpen, setIsSkillsModalOpen] = useState(false);
+
+  const { hardSkills, softSkills } = useMemo(() => {
+    const hard: TagResponse[] = [];
+    const soft: TagResponse[] = [];
+
+    (user?.tags || []).forEach(tag => {
+      // Ajuste 'HARD_SKILL' e 'SOFT_SKILL' se os 'types' no DB forem diferentes
+      if (tag.type === 'HARD_SKILL') {
+        hard.push(tag);
+      } else if (tag.type === 'SOFT_SKILL') {
+        soft.push(tag);
+      }
+    });
+
+    return { hardSkills: hard, softSkills: soft };
+  }, [user?.tags]);
 
   // --- ESTADO DE CARREGAMENTO ---
   if (isLoading) {
@@ -600,6 +699,7 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
             }
           </p>
 
+          {/* --- 2. BLOCO DE HABILIDADES ATUALIZADO --- */}
           <div className="mt-4 rounded-xl border p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-start gap-3">
@@ -608,7 +708,6 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
                   Habilidades
                 </p>
               </div>
-              {/* 9. Botão de Edição (Caneta) para Habilidades */}
               <button
                 onClick={() => setIsSkillsModalOpen(true)}
                 className="text-neutral-500 hover:text-blue-600 transition-colors"
@@ -618,19 +717,48 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
               </button>
             </div>
 
-            {/* Lista de Habilidades */}
-            {user.tags && user.tags.length > 0 ? (
-              <div className="flex flex-wrap gap-1">
-                {user.tags.map((tag) => (
-                  <span key={tag.id} className="text-xs text-neutral-600 bg-neutral-100 px-2 py-0.5 rounded-full">
-                    {tag.name}
-                  </span>
-                ))}
-              </div>
-            ) : (
+            {/* Lista de Habilidades Dividida */}
+            {(hardSkills.length === 0 && softSkills.length === 0) ? (
               <p className="text-xs text-neutral-600">
                 Nenhuma habilidade definida.
               </p>
+            ) : (
+              // Caso 2: Renderiza as seções
+              <div className="space-y-4">
+
+                {/* Seção de Hard Skills */}
+                {hardSkills.length > 0 && (
+                  <div>
+                    <h4 className="text-xs font-semibold text-neutral-500 mb-2">
+                      Hard Skills (Técnicas)
+                    </h4>
+                    <div className="flex flex-wrap gap-1">
+                      {hardSkills.map((tag) => (
+                        <span key={tag.id} className="text-xs text-neutral-600 bg-neutral-100 px-2 py-0.5 rounded-full">
+                          {tag.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Seção de Soft Skills */}
+                {softSkills.length > 0 && (
+                  <div>
+                    <h4 className="text-xs font-semibold text-neutral-500 mb-2">
+                      Soft Skills (Comportamentais)
+                    </h4>
+                    <div className="flex flex-wrap gap-1">
+                      {softSkills.map((tag) => (
+                        <span key={tag.id} className="text-xs text-neutral-600 bg-neutral-100 px-2 py-0.5 rounded-full">
+                          {tag.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              </div>
             )}
           </div>
         </div>

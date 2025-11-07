@@ -35,15 +35,15 @@ public class Initializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-//        log.info("Initializing application...");
+        log.info("Initializing application...");
 //        String enterpriseId = "";
 //        String userId = "";
 //        String moduleId = "";
-//        try {
-//            planService.init();
-//        } catch (Exception e) {
-//            log.error("Failed in creating plans ❌: {}", e.getMessage());
-//        }
+        try {
+            planService.init();
+        } catch (Exception e) {
+            log.error("Failed in creating plans ❌: {}", e.getMessage());
+        }
 //        try {
 //            userId = crudUserCandidate.init();
 //        } catch (Exception e) {
@@ -84,16 +84,16 @@ public class Initializer implements ApplicationRunner {
 //        } catch (Exception e) {
 //            log.error("Failed in creating job opening ❌: {}", e.getMessage());
 //        }
-//        try {
-//            tagService.init();
-//        } catch (Exception e) {
-//            log.error("Failed in creating tag ❌: {}", e.getMessage());
-//        }
+        try {
+            tagService.init();
+        } catch (Exception e) {
+            log.error("Failed in creating tag ❌: {}", e.getMessage());
+        }
 //        try {
 //            mercadoPagoService.initEnterprisePlan();
 //        } catch (Exception e) {
 //            log.error("Failed in creating plan ❌: {}", e.getMessage());
 //        }
-//        log.info("Application initialized successfully. ✅");
+        log.info("Application initialized successfully. ✅");
     }
 }
