@@ -58,7 +58,7 @@ export function ModalCandidate({ title }: modalCandidateProps) {
       toast.success("Currículo enviado com sucesso!");
       qc.invalidateQueries({ queryKey: ["userCandidate", userCandidate?.id] });
       setFile(null);
-      window.location.reload();
+      // window.location.reload();
       if (inputRef.current) inputRef.current.value = "";
     },
     onError: (err: any) => {
@@ -86,7 +86,7 @@ export function ModalCandidate({ title }: modalCandidateProps) {
       toast.success("Candidatura enviada com sucesso!");
       qc.invalidateQueries({ queryKey: ["job-opening", jobOpeningId] });
       qc.invalidateQueries({ queryKey: ["applications", userCandidate?.id] });
-      window.location.reload();
+      // window.location.reload();
     },
     onError: (err: any) => {
       const msg =
@@ -116,7 +116,7 @@ export function ModalCandidate({ title }: modalCandidateProps) {
   function onSubmitApplication(e: React.FormEvent) {
     e.preventDefault();
     submitApplication();
-    window.location.reload();
+    // window.location.reload();
   }
 
   if (isLoadingJob) {

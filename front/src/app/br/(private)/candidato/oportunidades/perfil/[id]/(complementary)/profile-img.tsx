@@ -47,7 +47,7 @@ const { mutate, isPending } = useMutation({
     qc.refetchQueries({ queryKey: ["userCandidate"] });
     
     console.log("onSuccess - queries invalidadas");
-    window.location.reload()
+    // window.location.reload()
     setPreview(null);
   },
   onError: (error) => {
