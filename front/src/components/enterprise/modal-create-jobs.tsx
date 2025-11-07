@@ -11,6 +11,9 @@ import { UseUserEnteprise } from "@/context/user-enterprise.context";
 import { api } from "@/service/api";
 import * as currencies from 'currency-codes';
 import { getNameList } from 'country-list';
+import { Loader2, Search } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Tag = {
   id: string;
@@ -29,9 +32,13 @@ function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+const getTagName = (t?: Tag) => t?.name ?? t?.title ?? t?.label ?? "—";
+
 export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receba a prop
   const { userEnterprise } = UseUserEnteprise();
   const [isOpen, setIsOpen] = useState(false);
+  const [hardSkillSearch, setHardSkillSearch] = useState("");
+  const [softSkillSearch, setSoftSkillSearch] = useState("");
   const { error, form, isError, isPending, onSubmit } = useCreateJob(
     (isOpen) => setIsOpen(isOpen),
     onSuccess
@@ -62,30 +69,36 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
     },
   });
 
+  const selectedIdSet = useMemo(() => new Set(selectedTagIds), [selectedTagIds]);
+
   // 2. FILTRAMOS as tags para a UI
-  const hardSkills = useMemo(() =>
-    tags?.filter(t => t.type === "HARD_SKILL") ?? [],
-    [tags]);
+  const hardSkills = useMemo(() => {
+    const allHardSkills = tags?.filter(t => t.type === "HARD_SKILL") ?? [];
+    if (!hardSkillSearch) return allHardSkills;
+    return allHardSkills.filter(t =>
+      getTagName(t).toLowerCase().includes(hardSkillSearch.toLowerCase())
+    );
+  }, [tags, hardSkillSearch]);
 
-  const softSkills = useMemo(() =>
-    tags?.filter(t => t.type === "SOFT_SKILL") ?? [],
-    [tags]);
-
-  const getTagName = (t?: Tag) => t?.name ?? t?.title ?? t?.label ?? "—";
+  const softSkills = useMemo(() => {
+    const allSoftSkills = tags?.filter(t => t.type === "SOFT_SKILL") ?? [];
+    if (!softSkillSearch) return allSoftSkills;
+    return allSoftSkills.filter(t =>
+      getTagName(t).toLowerCase().includes(softSkillSearch.toLowerCase())
+    );
+  }, [tags, softSkillSearch]);
 
   // 3. LÓGICA DE 'onChange' ATUALIZADA
   //    Esta função agora junta as seleções das DUAS caixas
-  const onChangeTags = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const fieldName = event.target.name; // "hardSkillSelect" ou "softSkillSelect"
-    const selectedOptions = Array.from(event.target.selectedOptions).map((o) => o.value);
-
-    // Pega os valores da *outra* caixa que não está sendo mudada
-    const otherValues = (fieldName === 'hardSkillSelect')
-      ? softSkills.map(t => t.id).filter(id => selectedTagIds.includes(id))
-      : hardSkills.map(t => t.id).filter(id => selectedTagIds.includes(id));
-
-    // Junta as seleções novas + seleções antigas da outra caixa
-    setValue("tagIds", [...selectedOptions, ...otherValues], { shouldValidate: true, shouldDirty: true });
+  const handleTagChange = (tagId: string, isChecked: boolean) => {
+    const currentIds = new Set(selectedIdSet); // Copia o Set atual
+    if (isChecked) {
+      currentIds.add(tagId); // Adiciona
+    } else {
+      currentIds.delete(tagId); // Remove
+    }
+    // Atualiza o formulário com o novo array
+    setValue("tagIds", Array.from(currentIds), { shouldValidate: true, shouldDirty: true });
   };
 
   // CÓDIGO CORRIGIDO
@@ -326,44 +339,82 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
 
           <div className="flex flex-col gap-2">
             <Label>Hard Skills</Label>
-            <select
-              multiple
-              name="hardSkillSelect" // Damos um nome para identificar
-              // 4. O 'value' é filtrado para mostrar apenas Hard Skills selecionadas
-              value={selectedTagIds.filter(id => hardSkills.some(t => t.id === id))}
-              onChange={onChangeTags}
-              className="border border-neutral-300 rounded-md p-2 bg-white h-32"
-              disabled={loadingTags}
-            >
-              {loadingTags ? <option>Carregando…</option> :
-                hardSkills.map((t) => (
-                  <option key={t.id} value={t.id}>{getTagName(t)}</option>
+            <div className="relative">
+              <Input
+                placeholder="Pesquisar hard skills..."
+                value={hardSkillSearch}
+                onChange={(e) => setHardSkillSearch(e.target.value)}
+                className="pl-10"
+              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+            </div>
+
+            {/* Substituído <select> por <ScrollArea> */}
+            <ScrollArea className="border border-neutral-300 rounded-md p-3 bg-white h-32">
+              {loadingTags && (
+                <div className="flex items-center justify-center h-full">
+                  <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
+                </div>
+              )}
+              {!loadingTags && hardSkills.length === 0 && (
+                <p className="text-sm text-neutral-500 text-center py-4">
+                  {hardSkillSearch ? 'Nenhum resultado' : 'Nenhuma tag'}
+                </p>
+              )}
+              <div className="space-y-3">
+                {hardSkills.map((t) => (
+                  <div key={t.id} className="flex items-center justify-between">
+                    <Label htmlFor={`hard-${t.id}`} className="font-normal cursor-pointer">{getTagName(t)}</Label>
+                    <Checkbox
+                      id={`hard-${t.id}`}
+                      checked={selectedIdSet.has(t.id)}
+                      onCheckedChange={(isChecked) => handleTagChange(t.id, isChecked as boolean)}
+                    />
+                  </div>
                 ))}
-            </select>
-            {/* Você pode adicionar 'errors.tagIds' aqui se necessário */}
+              </div>
+            </ScrollArea>
           </div>
 
+          {/* --- 8. BLOCO DE SOFT SKILLS (ATUALIZADO PARA CHECKBOX) --- */}
           <div className="flex flex-col gap-2">
             <Label>Soft Skills</Label>
-            <select
-              multiple
-              name="softSkillSelect" // Damos um nome para identificar
-              // 4. O 'value' é filtrado para mostrar apenas Soft Skills selecionadas
-              value={selectedTagIds.filter(id => softSkills.some(t => t.id === id))}
-              onChange={onChangeTags}
-              className="border border-neutral-300 rounded-md p-2 bg-white h-32"
-              disabled={loadingTags}
-            >
-              {loadingTags ? <option>Carregando…</option> :
-                softSkills.map((t) => (
-                  <option key={t.id} value={t.id}>{getTagName(t)}</option>
-                ))}
-            </select>
-          </div>
+            <div className="relative">
+              <Input
+                placeholder="Pesquisar soft skills..."
+                value={softSkillSearch}
+                onChange={(e) => setSoftSkillSearch(e.target.value)}
+                className="pl-10"
+              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+            </div>
 
-          <p className="text-xs text-neutral-500">
-            Segure <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> para selecionar várias opções em ambas as caixas.
-          </p>
+            {/* Substituído <select> por <ScrollArea> */}
+            <ScrollArea className="border border-neutral-300 rounded-md p-3 bg-white h-32">
+              {loadingTags && (
+                <div className="flex items-center justify-center h-full">
+                  <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
+                </div>
+              )}
+              {!loadingTags && softSkills.length === 0 && (
+                <p className="text-sm text-neutral-500 text-center py-4">
+                  {softSkillSearch ? 'Nenhum resultado' : 'Nenhuma tag'}
+                </p>
+              )}
+              <div className="space-y-3">
+                {softSkills.map((t) => (
+                  <div key={t.id} className="flex items-center justify-between">
+                    <Label htmlFor={`soft-${t.id}`} className="font-normal cursor-pointer">{getTagName(t)}</Label>
+                    <Checkbox
+                      id={`soft-${t.id}`}
+                      checked={selectedIdSet.has(t.id)}
+                      onCheckedChange={(isChecked) => handleTagChange(t.id, isChecked as boolean)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
 
           {/* A exibição das "pills" de tags (já funciona) */}
           {selectedTagIds.length > 0 && (

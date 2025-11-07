@@ -9,6 +9,8 @@ import { UserCandidateProvider } from '@/context/user-candidate.context';
 
 // (Importe outros providers que você usa, como Toaster)
 import { Toaster } from 'sonner';
+import { UserEnterpriseProvider } from "@/context/user-enterprise.context";
+import { UserPartnerProvider } from "@/context/user-partner.context";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   // Configuração do React Query
@@ -24,20 +26,20 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     // 2. TODOS OS PROVIDERS DE CLIENTE VÊM AQUI
     <QueryClientProvider client={queryClient}>
       <UserCandidateProvider> {/* <--- Seu provider que estava dando erro */}
-        
-        {children} {/* <--- Suas páginas (layout, page, etc) */}
-
-        {/* 3. Coloque os componentes "globais" aqui */}
-        <Toaster position="top-right" richColors />
-        
-        <NextNProgressBar
-          color="#2563eb" // Cor azul do seu logo
-          startPosition={0.3}
-          stopDelayMs={200}
-          height={3}
-          showOnShallow={true}
-        />
-
+        <UserEnterpriseProvider>
+          <UserPartnerProvider>
+            {children} {/* <--- Suas páginas (layout, page, etc) */}
+            {/* 3. Coloque os componentes "globais" aqui */}
+            <Toaster position="top-right" richColors />
+            <NextNProgressBar
+              color="#2563eb" // Cor azul do seu logo
+              startPosition={0.3}
+              stopDelayMs={200}
+              height={3}
+              showOnShallow={true}
+            />
+          </UserPartnerProvider>
+        </UserEnterpriseProvider>
       </UserCandidateProvider>
     </QueryClientProvider>
   );
