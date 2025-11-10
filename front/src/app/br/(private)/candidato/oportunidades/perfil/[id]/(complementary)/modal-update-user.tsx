@@ -71,7 +71,7 @@ export function ModalUpdateUser() {
       console.log("boa");
       console.log(data);
       toast.success("Sucesso ao atualizar usuario ")
-      window.location.reload()
+      // window.location.reload()
     },
     onError:(err) => {
       console.log(err);
