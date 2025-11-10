@@ -103,8 +103,8 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         user.setPassword(encryptedRandomPassword);
         userEnterpriseCommandService.save(user);
         // mercado pago costumer
-        CreateMercadoPagoCustomerRequest customerRequest = MercadoPagoMapper.toEntityCreate(request);
-        mercadoPagoService.saveCustomer(enterprise.getId(),customerRequest);
+//        CreateMercadoPagoCustomerRequest customerRequest = MercadoPagoMapper.toEntityCreate(request);
+//        mercadoPagoService.saveCustomer(enterprise.getId(),customerRequest);
         // partner
         if (request.getPartnerToken() != null && !request.getPartnerToken().isEmpty()) {
             Partner partner = partnerQueryService.findByTokenOrThrow(request.getPartnerToken());
