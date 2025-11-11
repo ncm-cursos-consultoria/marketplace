@@ -33,6 +33,9 @@ export default function SignIn() {
         <h2 className="font-medium text-lg md:text-xl text-gray-600">
           Seja bem-vindo novamente
         </h2>
+        <div className="text-center text-gray-500">
+          Escolha uma das opções abaixo para acessar sua conta
+        </div>
       </div>
 
       <div className="flex items-center justify-center border shadow-md p-2 border-neutral-500  gap-2 w-[600px]">
