@@ -26,13 +26,16 @@ export function useLoginPartner() {
 
   const onSubmit = async (data: LoginFormSchema) => {
     setIsProcessing(true);
-    
+
     try {
       await loginMutation(data);
 
       const userData = await me();
-      
+
       if (userData?.id) {
+        if (userData?.type !== "PARTNER") {
+          throw new Error("Tipo de usuário inválido para esta área.");
+        }
         setUserPartner(userData);
         toast.success("Login efetuado com sucesso!");
         router.push(`/br/partner/home`);
@@ -46,6 +49,6 @@ export function useLoginPartner() {
       });
       setIsProcessing(false);
     }
-  };  
+  };
   return { onSubmit, isPending: isProcessing, form };
 }

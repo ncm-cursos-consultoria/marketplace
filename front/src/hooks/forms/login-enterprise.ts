@@ -11,42 +11,44 @@ import { toast } from "sonner";
 
 export function useLoginEnterprise() {
   const router = useRouter();
-    const { setUserEnterprise } = UseUserEnteprise();
-    const queryClient = useQueryClient();
-  
-    const form = useForm<LoginFormSchema>({
-      resolver: zodResolver(loginFormSchema),
-    });
-    const { setError } = form;
-    const [isProcessing, setIsProcessing] = useState(false);
-  
-    const { mutateAsync: loginMutation } = useMutation({
-      mutationFn: (data: LoginFormSchema) => login(data),
-    });
-  
-    const onSubmit = async (data: LoginFormSchema) => {
-      setIsProcessing(true);
-      
-      try {
-        await loginMutation(data);
-  
-        const userData = await me();
-        
-        if (userData?.id) {
-          setUserEnterprise(userData);
-          toast.success("Login efetuado com sucesso!");
-          router.push(`/br/enterprise/${userData.id}`);
-        } else {
-          throw new Error("Dados do usuário não encontrados após o login.");
+  const { setUserEnterprise } = UseUserEnteprise();
+  const queryClient = useQueryClient();
+
+  const form = useForm<LoginFormSchema>({
+    resolver: zodResolver(loginFormSchema),
+  });
+  const { setError } = form;
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const { mutateAsync: loginMutation } = useMutation({
+    mutationFn: (data: LoginFormSchema) => login(data),
+  });
+
+  const onSubmit = async (data: LoginFormSchema) => {
+    setIsProcessing(true);
+
+    try {
+      await loginMutation(data);
+
+      const userData = await me();
+
+      if (userData?.id) {
+        if (userData?.type !== "ENTERPRISE") {
+          throw new Error("Tipo de usuário inválido para esta área.");
         }
-      } catch (error) {
-        console.error("Falha no login:", error);
-        setError("root", {
-          message: "Email ou senha inválidos. Por favor, tente novamente.",
-        });
-        setIsProcessing(false);
+        setUserEnterprise(userData);
+        toast.success("Login efetuado com sucesso!");
+        router.push(`/br/enterprise/${userData.id}`);
+      } else {
+        throw new Error("Dados do usuário não encontrados após o login.");
       }
-    };  
-    return { onSubmit, isPending: isProcessing, form };
-  }
-  
+    } catch (error) {
+      console.error("Falha no login:", error);
+      setError("root", {
+        message: "Email ou senha inválidos. Por favor, tente novamente.",
+      });
+      setIsProcessing(false);
+    }
+  };
+  return { onSubmit, isPending: isProcessing, form };
+}
