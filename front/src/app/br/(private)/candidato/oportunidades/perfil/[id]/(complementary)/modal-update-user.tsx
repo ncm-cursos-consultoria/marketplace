@@ -43,9 +43,6 @@ export function ModalUpdateUser() {
     enabled: !!userCandidate?.id,
   });
 
-  console.log(user);
-  
-
   useEffect(() => {
     if (!user) return;
 
@@ -68,13 +65,10 @@ export function ModalUpdateUser() {
     },
     mutationKey: ["authUser"],
     onSuccess: (data) => {
-      console.log("boa");
-      console.log(data);
       toast.success("Sucesso ao atualizar usuario ")
       // window.location.reload()
     },
     onError:(err) => {
-      console.log(err);
       toast.error("Erro ao atualizar usário")
     } 
   });

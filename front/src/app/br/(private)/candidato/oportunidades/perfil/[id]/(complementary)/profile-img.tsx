@@ -18,14 +18,9 @@ export function ProfileImg() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
-  console.log("ProfileImg - userCandidate:", userCandidate);
-  console.log("ProfileImg - userId:", userCandidate?.id);
-
 const { mutate, isPending } = useMutation({
   mutationKey: ["authUser"],
   mutationFn: (file: File) => {
-    console.log("mutationFn - chamada com file:", file);
-    console.log("mutationFn - userId:", userCandidate?.id);
     
     if (!userCandidate?.id) {
       throw new Error("ID do usuário não encontrado");
@@ -34,8 +29,6 @@ const { mutate, isPending } = useMutation({
     return patchProfilePicture(file, userCandidate.id);
   },
   onSuccess: (data) => {
-    console.log("onSuccess - resposta:", data);
-    console.log("onSuccess - resposta completa (verificar se tem URL):", JSON.stringify(data, null, 2));
     
     toast.success("Foto de perfil enviada com sucesso");
     
@@ -46,7 +39,6 @@ const { mutate, isPending } = useMutation({
     qc.refetchQueries({ queryKey: ["authUser"] });
     qc.refetchQueries({ queryKey: ["userCandidate"] });
     
-    console.log("onSuccess - queries invalidadas");
     // window.location.reload()
     setPreview(null);
   },
@@ -57,17 +49,13 @@ const { mutate, isPending } = useMutation({
 });
 
   function openPicker() {
-    console.log("openPicker - clicado");
     inputRef.current?.click();
   }
 
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    console.log("onFileChange - evento:", e);
     const file = e.target.files?.[0];
-    console.log("onFileChange - arquivo selecionado:", file);
     
     if (!file) {
-      console.log("onFileChange - nenhum arquivo selecionado");
       return;
     }
 
@@ -102,7 +90,6 @@ const { mutate, isPending } = useMutation({
     const url = URL.createObjectURL(file);
     setPreview(url);
     
-    console.log("onFileChange - validações OK, iniciando mutação...");
     mutate(file);
   }
 

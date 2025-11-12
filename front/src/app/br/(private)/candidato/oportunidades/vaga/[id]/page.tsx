@@ -171,9 +171,6 @@ export default function JobUniquePage() {
     url,
   } = job;
 
-  console.log(job);
-  
-
   const safeHtml = DOMPurify.sanitize(description ?? "", {
     USE_PROFILES: { html: true },
   });

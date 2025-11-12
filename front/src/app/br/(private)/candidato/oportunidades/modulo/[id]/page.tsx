@@ -51,8 +51,6 @@ export default function ModuleCoursesPage() {
     queryFn: () => getCourses(moduleId),
     enabled: !!moduleId,
   });
-
-  console.log("teste",courses);
   
 
   const isLoading = isLoadingModule || isLoadingCourses;

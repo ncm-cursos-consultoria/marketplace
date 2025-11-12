@@ -49,7 +49,6 @@ export default function DiscResultPage() {
   useEffect(() => {
     // Se o usuário carregou E não tem um discId, vá para o /new
     if (!isUserLoading && !lastDiscId) {
-      console.log("Nenhum teste encontrado, redirecionando...");
       router.replace(`/br/candidato/oportunidades/teste-comportamental/${userId}/new`);
     }
   }, [isUserLoading, lastDiscId, router, userId]);

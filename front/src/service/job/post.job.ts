@@ -12,7 +12,6 @@ interface postJobProps {
 
 export const postJob = async (data: {}) => {
   try {
-    console.log("Data: ", data);
     
     const res = await api.post("/job-opening", data);
     return res.data;
