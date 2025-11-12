@@ -89,9 +89,14 @@ export function PlanCard({ enterprise, address, enterpriseId }: PlanCardProps) {
               enterpriseId={enterpriseId}
             />
 
-            <p className="text-xs text-neutral-500">
-              Desbloqueie mais recursos e alcance mais candidatos com o plano Standard.
-            </p>
+            <div>
+              <p className="text-xs text-neutral-500">
+                Desbloqueie mais recursos e alcance mais candidatos com o plano Standard.
+              </p>
+              <p className="text-xs text-blue-500">
+                *Teste por 30 dias grátis. Cancele a qualquer momento antes do fim do período para não ser cobrado.
+              </p>
+            </div>
           </>
         )}
 
