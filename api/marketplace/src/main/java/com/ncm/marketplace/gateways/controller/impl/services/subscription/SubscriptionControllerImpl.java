@@ -3,7 +3,6 @@ package com.ncm.marketplace.gateways.controller.impl.services.subscription;
 import com.ncm.marketplace.gateways.controller.interfaces.services.payment.SubscriptionController;
 import com.ncm.marketplace.gateways.dtos.requests.services.subscription.CreateEnterpriseSubscriptionRequest;
 import com.ncm.marketplace.gateways.dtos.responses.services.subscription.SubscriptionResponse;
-import com.ncm.marketplace.usecases.services.payment.PaymentService;
 import com.ncm.marketplace.usecases.services.subscription.SubscriptionService;
 import com.stripe.exception.StripeException;
 import io.swagger.v3.oas.annotations.Operation;

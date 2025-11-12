@@ -71,6 +71,7 @@ public class AuthService {
                     .birthday(LocalDate.now())
                     .profilePictureUrl("desconhecido")
                     .type(UserTypeEnum.UNKNOWN)
+                    .plan("desconhecido")
                     .build();
         }
 
@@ -91,6 +92,7 @@ public class AuthService {
         DiscEnum discTag = null;
         String discId = null;
         List<TagResponse> tags = null;
+        String plan = null;
 
         Object details = auth.getDetails();
         if (details instanceof java.util.Map<?,?> map) {
@@ -127,9 +129,10 @@ public class AuthService {
             tags = TagMapper.toResponseFromUserCandidate(userCandidate.getTagUserCandidates());
             discTag = userCandidate.getDiscTag();
         } else if (user instanceof UserEnterprise userEnterprise) {
-            enterpriseId = userEnterprise.getEnterprise() != null
-                    ? userEnterprise.getEnterprise().getId()
-                    : null;
+            if (userEnterprise.getEnterprise() != null) {
+                enterpriseId = userEnterprise.getEnterprise().getId();
+                plan = userEnterprise.getEnterprise().getPlan();
+            }
         } else if (user instanceof UserPartner userPartner) {
             partnerId = userPartner.getPartner() != null ? userPartner.getPartner().getId() : null;
             enterpriseId = userPartner.getPartner() != null
@@ -155,6 +158,7 @@ public class AuthService {
                 .discTag(discTag)
                 .discId(discId)
                 .tags(tags)
+                .plan(plan)
                 .build();
     }
 

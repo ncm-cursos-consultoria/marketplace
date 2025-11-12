@@ -8,7 +8,7 @@ import com.ncm.marketplace.usecases.interfaces.others.CrudAddress;
 import com.ncm.marketplace.usecases.interfaces.others.CrudPartner;
 import com.ncm.marketplace.usecases.interfaces.others.PlanService;
 import com.ncm.marketplace.usecases.interfaces.others.TagService;
-import com.ncm.marketplace.usecases.interfaces.thirdParty.MercadoPagoService;
+//import com.ncm.marketplace.usecases.interfaces.thirdParty.MercadoPagoService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.DiscService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.DiscQuestionService;
@@ -30,7 +30,7 @@ public class InitializerService {
     private final CrudCourse crudCourse;
     private final CrudJobOpening crudJobOpening;
     private final TagService tagService;
-    private final MercadoPagoService mercadoPagoService;
+//    private final MercadoPagoService mercadoPagoService;
     private final DiscQuestionService discQuestionService;
 
     public String init() {
@@ -93,11 +93,11 @@ public class InitializerService {
         } catch (Exception e) {
             log.error("Failed in creating disc questions ❌: {}", e.getMessage());
         }
-        try {
-            mercadoPagoService.initEnterprisePlan();
-        } catch (Exception e) {
-            log.error("Failed in creating plan ❌: {}", e.getMessage());
-        }
+//        try {
+//            mercadoPagoService.initEnterprisePlan();
+//        } catch (Exception e) {
+//            log.error("Failed in creating plan ❌: {}", e.getMessage());
+//        }
         log.info("Application initialized successfully. ✅");
         return "Application initialized successfully. ✅";
     }

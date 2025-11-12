@@ -61,7 +61,7 @@ public class UserCandidate extends User {
     @JsonBackReference("discs-user_candidate")
     private Set<Disc> discs = new HashSet<>();
 
-    @OneToOne(mappedBy = "userCandidate")
+    @OneToOne(mappedBy = "userCandidate", cascade = CascadeType.ALL)
     @JsonBackReference("partner_user_candidate-user_candidate")
     private PartnerUserCandidate partner;
 

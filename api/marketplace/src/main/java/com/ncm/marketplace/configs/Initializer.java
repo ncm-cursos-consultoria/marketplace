@@ -8,7 +8,7 @@ import com.ncm.marketplace.usecases.interfaces.others.CrudAddress;
 import com.ncm.marketplace.usecases.interfaces.others.CrudPartner;
 import com.ncm.marketplace.usecases.interfaces.others.PlanService;
 import com.ncm.marketplace.usecases.interfaces.others.TagService;
-import com.ncm.marketplace.usecases.interfaces.thirdParty.MercadoPagoService;
+//import com.ncm.marketplace.usecases.interfaces.thirdParty.MercadoPagoService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.DiscService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 public class Initializer implements ApplicationRunner {
     private final CrudUserCandidate crudUserCandidate;
     private final CrudEnterprise crudEnterprise;
-    private final MercadoPagoService mercadoPagoService;
+//    private final MercadoPagoService mercadoPagoService;
     private final PlanService planService;
     private final CrudModule crudModule;
     private final CrudCourse crudCourse;
