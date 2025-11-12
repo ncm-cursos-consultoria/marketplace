@@ -31,6 +31,7 @@ import com.ncm.marketplace.usecases.services.specification.relationships.user.ca
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -223,5 +224,13 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
     @Override
     public List<JobOpeningResponse> findAllByThirdPartyIsTrue() {
         return toResponse(jobOpeningQueryService.findAllByThirdParty(Boolean.TRUE));
+    }
+
+    @Override
+    @Async
+    @Transactional
+    public void pumpViews(String id) {
+        JobOpening jobOpening = jobOpeningQueryService.findByIdOrThrow(id);
+        jobOpening.setViews(jobOpening.getViews() + 1);
     }
 }

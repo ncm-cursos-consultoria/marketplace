@@ -103,4 +103,13 @@ public class JobOpeningControllerImpl implements JobOpeningController {
     public ResponseEntity<JobOpeningUserCandidateResponse> submitUserCandidateToJobOpeningById(@PathVariable String id, @PathVariable String userId) {
         return ResponseEntity.ok(crudJobOpening.submitUserCandidateToJobOpeningById(id, userId));
     }
+
+    @PatchMapping("/{id}/view")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Pump job opening views by 1")
+    @Override
+    public ResponseEntity<Void> pumpViews(@PathVariable String id) {
+        crudJobOpening.pumpViews(id);
+        return ResponseEntity.noContent().build();
+    }
 }
