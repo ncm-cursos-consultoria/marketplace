@@ -26,4 +26,9 @@ public class UserQueryService {
     public Boolean existByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    public User findByForgetPasswordCodeOrThrow(String fourDigitCode) {
+        return userRepository.findByForgetPasswordCode(fourDigitCode)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+    }
 }

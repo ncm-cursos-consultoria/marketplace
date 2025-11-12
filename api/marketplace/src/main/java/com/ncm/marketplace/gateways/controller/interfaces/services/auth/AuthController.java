@@ -8,4 +8,5 @@ public interface AuthController {
     ResponseEntity<?> login(AuthRequest request);
     ResponseEntity<?> logout();
     ResponseEntity<MeResponse> me();
+    ResponseEntity<Void> forgotMyPassword(String email);
 }

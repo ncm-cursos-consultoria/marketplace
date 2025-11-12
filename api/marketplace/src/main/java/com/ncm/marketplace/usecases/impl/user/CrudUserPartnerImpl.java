@@ -42,8 +42,8 @@ public class CrudUserPartnerImpl implements CrudUserPartner {
     @Override
     public UserPartnerResponse save(CreateUserPartnerRequest request) {
         UserPartner user = toEntityCreate(request);
-        String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
-        user.setPassword(encryptedRandomPassword);
+        String encryptedPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(encryptedPassword);
         Partner partner = partnerQueryService.findByIdOrThrow(request.getPartnerId());
         user.setPartner(partner);
         return toResponse(userPartnerCommandService.save(user));

@@ -69,8 +69,8 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
             throw new BadRequestException("CPF já existente");
         }
         UserCandidate user = toEntityCreate(request);
-        String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
-        user.setPassword(encryptedRandomPassword);
+        String encryptedPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(encryptedPassword);
         user = userCandidateCommandService.save(user);
         if (request.getPartnerToken() != null && !request.getPartnerToken().isEmpty()) {
             Partner partner = partnerQueryService.findByTokenOrThrow(request.getPartnerToken());

@@ -50,4 +50,12 @@ public class AuthControllerImpl implements AuthController {
     public ResponseEntity<MeResponse> me() {
         return ResponseEntity.ok(authService.me());
     }
+
+    @PostMapping("/forgot-my-password")
+    @Operation(summary = "Generate four digit code and send to e-mail")
+    @Override
+    public ResponseEntity<Void> forgotMyPassword(@RequestParam String email) {
+        authService.setForgetPasswordCodeAndSendByEmail(email);
+        return ResponseEntity.noContent().build();
+    }
 }
