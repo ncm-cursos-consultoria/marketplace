@@ -99,8 +99,8 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         //user
         UserEnterprise user = UserEnterpriseMapper.toEntityCreate(request);
         user.setEnterprise(enterprise);
-        String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
-        user.setPassword(encryptedRandomPassword);
+        String encryptedPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(encryptedPassword);
         userEnterpriseCommandService.save(user);
         // mercado pago costumer
 //        CreateMercadoPagoCustomerRequest customerRequest = MercadoPagoMapper.toEntityCreate(request);

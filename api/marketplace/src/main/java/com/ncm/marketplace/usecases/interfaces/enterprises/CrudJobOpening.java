@@ -18,4 +18,5 @@ public interface CrudJobOpening {
     List<JobOpeningResponse> findAllByEnterpriseId(String id);
     JobOpeningUserCandidateResponse submitUserCandidateToJobOpeningById(String id, String userId);
     List<JobOpeningResponse> findAllByThirdPartyIsTrue();
+    void pumpViews(String id);
 }

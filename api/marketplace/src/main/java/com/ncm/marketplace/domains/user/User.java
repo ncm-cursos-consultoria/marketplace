@@ -38,6 +38,9 @@ public abstract class User {
     private LocalDate birthday;
     @Builder.Default
     private Boolean isBlocked = Boolean.FALSE;
+    @Column(length = 4)
+    private String forgetPasswordCode;
+    private Instant forgetPasswordCodeExpiry;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profilePictureId", referencedColumnName = "id")

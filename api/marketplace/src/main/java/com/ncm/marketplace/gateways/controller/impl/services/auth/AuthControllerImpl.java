@@ -2,10 +2,12 @@ package com.ncm.marketplace.gateways.controller.impl.services.auth;
 
 import com.ncm.marketplace.gateways.controller.interfaces.services.auth.AuthController;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
+import com.ncm.marketplace.gateways.dtos.requests.services.auth.ResetPasswordRequest;
 import com.ncm.marketplace.gateways.dtos.responses.services.auth.MeResponse;
 import com.ncm.marketplace.usecases.services.security.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -50,4 +52,24 @@ public class AuthControllerImpl implements AuthController {
     public ResponseEntity<MeResponse> me() {
         return ResponseEntity.ok(authService.me());
     }
+
+    @PostMapping("/forgot-my-password")
+    @Operation(summary = "Generate four digit code and send to e-mail")
+    @ResponseStatus(HttpStatus.OK)
+    @Override
+    public ResponseEntity<Void> forgotMyPassword(@RequestParam String email) {
+        authService.setForgetPasswordCodeAndSendByEmail(email);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/reset-password-by-code")
+    @Operation(summary = "Reset user password using the four digit code sent by e-mail")
+    @ResponseStatus(HttpStatus.OK)
+    @Override
+    public ResponseEntity<Void> resetPasswordByFourDigitCode(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPasswordByForgetPasswordCode(request);
+        return ResponseEntity.ok().build();
+    }
+
+
 }

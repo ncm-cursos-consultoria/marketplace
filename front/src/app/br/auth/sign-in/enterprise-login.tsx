@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLoginEnterprise } from "@/hooks/forms/login-enterprise";
+import Link from "next/link";
 
 export function EnterpriseLogin() {
   const { form, isPending, onSubmit } = useLoginEnterprise();
@@ -48,6 +49,14 @@ export function EnterpriseLogin() {
                 {errors.password.message as string}
               </span>
             )}
+          </div>
+
+          <div className="flex justify-end -mt-2">
+            <Button variant="link" asChild className="p-0 h-auto text-sm text-blue-600">
+              <Link href="/br/auth/forgot-password">
+                Esqueceu sua senha?
+              </Link>
+            </Button>
           </div>
         </div>
 

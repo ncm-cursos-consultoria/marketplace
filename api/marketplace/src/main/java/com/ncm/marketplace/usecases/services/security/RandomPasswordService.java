@@ -42,4 +42,22 @@ public class RandomPasswordService {
         return new String(characters);
     }
 
+    public String generateForgetPasswordDigitCode() {
+        SecureRandom random = new SecureRandom();
+        String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String digits = "0123456789";
+        String all = upper + digits;
+
+        StringBuilder password = new StringBuilder();
+
+        password.append(upper.charAt(random.nextInt(upper.length())));
+        password.append(digits.charAt(random.nextInt(digits.length())));
+
+        for (int i = 0; i < 2; i++) {
+            password.append(all.charAt(random.nextInt(all.length())));
+        }
+
+        return shuffleString(password.toString(), random);
+    }
+
 }

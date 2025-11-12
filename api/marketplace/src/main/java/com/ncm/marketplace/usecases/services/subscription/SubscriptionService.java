@@ -77,13 +77,16 @@ public class SubscriptionService {
                 .setPaymentBehavior(SubscriptionCreateParams.PaymentBehavior.ALLOW_INCOMPLETE)
                 .setCollectionMethod(SubscriptionCreateParams.CollectionMethod.CHARGE_AUTOMATICALLY)
                 .addExpand("latest_invoice.payment_intent")
+                .setTrialPeriodDays(30L)
                 .build();
 
         Subscription subscription = Subscription.create(subParams);
 
         userEnterprise.setStripeSubscriptionId(subscription.getId());
 
-        if (subscription.getStatus().equals("active")) {
+        String stripeStatus = subscription.getStatus();
+
+        if (stripeStatus.equals("active") || stripeStatus.equals("trialing")) {
             userEnterprise.setSubscriptionStatus(ACTIVE);
             crudEnterpriseImpl.updateEnterprisePlan(userEnterprise.getEnterprise().getId(), PlansEnum.STANDARD.getName());
         } else {

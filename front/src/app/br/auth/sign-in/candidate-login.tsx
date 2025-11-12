@@ -53,6 +53,14 @@ export function CandidateLogin() {
               </span>
             )}
           </div>
+
+          <div className="flex justify-end -mt-2">
+            <Button variant="link" asChild className="p-0 h-auto text-sm text-blue-600">
+              <Link href="/br/auth/forgot-password">
+                Esqueceu sua senha?
+              </Link>
+            </Button>
+          </div>
         </div>
 
         <div className="flex flex-col gap-4 items-center">

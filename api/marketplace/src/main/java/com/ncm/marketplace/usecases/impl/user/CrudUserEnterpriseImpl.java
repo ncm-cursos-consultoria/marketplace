@@ -38,8 +38,8 @@ public class CrudUserEnterpriseImpl implements CrudUserEnterprise {
         UserEnterprise user = toEntityCreate(request);
         Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(request.getEnterpriseId());
         user.setEnterprise(enterprise);
-        String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
-        user.setPassword(encryptedRandomPassword);
+        String encryptedPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(encryptedPassword);
         return toResponse(userEnterpriseCommandService.save(user));
     }
 

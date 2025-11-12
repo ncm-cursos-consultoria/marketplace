@@ -257,9 +257,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
  * ABA TOTALMENTE REFEITA: DiscProfileTab
  */
 function DiscProfileTab({ candidate, canViewTests }: { candidate: JobCandidate, canViewTests: boolean }) {
-  console.log("Can view tests:", canViewTests);
-
-
   // --- 7. VERIFICAÇÃO DE PERMISSÃO ---
   if (!canViewTests) {
     return (

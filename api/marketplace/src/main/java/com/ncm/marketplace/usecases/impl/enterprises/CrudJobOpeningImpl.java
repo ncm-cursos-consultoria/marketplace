@@ -31,9 +31,11 @@ import com.ncm.marketplace.usecases.services.specification.relationships.user.ca
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.util.*;
@@ -147,7 +149,7 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
             if (jobOpeningUserCandidateStatusMap.containsKey(jobOpeningResponse.getId())) {
                 jobOpeningResponse.setMyApplicationStatus(jobOpeningUserCandidateStatusMap.get(jobOpeningResponse.getId()));
             }
-            Integer totalJobOpeningTags;
+            Integer totalJobOpeningTags = 0;
             Integer totalCompatibleTags = 0;
             if (affinity && !userTagIds.isEmpty() && !jobOpeningResponse.getTags().isEmpty()) {
                 totalJobOpeningTags = jobOpeningResponse.getTags().size();
@@ -156,16 +158,12 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
                         .count();
 
                 totalCompatibleTags = (int) compatibleCount;
-
-                if (totalJobOpeningTags > 0) {
-                    double affinityScore = ((double) totalCompatibleTags / totalJobOpeningTags) * 100.0;
-                    jobOpeningResponse.setAffinity(affinityScore);
-                } else {
-                    jobOpeningResponse.setAffinity((double) 0);
-                }
-            } else {
-                jobOpeningResponse.setAffinity((double) 0);
             }
+            double affinityScore = totalJobOpeningTags > 0
+                    ? new BigDecimal(totalCompatibleTags * 100 / totalJobOpeningTags)
+                        .setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue()
+                    : 0;
+            jobOpeningResponse.setAffinity(affinityScore);
         }
 
         if (affinity) {
@@ -226,5 +224,13 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
     @Override
     public List<JobOpeningResponse> findAllByThirdPartyIsTrue() {
         return toResponse(jobOpeningQueryService.findAllByThirdParty(Boolean.TRUE));
+    }
+
+    @Override
+    @Async
+    @Transactional
+    public void pumpViews(String id) {
+        JobOpening jobOpening = jobOpeningQueryService.findByIdOrThrow(id);
+        jobOpening.setViews(jobOpening.getViews() + 1);
     }
 }

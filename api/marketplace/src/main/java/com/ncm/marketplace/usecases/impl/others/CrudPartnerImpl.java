@@ -78,8 +78,8 @@ public class CrudPartnerImpl implements CrudPartner {
         partner.setEnterprise(enterprise);
         UserPartner user = UserPartnerMapper.toEntityCreate(request);
         user.setPartner(partner);
-        String encryptedRandomPassword = passwordEncoder.encode(request.getPassword());
-        user.setPassword(encryptedRandomPassword);
+        String encryptedPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(encryptedPassword);
         enterpriseCommandService.save(enterprise);
         partner = partnerCommandService.saveAndFlush(partner);
         userPartnerCommandService.save(user);

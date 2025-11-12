@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import DOMPurify from "isomorphic-dompurify";
 import {
   ArrowLeft,
@@ -20,6 +20,8 @@ import { UseUserCandidate } from "@/context/user-candidate.context";
 import Link from "next/link";
 import { ModalCandidate } from "../../modal-candidate";
 import { Button } from "@/components/ui/button";
+import { pumpViews } from "@/service/job/pump-views";
+import { useEffect } from "react";
 
 type Job = {
   id: string;
@@ -74,6 +76,35 @@ export default function JobUniquePage() {
     enabled: !!id,
     staleTime: 1000 * 60 * 2,
   });
+
+  const { mutate: incrementView } = useMutation({
+    mutationFn: (jobId: string) => pumpViews(jobId),
+  });
+
+  useEffect(() => {
+    if (!id) return; // Não faz nada se não houver ID
+
+    const THIRTY_MINUTES_MS = 30 * 60 * 1000;
+    const storageKey = `viewed_job_${id}`; // Chave única para esta vaga
+
+    try {
+      const lastViewedTimestamp = localStorage.getItem(storageKey);
+      const now = Date.now();
+
+      if (lastViewedTimestamp) {
+        const timeSinceLastView = now - Number(lastViewedTimestamp);
+
+        if (timeSinceLastView < THIRTY_MINUTES_MS) {
+          return;
+        }
+      }
+      incrementView(id);
+      localStorage.setItem(storageKey, now.toString());
+    } catch (error) {
+      incrementView(id);
+    }
+
+  }, [id, incrementView]); // 'incrementView' é estável, [id] é a dependência real.
 
   if (isLoading) {
     return (
@@ -242,8 +273,8 @@ export default function JobUniquePage() {
                 {status === "ACTIVE"
                   ? "Ativa"
                   : status === "CLOSED"
-                  ? "Encerrada"
-                  : "Inativa"}
+                    ? "Encerrada"
+                    : "Inativa"}
               </span>
               {workModel ? (
                 <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 ring-1 ring-indigo-200">

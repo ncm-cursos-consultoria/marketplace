@@ -7,12 +7,16 @@ import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.domains.user.UserPartner;
 import com.ncm.marketplace.domains.user.candidate.disc.Disc;
+import com.ncm.marketplace.exceptions.BadRequestException;
+import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.exceptions.InvalidCredentialsException;
 import com.ncm.marketplace.exceptions.UserBlockedException;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
+import com.ncm.marketplace.gateways.dtos.requests.services.auth.ResetPasswordRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.others.tag.TagResponse;
 import com.ncm.marketplace.gateways.dtos.responses.services.auth.MeResponse;
 import com.ncm.marketplace.gateways.mappers.others.tag.TagMapper;
+import com.ncm.marketplace.usecases.services.email.EmailService;
 import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
@@ -22,7 +26,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -33,6 +39,8 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final CookieService cookieService;
+    private final RandomPasswordService randomPasswordService;
+    private final EmailService emailService;
 
     public ResponseCookie login(AuthRequest request) {
         String email = request.getEmail() != null
@@ -197,5 +205,40 @@ public class AuthService {
             }
         }
         return "desconhecido";
+    }
+
+    @Transactional
+    public void setForgetPasswordCodeAndSendByEmail(String email) {
+        User user = userQueryService.findByEmailOrNull(email);
+        if (user != null) {
+            String fourDigitCode = randomPasswordService.generateForgetPasswordDigitCode();
+            user.setForgetPasswordCode(fourDigitCode);
+            user.setForgetPasswordCodeExpiry(Instant.now().plus(30, ChronoUnit.MINUTES));
+            emailService.sendForgotPasswordEmail(email,fourDigitCode);
+        }
+    }
+
+    @Transactional
+    public void resetPasswordByForgetPasswordCode(ResetPasswordRequest request) {
+        User user = userQueryService.findByEmailOrNull(request.getEmail());
+        String fourDigitCode = request.getFourDigitCode().toUpperCase();
+        if (user != null) {
+            if (user.getForgetPasswordCode() == null) {
+                throw new BadRequestException("Nenhum código de recuperação foi solicitado.");
+            }
+
+            if (!user.getForgetPasswordCode().equals(fourDigitCode)) {
+                throw new BadRequestException("Código inválido.");
+            }
+
+            if (user.getForgetPasswordCodeExpiry().isBefore(Instant.now())) {
+                throw new IllegalStateException("Código expirado. Solicite um novo.");
+            }
+
+            String encryptedPassword = passwordEncoder.encode(request.getNewPassword());
+            user.setPassword(encryptedPassword);
+            user.setForgetPasswordCode(null);
+            user.setForgetPasswordCodeExpiry(null);
+        }
     }
 }

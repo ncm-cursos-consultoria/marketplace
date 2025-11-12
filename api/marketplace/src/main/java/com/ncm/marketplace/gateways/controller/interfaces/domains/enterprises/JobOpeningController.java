@@ -20,4 +20,5 @@ public interface JobOpeningController {
     ResponseEntity<List<JobOpeningResponse>> findAllByEnterpriseId(String id);
     ResponseEntity<List<JobOpeningResponse>> findAllThirdParty();
     ResponseEntity<JobOpeningUserCandidateResponse> submitUserCandidateToJobOpeningById(String id, String userId);
+    ResponseEntity<Void> pumpViews(String id);
 }
