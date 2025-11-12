@@ -15,11 +15,18 @@ export interface UserCandidateProps {
   cpf: string;
   profilePictureUrl?: string;
   birthday?: string;
-  curriculumVitaeUrl? : string
+  curriculumVitaeUrl?: string
   hasCurriculumVitaeUrl?: boolean
   hasDisc?: boolean
   discId?: string
 }
+
+export interface PlanProps {
+  id: string;
+  name: string;
+}
+
+export type PlanType = 'BASIC' | 'STANDART' | 'PREMIUM';
 
 export interface UserEnterpriseProps {
   id: string;
@@ -31,6 +38,10 @@ export interface UserEnterpriseProps {
   type: string;
   enterpriseId: string;
   email: string;
+  plan: PlanType;
+  canCreateJobOpenings: boolean;
+  canViewTests: boolean;
+  canViewCurriculumVitaeBase: boolean;
 }
 
 export interface workModelEnum {

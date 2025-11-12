@@ -59,6 +59,9 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
     watch,
   } = form;
 
+  const isUserLoaded = userEnterprise !== null;
+  const canCreate = userEnterprise?.canCreateJobOpenings ?? false;
+
   const selectedTagIds = watch("tagIds") ?? [];
 
   const { data: tags, isLoading: loadingTags } = useQuery<Tag[]>({
@@ -113,13 +116,18 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
     setValue("tagIds", [], { shouldValidate: true, shouldDirty: true });
 
   return (
-    <div>
+    <div className="flex items-center gap-4">
+      {isUserLoaded && !canCreate && (
+        <p className="text-sm text-red-600 font-medium">
+          Você atingiu o limite de vagas criadas para o plano atual.
+        </p>
+      )}
       <Modal
-        className="p-2 bg-blue-600 text-white rounded-md w-[160px] font-medium cursor-pointer hover:bg-blue-700 transition"
-        headerTitle="Crie uma nova vaga"
+        className="p-2 bg-blue-600 text-white rounded-md w-[160px] font-medium cursor-pointer hover:bg-blue-700 transition disabled:bg-gray-400 disabled:opacity-70 disabled:cursor-not-allowed" headerTitle="Crie uma nova vaga"
         title="Nova Vaga"
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        disabled={!canCreate}
       >
         <form
           className="flex flex-col gap-4 overflow-auto h-[70vh] p-2"
@@ -468,6 +476,7 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
           </Button>
         </form>
       </Modal>
+
     </div>
   );
 }
