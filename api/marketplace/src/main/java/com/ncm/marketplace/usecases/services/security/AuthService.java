@@ -221,12 +221,13 @@ public class AuthService {
     @Transactional
     public void resetPasswordByForgetPasswordCode(ResetPasswordRequest request) {
         User user = userQueryService.findByEmailOrNull(request.getEmail());
+        String fourDigitCode = request.getFourDigitCode().toUpperCase();
         if (user != null) {
             if (user.getForgetPasswordCode() == null) {
                 throw new BadRequestException("Nenhum código de recuperação foi solicitado.");
             }
 
-            if (!user.getForgetPasswordCode().equals(request.getFourDigitCode())) {
+            if (!user.getForgetPasswordCode().equals(fourDigitCode)) {
                 throw new BadRequestException("Código inválido.");
             }
 

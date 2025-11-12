@@ -39,6 +39,8 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**",
                                 "/auth/login",
+                                "/auth/forgot-my-password",
+                                "/auth/reset-password-by-code",
                                 "/email/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST,
