@@ -58,6 +58,7 @@ public class EmailService {
 
             htmlBody = htmlBody.replace("#CODIGO#", fourDigitCode);
             htmlBody = htmlBody.replace("#URL_RECUPERACAO#", RECOVERY_URL);
+            htmlBody = htmlBody.replace("#EMAIL#", toEmail);
 
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");

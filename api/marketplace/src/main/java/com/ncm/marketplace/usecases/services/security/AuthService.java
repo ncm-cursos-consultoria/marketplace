@@ -7,6 +7,7 @@ import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.domains.user.UserPartner;
 import com.ncm.marketplace.domains.user.candidate.disc.Disc;
+import com.ncm.marketplace.exceptions.BadRequestException;
 import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.exceptions.InvalidCredentialsException;
 import com.ncm.marketplace.exceptions.UserBlockedException;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -211,19 +213,31 @@ public class AuthService {
         if (user != null) {
             String fourDigitCode = randomPasswordService.generateForgetPasswordDigitCode();
             user.setForgetPasswordCode(fourDigitCode);
-            user.setForgetPasswordCodeExpiry(Instant.now().plusSeconds(60*30));
+            user.setForgetPasswordCodeExpiry(Instant.now().plus(30, ChronoUnit.MINUTES));
             emailService.sendForgotPasswordEmail(email,fourDigitCode);
         }
     }
 
     @Transactional
     public void resetPasswordByForgetPasswordCode(ResetPasswordRequest request) {
-        User user = userQueryService.findByForgetPasswordCodeOrThrow(request.getFourDigitCode());
-        if (user.getForgetPasswordCodeExpiry().isBefore(Instant.now())) {
-            throw new IllegalStateException("Code already expired");
-        } else {
+        User user = userQueryService.findByEmailOrNull(request.getEmail());
+        if (user != null) {
+            if (user.getForgetPasswordCode() == null) {
+                throw new BadRequestException("Nenhum código de recuperação foi solicitado.");
+            }
+
+            if (!user.getForgetPasswordCode().equals(request.getFourDigitCode())) {
+                throw new BadRequestException("Código inválido.");
+            }
+
+            if (user.getForgetPasswordCodeExpiry().isBefore(Instant.now())) {
+                throw new IllegalStateException("Código expirado. Solicite um novo.");
+            }
+
             String encryptedPassword = passwordEncoder.encode(request.getNewPassword());
             user.setPassword(encryptedPassword);
+            user.setForgetPasswordCode(null);
+            user.setForgetPasswordCodeExpiry(null);
         }
     }
 }

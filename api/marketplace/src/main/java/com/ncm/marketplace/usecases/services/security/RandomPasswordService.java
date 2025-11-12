@@ -53,7 +53,7 @@ public class RandomPasswordService {
         password.append(upper.charAt(random.nextInt(upper.length())));
         password.append(digits.charAt(random.nextInt(digits.length())));
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 2; i++) {
             password.append(all.charAt(random.nextInt(all.length())));
         }
 

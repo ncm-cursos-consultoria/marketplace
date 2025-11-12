@@ -38,7 +38,7 @@ public abstract class User {
     private LocalDate birthday;
     @Builder.Default
     private Boolean isBlocked = Boolean.FALSE;
-    @Column(unique = true, length = 4)
+    @Column(length = 4)
     private String forgetPasswordCode;
     private Instant forgetPasswordCodeExpiry;
 
