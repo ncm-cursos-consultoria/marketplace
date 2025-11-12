@@ -31,7 +31,7 @@ export function ModuleHero({ module }: { module: Module }) {
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="secondary">{module.coursesCount ?? 0} aula(s)</Badge>
-          <Button variant="outline" size="sm" onClick={() => console.log('editar módulo', module.id)}>
+          <Button variant="outline" size="sm" onClick={() => {}}>
             Editar módulo
           </Button>
         </div>
