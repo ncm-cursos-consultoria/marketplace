@@ -65,7 +65,6 @@ export function useCreateUser() {
   });
 
   const onSubmit = (data: CreateUserFormSchema) => {
-    console.log("enviando dados de cadastro:", data);
     mutate(data);
   };
 

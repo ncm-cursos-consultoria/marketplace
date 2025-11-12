@@ -79,7 +79,6 @@ export default function MinhasVagasPage() {
         userIds: [usersParam],
         affinity: true,
       });
-      console.log("Fetched Job data: ", jobsData);
 
       return jobsData; // <-- Retorna a lista
     },

@@ -35,9 +35,8 @@ function ProgressRow({ label, percent }: { label: string; percent: number }) {
 
 
 export default function PartnerPanel() {
-const {userPartner} = UseUserPartner()
+  const { userPartner } = UseUserPartner()
 
-console.log(userPartner);
 
 
   const totalJobOpening = 42;

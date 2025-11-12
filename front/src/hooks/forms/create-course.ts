@@ -24,7 +24,6 @@ export function useCreateCourse(moduleId: string) {
       ...data,
       moduleId: moduleId
     }
-    console.log(payload);
     
     mutate(payload)
   }

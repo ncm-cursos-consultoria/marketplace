@@ -5,9 +5,6 @@ import { useSimulateCandidate } from "@/context/candidate.context";
 export default function UserPage() {
   const { candidate } = useSimulateCandidate();
 
-  console.log("text", candidate);
-  
-
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-3xl font-bold mb-6">Minhas Candidaturas</h1>

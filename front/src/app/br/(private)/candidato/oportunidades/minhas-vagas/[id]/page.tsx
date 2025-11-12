@@ -69,7 +69,6 @@ function dateTimePtBr(iso: string) {
 }
 
 export default function MinhasVagasPage() {
-  console.log("Mihas vafas");
   
   const { userCandidate } = UseUserCandidate();
   const userId = userCandidate?.id; // <- ajuste se seu contexto expõe outro campo
@@ -86,8 +85,6 @@ export default function MinhasVagasPage() {
     staleTime: 1000 * 60 * 5,
   });
 
-  console.log(data);
-  
 
   const salaryFmt = useMemo(
     () =>
