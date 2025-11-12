@@ -34,4 +34,5 @@ public class MeResponse {
     private String curriculumVitaeUrl;
     private Boolean hasDisc;
     private List<TagResponse> tags;
+    private String plan;
 }
