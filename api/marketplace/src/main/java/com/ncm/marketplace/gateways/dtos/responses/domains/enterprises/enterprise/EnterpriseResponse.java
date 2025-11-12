@@ -27,6 +27,9 @@ public class EnterpriseResponse {
     private String coreValues;
     private String benefits;
     private Boolean canUploadModules;
+    private Boolean canCreateJobOpenings;
+    private Boolean canViewTests;
+    private Boolean canViewCurriculumVitaeBase;
     private String phone;
     private String website;
 }

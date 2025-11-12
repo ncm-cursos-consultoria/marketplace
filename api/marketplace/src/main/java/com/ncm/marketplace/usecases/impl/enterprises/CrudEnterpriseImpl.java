@@ -165,8 +165,12 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         if (oldPlanName != null && !oldPlanName.equals(plan.getName())) {
             if (planName.equals(PlansEnum.BASIC.getName())) {
                 enterprise.getPlanEnterprise().setEndDate(null);
+                if (!enterprise.getJobOpenings().isEmpty()) {
+                    enterprise.setCanCreateJobOpenings(Boolean.FALSE);
+                }
             } else if (planName.equals(PlansEnum.STANDARD.getName())) {
                 enterprise.getPlanEnterprise().setEndDate(LocalDate.now().plusMonths(1));
+                enterprise.setCanCreateJobOpenings(Boolean.TRUE);
             } else {
                 throw new IllegalStateException("Unsupported plan: " + planName);
             }

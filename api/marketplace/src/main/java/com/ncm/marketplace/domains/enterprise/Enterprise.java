@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ncm.marketplace.domains.enums.PlansEnum;
 import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.domains.others.File;
-import com.ncm.marketplace.domains.catalog.Module;
 import com.ncm.marketplace.domains.others.Partner;
 import com.ncm.marketplace.domains.relationships.partner.PartnerEnterprise;
 import com.ncm.marketplace.domains.relationships.plan.enterprise.PlanEnterprise;
@@ -52,6 +51,12 @@ public class Enterprise {
     private String benefits;
     @Builder.Default
     private Boolean canUploadModules = Boolean.FALSE;
+    @Builder.Default
+    private Boolean canCreateJobOpenings = Boolean.TRUE;
+    @Builder.Default
+    private Boolean canViewTests = Boolean.FALSE;
+    @Builder.Default
+    private Boolean canViewCurriculumVitaeBase = Boolean.FALSE;
     private String phone;
     private String website;
 
