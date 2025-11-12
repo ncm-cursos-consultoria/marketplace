@@ -2,15 +2,13 @@ package com.ncm.marketplace.usecases.impl.enterprises;
 
 import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enterprise.JobOpening;
-import com.ncm.marketplace.domains.enums.ContractTypeEnum;
-import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
-import com.ncm.marketplace.domains.enums.WorkModelEnum;
-import com.ncm.marketplace.domains.enums.WorkPeriodEnum;
+import com.ncm.marketplace.domains.enums.*;
 import com.ncm.marketplace.domains.others.Tag;
 import com.ncm.marketplace.domains.relationships.tag.TagJobOpening;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.exceptions.BadRequestException;
+import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.JobOpeningSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
@@ -19,6 +17,7 @@ import com.ncm.marketplace.gateways.dtos.responses.domains.relationships.enterpr
 import com.ncm.marketplace.gateways.mappers.relationships.enterprises.jobOpening.JobOpeningUserCandidateMapper;
 import com.ncm.marketplace.gateways.mappers.relationships.tag.TagJobOpeningMapper;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudJobOpening;
+import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.enterprises.JobOpeningCommandService;
 import com.ncm.marketplace.usecases.services.command.relationship.user.candidate.UserCandidateJobOpeningCommandService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
@@ -56,12 +55,16 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
     private final UserCandidateJobOpeningQueryService userCandidateJobOpeningQueryService;
     private final UserCandidateJobOpeningSpecification userCandidateJobOpeningSpecification;
     private final TagQueryService tagQueryService;
+    private final EnterpriseCommandService enterpriseCommandService;
 
     @Transactional
     @Override
     public JobOpeningResponse save(CreateJobOpeningRequest request) {
         JobOpening jobOpening = toEntityCreate(request);
         Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(request.getEnterpriseId());
+        if (!enterprise.getCanCreateJobOpenings()) {
+            throw new IllegalStateException("This enterprise can't create job openings");
+        }
         jobOpening.setEnterprise(enterprise);
         if (request.getTagIds() != null && !request.getTagIds().isEmpty()) {
             Set<Tag> tags = new HashSet<>(tagQueryService.findAllByIds(request.getTagIds()));
@@ -69,7 +72,13 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
                 jobOpening.getTagJobOpenings().add(TagJobOpeningMapper.toEntityCreate(jobOpening,tag));
             }
         }
-        return toResponse(jobOpeningCommandService.save(jobOpening));
+        jobOpening = jobOpeningCommandService.save(jobOpening);
+        if (enterprise.getPlan().equals(PlansEnum.BASIC.getName())
+                && !enterprise.getJobOpenings().isEmpty()) {
+            enterprise.setCanCreateJobOpenings(Boolean.FALSE);
+            enterpriseCommandService.save(enterprise);
+        }
+        return toResponse(jobOpening);
     }
 
     @Transactional

@@ -4,6 +4,7 @@ import { useQueries } from "@tanstack/react-query";
 import { getJobCandidates, type JobCandidate } from "@/service/user/get-job-candidates";
 import { getJobDetails, type JobFull } from "@/service/job/get-job-details";
 import { CandidateCard } from "./candidate-card";
+import { UseUserEnteprise } from "@/context/user-enterprise.context";
 
 interface JobCandidatesTabProps {
   jobId: string;
@@ -11,6 +12,7 @@ interface JobCandidatesTabProps {
 
 export function JobCandidatesTab({ jobId }: JobCandidatesTabProps) {
   // Usamos 'useQueries' para buscar os candidatos E os detalhes da vaga em paralelo
+  const user = UseUserEnteprise();
   const results = useQueries({
     queries: [
       {
@@ -59,6 +61,7 @@ export function JobCandidatesTab({ jobId }: JobCandidatesTabProps) {
           key={candidate.id} 
           candidate={candidate} 
           jobTags={jobTags} // Passamos as tags da vaga para o card
+          canViewTests={user.userEnterprise?.canViewTests || false}
         />
       ))}
     </div>

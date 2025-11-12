@@ -72,6 +72,9 @@ public class AuthService {
                     .profilePictureUrl("desconhecido")
                     .type(UserTypeEnum.UNKNOWN)
                     .plan("desconhecido")
+                    .canCreateJobOpenings(Boolean.FALSE)
+                    .canViewTests(Boolean.FALSE)
+                    .canViewCurriculumVitaeBase(Boolean.FALSE)
                     .build();
         }
 
@@ -93,6 +96,9 @@ public class AuthService {
         String discId = null;
         List<TagResponse> tags = null;
         String plan = null;
+        Boolean canCreateJobOpenings = null;
+        Boolean canViewTests = null;
+        Boolean canViewCurriculumVitaeBase = null;
 
         Object details = auth.getDetails();
         if (details instanceof java.util.Map<?,?> map) {
@@ -132,6 +138,9 @@ public class AuthService {
             if (userEnterprise.getEnterprise() != null) {
                 enterpriseId = userEnterprise.getEnterprise().getId();
                 plan = userEnterprise.getEnterprise().getPlan();
+                canCreateJobOpenings = userEnterprise.getEnterprise().getCanCreateJobOpenings();
+                canViewTests = userEnterprise.getEnterprise().getCanViewTests();
+                canViewCurriculumVitaeBase = userEnterprise.getEnterprise().getCanViewCurriculumVitaeBase();
             }
         } else if (user instanceof UserPartner userPartner) {
             partnerId = userPartner.getPartner() != null ? userPartner.getPartner().getId() : null;
@@ -159,6 +168,9 @@ public class AuthService {
                 .discId(discId)
                 .tags(tags)
                 .plan(plan)
+                .canCreateJobOpenings(canCreateJobOpenings)
+                .canViewTests(canViewTests)
+                .canViewCurriculumVitaeBase(canViewCurriculumVitaeBase)
                 .build();
     }
 

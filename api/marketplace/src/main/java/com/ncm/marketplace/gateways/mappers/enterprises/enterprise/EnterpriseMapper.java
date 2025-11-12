@@ -57,6 +57,9 @@ public class EnterpriseMapper {
                 .canUploadModules(enterprise.getCanUploadModules())
                 .phone(enterprise.getPhone())
                 .website(enterprise.getWebsite())
+                .canCreateJobOpenings(enterprise.getCanCreateJobOpenings())
+                .canViewTests(enterprise.getCanViewTests())
+                .canViewCurriculumVitaeBase(enterprise.getCanViewCurriculumVitaeBase())
                 .build();
     }
 
