@@ -134,10 +134,12 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("User candidate not found"));
         userCandidateJobOpening.setStatus(jobOpeningUserCandidateStatus);
-        notificationService.saveJobOpeningUserCandidateStatusUpdateNotification(CreateJobOpeningUserCandidateStatusUpdateNotificationRequest.builder()
-                        .jobOpeningId(jobOpening.getId())
-                        .userId(userId)
-                .build());
+        if (jobOpeningUserCandidateStatus != JobOpeningUserCandidateStatus.UNDER_REVIEW) {
+            notificationService.saveJobOpeningUserCandidateStatusUpdateNotification(CreateJobOpeningUserCandidateStatusUpdateNotificationRequest.builder()
+                            .jobOpeningId(jobOpening.getId())
+                            .userId(userId)
+                    .build());
+        }
     }
 
     @Override
