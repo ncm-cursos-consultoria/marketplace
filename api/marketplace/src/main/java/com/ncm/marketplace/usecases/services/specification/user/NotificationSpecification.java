@@ -59,6 +59,7 @@ public class NotificationSpecification {
                 criteriaBuilder.conjunction());
         if (request != null) {
             specification = specification.and(byUserIds(request.getUserIds()));
+            specification = specification.and(byIsRead(request.getIsRead()));
             specification = specification.and(notReadAndReadInLastDay(request.getRemoveReadAfter1Day()));
         }
         return specification;
