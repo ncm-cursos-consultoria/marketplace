@@ -61,6 +61,7 @@ export function JobCandidatesTab({ jobId }: JobCandidatesTabProps) {
           key={candidate.id} 
           candidate={candidate} 
           jobTags={jobTags} // Passamos as tags da vaga para o card
+          jobId={jobId}
           canViewTests={user.userEnterprise?.canViewTests || false}
         />
       ))}

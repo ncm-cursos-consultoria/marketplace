@@ -123,7 +123,8 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
         </p>
       )}
       <Modal
-        className="p-2 bg-blue-600 text-white rounded-md w-[160px] font-medium cursor-pointer hover:bg-blue-700 transition disabled:bg-gray-400 disabled:opacity-70 disabled:cursor-not-allowed" headerTitle="Crie uma nova vaga"
+        className="p-2 bg-blue-600 text-white rounded-md w-[160px] font-medium cursor-pointer hover:bg-blue-700 transition disabled:bg-gray-400 disabled:opacity-70 disabled:cursor-not-allowed" 
+        headerTitle="Crie uma nova vaga"
         title="Nova Vaga"
         isOpen={isOpen}
         setIsOpen={setIsOpen}

@@ -96,9 +96,7 @@ export default function EnterpriseJobsPage() {
             ))}
           </div>
         ) : (
-          <EmptyState>
-            <ModalCreateJob onSuccess={handleJobCreateSuccess} />
-          </EmptyState>
+          <EmptyState />
         )}
       </div>
     </main>
@@ -150,16 +148,13 @@ function JobCard({ job }: { job: ApiJob }) {
   );
 }
 
-function EmptyState({ children }: { children: React.ReactNode }) {
+function EmptyState() {
   return (
     <div className="text-center py-20 px-6 border-2 border-dashed border-gray-300 rounded-lg">
       <h3 className="text-xl font-semibold text-gray-900">Nenhuma vaga encontrada</h3>
       <p className="mt-1 text-gray-500">
         Você ainda não publicou nenhuma vaga com o status selecionado.
       </p>
-      <div className="mt-6">
-        {children}
-      </div>
     </div>
   );
 }
