@@ -7,20 +7,21 @@ import logo from "@/assets/ncm-logo.png";
 import avatar from "@/assets/avatar.png";
 import { UseUserCandidate } from "@/context/user-candidate.context";
 import { LogOut, Loader2, Home, BookCopy, Briefcase, NotebookPenIcon } from "lucide-react";
+import { NotificationBell } from "../notification/NotificationBell";
 
 type NavItem = {
-    label: string;
-    slug: "home" | "courses" | "jobs" | "teste-comportamental" | "minhas-candidaturas";
-    requiresId?: boolean;
-    icon: React.ReactNode; // Adicionando o ícone ao tipo
+  label: string;
+  slug: "home" | "courses" | "jobs" | "teste-comportamental" | "minhas-candidaturas";
+  requiresId?: boolean;
+  icon: React.ReactNode; // Adicionando o ícone ao tipo
 };
 
 const NAV: NavItem[] = [
-    { label: "Início", slug: "home", requiresId: true, icon: <Home className="h-5 w-5" /> },
-    { label: "Teste Comportamental", slug: "teste-comportamental", requiresId: true, icon: <BookCopy className="h-5 w-5" /> },
-    { label: "Cursos", slug: "courses", requiresId: true, icon: <NotebookPenIcon className="h-5 w-5" /> },
-    { label: "Vagas", slug: "jobs", requiresId: true, icon: <Briefcase className="h-5 w-5" /> },
-    { label: "Minhas Candidaturas", slug: "minhas-candidaturas", requiresId: true, icon: <Briefcase className="h-5 w-5" /> }
+  { label: "Início", slug: "home", requiresId: true, icon: <Home className="h-5 w-5" /> },
+  { label: "Teste Comportamental", slug: "teste-comportamental", requiresId: true, icon: <BookCopy className="h-5 w-5" /> },
+  { label: "Cursos", slug: "courses", requiresId: true, icon: <NotebookPenIcon className="h-5 w-5" /> },
+  { label: "Vagas", slug: "jobs", requiresId: true, icon: <Briefcase className="h-5 w-5" /> },
+  { label: "Minhas Candidaturas", slug: "minhas-candidaturas", requiresId: true, icon: <Briefcase className="h-5 w-5" /> }
 ];
 
 export function Aside() {
@@ -82,22 +83,30 @@ export function Aside() {
         })}
       </nav>
 
-      {/* 2. O RODAPÉ QUE SERÁ EMPURRADO PARA BAIXO */}
-      {/* A classe 'mt-auto' faz toda a mágica! */}
       <div className="mt-auto border-t border-white/10 p-4">
-        <div className="flex items-center gap-3">
-          <Image
-            src={userCandidate?.profilePictureUrl || avatar}
-            alt="Avatar"
-            width={40}
-            height={40}
-            className="rounded-full object-cover" // object-cover evita distorção da imagem
-          />
-          <div className="flex flex-col leading-tight">
-            <Link href={id ? `/br/candidato/oportunidades/perfil/${id}` : '#'}>
-              <p className="font-semibold hover:underline">{userCandidate?.firstName} {userCandidate?.lastName}</p>
-            </Link>
-            <p className="text-xs text-white/70">{userCandidate?.email}</p>
+        <div className="flex items-center justify-between gap-3">
+          {/* Agrupar Avatar e Nome */}
+          <div className="flex items-center gap-3 min-w-0">
+            <Image
+              src={userCandidate?.profilePictureUrl || avatar}
+              alt="Avatar"
+              width={40}
+              height={40}
+              className="rounded-full object-cover flex-shrink-0"
+            />
+            <div className="flex flex-col leading-tight min-w-0">
+              <Link href={id ? `/br/candidato/oportunidades/perfil/${id}` : '#'}>
+                <p className="font-semibold hover:underline truncate">
+                  {userCandidate?.firstName} {userCandidate?.lastName}
+                </p>
+              </Link>
+              <p className="text-xs text-white/70 truncate">{userCandidate?.email}</p>
+            </div>
+          </div>
+
+          {/* 3. SINO ADICIONADO AQUI */}
+          <div className="flex-shrink-0">
+            <NotificationBell />
           </div>
         </div>
 

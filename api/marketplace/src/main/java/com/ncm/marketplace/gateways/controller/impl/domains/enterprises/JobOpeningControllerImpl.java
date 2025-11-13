@@ -1,13 +1,14 @@
 package com.ncm.marketplace.gateways.controller.impl.domains.enterprises;
 
 import com.ncm.marketplace.domains.enums.ActionEnum;
+import com.ncm.marketplace.domains.enums.JobOpeningStatusEnum;
+import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.gateways.controller.interfaces.domains.enterprises.JobOpeningController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.JobOpeningSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.relationships.enterprises.jobOpening.JobOpeningUserCandidateResponse;
-import com.ncm.marketplace.usecases.impl.others.TagServiceImpl;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudJobOpening;
 import com.ncm.marketplace.usecases.interfaces.others.TagService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,6 +62,25 @@ public class JobOpeningControllerImpl implements JobOpeningController {
                                                          @PathVariable String tagId,
                                                          @RequestParam ActionEnum action) {
         return ResponseEntity.ok(tagService.updateJobOpeningTags(id,tagId,action));
+    }
+
+    @PatchMapping("/{id}/status")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Change job opening status")
+    @Override
+    public ResponseEntity<JobOpeningResponse> changeStatus(@PathVariable String id, @RequestParam JobOpeningStatusEnum jobOpeningStatus) {
+        return ResponseEntity.ok(crudJobOpening.changeStatus(id, jobOpeningStatus));
+    }
+
+    @PatchMapping("/{id}/{userId}/status")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Change user status in a job opening")
+    @Override
+    public ResponseEntity<Void> changeUserCandidateJobOpeningStatus(@PathVariable String id,
+                                                                                  @PathVariable String userId,
+                                                                                  @RequestParam JobOpeningUserCandidateStatus jobOpeningUserCandidateStatus) {
+        crudJobOpening.changeUserCandidateJobOpeningStatus(id, userId, jobOpeningUserCandidateStatus);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}")

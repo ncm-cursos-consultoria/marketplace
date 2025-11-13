@@ -1,5 +1,6 @@
 package com.ncm.marketplace.domains.user;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.domains.enums.UserTypeEnum;
@@ -12,6 +13,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -46,6 +49,11 @@ public abstract class User {
     @JoinColumn(name = "profilePictureId", referencedColumnName = "id")
     @JsonManagedReference("user-profile_picture")
     private File profilePicture;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference("user-notifications")
+    private Set<Notification> notifications = new HashSet<>();
 
     public String getFullName() {
         return String.format("%s %s", this.firstName != null ? this.firstName : "", this.lastName != null ? this.lastName : "").trim();

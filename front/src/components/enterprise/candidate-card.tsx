@@ -6,24 +6,41 @@ import type { Tag } from "@/types/domain";
 import {
   ChevronDown, FileText, User, BarChart2, Briefcase, Link as LinkIcon,
   Linkedin, Github, Phone, Mail, MapPin, Tag as TagIcon, Hash, Calendar, ExternalLink,
-  Lock
+  Lock,
+  Loader2
 } from "lucide-react";
 import { getAddress, type Address } from "@/service/address/get-address";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { DiscResultResponse, getUniqueDisc } from "@/service/user/disc/get-unique-disc";
+import { ApplicationStatus, updateCandidateStatus } from "@/service/user/update-candidate-status";
+// 1. Importe 'statusApplicationMap' E 'getApplicationStatusStyle'
+import { statusApplicationMap, getApplicationStatusStyle, StatusStyle } from "@/utils/status-applciation-class"; // Verifique este path
+import { toast } from "sonner";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CandidateCardProps {
   candidate: JobCandidate;
   jobTags: Tag[];
   canViewTests: boolean;
+  jobId: string;
 }
 
 type ActiveTab = "general" | "disc" | "cv";
 
-export function CandidateCard({ candidate, jobTags, canViewTests }: CandidateCardProps) { // 3. Ler a prop
+const statusOptionsWithStyle: (StatusStyle & { value: ApplicationStatus })[] =
+  Object.keys(statusApplicationMap).map(key => {
+    const status = key as ApplicationStatus;
+    return {
+      value: status,
+      ...getApplicationStatusStyle(status)
+    }
+  });
+
+export function CandidateCard({ candidate, jobTags, canViewTests, jobId }: CandidateCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   // Estado para controlar a aba ativa DENTRO do card
   const [activeTab, setActiveTab] = useState<ActiveTab>("general");
+  const queryClient = useQueryClient();
 
   // Lógica de Negócio: Calcula as tags em comum
   const commonTags = useMemo(() => {
@@ -37,18 +54,44 @@ export function CandidateCard({ candidate, jobTags, canViewTests }: CandidateCar
 
   const fullName = `${candidate.firstName} ${candidate.lastName}`;
 
+  const { mutate: changeStatus, isPending: isUpdatingStatus } = useMutation({
+    mutationFn: updateCandidateStatus,
+    onSuccess: () => {
+      toast.success("Status do candidato atualizado!");
+      queryClient.invalidateQueries({ queryKey: ["jobCandidates", jobId] });
+    },
+    onError: (err) => {
+      toast.error("Falha ao atualizar o status.");
+    }
+  });
+
+  // 9. Handler para o <Select>
+  const handleStatusChange = (newStatus: ApplicationStatus) => {
+    if (newStatus !== candidate.myApplicationStatus) {
+      changeStatus({
+        jobId: jobId,
+        userId: candidate.id,
+        jobOpeningUserCandidateStatus: newStatus
+      });
+    }
+  };
+
+  const currentStatusStyle = getApplicationStatusStyle(candidate.myApplicationStatus || "UNDER_REVIEW");
+  const Icon = currentStatusStyle.icon;
+
   return (
     <div className="border rounded-lg overflow-hidden transition-all duration-300 bg-white shadow-sm">
-      {/* --- O SNIPPET (SEMPRE VISÍVEL) --- */}
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full p-4 flex flex-col md:flex-row md:items-center gap-4 text-left hover:bg-gray-50"
-      >
+      {/* --- O SNIPPET (ATUALIZADO) --- */}
+      <div className="w-full p-4 flex flex-col md:flex-row md:items-center gap-4 text-left">
+
+        {/* Imagem */}
         <img
           src={candidate.profilePictureUrl || `https://ui-avatars.com/api/?name=${fullName}&background=random`}
           alt={fullName}
           className="h-16 w-16 rounded-full bg-gray-200 object-cover"
         />
+
+        {/* Info (Nome, Email, DISC) */}
         <div className="flex-1">
           <h4 className="font-semibold text-gray-900">{fullName}</h4>
           <p className="text-sm text-gray-500">{candidate.email}</p>
@@ -58,7 +101,9 @@ export function CandidateCard({ candidate, jobTags, canViewTests }: CandidateCar
             </span>
           )}
         </div>
-        <div className="w-full md:w-auto mt-2 md:mt-0">
+
+        {/* Tags em Comum */}
+        <div className="w-full md:w-48 mt-2 md:mt-0 flex-shrink-0">
           {commonTags.length > 0 ? (
             <div className="flex flex-wrap items-center justify-start md:justify-end gap-2">
               {commonTags.slice(0, 3).map(tag => (
@@ -76,22 +121,68 @@ export function CandidateCard({ candidate, jobTags, canViewTests }: CandidateCar
             <p className="text-sm text-gray-500 text-left md:text-right">Nenhuma habilidade em comum</p>
           )}
         </div>
-        <ChevronDown
-          className={`h-5 w-5 text-gray-400 transition-transform duration-300 ml-2 ${isExpanded ? 'rotate-180' : ''}`}
-        />
-      </button>
+        <div className="w-full md:w-48 flex-shrink-0">
+          <Select
+            value={candidate.myApplicationStatus || "UNDER_REVIEW"}
+            onValueChange={(value: ApplicationStatus) => handleStatusChange(value)}
+            disabled={isUpdatingStatus}
+          >
+            <SelectTrigger className={currentStatusStyle.selectClassName}>
+              <SelectValue asChild>
+                {/* 8.1 Mostra o ícone e o texto do status ATUAL */}
+                <span className="flex items-center gap-2">
+                  {isUpdatingStatus ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Icon className="h-4 w-4" />
+                  )}
+                  {currentStatusStyle.text}
+                </span>
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {/* 8.2 Mapeia as opções com ícones e cores */}
+              {statusOptionsWithStyle.map(opt => {
+                const ItemIcon = opt.icon;
+                return (
+                  <SelectItem
+                    key={opt.value}
+                    value={opt.value}
+                    className={opt.selectClassName} // Aplica a cor no item
+                  >
+                    <span className="flex items-center gap-2">
+                      <ItemIcon className="h-4 w-4" />
+                      {opt.text}
+                    </span>
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
 
-      {/* --- O CONTEÚDO EXPANSÍVEL --- */}
+        {/* Botão de Expandir */}
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="p-2 -m-2 text-gray-400 hover:text-gray-600"
+        >
+          <ChevronDown
+            className={`h-5 w-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+          />
+        </button>
+      </div>
+
+      {/* --- O CONTEÚDO EXPANSÍVEL (sem alteração) --- */}
       {isExpanded && (
         <div className="border-t p-4 md:p-6">
           {/* As Abas Internas */}
           <div className="flex border-b mb-4">
             <TabButton label="Geral" icon={User} isActive={activeTab === 'general'} onClick={() => setActiveTab('general')} />
-            <TabButton 
-              label="Perfil DISC" 
-              icon={canViewTests ? BarChart2 : Lock} // Ícone dinâmico
-              isActive={activeTab === 'disc'} 
-              onClick={() => setActiveTab('disc')} 
+            <TabButton
+              label="Perfil DISC"
+              icon={canViewTests ? BarChart2 : Lock}
+              isActive={activeTab === 'disc'}
+              onClick={() => setActiveTab('disc')}
             />
             <TabButton label="Currículo" icon={FileText} isActive={activeTab === 'cv'} onClick={() => setActiveTab('cv')} />
           </div>

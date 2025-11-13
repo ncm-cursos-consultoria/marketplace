@@ -4,19 +4,25 @@ import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enterprise.JobOpening;
 import com.ncm.marketplace.domains.enums.*;
 import com.ncm.marketplace.domains.others.Tag;
-import com.ncm.marketplace.domains.relationships.tag.TagJobOpening;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
+import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.exceptions.BadRequestException;
 import com.ncm.marketplace.exceptions.IllegalStateException;
+import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.JobOpeningSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.notification.CreateJobOpeningStatusUpdateNotificationRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.notification.CreateJobOpeningUserCandidateStatusUpdateNotificationRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.notification.CreateNotificationRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.notification.CreateUserCandidateJobOpeningSubmissionNotificationRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.relationships.enterprises.jobOpening.JobOpeningUserCandidateResponse;
 import com.ncm.marketplace.gateways.mappers.relationships.enterprises.jobOpening.JobOpeningUserCandidateMapper;
 import com.ncm.marketplace.gateways.mappers.relationships.tag.TagJobOpeningMapper;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudJobOpening;
+import com.ncm.marketplace.usecases.interfaces.user.NotificationService;
 import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.enterprises.JobOpeningCommandService;
 import com.ncm.marketplace.usecases.services.command.relationship.user.candidate.UserCandidateJobOpeningCommandService;
@@ -58,6 +64,7 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
     private final UserCandidateJobOpeningSpecification userCandidateJobOpeningSpecification;
     private final TagQueryService tagQueryService;
     private final EnterpriseCommandService enterpriseCommandService;
+    private final NotificationService notificationService;
 
     @Transactional
     @Override
@@ -103,6 +110,36 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
         jobOpening.setWorkModel(request.getWorkModel());
 
         return toResponse(jobOpeningCommandService.save(jobOpening));
+    }
+
+    @Override
+    @Transactional
+    public JobOpeningResponse changeStatus(String id, JobOpeningStatusEnum status) {
+        JobOpening jobOpening = jobOpeningQueryService.findByIdOrThrow(id);
+        jobOpening.setStatus(status);
+        notificationService.saveJobOpeningStatusUpdateNotification(CreateJobOpeningStatusUpdateNotificationRequest.builder()
+                        .jobOpeningId(id)
+                        .newStatus(status)
+                .build());
+        return toResponse(jobOpening);
+    }
+
+    @Transactional
+    @Override
+    public void changeUserCandidateJobOpeningStatus(String id, String userId, JobOpeningUserCandidateStatus jobOpeningUserCandidateStatus) {
+        JobOpening jobOpening = jobOpeningQueryService.findByIdOrThrow(id);
+        UserCandidateJobOpening userCandidateJobOpening = jobOpening.getUserCandidateJobOpenings().stream()
+                .filter(candidateJobOpening ->
+                        candidateJobOpening.getUserCandidate().getId().equals(userId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("User candidate not found"));
+        userCandidateJobOpening.setStatus(jobOpeningUserCandidateStatus);
+        if (jobOpeningUserCandidateStatus != JobOpeningUserCandidateStatus.UNDER_REVIEW) {
+            notificationService.saveJobOpeningUserCandidateStatusUpdateNotification(CreateJobOpeningUserCandidateStatusUpdateNotificationRequest.builder()
+                            .jobOpeningId(jobOpening.getId())
+                            .userId(userId)
+                    .build());
+        }
     }
 
     @Override
@@ -210,12 +247,16 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
         JobOpening jobOpening = jobOpeningQueryService.findByIdOrThrow(id);
         UserCandidate user = userCandidateQueryService.findByIdOrThrow(userId);
         if (!userCandidateJobOpeningQueryService.existsByJobOpeningAndUser(id, userId)) {
-            return JobOpeningUserCandidateMapper.toResponse(
-                    userCandidateJobOpeningCommandService.save(UserCandidateJobOpening.builder()
-                            .submittedAt(Instant.now())
-                            .jobOpening(jobOpening)
-                            .userCandidate(user)
-                            .build()));
+            UserCandidateJobOpening userCandidateJobOpening = userCandidateJobOpeningCommandService.save(UserCandidateJobOpening.builder()
+                    .submittedAt(Instant.now())
+                    .jobOpening(jobOpening)
+                    .userCandidate(user)
+                    .build());
+            notificationService.saveUserCandidateJobOpeningSubmitNotification(CreateUserCandidateJobOpeningSubmissionNotificationRequest.builder()
+                            .jobOpeningId(id)
+                            .userId(userId)
+                    .build());
+            return JobOpeningUserCandidateMapper.toResponse(userCandidateJobOpening);
         } else {
             throw new BadRequestException("User candidate already submitted to this job opening");
         }

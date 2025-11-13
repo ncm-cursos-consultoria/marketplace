@@ -7,6 +7,7 @@ import { Plus, Briefcase, MapPin, Tag as TagIcon } from "lucide-react";
 import { getAllJobs, ApiJob } from "@/service/job/get-all-jobs";
 import { ModalCreateJob } from "@/components/enterprise/modal-create-jobs";
 import Link from "next/link";
+import { formatValue, workModelTranslations } from "@/utils/translations";
 
 // Dicionário de tradução para os status (com tipagem corrigida)
 const statusTranslations: Record<string, string> = {
@@ -95,9 +96,7 @@ export default function EnterpriseJobsPage() {
             ))}
           </div>
         ) : (
-          <EmptyState>
-            <ModalCreateJob onSuccess={handleJobCreateSuccess} />
-          </EmptyState>
+          <EmptyState />
         )}
       </div>
     </main>
@@ -122,7 +121,7 @@ function JobCard({ job }: { job: ApiJob }) {
             <span className="hidden sm:inline text-gray-300">|</span>
             <span className="flex items-center gap-1.5">
               <Briefcase className="h-4 w-4" />
-              {job.workModel}
+              {formatValue(job.workModel, workModelTranslations)}
             </span>
           </p>
         </div>
@@ -149,16 +148,13 @@ function JobCard({ job }: { job: ApiJob }) {
   );
 }
 
-function EmptyState({ children }: { children: React.ReactNode }) {
+function EmptyState() {
   return (
     <div className="text-center py-20 px-6 border-2 border-dashed border-gray-300 rounded-lg">
       <h3 className="text-xl font-semibold text-gray-900">Nenhuma vaga encontrada</h3>
       <p className="mt-1 text-gray-500">
         Você ainda não publicou nenhuma vaga com o status selecionado.
       </p>
-      <div className="mt-6">
-        {children}
-      </div>
     </div>
   );
 }
