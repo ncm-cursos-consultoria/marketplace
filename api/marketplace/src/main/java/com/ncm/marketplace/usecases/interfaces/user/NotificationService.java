@@ -2,6 +2,8 @@ package com.ncm.marketplace.usecases.interfaces.user;
 
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.notification.*;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.notification.NotificationResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
@@ -17,5 +19,5 @@ public interface NotificationService {
     void deleteById(String id);
     void markAsRead(String id);
     NotificationResponse findById(String id);
-    List<NotificationResponse> findAll(NotificationSpecificationRequest specificationRequest);
+    Page<NotificationResponse> findAll(NotificationSpecificationRequest specificationRequest, Pageable pageable);
 }

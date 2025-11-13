@@ -9,6 +9,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,7 +64,12 @@ public class NotificationControllerImpl implements NotificationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Find all notifications, can be filtered by userIds and isRead")
     @Override
-    public ResponseEntity<List<NotificationResponse>> findAll(NotificationSpecificationRequest request) {
-        return ResponseEntity.ok(notificationService.findAll(request));
+    public ResponseEntity<Page<NotificationResponse>> findAll(NotificationSpecificationRequest request,
+                                                              @RequestParam(required = false, defaultValue = "0") int page,
+                                                              @RequestParam(required = false, defaultValue = "10") int size,
+                                                              @RequestParam(required = false, defaultValue = "createdAt") String sort,
+                                                              @RequestParam(required = false, defaultValue = "DESC") Sort.Direction direction) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction,sort));
+        return ResponseEntity.ok(notificationService.findAll(request,pageable));
     }
 }

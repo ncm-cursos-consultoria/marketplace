@@ -3,6 +3,7 @@ package com.ncm.marketplace.gateways.mappers.user;
 import com.ncm.marketplace.domains.user.Notification;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.notification.CreateNotificationRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.notification.NotificationResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -31,5 +32,9 @@ public class NotificationMapper {
 
     public static List<NotificationResponse> toResponse(List<Notification> notifications) {
         return notifications.stream().map(NotificationMapper::toResponse).toList();
+    }
+
+    public static Page<NotificationResponse> toResponse(Page<Notification> notifications) {
+        return notifications.map(NotificationMapper::toResponse);
     }
 }

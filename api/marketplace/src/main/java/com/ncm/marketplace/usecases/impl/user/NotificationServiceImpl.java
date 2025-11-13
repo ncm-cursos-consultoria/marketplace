@@ -17,6 +17,8 @@ import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import com.ncm.marketplace.usecases.services.specification.user.NotificationSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -142,8 +144,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<NotificationResponse> findAll(NotificationSpecificationRequest specificationRequest) {
+    public Page<NotificationResponse> findAll(NotificationSpecificationRequest specificationRequest, Pageable pageable) {
         Specification<Notification> specification = notificationSpecification.toSpecification(specificationRequest);
-        return toResponse(notificationQueryService.findAll(specification));
+        return toResponse(notificationQueryService.findAll(specification, pageable));
     }
 }

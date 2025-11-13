@@ -4,6 +4,8 @@ import com.ncm.marketplace.domains.user.Notification;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.user.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,5 +25,9 @@ public class NotificationQueryService {
 
     public List<Notification> findAll(Specification<Notification> specification) {
         return notificationRepository.findAll(specification);
+    }
+
+    public Page<Notification> findAll(Specification<Notification> specification, Pageable pageable) {
+        return notificationRepository.findAll(specification, pageable);
     }
 }
