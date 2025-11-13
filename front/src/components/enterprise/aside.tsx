@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getEnterprise } from "@/service/enterprise/get-enterprise";
 import { UserEnterpriseProps } from "@/utils/interfaces";
 import { LogOut, Loader2, Home, Building2, Briefcase, NotebookPenIcon } from "lucide-react";
+import { NotificationBell } from "./enterprise-notification-bell";
 
 type NavItem = {
   label: string;
@@ -91,8 +92,12 @@ export function AsideEnterprise() {
             <p className="font-semibold">{enterpriseData?.tradeName}</p>
             <p className="text-xs text-white/70">{enterpriseData?.legalName}</p>
           </div>
+          <div className="flex-shrink-0">
+            <NotificationBell />
+          </div>
         </div>
       </div>
+
 
       {/* Seção da Navegação (Agora usando <Link> diretamente) */}
       <nav className="flex-1 px-4 py-4">
