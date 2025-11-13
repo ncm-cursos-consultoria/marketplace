@@ -9,10 +9,14 @@ import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.exceptions.BadRequestException;
 import com.ncm.marketplace.exceptions.IllegalStateException;
+import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.CreateJobOpeningRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.JobOpeningSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.jobOpening.UpdateJobOpeningRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.notification.CreateJobOpeningStatusUpdateNotificationRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.notification.CreateJobOpeningUserCandidateStatusUpdateNotificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.notification.CreateNotificationRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.notification.CreateUserCandidateJobOpeningSubmissionNotificationRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.jobOpening.JobOpeningResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.relationships.enterprises.jobOpening.JobOpeningUserCandidateResponse;
 import com.ncm.marketplace.gateways.mappers.relationships.enterprises.jobOpening.JobOpeningUserCandidateMapper;
@@ -106,6 +110,34 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
         jobOpening.setWorkModel(request.getWorkModel());
 
         return toResponse(jobOpeningCommandService.save(jobOpening));
+    }
+
+    @Override
+    @Transactional
+    public JobOpeningResponse changeStatus(String id, JobOpeningStatusEnum status) {
+        JobOpening jobOpening = jobOpeningQueryService.findByIdOrThrow(id);
+        jobOpening.setStatus(status);
+        notificationService.saveJobOpeningStatusUpdateNotification(CreateJobOpeningStatusUpdateNotificationRequest.builder()
+                        .jobOpeningId(id)
+                        .newStatus(status)
+                .build());
+        return toResponse(jobOpening);
+    }
+
+    @Transactional
+    @Override
+    public void changeUserCandidateJobOpeningStatus(String id, String userId, JobOpeningUserCandidateStatus jobOpeningUserCandidateStatus) {
+        JobOpening jobOpening = jobOpeningQueryService.findByIdOrThrow(id);
+        UserCandidateJobOpening userCandidateJobOpening = jobOpening.getUserCandidateJobOpenings().stream()
+                .filter(candidateJobOpening ->
+                        candidateJobOpening.getUserCandidate().getId().equals(userId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("User candidate not found"));
+        userCandidateJobOpening.setStatus(jobOpeningUserCandidateStatus);
+        notificationService.saveJobOpeningUserCandidateStatusUpdateNotification(CreateJobOpeningUserCandidateStatusUpdateNotificationRequest.builder()
+                        .jobOpeningId(jobOpening.getId())
+                        .userId(userId)
+                .build());
     }
 
     @Override
@@ -218,15 +250,10 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
                     .jobOpening(jobOpening)
                     .userCandidate(user)
                     .build());
-            if (jobOpening.getEnterprise() != null && jobOpening.getEnterprise().getUserEnterprise() != null) {
-                UserEnterprise userEnterprise = jobOpening.getEnterprise().getUserEnterprise();
-                notificationService.save(CreateNotificationRequest.builder()
-                                .title("Novo candidato se cadastrou na vaga " + jobOpening.getTitle())
-                                .body("O candidato " + user.getFullName() + " se cadastrou na vaga " + jobOpening.getTitle() + "!"
-                                + "/n Cheque o campo minhas vagas para mais detalhes")
-                                .userId(userEnterprise.getId())
-                        .build());
-            }
+            notificationService.saveUserCandidateJobOpeningSubmitNotification(CreateUserCandidateJobOpeningSubmissionNotificationRequest.builder()
+                            .jobOpeningId(id)
+                            .userId(userId)
+                    .build());
             return JobOpeningUserCandidateMapper.toResponse(userCandidateJobOpening);
         } else {
             throw new BadRequestException("User candidate already submitted to this job opening");

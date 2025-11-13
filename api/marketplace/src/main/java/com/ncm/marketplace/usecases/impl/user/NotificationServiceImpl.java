@@ -1,14 +1,20 @@
 package com.ncm.marketplace.usecases.impl.user;
 
+import com.ncm.marketplace.domains.enterprise.JobOpening;
+import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import com.ncm.marketplace.domains.user.Notification;
 import com.ncm.marketplace.domains.user.User;
-import com.ncm.marketplace.gateways.dtos.requests.domains.user.notification.CreateNotificationRequest;
-import com.ncm.marketplace.gateways.dtos.requests.domains.user.notification.NotificationSpecificationRequest;
+import com.ncm.marketplace.domains.user.UserEnterprise;
+import com.ncm.marketplace.domains.user.candidate.UserCandidate;
+import com.ncm.marketplace.exceptions.NotFoundException;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.notification.*;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.notification.NotificationResponse;
 import com.ncm.marketplace.usecases.interfaces.user.NotificationService;
 import com.ncm.marketplace.usecases.services.command.user.NotificationCommandService;
+import com.ncm.marketplace.usecases.services.query.enterprises.JobOpeningQueryService;
 import com.ncm.marketplace.usecases.services.query.user.NotificationQueryService;
 import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
+import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import com.ncm.marketplace.usecases.services.specification.user.NotificationSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,6 +34,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationCommandService notificationCommandService;
     private final NotificationQueryService notificationQueryService;
     private final NotificationSpecification notificationSpecification;
+    private final JobOpeningQueryService jobOpeningQueryService;
+    private final UserCandidateQueryService userCandidateQueryService;
 
     @Override
     @Transactional
@@ -36,6 +44,82 @@ public class NotificationServiceImpl implements NotificationService {
         User user = userQueryService.findByIdOrThrow(request.getUserId());
         notification.setUser(user);
         return toResponse(notificationCommandService.save(notification));
+    }
+
+    @Transactional
+    @Override
+    public void saveUserCandidateJobOpeningSubmitNotification(CreateUserCandidateJobOpeningSubmissionNotificationRequest request) {
+        JobOpening jobOpening = jobOpeningQueryService.findByIdOrThrow(request.getJobOpeningId());
+        UserCandidate userCandidate = userCandidateQueryService.findByIdOrThrow(request.getUserId());
+        if (jobOpening.getEnterprise() != null && jobOpening.getEnterprise().getUserEnterprise() != null) {
+            UserEnterprise userEnterprise = jobOpening.getEnterprise().getUserEnterprise();
+            save(CreateNotificationRequest.builder()
+                    .title("Novo candidato se cadastrou na vaga " + jobOpening.getTitle())
+                    .body("O candidato " + userCandidate.getFullName() + " se cadastrou na vaga " + jobOpening.getTitle() + "!"
+                            + "/n Cheque o campo minhas vagas para mais detalhes")
+                    .userId(userEnterprise.getId())
+                    .build());
+        }
+    }
+
+    @Transactional
+    @Override
+    public void saveJobOpeningStatusUpdateNotification(CreateJobOpeningStatusUpdateNotificationRequest request) {
+        JobOpening jobOpening = jobOpeningQueryService.findByIdOrThrow(request.getJobOpeningId());
+        if (jobOpening.getUserCandidateJobOpenings() != null && !jobOpening.getUserCandidateJobOpenings().isEmpty()) {
+            String body;
+            switch (request.getNewStatus()) {
+                case ACTIVE -> {
+                    body = "Vaga " + jobOpening.getTitle() + " foi reativada!"
+                            + "/n entre na página da vaga para maiores detalhes";
+                }
+                case PAUSED -> {
+                    body = "Vaga " + jobOpening.getTitle() + " foi pausada!"
+                            + "/n entre na página da vaga para maiores detalhes";
+                }
+                case CLOSED -> {
+                    body = "Vaga " + jobOpening.getTitle() + " foi fechada!"
+                            + "/n entre na página da vaga para maiores detalhes";
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + request.getNewStatus());
+            }
+            for (UserCandidateJobOpening userCandidateJobOpening : jobOpening.getUserCandidateJobOpenings()) {
+                save(CreateNotificationRequest.builder()
+                        .title("Atualizações na vaga " + jobOpening.getTitle())
+                        .body(body)
+                        .userId(userCandidateJobOpening.getUserCandidate().getId())
+                        .build());
+            }
+        }
+    }
+
+    @Transactional
+    @Override
+    public void saveJobOpeningUserCandidateStatusUpdateNotification(CreateJobOpeningUserCandidateStatusUpdateNotificationRequest request) {
+        JobOpening jobOpening = jobOpeningQueryService.findByIdOrThrow(request.getJobOpeningId());
+        UserCandidateJobOpening candidateJobOpening = jobOpening.getUserCandidateJobOpenings().stream()
+                .filter(userCandidateJobOpening -> userCandidateJobOpening.getUserCandidate().getId().equals(request.getUserId()))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("User candidate not found"));
+        String body;
+        switch (candidateJobOpening.getStatus()) {
+            case SELECTED -> {
+                body = "Parabéns! Você foi selecionado para a próxima fase da vaga " + jobOpening.getTitle() + "!";
+            }
+            case NOT_SELECTED, REJECTED -> {
+                body = "Poxa, não foi dessa vez! " +
+                        "Agradecemos o tempo investido mas você não foi selecionado para a vaga " + jobOpening.getTitle() + ".";
+            }
+            case APPROVED -> {
+                body = "Parabéns! Você foi selecionado para a última fase da vaga " + jobOpening.getTitle() + "!";
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + candidateJobOpening.getStatus());
+        }
+        save(CreateNotificationRequest.builder()
+                .title("Atualizações na vaga " + jobOpening.getTitle())
+                .body(body)
+                .userId(candidateJobOpening.getUserCandidate().getId())
+                .build());
     }
 
     @Override
