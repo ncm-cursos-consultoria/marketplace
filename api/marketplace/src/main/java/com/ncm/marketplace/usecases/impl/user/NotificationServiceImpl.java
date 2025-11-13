@@ -57,7 +57,7 @@ public class NotificationServiceImpl implements NotificationService {
             save(CreateNotificationRequest.builder()
                     .title("Novo candidato se cadastrou na vaga " + jobOpening.getTitle())
                     .body("O candidato " + userCandidate.getFullName() + " se cadastrou na vaga " + jobOpening.getTitle() + "!"
-                            + "\n Cheque o campo minhas vagas para mais detalhes")
+                            + "\nCheque o campo minhas vagas para mais detalhes")
                     .userId(userEnterprise.getId())
                     .build());
         }
@@ -72,15 +72,15 @@ public class NotificationServiceImpl implements NotificationService {
             switch (request.getNewStatus()) {
                 case ACTIVE -> {
                     body = "Vaga " + jobOpening.getTitle() + " foi reativada!"
-                            + "\n entre na página da vaga para maiores detalhes";
+                            + "\nEntre na página da vaga para maiores detalhes";
                 }
                 case PAUSED -> {
                     body = "Vaga " + jobOpening.getTitle() + " foi pausada!"
-                            + "\n entre na página da vaga para maiores detalhes";
+                            + "\nEntre na página da vaga para maiores detalhes";
                 }
                 case CLOSED -> {
                     body = "Vaga " + jobOpening.getTitle() + " foi fechada!"
-                            + "\n entre na página da vaga para maiores detalhes";
+                            + "\nEntre na página da vaga para maiores detalhes";
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + request.getNewStatus());
             }
@@ -105,14 +105,16 @@ public class NotificationServiceImpl implements NotificationService {
         String body;
         switch (candidateJobOpening.getStatus()) {
             case SELECTED -> {
-                body = "Parabéns! Você foi selecionado para a próxima fase da vaga " + jobOpening.getTitle() + "!";
+                body = "Parabéns! 😀" + 
+                        "\nVocê foi selecionado(a) para a próxima fase da vaga " + jobOpening.getTitle() + "!";
             }
             case NOT_SELECTED, REJECTED -> {
-                body = "Poxa, não foi dessa vez! " +
-                        "Agradecemos o tempo investido mas você não foi selecionado para a vaga " + jobOpening.getTitle() + ".";
+                body = "Poxa, não foi dessa vez! 🙁" +
+                        "\nAgradecemos o tempo investido mas você não foi selecionado(a) para a vaga " + jobOpening.getTitle() + ".";
             }
             case APPROVED -> {
-                body = "Parabéns! Você foi selecionado para a última fase da vaga " + jobOpening.getTitle() + "!";
+                body = "Parabéns! 😀" +
+                        "\nVocê foi selecionado(a) para a última fase da vaga " + jobOpening.getTitle() + "!";
             }
             default -> throw new IllegalStateException("Unexpected value: " + candidateJobOpening.getStatus());
         }
