@@ -51,7 +51,7 @@ public abstract class User {
     private File profilePicture;
 
     @Builder.Default
-    @OneToMany(mappedBy = "notifications", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("user-notifications")
     private Set<Notification> notifications = new HashSet<>();
 
