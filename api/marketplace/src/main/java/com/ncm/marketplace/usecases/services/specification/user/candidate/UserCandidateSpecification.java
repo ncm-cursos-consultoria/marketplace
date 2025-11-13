@@ -1,8 +1,6 @@
 package com.ncm.marketplace.usecases.services.specification.user.candidate;
 
-import com.ncm.marketplace.domains.others.Tag;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
-import com.ncm.marketplace.gateways.dtos.requests.domains.others.tag.TagSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
