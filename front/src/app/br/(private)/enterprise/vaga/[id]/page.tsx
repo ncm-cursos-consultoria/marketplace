@@ -7,6 +7,7 @@ import { Plus, Briefcase, MapPin, Tag as TagIcon } from "lucide-react";
 import { getAllJobs, ApiJob } from "@/service/job/get-all-jobs";
 import { ModalCreateJob } from "@/components/enterprise/modal-create-jobs";
 import Link from "next/link";
+import { formatValue, workModelTranslations } from "@/utils/translations";
 
 // Dicionário de tradução para os status (com tipagem corrigida)
 const statusTranslations: Record<string, string> = {
@@ -122,7 +123,7 @@ function JobCard({ job }: { job: ApiJob }) {
             <span className="hidden sm:inline text-gray-300">|</span>
             <span className="flex items-center gap-1.5">
               <Briefcase className="h-4 w-4" />
-              {job.workModel}
+              {formatValue(job.workModel, workModelTranslations)}
             </span>
           </p>
         </div>

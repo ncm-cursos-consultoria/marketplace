@@ -30,8 +30,6 @@ function useNotificationSnippet(userId: string) {
         enabled: !!userId,
         staleTime: 1000 * 60,
     });
-    console.log(`Notifications found for id ${userId}: `, data);
-    
 
     const unreadCount = data?.totalElements ?? 0;
     const snippets = data?.content ?? [];
