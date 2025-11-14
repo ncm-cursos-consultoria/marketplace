@@ -24,6 +24,8 @@ public class JobOpeningResponse {
     private Instant updatedAt;
     private String title;
     private Double salary;
+    private Double salaryRangeStart;
+    private Double salaryRangeEnd;
     private CurrencyResponse currency;
     private String description;
     private JobOpeningStatusEnum status;

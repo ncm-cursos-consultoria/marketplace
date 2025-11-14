@@ -33,6 +33,8 @@ public class JobOpening {
     private Instant updatedAt;
     private String title;
     private Double salary;
+    private Double salaryRangeStart;
+    private Double salaryRangeEnd;
     private String currencyCode;
     @Column(length = 5000)
     private String description;

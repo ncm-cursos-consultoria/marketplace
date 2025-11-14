@@ -23,6 +23,8 @@ public class JobOpeningSnippetResponse {
     private String id;
     private String title;
     private Double salary;
+    private Double salaryRangeStart;
+    private Double salaryRangeEnd;
     private CurrencyResponse currency;
     private JobOpeningStatusEnum status;
     private String country;

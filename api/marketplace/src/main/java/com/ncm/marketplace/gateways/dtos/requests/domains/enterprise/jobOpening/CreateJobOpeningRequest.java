@@ -22,6 +22,8 @@ public class CreateJobOpeningRequest {
     @NotEmpty
     private String title;
     private Double salary;
+    private Double salaryRangeStart;
+    private Double salaryRangeEnd;
     @NotNull
     private String currencyCode;
     @NotEmpty
