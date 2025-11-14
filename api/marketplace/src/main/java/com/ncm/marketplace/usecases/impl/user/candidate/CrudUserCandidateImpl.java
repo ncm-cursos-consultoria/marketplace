@@ -49,10 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
@@ -390,7 +387,12 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
             contentStream.showText("Perfil Comportamental DISC");
             contentStream.endText();
 
-            Disc discResult = candidate.getDiscs().stream().findFirst().orElse(null);
+            Disc discResult = candidate.getDiscs().stream().max(Comparator.comparing(Disc::getCreatedAt)).orElse(null);
+            if (discResult != null) {
+                System.out.println("Disc encontrado");
+            } else {
+                System.out.println("Disc não encontrado");
+            }
 
             // Posição Y inicial (começa abaixo do título)
             float currentY = 650;
