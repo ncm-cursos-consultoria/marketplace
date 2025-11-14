@@ -20,4 +20,5 @@ public interface UserCandidateController {
     ResponseEntity<UserCandidateResponse> addDisc(String id, CreateDiscRequest request);
     ResponseEntity<UserCandidateResponse> findById(String id);
     ResponseEntity<List<UserCandidateResponse>> findAll(UserCandidateSpecificationRequest specificationRequest);
+    ResponseEntity<byte[]> downloadFullReport(String id) throws Exception;
 }

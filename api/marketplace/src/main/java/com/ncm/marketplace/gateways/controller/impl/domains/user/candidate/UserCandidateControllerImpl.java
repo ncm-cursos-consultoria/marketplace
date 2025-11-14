@@ -15,7 +15,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -96,5 +98,18 @@ public class UserCandidateControllerImpl implements UserCandidateController {
     @Override
     public ResponseEntity<List<UserCandidateResponse>> findAll(UserCandidateSpecificationRequest specificationRequest) {
         return ResponseEntity.ok(crudUserCandidate.findAll(specificationRequest));
+    }
+
+    @GetMapping("/{id}/download-full-report")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Downloads a full PDF report for a candidate")
+    @Override
+    public ResponseEntity<byte[]> downloadFullReport(@PathVariable String id) throws Exception {
+        byte[] pdfBytes = crudUserCandidate.generateFullReport(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "relatorio_candidato.pdf");
+        headers.setContentLength(pdfBytes.length);
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 }

@@ -7,7 +7,8 @@ import {
   ChevronDown, FileText, User, BarChart2, Briefcase, Link as LinkIcon,
   Linkedin, Github, Phone, Mail, MapPin, Tag as TagIcon, Hash, Calendar, ExternalLink,
   Lock,
-  Loader2
+  Loader2,
+  Download
 } from "lucide-react";
 import { getAddress, type Address } from "@/service/address/get-address";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -17,6 +18,8 @@ import { ApplicationStatus, updateCandidateStatus } from "@/service/user/update-
 import { statusApplicationMap, getApplicationStatusStyle, StatusStyle } from "@/utils/status-applciation-class"; // Verifique este path
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "../ui/button";
+import { downloadFullReport } from "@/service/user/download-full-report";
 
 interface CandidateCardProps {
   candidate: JobCandidate;
@@ -237,6 +240,38 @@ function AddressDisplay({ addressId }: { addressId: string | null }) {
 
 function GeneralInfoTab({ candidate }: { candidate: JobCandidate }) {
   const fullName = `${candidate.firstName} ${candidate.lastName}`;
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadReport = async () => {
+    setIsDownloading(true);
+    try {
+      console.log("Baixando o relatório do usuário: ", candidate.id);
+      
+      // Chama a service que você criou
+      const blob = await downloadFullReport(candidate.id);
+
+      // Cria um link "fantasma" no navegador para iniciar o download
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      // Define o nome do arquivo
+      link.setAttribute('download', `relatorio_${fullName.replace(/ /g, '_')}.pdf`);
+
+      document.body.appendChild(link);
+      link.click(); // Clica no link
+
+      // Limpa
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Relatório baixado com sucesso!");
+    } catch (err) {
+      toast.error("Erro ao baixar o relatório.");
+      console.error(err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   // Função para formatar a data de aniversário
   const formatBirthday = (dateString: string | null) => {
@@ -260,8 +295,26 @@ function GeneralInfoTab({ candidate }: { candidate: JobCandidate }) {
             alt={fullName}
             className="h-32 w-32 rounded-full bg-gray-200 object-cover flex-shrink-0"
           />
-          <div className="space-y-2">
-            <h3 className="text-2xl font-bold text-gray-900">{fullName}</h3>
+          <div className="space-y-2 flex-1">
+            {/* 9. DIV PARA ALINHAR NOME E ÍCONE */}
+            <div className="flex items-center justify-between">
+              <h3 className="text-2xl font-bold text-gray-900">{fullName}</h3>
+              {/* 10. BOTÃO DE DOWNLOAD (SÓ O ÍCONE) */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleDownloadReport}
+                disabled={isDownloading}
+                className="text-gray-500 hover:text-blue-600"
+                title="Baixar Relatório Completo (PDF)"
+              >
+                {isDownloading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Download className="h-5 w-5" />
+                )}
+              </Button>
+            </div>
             <p className="text-md text-gray-600">{candidate.subTitle || "Candidato"}</p>
             <dl className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
               <InfoItem icon={Hash} label="CPF" value={candidate.cpf || "Não informado"} simple />

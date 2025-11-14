@@ -19,4 +19,5 @@ public interface CrudUserCandidate {
     String init();
     UserCandidateResponse addOrUpdateAddress(String id, CreateAddressRequest request);
     UserCandidateResponse addDisc(String id, CreateDiscRequest request);
+    public byte[] generateFullReport(String candidateId) throws Exception;
 }
