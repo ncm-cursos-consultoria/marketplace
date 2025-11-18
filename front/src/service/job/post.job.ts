@@ -2,7 +2,9 @@ import { api } from "../api";
 
 interface postJobProps {
   title: string;
-  salary: number;
+  salary?: number | null;
+  salaryRangeStart?: number | null; // Java 'Double'
+  salaryRangeEnd?: number | null;   // Java 'Double'
   description: string;
   city: string;
   state: string;

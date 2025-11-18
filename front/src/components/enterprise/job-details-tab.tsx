@@ -55,17 +55,40 @@ function DetailItem({
  * Aplica a Regra 1: "se o salario for 0 ou null, deve aparecer a combinar"
  */
 function formatSalary(job: JobFull): string {
-  if (!job.salary) {
-    return "A combinar";
+  const { salary, salaryRangeStart, salaryRangeEnd, currency } = job;
+  const currencyCode = currency?.code || "BRL";
+
+  const format = (value: number) => {
+    try {
+      return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: currencyCode,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(value);
+    } catch {
+      return `R$ ${value.toLocaleString("pt-BR")}`;
+    }
+  };
+
+  // 1. Tenta a Faixa Salarial (Start E End)
+  // Verificamos se AMBOS são números e maiores que zero
+  if (salaryRangeStart != null && salaryRangeEnd != null && salaryRangeEnd > 0) {
+    return `${format(salaryRangeStart)} - ${format(salaryRangeEnd)}`;
   }
-  
-  // Usa a API Intl para formatar a moeda corretamente (Ex: R$ 5.000,00)
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: job.currency.code || "BRL", // Usa BRL como fallback
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(job.salary);
+
+  // 2. Tenta a Faixa Salarial (Apenas Start)
+  if (salaryRangeStart != null && salaryRangeStart > 0) {
+    return `A partir de ${format(salaryRangeStart)}`;
+  }
+
+  // 3. Tenta o Salário Fixo
+  if (salary != null && salary > 0) {
+    return format(salary);
+  }
+
+  // 4. Fallback
+  return "A combinar";
 }
 
 /**
@@ -89,7 +112,7 @@ function formatPublicationDate(dateString: string): string {
     day: "2-digit",
     month: "long",
     year: "numeric",
-    timeZone: 'UTC', // Importante para 'Instant'
+    // timeZone: 'UTC', // Importante para 'Instant'
   }).format(new Date(dateString));
 }
 
@@ -98,7 +121,7 @@ function formatPublicationDate(dateString: string): string {
 export function JobDetailsTab({ job }: JobDetailsTabProps) {
   return (
     <div className="space-y-8">
-      
+
       {/* SEÇÃO 1: DESCRIÇÃO */}
       <section className="bg-white p-6 border rounded-lg shadow-sm">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2 mb-4">
@@ -140,7 +163,7 @@ export function JobDetailsTab({ job }: JobDetailsTabProps) {
           />
         </dl>
       </section>
-      
+
       {/* SEÇÃO 3: LOCALIZAÇÃO */}
       <section>
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -179,43 +202,43 @@ export function JobDetailsTab({ job }: JobDetailsTabProps) {
           </div>
         </section>
       )}
-      
+
       {/* SEÇÃO 5: INFORMAÇÕES ADICIONAIS */}
       <section>
-         <h2 className="text-xl font-semibold text-gray-800 mb-4">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">
           Informações Adicionais
         </h2>
-         <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
-           {/* Regra 4: 'url' só aparece se 'thirdParty' for true */}
-           {job.thirdParty && job.url && (
-             <DetailItem
-               icon={ExternalLink}
-               label="Link da Vaga (Externa)"
-               value={
-                 <Link href={job.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">
-                   {job.url}
-                 </Link>
-               }
-             />
-           )}
-           <DetailItem
-             icon={Eye}
-             label="Visualizações"
-             value={job.views}
-           />
-           <DetailItem
-             icon={Calendar}
-             label="Data da Publicação"
-             value={formatPublicationDate(job.createdAt)}
-           />
-           {job.enterpriseLegalName && (
-             <DetailItem
-                icon={Briefcase}
-                label="Publicado por"
-                value={job.enterpriseLegalName}
-             />
-           )}
-         </dl>
+        <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Regra 4: 'url' só aparece se 'thirdParty' for true */}
+          {job.thirdParty && job.url && (
+            <DetailItem
+              icon={ExternalLink}
+              label="Link da Vaga (Externa)"
+              value={
+                <Link href={job.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">
+                  {job.url}
+                </Link>
+              }
+            />
+          )}
+          <DetailItem
+            icon={Eye}
+            label="Visualizações"
+            value={job.views}
+          />
+          <DetailItem
+            icon={Calendar}
+            label="Data da Publicação"
+            value={formatPublicationDate(job.createdAt)}
+          />
+          {job.enterpriseLegalName && (
+            <DetailItem
+              icon={Briefcase}
+              label="Publicado por"
+              value={job.enterpriseLegalName}
+            />
+          )}
+        </dl>
       </section>
 
     </div>

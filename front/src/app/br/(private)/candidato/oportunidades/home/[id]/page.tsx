@@ -95,7 +95,7 @@ export default function Home() {
                           <p className="text-sm">
                             <span className="text-gray-500">Salário</span>{" "}
                             <span className="font-semibold">
-                              {Number.isFinite(job?.salary) && job.salary > 0
+                              {Number.isFinite(job?.salary) && job.salary && job.salary > 0
                                 ? formatMoney(job.salary, job.currency)
                                 : "A combinar"}
                             </span>

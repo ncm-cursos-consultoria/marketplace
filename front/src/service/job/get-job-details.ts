@@ -19,7 +19,9 @@ export interface JobFull {
   createdAt: string;       // Java 'Instant' vira 'string' no JSON
   updatedAt: string;       // Java 'Instant' vira 'string' no JSON
   title: string;
-  salary: number | null;     // Java 'Double' (salário pode ser nulo ou 0)
+  salary?: number | null;     // Java 'Double' (salário pode ser nulo ou 0)
+  salaryRangeStart?: number | null; // Java 'Double'
+  salaryRangeEnd?: number | null;   // Java 'Double'
   currency: Currency;        // 'CurrencyResponse'
   description: string;
   status: JobStatus;         // 'JobOpeningStatusEnum'

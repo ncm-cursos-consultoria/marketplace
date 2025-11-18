@@ -13,7 +13,9 @@ export type ApiJob = {
   createdAt: string;
   updatedAt: string;
   title: string;
-  salary: number;
+  salary?: number | null;
+  salaryRangeStart?: number | null; // Java 'Double'
+  salaryRangeEnd?: number | null; 
   currency: ApiCurrency;
   description: string;
   status: "ACTIVE" | "PAUSED" | "CLOSED" | string;

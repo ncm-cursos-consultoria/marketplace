@@ -5,9 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getApplicationStatusStyle, type ApiJob } from "@/service/job/get-all-jobs";
 import { affinityClass } from "@/utils/affinity-class";
+import { formatMoney } from "@/utils/format-money";
 import { htmlToText } from "@/utils/htmlformat";
 import { MapPin, Briefcase, Clock, Zap } from "lucide-react";
 import Link from "next/link";
+import { useMemo } from "react";
 import { toast } from "sonner";
 
 type ApiCurrency = {
@@ -46,8 +48,35 @@ function JobCardItem({
   job: ApiJob;
   onApply?: (job: ApiJob) => void;
 }) {
-  const money = formatMoney(job.salary, job.currency);
-  const salaryLabel = money ?? "a combinar";
+  const salaryLabel = useMemo(() => {
+    const { salary, salaryRangeStart, salaryRangeEnd, currency } = job;
+    
+    // Verificamos se os valores são números válidos (>= 0)
+    // Usamos '!= null' para permitir o valor '0'
+    const startIsValid = salaryRangeStart != null && salaryRangeStart >= 0;
+    const endIsValid = salaryRangeEnd != null && salaryRangeEnd > 0;
+    const fixedIsValid = salary != null && salary > 0;
+
+    // 1. Tenta a Faixa Completa (Ex: R$ 0 - R$ 13.000)
+    //    Verifica se o 'end' é maior que o 'start'
+    if (startIsValid && endIsValid && salaryRangeEnd > salaryRangeStart) {
+      return `${formatMoney(salaryRangeStart, currency)} - ${formatMoney(salaryRangeEnd, currency)}`;
+    }
+    
+    // 2. Tenta "A partir de" (Ex: A partir de R$ 11.000)
+    //    (Também trata o caso de 'A partir de R$ 0')
+    if (startIsValid) {
+      return `A partir de ${formatMoney(salaryRangeStart, currency)}`;
+    }
+    
+    // 3. Tenta Salário Fixo (Ex: R$ 13.000)
+    if (fixedIsValid) {
+      return formatMoney(salary, currency);
+    }
+
+    // 4. Fallback
+    return "a combinar";
+  }, [job.salary, job.salaryRangeStart, job.salaryRangeEnd, job.currency]);
   const workLabel = workModelLabel(job.workModel);
   const statusBadge = statusBadgeView(job.status);
   const updatedAt = safeFormatDate(job.updatedAt);
@@ -130,32 +159,32 @@ function JobCardItem({
   );
 }
 
-function formatMoney(
-  amount?: number,
-  currency?: ApiCurrency
-): string | undefined {
-  // Sem salário (null/undefined/NaN) ou sem moeda -> sem valor
-  if (amount == null || Number.isNaN(Number(amount)) || !currency?.code) {
-    return undefined;
-  }
+// function formatMoney(
+//   amount?: number,
+//   currency?: ApiCurrency
+// ): string | undefined {
+//   // Sem salário (null/undefined/NaN) ou sem moeda -> sem valor
+//   if (amount == null || Number.isNaN(Number(amount)) || !currency?.code) {
+//     return undefined;
+//   }
 
-  // Se quiser tratar 0 ou negativo como "sem salário", descomente:
-  // if (amount <= 0) return undefined;
+//   // Se quiser tratar 0 ou negativo como "sem salário", descomente:
+//   // if (amount <= 0) return undefined;
 
-  try {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: currency.code,
-      currencyDisplay: "symbol",
-      minimumFractionDigits: 2,
-    }).format(amount);
-  } catch {
-    // Fallback simples; se não tiver símbolo, considera "sem salário"
-    return currency?.symbol
-      ? `${currency.symbol} ${Number(amount).toFixed(2)}`
-      : undefined;
-  }
-}
+//   try {
+//     return new Intl.NumberFormat("pt-BR", {
+//       style: "currency",
+//       currency: currency.code,
+//       currencyDisplay: "symbol",
+//       minimumFractionDigits: 2,
+//     }).format(amount);
+//   } catch {
+//     // Fallback simples; se não tiver símbolo, considera "sem salário"
+//     return currency?.symbol
+//       ? `${currency.symbol} ${Number(amount).toFixed(2)}`
+//       : undefined;
+//   }
+// }
 
 function workModelLabel(w: ApiJob["workModel"]) {
   switch (w) {
@@ -191,12 +220,17 @@ function statusBadgeView(status: ApiJob["status"]) {
   );
 }
 
+// CÓDIGO CORRIGIDO
 function safeFormatDate(iso?: string) {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return "—";
-  return d.toLocaleString("pt-BR", {
-    dateStyle: "short",
-    timeStyle: "short",
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "—";
+
+  // Use toLocaleDateString(), que formata APENAS a data.
+  return d.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "UTC" // Garante que a data não mude por causa do fuso horário
   });
 }

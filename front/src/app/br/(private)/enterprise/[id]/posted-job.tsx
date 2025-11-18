@@ -2,6 +2,8 @@ import { ModalCreateJob } from "@/components/enterprise/modal-create-jobs";
 import { StatusBadge } from "@/components/enterprise/status.badge";
 import { UseUserEnteprise } from "@/context/user-enterprise.context";
 import { getJobByEnterprise } from "@/service/job/get-job-by-enterprise";
+import { JobFull } from "@/service/job/get-job-details";
+import { formatMoney } from "@/utils/format-money";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, Clock, MapPin } from "lucide-react";
 import Link from "next/link";
@@ -18,22 +20,41 @@ export function PostedJobs() {
     enabled: !!enterpriseId,
   });
 
-  const salaryFmt = useMemo(
-    () =>
-      new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-        maximumFractionDigits: 0,
-      }),
-    []
-  );
+  function formatSalary(job: JobFull): string {
+    const { salary, salaryRangeStart, salaryRangeEnd, currency } = job;
 
-  function formatPtBr(iso: string) {
+    // Verificamos se os valores são números válidos (>= 0)
+    const startIsValid = salaryRangeStart != null && salaryRangeStart >= 0;
+    const endIsValid = salaryRangeEnd != null && salaryRangeEnd > 0;
+    const fixedIsValid = salary != null && salary > 0;
+
+    // 1. Tenta a Faixa Completa (Ex: R$ 0 - R$ 13.000)
+    if (startIsValid && endIsValid && salaryRangeEnd > salaryRangeStart) {
+      return `${formatMoney(salaryRangeStart, currency)} - ${formatMoney(salaryRangeEnd, currency)}`;
+    }
+
+    // 2. Tenta "A partir de" (Ex: A partir de R$ 11.000)
+    if (startIsValid) {
+      return `A partir de ${formatMoney(salaryRangeStart, currency)}`;
+    }
+
+    // 3. Tenta Salário Fixo (Ex: R$ 13.000)
+    if (fixedIsValid) {
+      return formatMoney(salary, currency);
+    }
+
+    // 4. Fallback
+    return "A combinar";
+  }
+
+  // 7. FUNÇÃO DE DATA CORRIGIDA
+  function formatPtBr(iso?: string) { // <-- Marcar como opcional
+    if (!iso) return "—"; // Fallback se 'updatedAt' for nulo
     const d = new Date(iso);
     return new Intl.DateTimeFormat("pt-BR", {
       timeZone: "America/Sao_Paulo",
       dateStyle: "short",
-      timeStyle: "short",
+      // timeStyle: "short", // Removido para mostrar só a data
       hour12: false,
     }).format(d);
   }
@@ -76,8 +97,8 @@ export function PostedJobs() {
                       <span className="inline-flex items-center gap-1">
                         <MapPin className="h-4 w-4" /> {v.city} - {v.state}
                       </span>
-                      <span className="inline-flex items-center gap-1">
-                        {salaryFmt.format(v.salary)}
+                      <span className="inline-flex items-center gap-1 font-medium text-gray-700">
+                        {formatSalary(v)} 
                       </span>
                       <StatusBadge value={v.status} />
                       <div>

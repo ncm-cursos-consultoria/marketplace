@@ -34,11 +34,14 @@ function capitalize(str: string): string {
 
 const getTagName = (t?: Tag) => t?.name ?? t?.title ?? t?.label ?? "—";
 
+type SalaryType = "FIXED" | "RANGE" | "COMBINE";
+
 export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receba a prop
   const { userEnterprise } = UseUserEnteprise();
   const [isOpen, setIsOpen] = useState(false);
   const [hardSkillSearch, setHardSkillSearch] = useState("");
   const [softSkillSearch, setSoftSkillSearch] = useState("");
+  const [salaryType, setSalaryType] = useState<SalaryType>("FIXED"); // Padrão é Salário Fixo
   const { error, form, isError, isPending, onSubmit } = useCreateJob(
     (isOpen) => setIsOpen(isOpen),
     onSuccess
@@ -115,6 +118,27 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
   const clearTags = () =>
     setValue("tagIds", [], { shouldValidate: true, shouldDirty: true });
 
+  const handleSalaryTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newType = e.target.value as SalaryType;
+    setSalaryType(newType);
+
+    // Limpa os campos do formulário que NÃO serão usados
+    // para garantir que o backend receba 'null'
+    if (newType === 'FIXED') {
+      // Limpa os campos de faixa
+      setValue('salaryRangeStart', undefined);
+      setValue('salaryRangeEnd', undefined);
+    } else if (newType === 'RANGE') {
+      // Limpa o salário fixo
+      setValue('salary', undefined);
+    } else { // 'COMBINE'
+      // Limpa todos os campos de salário
+      setValue('salary', undefined);
+      setValue('salaryRangeStart', undefined);
+      setValue('salaryRangeEnd', undefined);
+    }
+  };
+
   return (
     <div className="flex items-center gap-4">
       {isUserLoaded && !canCreate && (
@@ -123,15 +147,28 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
         </p>
       )}
       <Modal
-        className="p-2 bg-blue-600 text-white rounded-md w-[160px] font-medium cursor-pointer hover:bg-blue-700 transition disabled:bg-gray-400 disabled:opacity-70 disabled:cursor-not-allowed" 
+        className="p-2 bg-blue-600 text-white rounded-md w-[160px] font-medium cursor-pointer hover:bg-blue-700 transition disabled:bg-gray-400 disabled:opacity-70 disabled:cursor-not-allowed"
         headerTitle="Crie uma nova vaga"
         title="Nova Vaga"
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         disabled={!canCreate}
+        footer={
+          <Button
+            // Damos ao botão um 'form' ID e ao formulário o mesmo 'id'
+            form="create-job-form"
+            className="bg-blue-600 hover:bg-blue-700"
+            type="submit" // O 'type' submit funciona fora do form por causa do 'form' ID
+            disabled={isPending}
+          >
+            {isPending ? "Criando..." : "Criar vaga"}
+          </Button>
+        }
       >
         <form
-          className="flex flex-col gap-4 overflow-auto h-[70vh] p-2"
+          id="create-job-form"
+          // Adicione padding ao formulário (ex: p-6)
+          className="flex flex-col gap-6 p-6" // Removido 'overflow-auto'
           onSubmit={handleSubmit(onSubmit)}
         >
           {isError && (
@@ -140,8 +177,11 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1">
+          {/* --- 5. CAMPOS REORGANIZADOS EM SEÇÕES --- */}
+
+          {/* --- SEÇÃO 1: INFORMAÇÕES PRINCIPAIS --- */}
+          <fieldset className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1 md:col-span-2"> {/* Título ocupa 2 colunas */}
               <Label>Título da vaga</Label>
               <Input
                 placeholder="Ex.: Desenvolvedor(a) Front-end Pleno"
@@ -149,13 +189,13 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
                 {...register("title")}
                 aria-invalid={!!errors.title}
               />
-              {errors.title && (
-                <span className="text-sm text-red-600">
-                  {errors.title.message as string}
-                </span>
-              )}
+              {errors.title && (<span className="text-sm text-red-600">{errors.title.message as string}</span>)}
             </div>
+          </fieldset>
 
+          {/* --- SEÇÃO 2: LOCALIZAÇÃO E MODELO --- */}
+          <fieldset className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <legend className="text-sm font-medium text-neutral-600 mb-2">Localização e Modelo</legend>
             <div className="flex flex-col gap-1">
               <Label>Modelo de trabalho</Label>
               <select
@@ -164,37 +204,29 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
                 defaultValue=""
                 aria-invalid={!!errors.workModel}
               >
-                <option value="" disabled>
-                  Selecione uma opção
-                </option>
+                <option value="" disabled>Selecione uma opção</option>
                 <option value="HYBRID">Híbrido</option>
                 <option value="ON_SITE">Presencial</option>
                 <option value="REMOTE">Home Office</option>
               </select>
-              {errors.workModel && (
-                <span className="text-sm text-red-600">
-                  {errors.workModel.message as string}
-                </span>
-              )}
+              {errors.workModel && (<span className="text-sm text-red-600">{errors.workModel.message as string}</span>)}
             </div>
-
             <div className="flex flex-col gap-1">
               <Label>País</Label>
               <select
-                className="border border-neutral-400 p-1 rounded-md"
+                className="border border-neutral-400 p-2 rounded-md" // Aumentei o padding
                 {...register("country")}
-                defaultValue="BR"
+                defaultValue="Brasil" // Mudei para "Brasil"
                 aria-invalid={!!errors.country}
               >
                 <option value="" disabled>Selecione um país</option>
                 {allCountries.map((country) => (
                   <option key={country.name} value={country.name}>
-                    {country.name} - {country.code}
+                    {country.name}
                   </option>
                 ))}
               </select>
             </div>
-
             <div className="flex flex-col gap-1">
               <Label>Estado</Label>
               <Input
@@ -203,14 +235,9 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
                 {...register("state")}
                 aria-invalid={!!errors.state}
               />
-              {errors.state && (
-                <span className="text-sm text-red-600">
-                  {errors.state.message as string}
-                </span>
-              )}
+              {errors.state && (<span className="text-sm text-red-600">{errors.state.message as string}</span>)}
             </div>
-
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 md:col-span-2"> {/* Cidade ocupa 2 colunas */}
               <Label>Cidade</Label>
               <Input
                 placeholder="Ex.: Campinas"
@@ -218,58 +245,32 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
                 {...register("city")}
                 aria-invalid={!!errors.city}
               />
-              {errors.city && (
-                <span className="text-sm text-red-600">
-                  {errors.city.message as string}
-                </span>
-              )}
+              {errors.city && (<span className="text-sm text-red-600">{errors.city.message as string}</span>)}
             </div>
+          </fieldset>
 
-            <div className="flex flex-col gap-1">
-              <Label>Moeda</Label>
+          {/* --- SEÇÃO 3: CONTRATO E CARGA HORÁRIA --- */}
+          <fieldset className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <legend className="text-sm font-medium text-neutral-600 mb-2">Contrato e Horário</legend>
+            <div className="flex flex-col gap-1 md:col-span-2">
+              <Label>Tipo de contrato</Label>
               <select
-                {...register("currencyCode")}
-                className="border border-neutral-300 rounded-md p-1"
-                defaultValue="BRL" // 3. Define BRL como padrão
-                aria-invalid={!!errors.currencyCode}
+                {...register("contractType")}
+                className="border border-neutral-300 w-full p-2 rounded-md bg-white"
+                defaultValue=""
+                aria-invalid={!!errors.contractType}
               >
-                <option value="" disabled>Selecione a moeda</option>
-
-                {/* 4. GERE AS OPÇÕES DINAMICAMENTE */}
-                {allCurrencies.map((currency) => (
-                  <option key={currency.code} value={currency.code}>
-                    {currency.code} - {currency.currency}
-                  </option>
-                ))}
+                <option value="" disabled>Selecione o contrato</option>
+                <option value="CLT">CLT (Efetivo)</option>
+                <option value="PJ">Pessoa Jurídica (PJ)</option>
+                <option value="FIXED_TERM">Prazo Determinado (Temporário)</option>
+                <option value="INTERNSHIP">Estágio</option>
+                <option value="COOPERATIVE">Cooperado</option>
+                <option value="OTHER">Outro</option>
               </select>
-              {errors.currencyCode && (
-                <span className="text-sm text-red-600">
-                  {errors.currencyCode.message as string}
-                </span>
-              )}
+              {errors.contractType && (<span className="text-sm text-red-600">{errors.contractType.message as string}</span>)}
             </div>
-
-            <div className="flex flex-col gap-1">
-              <Label>Salário</Label>
-              <div className="relative">
-                <Input
-                  type="number"
-                  step="0.01"
-                  min={0}
-                  placeholder="Ex.: 5000.00"
-                  className="border-neutral-300 pl-8"
-                  {...register("salary", { valueAsNumber: true })}
-                  aria-invalid={!!errors.salary}
-                />
-              </div>
-              {errors.salary && (
-                <span className="text-sm text-red-600">
-                  {errors.salary.message as string}
-                </span>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 md:col-span-2">
               <Label>Período de trabalho</Label>
               <select
                 {...register("workPeriod")}
@@ -286,37 +287,9 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
                 <option value="NIGHT_SHIFT">Noturno</option>
                 <option value="TO_BE_DEFINED">A Combinar</option>
               </select>
-              {errors.workPeriod && (
-                <span className="text-sm text-red-600">
-                  {errors.workPeriod.message as string}
-                </span>
-              )}
+              {errors.workPeriod && (<span className="text-sm text-red-600">{errors.workPeriod.message as string}</span>)}
             </div>
-
-            <div className="flex flex-col gap-1">
-              <Label>Tipo de contrato</Label>
-              <select
-                {...register("contractType")}
-                className="border border-neutral-300 w-full p-2 rounded-md bg-white"
-                defaultValue=""
-                aria-invalid={!!errors.contractType}
-              >
-                <option value="" disabled>Selecione o contrato</option>
-                <option value="CLT">CLT (Efetivo)</option>
-                <option value="PJ">Pessoa Jurídica (PJ)</option>
-                <option value="FIXED_TERM">Prazo Determinado (Temporário)</option>
-                <option value="INTERNSHIP">Estágio</option>
-                <option value="COOPERATIVE">Cooperado</option>
-                <option value="OTHER">Outro</option>
-              </select>
-              {errors.contractType && (
-                <span className="text-sm text-red-600">
-                  {errors.contractType.message as string}
-                </span>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 md:col-span-2">
               <Label>Início do expediente</Label>
               <Input
                 type="time"
@@ -324,13 +297,9 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
                 {...register("workStartTime")}
                 aria-invalid={!!errors.workStartTime}
               />
-              {errors.workStartTime && (
-                <span className="text-sm text-red-600">
-                  {errors.workStartTime.message as string}
-                </span>
-              )}
+              {errors.workStartTime && (<span className="text-sm text-red-600">{errors.workStartTime.message as string}</span>)}
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 md:col-span-2">
               <Label>Fim do expediente</Label>
               <Input
                 type="time"
@@ -338,92 +307,198 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
                 {...register("workEndTime")}
                 aria-invalid={!!errors.workEndTime}
               />
-              {errors.workEndTime && (
-                <span className="text-sm text-red-600">
-                  {errors.workEndTime.message as string}
-                </span>
-              )}
+              {errors.workEndTime && (<span className="text-sm text-red-600">{errors.workEndTime.message as string}</span>)}
             </div>
-          </div>
+          </fieldset>
 
-          <div className="flex flex-col gap-2">
-            <Label>Hard Skills</Label>
-            <div className="relative">
-              <Input
-                placeholder="Pesquisar hard skills..."
-                value={hardSkillSearch}
-                onChange={(e) => setHardSkillSearch(e.target.value)}
-                className="pl-10"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+          {/* --- SEÇÃO 4: REMUNERAÇÃO --- */}
+          <fieldset className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-neutral-200 rounded-lg">
+            <legend className="text-sm font-medium text-neutral-600 mb-2 px-1">Remuneração</legend>
+            <div className="flex flex-col gap-1 md:col-span-2">
+              <Label>Formato</Label>
+              <select
+                value={salaryType}
+                onChange={handleSalaryTypeChange}
+                className="border border-neutral-300 w-full p-2 rounded-md bg-white"
+              >
+                <option value="FIXED">Salário Fixo</option>
+                <option value="RANGE">Faixa Salarial</option>
+                <option value="COMBINE">A combinar</option>
+              </select>
             </div>
 
-            {/* Substituído <select> por <ScrollArea> */}
-            <ScrollArea className="border border-neutral-300 rounded-md p-3 bg-white h-32">
-              {loadingTags && (
-                <div className="flex items-center justify-center h-full">
-                  <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
-                </div>
-              )}
-              {!loadingTags && hardSkills.length === 0 && (
-                <p className="text-sm text-neutral-500 text-center py-4">
-                  {hardSkillSearch ? 'Nenhum resultado' : 'Nenhuma tag'}
-                </p>
-              )}
-              <div className="space-y-3">
-                {hardSkills.map((t) => (
-                  <div key={t.id} className="flex items-center justify-between">
-                    <Label htmlFor={`hard-${t.id}`} className="font-normal cursor-pointer">{getTagName(t)}</Label>
-                    <Checkbox
-                      id={`hard-${t.id}`}
-                      checked={selectedIdSet.has(t.id)}
-                      onCheckedChange={(isChecked) => handleTagChange(t.id, isChecked as boolean)}
-                    />
-                  </div>
-                ))}
+            {/* Renderização Condicional de Salário (como antes) */}
+            {salaryType !== 'COMBINE' && (
+              <div className="flex flex-col gap-1 md:col-span-2">
+                <Label>Moeda</Label>
+                <select
+                  {...register("currencyCode")}
+                  className="border border-neutral-300 rounded-md p-2" // Aumentei padding
+                  defaultValue="BRL"
+                  aria-invalid={!!errors.currencyCode}
+                >
+                  {allCurrencies.map((currency) => (
+                    <option key={currency.code} value={currency.code}>
+                      {currency.code} - {currency.currency}
+                    </option>
+                  ))}
+                </select>
+                {errors.currencyCode && (<span className="text-sm text-red-600">{errors.currencyCode.message as string}</span>)}
               </div>
-            </ScrollArea>
-          </div>
+            )}
 
-          {/* --- 8. BLOCO DE SOFT SKILLS (ATUALIZADO PARA CHECKBOX) --- */}
-          <div className="flex flex-col gap-2">
-            <Label>Soft Skills</Label>
-            <div className="relative">
-              <Input
-                placeholder="Pesquisar soft skills..."
-                value={softSkillSearch}
-                onChange={(e) => setSoftSkillSearch(e.target.value)}
-                className="pl-10"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+            {salaryType === 'FIXED' && (
+              <div className="flex flex-col gap-1 md:col-span-2"> {/* Fixo ocupa 2 colunas */}
+                <Label>Salário Fixo</Label>
+                <Input
+                  type="number" step="0.01" min={0}
+                  placeholder="Ex.: 5000.00"
+                  className="border-neutral-300"
+                  {...register("salary", {
+                    valueAsNumber: true,
+                    required: salaryType === 'FIXED' ? 'Salário é obrigatório' : false
+                  })}
+                  aria-invalid={!!errors.salary}
+                />
+                {errors.salary && (<span className="text-sm text-red-600">{errors.salary.message as string}</span>)}
+              </div>
+            )}
+
+            {salaryType === 'RANGE' && (
+              <>
+                <div className="flex flex-col gap-1">
+                  <Label>Salário Inicial</Label>
+                  <Input
+                    type="number" step="0.01" min={0}
+                    placeholder="Ex.: 4000.00"
+                    className="border-neutral-300"
+                    {...register("salaryRangeStart", {
+                      valueAsNumber: true,
+                      required: salaryType === 'RANGE' ? 'Salário inicial é obrigatório' : false
+                    })}
+                    aria-invalid={!!errors.salaryRangeStart}
+                  />
+                  {errors.salaryRangeStart && (<span className="text-sm text-red-600">{errors.salaryRangeStart.message as string}</span>)}
+                </div>
+                <div className="flex flex-col gap-1">
+                  <Label>Salário Final</Label>
+                  <Input
+                    type="number" step="0.01" min={0}
+                    placeholder="Ex.: 6000.00"
+                    className="border-neutral-300"
+                    {...register("salaryRangeEnd", {
+                      valueAsNumber: true,
+                      required: salaryType === 'RANGE' ? 'Salário final é obrigatório' : false
+                    })}
+                    aria-invalid={!!errors.salaryRangeEnd}
+                  />
+                  {errors.salaryRangeEnd && (<span className="text-sm text-red-600">{errors.salaryRangeEnd.message as string}</span>)}
+                </div>
+              </>
+            )}
+
+            {salaryType === 'COMBINE' && (
+              <p className="text-sm text-neutral-500 md:col-span-2">
+                O salário será exibido como "A combinar".
+              </p>
+            )}
+          </fieldset>
+
+          {/* --- SEÇÃO 5: HABILIDADES --- */}
+          <fieldset className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            {/* Coluna 1: Hard Skills */}
+            <div className="flex flex-col gap-2">
+              <Label>Hard Skills</Label>
+              <div className="relative">
+                <Input
+                  placeholder="Pesquisar..."
+                  value={hardSkillSearch}
+                  onChange={(e) => setHardSkillSearch(e.target.value)}
+                  className="pl-9 h-9 text-sm"
+                />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+              </div>
+
+              {/* CORREÇÃO: Container relativo com altura fixa protege o layout */}
+              <div className="h-32 w-full relative">
+                <ScrollArea className="h-full w-full border border-neutral-300 rounded-md bg-white">
+                  <div className="p-2">
+                    {loadingTags && (
+                      <div className="flex items-center justify-center py-4">
+                        <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
+                      </div>
+                    )}
+                    {!loadingTags && hardSkills.length === 0 && (
+                      <p className="text-xs text-neutral-500 text-center py-2">
+                        {hardSkillSearch ? 'Nada encontrado' : 'Vazio'}
+                      </p>
+                    )}
+                    <div className="space-y-2">
+                      {hardSkills.map((t) => (
+                        <div key={t.id} className="flex items-center justify-between">
+                          <Label htmlFor={`hard-${t.id}`} className="text-sm font-normal cursor-pointer truncate pr-2">
+                            {getTagName(t)}
+                          </Label>
+                          <Checkbox
+                            id={`hard-${t.id}`}
+                            checked={selectedIdSet.has(t.id)}
+                            onCheckedChange={(isChecked) => handleTagChange(t.id, isChecked as boolean)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </ScrollArea>
+              </div>
             </div>
 
-            {/* Substituído <select> por <ScrollArea> */}
-            <ScrollArea className="border border-neutral-300 rounded-md p-3 bg-white h-32">
-              {loadingTags && (
-                <div className="flex items-center justify-center h-full">
-                  <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
-                </div>
-              )}
-              {!loadingTags && softSkills.length === 0 && (
-                <p className="text-sm text-neutral-500 text-center py-4">
-                  {softSkillSearch ? 'Nenhum resultado' : 'Nenhuma tag'}
-                </p>
-              )}
-              <div className="space-y-3">
-                {softSkills.map((t) => (
-                  <div key={t.id} className="flex items-center justify-between">
-                    <Label htmlFor={`soft-${t.id}`} className="font-normal cursor-pointer">{getTagName(t)}</Label>
-                    <Checkbox
-                      id={`soft-${t.id}`}
-                      checked={selectedIdSet.has(t.id)}
-                      onCheckedChange={(isChecked) => handleTagChange(t.id, isChecked as boolean)}
-                    />
-                  </div>
-                ))}
+            {/* Coluna 2: Soft Skills */}
+            <div className="flex flex-col gap-2">
+              <Label>Soft Skills</Label>
+              <div className="relative">
+                <Input
+                  placeholder="Pesquisar..."
+                  value={softSkillSearch}
+                  onChange={(e) => setSoftSkillSearch(e.target.value)}
+                  className="pl-9 h-9 text-sm"
+                />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
               </div>
-            </ScrollArea>
-          </div>
+
+              {/* CORREÇÃO: Container relativo com altura fixa */}
+              <div className="h-32 w-full relative">
+                <ScrollArea className="h-full w-full border border-neutral-300 rounded-md bg-white">
+                  <div className="p-2">
+                    {loadingTags && (
+                      <div className="flex items-center justify-center py-4">
+                        <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
+                      </div>
+                    )}
+                    {!loadingTags && softSkills.length === 0 && (
+                      <p className="text-xs text-neutral-500 text-center py-2">
+                        {softSkillSearch ? 'Nada encontrado' : 'Vazio'}
+                      </p>
+                    )}
+                    <div className="space-y-2">
+                      {softSkills.map((t) => (
+                        <div key={t.id} className="flex items-center justify-between">
+                          <Label htmlFor={`soft-${t.id}`} className="text-sm font-normal cursor-pointer truncate pr-2">
+                            {getTagName(t)}
+                          </Label>
+                          <Checkbox
+                            id={`soft-${t.id}`}
+                            checked={selectedIdSet.has(t.id)}
+                            onCheckedChange={(isChecked) => handleTagChange(t.id, isChecked as boolean)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </ScrollArea>
+              </div>
+            </div>
+          </fieldset>
 
           {/* A exibição das "pills" de tags (já funciona) */}
           {selectedTagIds.length > 0 && (
@@ -468,13 +543,13 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
             </span>
           )}
 
-          <Button
+          {/* <Button
             className="bg-blue-600 hover:bg-blue-700 cursor-pointer rounded-md h-10"
             type="submit"
             disabled={isPending}
           >
             {isPending ? "Criando..." : "Criar vaga"}
-          </Button>
+          </Button> */}
         </form>
       </Modal>
 

@@ -1,4 +1,4 @@
-export function formatMoney(amount?: number, currency?: { code?: string; symbol?: string }) {
+export function formatMoney(amount?: number | null, currency?: { code?: string; symbol?: string }) {
   if (typeof amount !== "number") return "—";
   const code = currency?.code || "BRL";
   try {

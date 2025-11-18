@@ -18,11 +18,20 @@ export const createJobFormSchema = z.object({
   ),
   workStartTime: z.string().optional(), // "09:00"
   workEndTime: z.string().optional(),   // "18:00"
-  salary: z.coerce
-    .number() // Converte o valor para número
-    .min(0, "Salário não pode ser negativo") // Valida o número
-    .default(0),
   tagIds: z.array(z.string()),
-});
+  salary: z.number().optional().nullable(),
+  salaryRangeStart: z.number().optional().nullable(),
+  salaryRangeEnd: z.number().optional().nullable(),
+})
+  .refine(data => {
+    // Se for "RANGE", 'start' e 'end' são obrigatórios
+    if (data.salary == null && (data.salaryRangeStart != null || data.salaryRangeEnd != null)) {
+      return data.salaryRangeStart != null && data.salaryRangeEnd != null;
+    }
+    return true;
+  }, {
+    message: "Salário inicial e final são obrigatórios para a faixa salarial.",
+    path: ["salaryRangeEnd"], // Onde mostrar o erro
+  });
 
 export type CreateJobFormSchema = z.infer<typeof createJobFormSchema>;
