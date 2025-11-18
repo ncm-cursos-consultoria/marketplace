@@ -1,5 +1,6 @@
 package com.ncm.marketplace.usecases.interfaces.catalog;
 
+import com.ncm.marketplace.domains.enums.CourseStatusEnum;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CourseSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.UpdateCourseRequest;
@@ -17,4 +18,5 @@ public interface CrudCourse {
     void init(String moduleId);
     List<CourseResponse> findAllByModuleId(String id);
     CourseResponse upload(String id, MultipartFile file);
+    void changeCourseUserStatus(String id, String userId, CourseStatusEnum status);
 }

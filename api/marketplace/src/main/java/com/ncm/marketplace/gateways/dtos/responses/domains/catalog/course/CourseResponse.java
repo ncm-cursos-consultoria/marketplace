@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.dtos.responses.domains.catalog.course;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ncm.marketplace.domains.enums.CourseStatusEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,4 +23,5 @@ public class CourseResponse {
     private Integer order;
     private String moduleId;
     private String videoUrl;
+    private CourseStatusEnum status;
 }
