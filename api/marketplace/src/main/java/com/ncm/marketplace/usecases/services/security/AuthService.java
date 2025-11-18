@@ -104,6 +104,7 @@ public class AuthService {
         String discId = null;
         List<TagResponse> tags = null;
         String plan = null;
+        Boolean canViewCourses = null;
         Boolean canCreateJobOpenings = null;
         Boolean canViewTests = null;
         Boolean canViewCurriculumVitaeBase = null;
@@ -142,6 +143,8 @@ public class AuthService {
             cpf = userCandidate.getCpf();
             tags = TagMapper.toResponseFromUserCandidate(userCandidate.getTagUserCandidates());
             discTag = userCandidate.getDiscTag();
+            canViewCourses = userCandidate.getCanViewCourses();
+            plan = userCandidate.getPlan();
         } else if (user instanceof UserEnterprise userEnterprise) {
             if (userEnterprise.getEnterprise() != null) {
                 enterpriseId = userEnterprise.getEnterprise().getId();
@@ -176,6 +179,7 @@ public class AuthService {
                 .discId(discId)
                 .tags(tags)
                 .plan(plan)
+                .canViewCourses(canViewCourses)
                 .canCreateJobOpenings(canCreateJobOpenings)
                 .canViewTests(canViewTests)
                 .canViewCurriculumVitaeBase(canViewCurriculumVitaeBase)
