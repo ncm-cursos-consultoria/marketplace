@@ -17,6 +17,10 @@ import java.time.Instant;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "user_candidate_course",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_user_course", columnNames = {"userId", "courseId"})
+        })
 public class UserCandidateCourse {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

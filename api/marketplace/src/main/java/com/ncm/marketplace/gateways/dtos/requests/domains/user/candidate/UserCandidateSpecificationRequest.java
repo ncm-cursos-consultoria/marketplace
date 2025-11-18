@@ -9,4 +9,6 @@ import java.util.List;
 @Setter
 public class UserCandidateSpecificationRequest {
     private List<String> jobOpeningIds;
+    private String searchQuery;
+    private List<String> tagIds;
 }

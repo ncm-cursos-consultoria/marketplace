@@ -15,6 +15,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -98,6 +102,19 @@ public class UserCandidateControllerImpl implements UserCandidateController {
     @Override
     public ResponseEntity<List<UserCandidateResponse>> findAll(UserCandidateSpecificationRequest specificationRequest) {
         return ResponseEntity.ok(crudUserCandidate.findAll(specificationRequest));
+    }
+
+    @GetMapping("/page")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Find all candidate users in a pageable")
+    @Override
+    public ResponseEntity<Page<UserCandidateResponse>> findAllPageable(UserCandidateSpecificationRequest specificationRequest,
+                                                                       @RequestParam(required = false, defaultValue = "0") int page,
+                                                                       @RequestParam(required = false, defaultValue = "10") int size,
+                                                                       @RequestParam(required = false, defaultValue = "createdAt") String sort,
+                                                                       @RequestParam(required = false, defaultValue = "DESC") Sort.Direction direction) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction,sort));
+        return ResponseEntity.ok(crudUserCandidate.findAll(specificationRequest, pageable));
     }
 
     @GetMapping("/{id}/download-full-report")

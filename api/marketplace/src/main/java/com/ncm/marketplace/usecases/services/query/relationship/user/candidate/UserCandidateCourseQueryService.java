@@ -6,6 +6,7 @@ import com.ncm.marketplace.gateways.repositories.domains.relationship.user.candi
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,5 +29,9 @@ public class UserCandidateCourseQueryService {
 
     public Page<UserCandidateCourse> findAll(Pageable pageable) {
         return userCandidateCourseRepository.findAll(pageable);
+    }
+
+    public List<UserCandidateCourse> findAll(Specification<UserCandidateCourse> specification) {
+        return userCandidateCourseRepository.findAll(specification);
     }
 }

@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.controller.impl.domains.catalog;
 
+import com.ncm.marketplace.domains.enums.CourseStatusEnum;
 import com.ncm.marketplace.gateways.controller.interfaces.domains.catalog.CourseController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CourseSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
@@ -73,5 +74,16 @@ public class CourseControllerImpl implements CourseController {
     @Override
     public ResponseEntity<List<CourseResponse>> findAllByModuleId(@PathVariable String id) {
         return ResponseEntity.ok(crudCourse.findAllByModuleId(id));
+    }
+
+    @PatchMapping("/{id}/{userId}/status")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Change course status for an user")
+    @Override
+    public ResponseEntity<Void> changeCourseUserStatus(@PathVariable String id,
+                                             @PathVariable String userId,
+                                             @RequestParam CourseStatusEnum status) {
+        crudCourse.changeCourseUserStatus(id,userId,status);
+        return ResponseEntity.noContent().build();
     }
 }

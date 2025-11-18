@@ -41,6 +41,8 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -152,6 +154,12 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
             }
         }
         return response;
+    }
+
+    @Override
+    public Page<UserCandidateResponse> findAll(UserCandidateSpecificationRequest specificationRequest, Pageable pageable) {
+        Specification<UserCandidate> specification = userCandidateSpecification.toSpecification(specificationRequest);
+        return toResponse(userCandidateQueryService.findAll(specification, pageable));
     }
 
     @Transactional

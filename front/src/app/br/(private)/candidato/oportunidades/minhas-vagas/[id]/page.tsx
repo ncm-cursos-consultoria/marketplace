@@ -23,7 +23,9 @@ type JobOpening = {
   createdAt: string;
   updatedAt: string;
   title: string;
-  salary: number;
+  salary?: number | null;
+  salaryRangeStart?: number | null; // Java 'Double'
+  salaryRangeEnd?: number | null;
   currency: Currency;
   status: "ACTIVE" | "PAUSED" | "CLOSED" | string;
   country: string;
@@ -45,7 +47,7 @@ const workModelLabel: Record<string, string> = {
   REMOTE: "Remoto",
 };
 
-function moneyFmt(curr?: Currency, value?: number) {
+function moneyFmt(curr?: Currency, value?: number | null) {
   if (value == null) return "—";
   try {
     return new Intl.NumberFormat("pt-BR", {
@@ -58,18 +60,17 @@ function moneyFmt(curr?: Currency, value?: number) {
   }
 }
 
+// CÓDIGO CORRIGIDO
 function dateTimePtBr(iso: string) {
   const d = new Date(iso);
   return new Intl.DateTimeFormat("pt-BR", {
     timeZone: "America/Sao_Paulo",
-    dateStyle: "short",
-    timeStyle: "short",
-    hour12: false,
+    dateStyle: "short", // <-- Mantenha apenas o dateStyle
   }).format(d);
 }
 
 export default function MinhasVagasPage() {
-  
+
   const { userCandidate } = UseUserCandidate();
   const userId = userCandidate?.id; // <- ajuste se seu contexto expõe outro campo
 

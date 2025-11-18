@@ -8,12 +8,12 @@ import { UseUserEnteprise } from "@/context/user-enterprise.context";
 import { useQuery } from "@tanstack/react-query";
 import { getEnterprise } from "@/service/enterprise/get-enterprise";
 import { UserEnterpriseProps } from "@/utils/interfaces";
-import { LogOut, Loader2, Home, Building2, Briefcase, NotebookPenIcon } from "lucide-react";
+import { LogOut, Loader2, Home, Building2, Briefcase, NotebookPenIcon, Users } from "lucide-react";
 import { NotificationBell } from "./enterprise-notification-bell";
 
 type NavItem = {
   label: string;
-  slug: "home" | "profile" | "vaga" | "module";
+  slug: "home" | "profile" | "vaga" | "module" | "talent-base";
   icon: React.ReactNode;
 };
 
@@ -21,6 +21,7 @@ const NAV: NavItem[] = [
   { label: "Início", slug: "home", icon: <Home className="h-5 w-5" /> },
   { label: "Minha Empresa", slug: "profile", icon: <Building2 className="h-5 w-5" /> },
   { label: "Minhas Vagas", slug: "vaga", icon: <Briefcase className="h-5 w-5" /> },
+  { label: "Banco de Talentos", slug: "talent-base", icon: <Users className="h-5 w-5" /> },
   { label: "Portfólio de Cursos", slug: "module", icon: <NotebookPenIcon className="h-5 w-5" /> },
 ];
 

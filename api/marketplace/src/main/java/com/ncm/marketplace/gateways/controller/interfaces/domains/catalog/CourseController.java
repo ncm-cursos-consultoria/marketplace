@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.controller.interfaces.domains.catalog;
 
+import com.ncm.marketplace.domains.enums.CourseStatusEnum;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CourseSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.UpdateCourseRequest;
@@ -17,4 +18,5 @@ public interface CourseController {
     ResponseEntity<CourseResponse> findById(String id);
     ResponseEntity<List<CourseResponse>> findAll(CourseSpecificationRequest specificationRequest);
     ResponseEntity<List<CourseResponse>> findAllByModuleId(String id);
+    ResponseEntity<Void> changeCourseUserStatus(String id, String userId, CourseStatusEnum status);
 }

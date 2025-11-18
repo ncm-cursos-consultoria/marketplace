@@ -32,6 +32,10 @@ public class UserCandidateQueryService {
         return userCandidateRepository.findAll(pageable);
     }
 
+    public Page<UserCandidate> findAll(Specification<UserCandidate> specification, Pageable pageable) {
+        return userCandidateRepository.findAll(specification, pageable);
+    }
+
     public Boolean existsByCpf(String cpf) {
         return userCandidateRepository.existsByCpf(cpf);
     }

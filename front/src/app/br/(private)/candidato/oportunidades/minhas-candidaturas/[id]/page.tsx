@@ -30,7 +30,7 @@ const workModelLabel: Record<string, string> = {
   REMOTE: "Remoto",
 };
 
-function moneyFmt(curr?: Currency, value?: number) {
+function moneyFmt(curr?: Currency, value?: number | null) {
   if (value == null) return "—";
   try {
     return new Intl.NumberFormat("pt-BR", {
@@ -43,13 +43,12 @@ function moneyFmt(curr?: Currency, value?: number) {
   }
 }
 
+// CÓDIGO CORRIGIDO
 function dateTimePtBr(iso: string) {
   const d = new Date(iso);
   return new Intl.DateTimeFormat("pt-BR", {
     timeZone: "America/Sao_Paulo",
-    dateStyle: "short",
-    timeStyle: "short",
-    hour12: false,
+    dateStyle: "short", // <-- Mantenha apenas o dateStyle
   }).format(d);
 }
 

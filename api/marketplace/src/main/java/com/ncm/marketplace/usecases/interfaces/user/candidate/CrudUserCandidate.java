@@ -7,6 +7,8 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateU
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.CreateDiscRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -16,6 +18,7 @@ public interface CrudUserCandidate {
     UserCandidateResponse update(String id, UpdateUserCandidateRequest request);
     UserCandidateResponse findById(String id);
     List<UserCandidateResponse> findAll(UserCandidateSpecificationRequest specificationRequest);
+    Page<UserCandidateResponse> findAll(UserCandidateSpecificationRequest specificationRequest, Pageable pageable);
     String init();
     UserCandidateResponse addOrUpdateAddress(String id, CreateAddressRequest request);
     UserCandidateResponse addDisc(String id, CreateDiscRequest request);
