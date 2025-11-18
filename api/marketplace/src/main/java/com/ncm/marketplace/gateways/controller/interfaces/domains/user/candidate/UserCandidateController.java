@@ -7,6 +7,8 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateU
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.CreateDiscRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -20,5 +22,6 @@ public interface UserCandidateController {
     ResponseEntity<UserCandidateResponse> addDisc(String id, CreateDiscRequest request);
     ResponseEntity<UserCandidateResponse> findById(String id);
     ResponseEntity<List<UserCandidateResponse>> findAll(UserCandidateSpecificationRequest specificationRequest);
+    ResponseEntity<Page<UserCandidateResponse>> findAllPageable(UserCandidateSpecificationRequest specificationRequest, int page, int size, String sort, Sort.Direction direction);
     ResponseEntity<byte[]> downloadFullReport(String id) throws Exception;
 }
