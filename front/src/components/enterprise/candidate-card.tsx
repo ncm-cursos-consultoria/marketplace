@@ -206,7 +206,7 @@ export function CandidateCard({ candidate, jobTags, canViewTests, jobId }: Candi
 // --- Componentes Internos das Abas ---
 
 // Botão de Aba
-function TabButton({ label, icon: Icon, isActive, onClick }: { label: string; icon: React.ElementType, isActive: boolean; onClick: () => void; }) {
+export function TabButton({ label, icon: Icon, isActive, onClick }: { label: string; icon: React.ElementType, isActive: boolean; onClick: () => void; }) {
   return (
     <button onClick={onClick} className={`flex items-center gap-2 px-3 py-2 text-sm font-medium ${isActive ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}>
       <Icon className="h-4 w-4" />
@@ -238,7 +238,7 @@ function AddressDisplay({ addressId }: { addressId: string | null }) {
   return <InfoItem icon={MapPin} label="Endereço" value={fullAddress} />;
 }
 
-function GeneralInfoTab({ candidate }: { candidate: JobCandidate }) {
+export function GeneralInfoTab({ candidate }: { candidate: JobCandidate }) {
   const fullName = `${candidate.firstName} ${candidate.lastName}`;
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -376,7 +376,7 @@ function InfoItem({ icon: Icon, label, value, simple = false }: { icon: React.El
   );
 }
 
-const discProfileTranslations: Record<string, string> = {
+export const discProfileTranslations: Record<string, string> = {
   DOMINANCE: "Dominante",
   INFLUENCING: "Influente",
   STEADINESS: "Estável",
@@ -400,7 +400,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 /**
  * ABA TOTALMENTE REFEITA: DiscProfileTab
  */
-function DiscProfileTab({ candidate, canViewTests }: { candidate: JobCandidate, canViewTests: boolean }) {
+export function DiscProfileTab({ candidate, canViewTests }: { candidate: JobCandidate, canViewTests: boolean }) {
   // --- 7. VERIFICAÇÃO DE PERMISSÃO ---
   if (!canViewTests) {
     return (
@@ -491,7 +491,7 @@ function DiscProfileTab({ candidate, canViewTests }: { candidate: JobCandidate, 
 }
 
 // Aba do Currículo (PDF)
-function CurriculumVitaeTab({ candidate }: { candidate: JobCandidate }) {
+export function CurriculumVitaeTab({ candidate }: { candidate: JobCandidate }) {
   if (!candidate.curriculumVitaeUrl) {
     return (
       <div className="p-4 text-center border rounded-lg bg-gray-50">

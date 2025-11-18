@@ -14,7 +14,7 @@ export interface GetTagParams {
 
 export type TagType = 'SOFT_SKILL' | 'HARD_SKILL';
 
-export const getAllTags = async (params: GetTagParams): Promise<TagResponse[]> => {
+export const getAllTags = async (params?: GetTagParams): Promise<TagResponse[]> => {
   const { data } = await api.get('/tag', {
     params: params
   });
