@@ -1,16 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
+import YouTube, { YouTubeEvent, YouTubeProps } from "react-youtube"; // Import novo
 import { UseUserCandidate } from "@/context/user-candidate.context";
 import { getCourses } from "@/service/course/get-courses";
+import { changeCourseStatus, userCourseStatus } from "@/service/course/change-status";
 
 type Course = {
   id: string;
   title: string;
   moduleId: string;
   videoUrl: string;
+  status: userCourseStatus;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -18,22 +21,11 @@ type Course = {
 function getYouTubeId(url: string): string | null {
   try {
     const u = new URL(url);
-
-    if (u.hostname.includes("youtu.be")) {
-      return u.pathname.replace("/", "");
-    }
-
+    if (u.hostname.includes("youtu.be")) return u.pathname.replace("/", "");
     if (u.hostname.includes("youtube.com")) {
-      if (u.pathname === "/watch") {
-        return u.searchParams.get("v");
-      }
-      if (u.pathname.startsWith("/embed/")) {
-        return u.pathname.split("/")[2] ?? null;
-      }
-
-      if (u.pathname.startsWith("/shorts/")) {
-        return u.pathname.split("/")[2] ?? null;
-      }
+      if (u.pathname === "/watch") return u.searchParams.get("v");
+      if (u.pathname.startsWith("/embed/")) return u.pathname.split("/")[2] ?? null;
+      if (u.pathname.startsWith("/shorts/")) return u.pathname.split("/")[2] ?? null;
     }
     return null;
   } catch {
@@ -41,35 +33,82 @@ function getYouTubeId(url: string): string | null {
   }
 }
 
-function toEmbedUrl(raw: string): string | null {
-  const id = getYouTubeId(raw);
-  if (!id) return null;
-
-  return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&autoplay=1`;
-}
-
 function toThumbUrl(raw: string): string | null {
   const id = getYouTubeId(raw);
   if (!id) return null;
-
   return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 }
 
+// --- NOVO COMPONENTE LITEYOUTUBE ---
 function LiteYouTube({
   url,
   title,
+  onStartVideo,
+  onFinishVideo,
 }: {
   url: string;
   title: string;
+  onStartVideo: () => void;
+  onFinishVideo: () => void;
 }) {
   const [playing, setPlaying] = useState(false);
-  const embedUrl = toEmbedUrl(url);
+  const [player, setPlayer] = useState<any>(null);
+  const [finished, setFinished] = useState(false); // Evita chamadas duplicadas
+
+  const videoId = getYouTubeId(url);
   const thumbUrl = toThumbUrl(url);
 
-  if (!embedUrl || !thumbUrl) {
+  // Monitora o progresso do vídeo a cada 1 segundo
+  useEffect(() => {
+    if (!player || finished) return;
+
+    const interval = setInterval(async () => {
+      try {
+        // currentTime e duration vêm em segundos
+        const currentTime = await player.getCurrentTime();
+        const duration = await player.getDuration();
+
+        if (duration > 0) {
+          const percentage = (currentTime / duration) * 100;
+          if (percentage >= 95) {
+            onFinishVideo();
+            setFinished(true);
+            clearInterval(interval);
+          }
+        }
+      } catch (e) {
+        // Ignora erros se o player ainda não estiver pronto
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [player, finished, onFinishVideo]);
+
+  const handlePlayClick = () => {
+    setPlaying(true);
+    onStartVideo(); // Marca como ONGOING ao clicar no play
+  };
+
+  const onPlayerReady = (event: YouTubeEvent) => {
+    setPlayer(event.target);
+    // Opcional: Tocar automaticamente ao carregar o componente pesado
+    event.target.playVideo();
+  };
+
+  const opts: YouTubeProps["opts"] = {
+    height: "100%",
+    width: "100%",
+    playerVars: {
+      autoplay: 1,
+      rel: 0,
+      modestbranding: 1,
+    },
+  };
+
+  if (!videoId || !thumbUrl) {
     return (
       <div className="aspect-video w-full grid place-items-center rounded-xl bg-neutral-100 text-neutral-500">
-        URL de vídeo inválida
+        URL inválida
       </div>
     );
   }
@@ -77,17 +116,18 @@ function LiteYouTube({
   return (
     <div className="relative w-full aspect-video overflow-hidden rounded-xl bg-black">
       {playing ? (
-        <iframe
-          className="absolute inset-0 h-full w-full"
-          src={embedUrl}
+        <YouTube
+          videoId={videoId}
           title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
+          opts={opts}
+          onReady={onPlayerReady}
+          className="absolute inset-0 h-full w-full"
+          iframeClassName="h-full w-full"
         />
       ) : (
         <button
           type="button"
-          onClick={() => setPlaying(true)}
+          onClick={handlePlayClick}
           className="absolute inset-0 group"
           aria-label={`Assistir ${title}`}
         >
@@ -111,22 +151,64 @@ function LiteYouTube({
   );
 }
 
-function CourseCard({ course }: { course: Course }) {
+const STATUS_CONFIG: Record<userCourseStatus, { label: string; color: string; bg: string }> = {
+  NOT_STARTED: { label: "Não iniciado", color: "text-gray-700", bg: "bg-gray-100" },
+  ONGOING: { label: "Em andamento", color: "text-blue-700", bg: "bg-blue-50" },
+  FINISHED: { label: "Concluído", color: "text-green-700", bg: "bg-green-50" },
+};
+
+function StatusBadge({ status }: { status?: userCourseStatus }) {
+  const current = status ? STATUS_CONFIG[status] : STATUS_CONFIG["NOT_STARTED"];
+
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-sm">
-      <LiteYouTube url={course.videoUrl} title={course.title} />
-      <div className="flex flex-col gap-2 p-4">
-        <h3 className="line-clamp-2 text-base font-semibold">{course.title}</h3>
-        <div className="text-xs text-neutral-500">
-          {course.createdAt
-            ? new Date(course.createdAt).toLocaleString("pt-BR")
-            : null}
+    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${current.bg} ${current.color} border border-transparent`}>
+      {current.label}
+    </span>
+  );
+}
+
+// --- CARD ATUALIZADO ---
+function CourseCard({
+  course,
+  userId,
+  onUpdateStatus
+}: {
+  course: Course;
+  userId: string;
+  onUpdateStatus: (status: userCourseStatus) => void;
+}) {
+
+  const handleUpdate = (status: userCourseStatus) => {
+    console.log(`Changed course id ${course.id} to status ${status}`);
+    
+    onUpdateStatus(status);
+  };
+
+  return (
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-sm hover:shadow-md transition-shadow">
+      <LiteYouTube
+        url={course.videoUrl}
+        title={course.title}
+        onStartVideo={() => onUpdateStatus("ONGOING")}
+        onFinishVideo={() => onUpdateStatus("FINISHED")}
+      />
+      
+      <div className="flex flex-col flex-1 p-4 gap-3">
+        {/* Título */}
+        <h3 className="line-clamp-2 text-base font-semibold text-neutral-900 leading-tight">
+          {course.title}
+        </h3>
+        
+        {/* Status e Duração */}
+        <div className="flex items-center justify-between mt-auto pt-2">
+          <StatusBadge status={course.status} />
         </div>
         <a
           href={course.videoUrl}
           target="_blank"
           rel="noreferrer"
-          className="mt-1 text-sm text-blue-600 hover:underline"
+          onClick={() => handleUpdate("ONGOING")} // Marca como ONGOING ao clicar no link
+          className="mt-1 text-sm text-blue-600 hover:underline cursor-pointer"
         >
           Abrir no YouTube
         </a>
@@ -136,7 +218,6 @@ function CourseCard({ course }: { course: Course }) {
 }
 
 export default function CursoPage() {
-
   const { userCandidate } = UseUserCandidate();
   const params = useParams<{ id: string }>();
   const id = params?.id;
@@ -153,7 +234,22 @@ export default function CursoPage() {
     staleTime: 1000 * 60 * 5,
   });
 
-  // ordena por número no título se existir (ex.: "Cap 1", "Cap 2"...)
+  // Função centralizadora para chamar a API
+  const handleStatusChange = async (courseId: string, status: userCourseStatus) => {
+    if (!userCandidate?.id) return;
+
+    try {
+      await changeCourseStatus({
+        id: courseId,
+        userId: userCandidate.id,
+        status: status
+      });
+      console.log(`Status do curso ${courseId} atualizado para ${status}`);
+    } catch (error) {
+      console.error("Erro ao atualizar status", error);
+    }
+  };
+
   const sorted =
     (courses ?? []).slice().sort((a, b) => {
       const numA = Number(a.title.match(/\d+/)?.[0] ?? 9999);
@@ -165,9 +261,6 @@ export default function CursoPage() {
     <div className="px-6 py-6">
       <header className="mb-6">
         <h1 className="text-2xl font-semibold">Cursos</h1>
-        <p className="text-sm text-neutral-600">
-          
-        </p>
       </header>
 
       {isLoading ? (
@@ -187,17 +280,19 @@ export default function CursoPage() {
         </div>
       ) : isError ? (
         <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
-          Falha ao carregar cursos.
-          <div className="text-xs mt-1 opacity-80">
-            {(error as Error)?.message}
-          </div>
+          Falha ao carregar cursos. {(error as Error)?.message}
         </div>
       ) : sorted.length === 0 ? (
         <div className="text-neutral-600">Nenhum curso encontrado.</div>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {sorted.map((c) => (
-            <CourseCard key={c.id} course={c} />
+            <CourseCard
+              key={c.id}
+              course={c}
+              userId={userCandidate?.id ?? ""}
+              onUpdateStatus={(status) => handleStatusChange(c.id, status)}
+            />
           ))}
         </div>
       )}
