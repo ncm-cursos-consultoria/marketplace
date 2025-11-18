@@ -18,4 +18,5 @@ public class UpdateCourseRequest {
     private String description;
     @NotEmpty
     private String videoUrl;
+    private Boolean freePlan;
 }

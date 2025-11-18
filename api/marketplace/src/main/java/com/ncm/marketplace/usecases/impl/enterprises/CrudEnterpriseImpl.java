@@ -18,15 +18,14 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.
 import com.ncm.marketplace.gateways.dtos.requests.domains.enterprise.enterprise.UpdateEnterpriseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.file.CreateFileRequest;
-import com.ncm.marketplace.gateways.dtos.requests.domains.thirdParty.mercadoPago.CreateMercadoPagoCustomerRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.enterprises.enterprise.EnterpriseResponse;
 import com.ncm.marketplace.gateways.mappers.others.address.AddressMapper;
 //import com.ncm.marketplace.gateways.mappers.thirdParty.mercadoPago.MercadoPagoMapper;
 import com.ncm.marketplace.gateways.mappers.user.enterprise.UserEnterpriseMapper;
-import com.ncm.marketplace.usecases.impl.relationships.plan.enterprise.PlanEnterpriseServiceImpl;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
 import com.ncm.marketplace.usecases.interfaces.others.CrudFile;
 //import com.ncm.marketplace.usecases.interfaces.thirdParty.MercadoPagoService;
+import com.ncm.marketplace.usecases.interfaces.relationships.plan.enterprise.PlanEnterpriseService;
 import com.ncm.marketplace.usecases.services.command.enterprises.EnterpriseCommandService;
 import com.ncm.marketplace.usecases.services.command.others.AddressCommandService;
 import com.ncm.marketplace.usecases.services.command.relationship.partner.PartnerEnterpriseCommandService;
@@ -64,7 +63,7 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
     private final PartnerQueryService partnerQueryService;
     private final PartnerEnterpriseCommandService partnerEnterpriseCommandService;
 //    private final MercadoPagoService mercadoPagoService;
-    private final PlanEnterpriseServiceImpl planEnterpriseServiceImpl;
+    private final PlanEnterpriseService planEnterpriseService;
     private final PlanQueryService planQueryService;
     private final CrudFile crudFile;
     private final FileStorageService fileStorageService;
@@ -79,7 +78,7 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         }
         Enterprise enterprise = enterpriseCommandService.save(toEntityCreate(request));
         Plan plan = planQueryService.findByNameOrThrow("Basic");
-        planEnterpriseServiceImpl.save(enterprise.getId(),plan.getId());
+        planEnterpriseService.save(enterprise.getId(),plan.getId());
         return toResponse(enterprise);
     }
 
@@ -95,7 +94,7 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         Enterprise enterprise = enterpriseCommandService.save(toEntityCreate(request));
         // plan
         Plan plan = planQueryService.findByNameOrThrow("Basic");
-        planEnterpriseServiceImpl.save(enterprise.getId(),plan.getId());
+        planEnterpriseService.save(enterprise.getId(),plan.getId());
         //user
         UserEnterprise user = UserEnterpriseMapper.toEntityCreate(request);
         user.setEnterprise(enterprise);

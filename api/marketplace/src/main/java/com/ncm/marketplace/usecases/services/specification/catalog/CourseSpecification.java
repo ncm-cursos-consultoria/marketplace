@@ -21,11 +21,24 @@ public class CourseSpecification {
         });
     }
 
+    public static Specification<Course> byFreePlan(Boolean freePlan) {
+        return ((root, query, criteriaBuilder) -> {
+            if (freePlan == null) {
+                return criteriaBuilder.conjunction();
+            } else {
+                assert query != null;
+                query.distinct(true);
+                return criteriaBuilder.equal(root.get("freePlan"), freePlan);
+            }
+        });
+    }
+
     public Specification<Course> toSpecification(CourseSpecificationRequest request) {
         Specification<Course> specification = (root, query, criteriaBuilder) ->
                 criteriaBuilder.conjunction();
         if (request != null) {
             specification = specification.and(byModuleIds(request.getModuleIds()));
+            specification = specification.and(byFreePlan(request.getFreePlan()));
         }
 
         return specification;

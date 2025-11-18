@@ -12,8 +12,8 @@
 //public class MercadoPagoCustomerCommandService {
 //    private final MPCustomerRepository mpCustomerRepository;
 //
-//    public MercadoPagoCustomer save(MercadoPagoCustomer customer){
-//        return mpCustomerRepository.save(customer);
+//    public MercadoPagoCustomer saveAndFlush(MercadoPagoCustomer customer){
+//        return mpCustomerRepository.saveAndFlush(customer);
 //    }
 //
 //    public void deleteById(MercadoPagoCustomer customer){

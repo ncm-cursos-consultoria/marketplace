@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateEnterpriseSubscriptionRequest {
+public class CreateSubscriptionRequest {
     @NotEmpty
     private String id;
     @NotEmpty

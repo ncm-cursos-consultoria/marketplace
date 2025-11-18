@@ -2,12 +2,11 @@ package com.ncm.marketplace.domains.user.candidate;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.ncm.marketplace.domains.enums.FileTypeEnum;
-import com.ncm.marketplace.domains.enums.UserTypeEnum;
+import com.ncm.marketplace.domains.enums.*;
 import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.domains.others.File;
-import com.ncm.marketplace.domains.enums.DiscEnum;
 import com.ncm.marketplace.domains.relationships.partner.PartnerUserCandidate;
+import com.ncm.marketplace.domains.relationships.plan.user.candidate.PlanUserCandidate;
 import com.ncm.marketplace.domains.relationships.tag.TagUserCandidate;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateCourse;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
@@ -45,6 +44,16 @@ public class UserCandidate extends User {
     private String githubUrl;
     @URL(protocol = "https")
     private String mySiteUrl;
+    @Column(unique = true)
+    private String stripeCustomerId;
+    @Column(unique = true)
+    private String stripeSubscriptionId;
+    @Enumerated(EnumType.STRING)
+    private SubscriptionStatusEnum subscriptionStatus;
+    @Builder.Default
+    private String plan = PlansEnum.BASIC.getName();
+    @Builder.Default
+    private Boolean canViewCourses = Boolean.FALSE;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "curriculumVitaeId", referencedColumnName = "id")
@@ -84,6 +93,10 @@ public class UserCandidate extends User {
     @OneToMany(mappedBy = "userCandidate", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("tag_user_candidate-user_candidate")
     private Set<TagUserCandidate> tagUserCandidates = new HashSet<>();
+
+    @OneToOne(mappedBy = "userCandidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference("plan_user_candidate-user_candidate")
+    private PlanUserCandidate planUserCandidate;
 
     @Override
     public UserTypeEnum getType() {

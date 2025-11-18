@@ -42,4 +42,8 @@ public class UserEnterpriseQueryService {
         return userEnterpriseRepository.findByStripeCustomerId(stripeCustomerId)
                 .orElseThrow(() -> new NotFoundException("User Enterprise not found"));
     }
+
+    public Boolean existsByStripeCustomerId(String stripeCustomerId) {
+        return userEnterpriseRepository.existsByStripeCustomerId(stripeCustomerId);
+    }
 }

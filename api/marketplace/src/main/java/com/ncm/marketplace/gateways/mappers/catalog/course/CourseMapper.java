@@ -31,6 +31,7 @@ public class CourseMapper {
                         ? course.getModule().getId()
                         : null)
                 .videoUrl(course.getLastVideoUrl())
+                .freePlan(course.getFreePlan())
                 .build();
     }
 

@@ -70,10 +70,10 @@
 //        if (mercadoPagoCustomerAPIResponse.getAddresses() != null && !mercadoPagoCustomerAPIResponse.getAddresses().isEmpty()) {
 //            MercadoPagoCustomerApiResponse.AddressDetailResponse addressDetailResponse = mercadoPagoCustomerAPIResponse.getAddresses().get(0);
 //            Address address = AddressMapper.toEntityCreate(addressDetailResponse);
-//            addressCommandService.save(address);
+//            addressCommandService.saveAndFlush(address);
 //            customer.setAddress(address);
 //        }
-//        return toResponse(mercadoPagoCustomerCommandService.save(customer));
+//        return toResponse(mercadoPagoCustomerCommandService.saveAndFlush(customer));
 //    }
 //
 //    @Override
@@ -109,7 +109,7 @@
 //
 //                MercadoPagoCustomer newCustomer = toEntityCreate(apiCustomer);
 //                newCustomer.setEnterprise(enterprise);
-//                return mercadoPagoCustomerCommandService.save(newCustomer);
+//                return mercadoPagoCustomerCommandService.saveAndFlush(newCustomer);
 //            }
 //        } catch (Exception e) {
 //            log.warn("Falha ao buscar cliente no MP, tentaremos criar um novo. Erro: {}", e.getMessage());
@@ -148,7 +148,7 @@
 //        } catch (Exception e) {
 //            throw new RuntimeException("Falha ao chamar a API do Mercado Pago: " + e.getMessage(), e);
 //        }
-//        return toResponse(mercadoPagoPlanCommandService.save(toEntityCreate(planType,mercadoPagoPlanApiResponse)));
+//        return toResponse(mercadoPagoPlanCommandService.saveAndFlush(toEntityCreate(planType,mercadoPagoPlanApiResponse)));
 //    }
 //
 //    @Override
@@ -185,7 +185,7 @@
 //                        .endDate(LocalDate.now().plusMonths(1))
 //                        .enterprise(enterprise)
 //                        .build();
-//                planEnterpriseCommandService.save(planEnterprise);
+//                planEnterpriseCommandService.saveAndFlush(planEnterprise);
 //                enterprise.setPlanEnterprise(planEnterprise);
 //            }
 //

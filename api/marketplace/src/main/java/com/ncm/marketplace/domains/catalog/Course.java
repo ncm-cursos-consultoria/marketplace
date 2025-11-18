@@ -32,6 +32,8 @@ public class Course {
     private String description;
     @Column(name = "courseOrder")
     private Integer order;
+    @Builder.Default
+    private Boolean freePlan = Boolean.FALSE;
     private String lastVideoUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)

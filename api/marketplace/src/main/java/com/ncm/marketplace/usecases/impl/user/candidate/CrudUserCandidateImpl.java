@@ -3,22 +3,28 @@ package com.ncm.marketplace.usecases.impl.user.candidate;
 import com.ncm.marketplace.domains.enterprise.JobOpening;
 import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.domains.enums.PartnerStatusEnum;
+import com.ncm.marketplace.domains.enums.PlansEnum;
 import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.domains.others.Partner;
+import com.ncm.marketplace.domains.others.Plan;
 import com.ncm.marketplace.domains.relationships.partner.PartnerUserCandidate;
+import com.ncm.marketplace.domains.relationships.plan.user.candidate.PlanUserCandidate;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateJobOpening;
 import com.ncm.marketplace.domains.user.User;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.domains.user.candidate.disc.Disc;
 import com.ncm.marketplace.exceptions.BadRequestException;
+import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.disc.CreateDiscRequest;
+import com.ncm.marketplace.gateways.dtos.responses.domains.relationships.plan.user.candidate.PlanUserCandidateResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.disc.DiscResponse;
 import com.ncm.marketplace.gateways.mappers.others.address.AddressMapper;
+import com.ncm.marketplace.usecases.interfaces.relationships.plan.user.candidate.PlanUserCandidateService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.disc.DiscService;
 import com.ncm.marketplace.usecases.services.command.others.AddressCommandService;
@@ -26,14 +32,14 @@ import com.ncm.marketplace.usecases.services.command.relationship.partner.Partne
 import com.ncm.marketplace.usecases.services.command.user.candidate.UserCandidateCommandService;
 import com.ncm.marketplace.usecases.services.query.enterprises.JobOpeningQueryService;
 import com.ncm.marketplace.usecases.services.query.others.PartnerQueryService;
+import com.ncm.marketplace.usecases.services.query.others.PlanQueryService;
+import com.ncm.marketplace.usecases.services.query.relationship.plan.user.candidate.PlanUserCandidateQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
 import com.ncm.marketplace.usecases.services.specification.user.candidate.UserCandidateSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.io.MemoryUsageSetting;
-import org.apache.pdfbox.io.RandomAccessRead;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -49,12 +55,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.io.InputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -76,6 +80,9 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
     private final UserCandidateSpecification userCandidateSpecification;
     private final JobOpeningQueryService jobOpeningQueryService;
     private final DiscService discService;
+    private final PlanQueryService planQueryService;
+    private final PlanUserCandidateService planUserCandidateService;
+    private final PlanUserCandidateQueryService planUserCandidateQueryService;
 
     @Transactional
     @Override
@@ -90,6 +97,8 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
         String encryptedPassword = passwordEncoder.encode(request.getPassword());
         user.setPassword(encryptedPassword);
         user = userCandidateCommandService.save(user);
+        Plan plan = planQueryService.findByNameOrThrow("Basic");
+        planUserCandidateService.save(user.getId(),plan.getId());
         if (request.getPartnerToken() != null && !request.getPartnerToken().isEmpty()) {
             Partner partner = partnerQueryService.findByTokenOrThrow(request.getPartnerToken());
             partnerUserCandidateCommandService.save(PartnerUserCandidate.builder()
@@ -252,9 +261,36 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
         return finalOutputStream.toByteArray();
     }
 
-    /**
-     * Função que cria um PDF com os dados básicos do candidato (Corrigida)
-     */
+    @Transactional
+    @Override
+    public void updateUserCandidatePlan(String id, String planName) {
+        UserCandidate userCandidate = userCandidateQueryService.findByIdOrThrow(id);
+        Plan plan = planQueryService.findByNameOrThrow(planName);
+        String oldPlanName = userCandidate.getPlan();
+        userCandidate.setPlan(plan.getName());
+        PlanUserCandidate planUserCandidate = null;
+        if (userCandidate.getPlanUserCandidate() == null) {
+            Plan basicPlan = planQueryService.findByNameOrThrow("Basic");
+            PlanUserCandidateResponse planUserCandidateResponse = planUserCandidateService.save(userCandidate.getId(),basicPlan.getId());
+            planUserCandidate = planUserCandidateQueryService.findByIdOrThrow(planUserCandidateResponse.getId());
+        } else {
+            planUserCandidate = userCandidate.getPlanUserCandidate();
+        }
+        planUserCandidate.setPlan(plan);
+        if (oldPlanName != null && !oldPlanName.equals(plan.getName())) {
+            if (planName.equals(PlansEnum.BASIC.getName())) {
+                planUserCandidate.setEndDate(null);
+                userCandidate.setCanViewCourses(Boolean.FALSE);
+            } else if (planName.equals(PlansEnum.STANDARD.getName())) {
+                planUserCandidate.setEndDate(LocalDate.now().plusMonths(1));
+                userCandidate.setCanViewCourses(Boolean.TRUE);
+            } else {
+                throw new IllegalStateException("Unsupported plan: " + planName);
+            }
+        }
+        planUserCandidate.setEndDate(LocalDate.now().plusMonths(1));
+    }
+
     private PDDocument createProfilePage(UserCandidate candidate) throws IOException {
         PDDocument document = new PDDocument();
         PDPage page = new PDPage();

@@ -10,7 +10,7 @@
 //public class MercadoPagoPlanCommandService {
 //    private final MercadoPagoPlanRepository mercadoPagoPlanRepository;
 //
-//    public MercadoPagoPlan save(MercadoPagoPlan mercadoPagoPlan) {
-//        return mercadoPagoPlanRepository.save(mercadoPagoPlan);
+//    public MercadoPagoPlan saveAndFlush(MercadoPagoPlan mercadoPagoPlan) {
+//        return mercadoPagoPlanRepository.saveAndFlush(mercadoPagoPlan);
 //    }
 //}
