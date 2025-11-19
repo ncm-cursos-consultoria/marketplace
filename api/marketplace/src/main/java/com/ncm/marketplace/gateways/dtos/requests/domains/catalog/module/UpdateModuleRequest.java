@@ -15,4 +15,5 @@ public class UpdateModuleRequest {
     private String title;
     @Size(max = 500)
     private String description;
+    private Boolean freePlan;
 }

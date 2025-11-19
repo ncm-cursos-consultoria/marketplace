@@ -33,7 +33,7 @@ public class SubscriptionControllerImpl implements SubscriptionController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Make user candidate subscription using Stripe")
     @Override
-    public ResponseEntity<SubscriptionResponse> createUserCandidateSubscription(CreateSubscriptionRequest request) throws StripeException {
+    public ResponseEntity<SubscriptionResponse> createUserCandidateSubscription(@Valid @RequestBody CreateSubscriptionRequest request) throws StripeException {
         return ResponseEntity.ok(subscriptionService.createUserCandidateSubscription(request));
     }
 }

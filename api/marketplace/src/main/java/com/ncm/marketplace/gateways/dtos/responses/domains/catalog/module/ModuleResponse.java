@@ -20,5 +20,6 @@ public class ModuleResponse {
     private String title;
     private String description;
     private Integer courseCount;
+    private Boolean freePlan;
 //    private String enterpriseId;
 }

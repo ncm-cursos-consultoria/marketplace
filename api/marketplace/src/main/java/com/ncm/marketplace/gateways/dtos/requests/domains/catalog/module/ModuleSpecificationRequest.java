@@ -9,4 +9,5 @@ import java.util.List;
 @Setter
 public class ModuleSpecificationRequest {
 //    private List<String> enterpriseIds;
+    private Boolean freePlan;
 }
