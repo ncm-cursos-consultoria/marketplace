@@ -13,7 +13,7 @@ export default function UserProfilePage() {
 
   // 1. Busca de dados do usuário
   const { data: user, isLoading: isLoadingUser } = useQuery({
-    queryKey: ["authUser", userCandidate?.id],
+    queryKey: ["authUser"],
     queryFn: () => getUniqueUser(userCandidate!.id),
     enabled: !!userCandidate?.id,
   });

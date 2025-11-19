@@ -14,7 +14,8 @@ import {
   Loader2,
   Search,
   Zap,
-  CheckCircle2
+  CheckCircle2,
+  AlertTriangle
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -32,6 +33,7 @@ import { getAllTags, GetTagParams, TagResponse } from "@/service/tag/get-all-tag
 import { ScrollArea } from "@/components/ui/scroll-area"; // <-- CORREÇÃO AQUI
 import { Checkbox } from "@/components/ui/checkbox";
 import { UpgradeCandidateModal } from "@/components/candidate/upgrade-candidate-modal";
+import { cancelSubscription } from "@/service/subscription/cancel-subscription";
 
 // --- SKELETONS (Componentes de Carregamento) ---
 function SkeletonCard() {
@@ -358,14 +360,14 @@ function SkillsModal({ isOpen, setIsOpen, user }: SkillsModalProps) {
       const { tagId, action } = variablesSent;
 
       // 3.1. Cancela queries pendentes do 'authUser'
-      await queryClient.cancelQueries({ queryKey: ['authUser', user.id] });
+      await queryClient.cancelQueries({ queryKey: ['authUser'] });
 
       // 3.2. Pega um snapshot dos dados atuais
-      const previousUserData = queryClient.getQueryData<UserCandidateResponse>(['authUser', user.id]);
+      const previousUserData = queryClient.getQueryData<UserCandidateResponse>(['authUser']);
       if (!previousUserData) return; // Se não houver dados, não faz nada
 
       // 3.3. ATUALIZA O CACHE IMEDIATAMENTE (A UI MUDA AGORA)
-      queryClient.setQueryData<UserCandidateResponse>(['authUser', user.id], (oldData) => {
+      queryClient.setQueryData<UserCandidateResponse>(['authUser'], (oldData) => {
         if (!oldData) return oldData;
 
         let newTags = [...(oldData.tags || [])];
@@ -393,7 +395,7 @@ function SkillsModal({ isOpen, setIsOpen, user }: SkillsModalProps) {
       toast.error("Não foi possível atualizar a tag. Revertendo.");
       // Reverte o cache para o estado anterior
       if (context?.previousUserData) {
-        queryClient.setQueryData(['authUser', user.id], context.previousUserData);
+        queryClient.setQueryData(['authUser'], context.previousUserData);
       }
     },
 
@@ -418,7 +420,7 @@ function SkillsModal({ isOpen, setIsOpen, user }: SkillsModalProps) {
     if (!open) {
       // O modal está fechando. Agora sim, invalidamos a query
       // para garantir que os dados fiquem 100% sincronizados.
-      queryClient.invalidateQueries({ queryKey: ['authUser', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['authUser'] });
     }
     setIsOpen(open);
   };
@@ -543,10 +545,65 @@ function SkillsModal({ isOpen, setIsOpen, user }: SkillsModalProps) {
   );
 }
 
+interface CancelSubscriptionModalProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  onConfirm: () => void;
+  isPending: boolean;
+}
+
+function CancelSubscriptionModal({ isOpen, setIsOpen, onConfirm, isPending }: CancelSubscriptionModalProps) {
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <div className="flex items-center gap-2 text-red-600 mb-2">
+            <AlertTriangle className="h-6 w-6" />
+            <DialogTitle>Cancelar Assinatura?</DialogTitle>
+          </div>
+          <DialogDescription className="pt-2">
+            Você tem certeza que deseja cancelar sua assinatura <strong>Standard</strong>?
+            <br /><br />
+            Você perderá acesso imediato ao portfólio de cursos e outros benefícios exclusivos ao final do ciclo atual.
+          </DialogDescription>
+        </DialogHeader>
+
+        <DialogFooter className="gap-2 sm:gap-0 mt-4">
+          <Button
+            variant="outline"
+            onClick={() => setIsOpen(false)}
+            disabled={isPending}
+          >
+            Manter Assinatura
+          </Button>
+
+          <Button
+            variant="destructive"
+            onClick={onConfirm}
+            disabled={isPending}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            {isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Cancelando...
+              </>
+            ) : (
+              "Sim, Cancelar"
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export function FirstCol({ user, address, isLoading }: FirstColProps) {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isSkillsModalOpen, setIsSkillsModalOpen] = useState(false);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
   const { hardSkills, softSkills } = useMemo(() => {
     const hard: TagResponse[] = [];
@@ -563,6 +620,21 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
 
     return { hardSkills: hard, softSkills: soft };
   }, [user?.tags]);
+
+  const { mutate: cancelPlan, isPending: isCanceling } = useMutation({
+    mutationFn: cancelSubscription,
+    onSuccess: () => {
+      toast.success("Assinatura cancelada com sucesso.");
+      if (user?.id) {
+        queryClient.invalidateQueries({ queryKey: ['authUser'] });
+      }
+      setIsCancelModalOpen(false); // Fecha o modal ao terminar
+    },
+    onError: () => {
+      toast.error("Erro ao cancelar. Tente novamente mais tarde.");
+      setIsCancelModalOpen(false); // Opcional: fechar ou manter aberto em erro
+    }
+  });
 
   // --- ESTADO DE CARREGAMENTO ---
   if (isLoading) {
@@ -582,7 +654,7 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
     return <p>Carregando...</p>;
   }
 
-  const isStandart = user.plan === 'STANDART';
+  const isStandard = user.plan === 'STANDARD';
   const planName = user.plan || 'BASIC';
 
   // --- RENDERIZAÇÃO COM DADOS REAIS ---
@@ -696,21 +768,31 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
               <Zap className="h-4 w-4 text-purple-600" />
               Plano de Assinatura
             </h3>
-            <span className={`text-[11px] px-2 py-1 rounded-full ${isStandart ? "bg-green-100 text-green-700" : "bg-neutral-100 text-neutral-700"
+            <span className={`text-[11px] px-2 py-1 rounded-full ${isStandard ? "bg-green-100 text-green-700" : "bg-neutral-100 text-neutral-700"
               }`}>
               {planName.toUpperCase()}
             </span>
           </div>
 
-          {isStandart ? (
-            <p className="text-sm text-emerald-700 font-medium">
-              <CheckCircle2 className="h-4 w-4 inline mr-1" /> Você tem acesso Standart completo.
-            </p>
+          {isStandard ? (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between">
+              <p className="text-sm font-medium text-red-800">
+                Sua assinatura está ativa.
+              </p>
+              <Button
+                size="sm"
+                // ALTERADO: Agora apenas abre o modal
+                onClick={() => setIsCancelModalOpen(true)}
+                variant="destructive"
+              >
+                Cancelar Assinatura
+              </Button>
+            </div>
           ) : (
             <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-blue-800">
-                  Upgrade para Standart
+                  Upgrade para Standard
                 </p>
                 <p className="text-xs text-blue-600">
                   Desbloqueie o Portfólio de Cursos.
@@ -823,6 +905,13 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
         isOpen={isSkillsModalOpen}
         setIsOpen={setIsSkillsModalOpen}
         user={user}
+      />
+
+      <CancelSubscriptionModal 
+        isOpen={isCancelModalOpen}
+        setIsOpen={setIsCancelModalOpen}
+        onConfirm={() => cancelPlan(user.id)} // A ação real acontece aqui
+        isPending={isCanceling}
       />
 
     </div>

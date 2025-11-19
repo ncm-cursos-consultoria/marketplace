@@ -43,4 +43,8 @@ public class EnterpriseQueryService {
                 .orElseThrow(() -> new NotFoundException("Enterprise not found"));
 
     }
+
+    public Boolean existsById(String id) {
+        return enterpriseRepository.existsById(id);
+    }
 }

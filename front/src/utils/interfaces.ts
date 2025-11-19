@@ -28,7 +28,7 @@ export interface PlanProps {
   name: string;
 }
 
-export type PlanType = 'BASIC' | 'STANDART' | 'PREMIUM';
+export type PlanType = 'BASIC' | 'STANDARD' | 'PREMIUM';
 
 export interface UserEnterpriseProps {
   id: string;

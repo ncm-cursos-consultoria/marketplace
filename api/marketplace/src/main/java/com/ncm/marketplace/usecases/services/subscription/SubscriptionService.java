@@ -13,6 +13,7 @@ import com.ncm.marketplace.gateways.dtos.responses.services.subscription.Subscri
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
 import com.ncm.marketplace.usecases.interfaces.relationships.plan.user.candidate.PlanUserCandidateService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
+import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.others.PlanQueryService;
 import com.ncm.marketplace.usecases.services.query.user.UserEnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
@@ -42,6 +43,7 @@ public class SubscriptionService {
     private final CrudUserCandidate crudUserCandidate;
     private final PlanQueryService planQueryService;
     private final PlanUserCandidateService planUserCandidateService;
+    private final EnterpriseQueryService enterpriseQueryService;
 
     @Value("${stripe.api.secret-key}")
     private String stripeSecretKey;
@@ -231,12 +233,8 @@ public class SubscriptionService {
         } else {
             try {
                 stripeObject = dataObjectDeserializer.deserializeUnsafe();
-                log.info("Deserialização 'unsafe' realizada com sucesso para evento {}", event.getType());
             } catch (Exception e) {
-                // 3. Só agora desistimos
                 log.error("Falha crítica na deserialização do objeto Stripe: {}", e.getMessage());
-                log.warn("Falha na deserialização do objeto Stripe para o evento {}. Versão da API incompatível?", event.getType());
-                log.warn(String.valueOf(event));
                 return;
             }
         }
@@ -272,9 +270,9 @@ public class SubscriptionService {
         Stripe.apiKey = stripeSecretKey;
         String stripeSubscriptionId = null;
 
-        if (userEnterpriseQueryService.existsById(id)) {
-            UserEnterprise userEnterprise = userEnterpriseQueryService.findByIdOrThrow(id);
-            stripeSubscriptionId = userEnterprise.getStripeSubscriptionId();
+        if (enterpriseQueryService.existsById(id)) {
+            Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(id);
+            stripeSubscriptionId = enterprise.getUserEnterprise().getStripeSubscriptionId();
         } else if (userCandidateQueryService.existsById(id)) {
             UserCandidate userCandidate = userCandidateQueryService.findByIdOrThrow(id);
             stripeSubscriptionId = userCandidate.getStripeSubscriptionId();
