@@ -209,8 +209,9 @@ public class SubscriptionService {
         } else if (userCandidateQueryService.existsByStripeCustomerId(stripeCustomerId)) {
             UserCandidate userCandidate = userCandidateQueryService.findByStripeCustomerIdOrThrow(stripeCustomerId);
             userCandidate.setSubscriptionStatus(newStatus);
+            log.info("Plano new status {}", newStatus);
 
-            if (Objects.requireNonNull(newStatus) == ACTIVE) {
+            if (newStatus == ACTIVE) {
                 log.info("Ativando plano STANDARD para o usuário: {}", userCandidate.getId());
                 crudEnterprise.updateEnterprisePlan(userCandidate.getId(), PlansEnum.STANDARD.getName());
             }
