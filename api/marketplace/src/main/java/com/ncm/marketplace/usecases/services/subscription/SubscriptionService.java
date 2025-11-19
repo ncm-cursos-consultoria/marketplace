@@ -229,9 +229,16 @@ public class SubscriptionService {
         if (dataObjectDeserializer.getObject().isPresent()) {
             stripeObject = dataObjectDeserializer.getObject().get();
         } else {
-            log.warn("Falha na deserialização do objeto Stripe para o evento {}. Versão da API incompatível?", event.getType());
-            log.warn(String.valueOf(event));
-            return;
+            try {
+                stripeObject = dataObjectDeserializer.deserializeUnsafe();
+                log.info("Deserialização 'unsafe' realizada com sucesso para evento {}", event.getType());
+            } catch (Exception e) {
+                // 3. Só agora desistimos
+                log.error("Falha crítica na deserialização do objeto Stripe: {}", e.getMessage());
+                log.warn("Falha na deserialização do objeto Stripe para o evento {}. Versão da API incompatível?", event.getType());
+                log.warn(String.valueOf(event));
+                return;
+            }
         }
 
         switch (event.getType()) {
