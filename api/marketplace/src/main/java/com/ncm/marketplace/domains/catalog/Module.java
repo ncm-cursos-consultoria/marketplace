@@ -31,6 +31,8 @@ public class Module {
     private String title;
     @Column(length = 500)
     private String description;
+    @Builder.Default
+    private Boolean freePlan = Boolean.FALSE;
 
     @Builder.Default
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)

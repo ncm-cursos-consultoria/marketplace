@@ -23,4 +23,5 @@ public interface CrudUserCandidate {
     UserCandidateResponse addOrUpdateAddress(String id, CreateAddressRequest request);
     UserCandidateResponse addDisc(String id, CreateDiscRequest request);
     public byte[] generateFullReport(String candidateId) throws Exception;
+    void updateUserCandidatePlan(String id, String planName);
 }

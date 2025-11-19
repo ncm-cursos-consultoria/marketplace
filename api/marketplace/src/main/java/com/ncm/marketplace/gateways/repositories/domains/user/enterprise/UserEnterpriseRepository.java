@@ -9,4 +9,5 @@ public interface UserEnterpriseRepository extends JpaRepository<UserEnterprise, 
     Boolean existsByEnterprise_Id(String enterpriseId);
     Boolean existsByEmail(String email);
     Optional<UserEnterprise> findByStripeCustomerId(String stripeCustomerId);
+    Boolean existsByStripeCustomerId(String stripeCustomerId);
 }

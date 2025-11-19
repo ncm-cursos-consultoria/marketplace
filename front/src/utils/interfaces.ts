@@ -19,6 +19,8 @@ export interface UserCandidateProps {
   hasCurriculumVitaeUrl?: boolean
   hasDisc?: boolean
   discId?: string
+  plan?: PlanType
+  canViewCourses?: boolean
 }
 
 export interface PlanProps {

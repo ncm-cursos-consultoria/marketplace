@@ -12,7 +12,9 @@ import {
   MapPin,
   Pencil,
   Loader2,
-  Search
+  Search,
+  Zap,
+  CheckCircle2
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -29,6 +31,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { getAllTags, GetTagParams, TagResponse } from "@/service/tag/get-all-tags";
 import { ScrollArea } from "@/components/ui/scroll-area"; // <-- CORREÇÃO AQUI
 import { Checkbox } from "@/components/ui/checkbox";
+import { UpgradeCandidateModal } from "@/components/candidate/upgrade-candidate-modal";
 
 // --- SKELETONS (Componentes de Carregamento) ---
 function SkeletonCard() {
@@ -529,20 +532,21 @@ function SkillsModal({ isOpen, setIsOpen, user }: SkillsModalProps) {
 
             </div>
           )}
-      </ScrollArea>
-      <DialogFooter>
-        <Button type="button" onClick={() => handleModalClose(false)}>
-          Fechar
-        </Button>
-      </DialogFooter>
-    </DialogContent>
-    </Dialog >
-  );
+        </ScrollArea>
+        <DialogFooter>
+          <Button type="button" onClick={() => handleModalClose(false)}>
+            Fechar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog >
+  );
 }
 
 export function FirstCol({ user, address, isLoading }: FirstColProps) {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isSkillsModalOpen, setIsSkillsModalOpen] = useState(false);
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
 
   const { hardSkills, softSkills } = useMemo(() => {
     const hard: TagResponse[] = [];
@@ -577,6 +581,9 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
   if (!user) {
     return <p>Carregando...</p>;
   }
+
+  const isStandart = user.plan === 'STANDART';
+  const planName = user.plan || 'BASIC';
 
   // --- RENDERIZAÇÃO COM DADOS REAIS ---
   return (
@@ -680,24 +687,44 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
         </div>
 
         {/* --- CARD 2: STATUS DO PERFIL --- */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 w-full h-full">
-          <div className="flex items-start justify-between">
-            <h3 className="text-sm font-semibold text-neutral-700">
-              Status do Perfil
+        {/* --- CARD 2: PLANO E HABILIDADES (Refatorado) --- */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 w-full h-full space-y-4">
+
+          {/* --- BLOCO A: PLANO DE ASSINATURA --- */}
+          <div className="flex items-start justify-between border-b pb-3">
+            <h3 className="text-sm font-semibold text-neutral-700 flex items-center gap-2">
+              <Zap className="h-4 w-4 text-purple-600" />
+              Plano de Assinatura
             </h3>
-            <span className={`text-[11px] px-2 py-1 rounded-full ${user.isBlocked
-              ? "bg-red-100 text-red-700"
-              : "bg-emerald-100 text-emerald-700"
+            <span className={`text-[11px] px-2 py-1 rounded-full ${isStandart ? "bg-green-100 text-green-700" : "bg-neutral-100 text-neutral-700"
               }`}>
-              {user.isBlocked ? "INATIVO" : "ATIVO"}
+              {planName.toUpperCase()}
             </span>
           </div>
-          <p className="mt-3 text-sm text-neutral-700">
-            {user.isBlocked
-              ? "Seu perfil não está visível para recrutadores."
-              : "Seu perfil está visível para recrutadores e empresas parceiras."
-            }
-          </p>
+
+          {isStandart ? (
+            <p className="text-sm text-emerald-700 font-medium">
+              <CheckCircle2 className="h-4 w-4 inline mr-1" /> Você tem acesso Standart completo.
+            </p>
+          ) : (
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-800">
+                  Upgrade para Standart
+                </p>
+                <p className="text-xs text-blue-600">
+                  Desbloqueie o Portfólio de Cursos.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => setIsUpgradeModalOpen(true)} // 3. Abre o modal
+                className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap"
+              >
+                Upgrade R$ 19,99/mês
+              </Button>
+            </div>
+          )}
 
           {/* --- 2. BLOCO DE HABILIDADES ATUALIZADO --- */}
           <div className="mt-4 rounded-xl border p-4">
@@ -763,6 +790,13 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
           </div>
         </div>
       </div>
+
+      {/* Renderiza o Modal de Upgrade */}
+      <UpgradeCandidateModal
+        userId={user.id}
+        isOpen={isUpgradeModalOpen}
+        setIsOpen={setIsUpgradeModalOpen}
+      />
 
       {/* --- LINHA 2: CARD "SOBRE" --- */}
       {user.about && (

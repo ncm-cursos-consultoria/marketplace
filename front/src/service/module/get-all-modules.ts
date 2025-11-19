@@ -1,10 +1,28 @@
 import { api } from "../api";
 
-export const getAllModules = async() => {
-  try{
-    const res =  await api.get("/module")
+export interface ModuleParams {
+  freePlan?: boolean;
+}
+
+export interface ApiModule {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  title: string;
+  description: string;
+  courseCount: number;
+  freePlan: boolean;
+}
+
+export const getAllModules = async (params?: ModuleParams): Promise<ApiModule[]> => {
+  try {
+    const res = await api.get("/module",
+      {
+        params: params
+      }
+    )
     return res.data
-  }catch(err) {
+  } catch (err) {
     console.log(err);
     throw new Error()
   }

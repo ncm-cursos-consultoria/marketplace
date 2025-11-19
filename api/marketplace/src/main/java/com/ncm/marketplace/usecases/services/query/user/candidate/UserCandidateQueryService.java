@@ -47,4 +47,13 @@ public class UserCandidateQueryService {
     public Integer countTotalSelectedByPartnerId(String id, JobOpeningUserCandidateStatus status) {
         return userCandidateRepository.countByPartnerUserCandidate_Partner_IdAndUserCandidateJobOpenings_Status(id, status);
     }
+
+    public UserCandidate findByStripeCustomerIdOrThrow(String stripeCustomerId) {
+        return userCandidateRepository.findByStripeCustomerId(stripeCustomerId)
+                .orElseThrow(() -> new NotFoundException("User Candidate not found"));
+    }
+
+    public Boolean existsByStripeCustomerId(String stripeCustomerId) {
+        return userCandidateRepository.existsByStripeCustomerId(stripeCustomerId);
+    }
 }

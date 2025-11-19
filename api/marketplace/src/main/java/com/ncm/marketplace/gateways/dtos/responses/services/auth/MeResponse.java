@@ -35,6 +35,7 @@ public class MeResponse {
     private Boolean hasDisc;
     private List<TagResponse> tags;
     private String plan;
+    private Boolean canViewCourses;
     private Boolean canCreateJobOpenings;
     private Boolean canViewTests;
     private Boolean canViewCurriculumVitaeBase;

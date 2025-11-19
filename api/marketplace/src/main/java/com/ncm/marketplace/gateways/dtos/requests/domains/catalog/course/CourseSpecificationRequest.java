@@ -9,4 +9,5 @@ import java.util.List;
 @Setter
 public class CourseSpecificationRequest {
     private List<String> moduleIds;
+    private Boolean freePlan;
 }

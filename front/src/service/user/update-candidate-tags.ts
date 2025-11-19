@@ -1,3 +1,4 @@
+import { PlanType } from "@/utils/interfaces";
 import { api } from "../api";
 import { TagResponse } from "../tag/get-all-tags";
 
@@ -25,6 +26,7 @@ export interface UserCandidateResponse {
   phoneNumber?: string,
   myApplicationStatus?: string,
   tags?: TagResponse[],
+  plan: PlanType,
 }
 
 export interface UpdateCandidateTagParams {
