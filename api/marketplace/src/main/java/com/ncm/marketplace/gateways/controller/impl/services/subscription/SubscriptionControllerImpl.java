@@ -37,7 +37,7 @@ public class SubscriptionControllerImpl implements SubscriptionController {
         return ResponseEntity.ok(subscriptionService.createUserCandidateSubscription(request));
     }
 
-    @PostMapping("/cancel/{id}")
+    @DeleteMapping("/cancel/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Cancel user subscription using Stripe")
     @Override
