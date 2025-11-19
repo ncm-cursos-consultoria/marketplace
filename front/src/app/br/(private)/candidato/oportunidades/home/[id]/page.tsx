@@ -1,6 +1,6 @@
 "use client";
 
-import { CourseCard } from "@/components/card/course-card";
+import { ModuleCard } from "@/components/card/module-card";
 import { UseUserCandidate } from "@/context/user-candidate.context";
 import { ApiJob, getAllJobs, JobFilters } from "@/service/job/get-all-jobs";
 import { formatLocation } from "@/utils/format-location";

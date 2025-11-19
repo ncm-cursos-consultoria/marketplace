@@ -54,7 +54,7 @@ export function Modal({
       <DialogContent
         // CORREÇÃO AQUI: Mudei 'max-h-[90vh]' para 'h-[90vh]'
         // Isso força o modal a ser grande, permitindo que o 'flex-1' interno funcione.
-        className={`sm:max-w-3xl h-[90vh] flex flex-col gap-0 p-0 ${contentClassName || ''}`}
+        className={`sm:max-w-3xl ${contentClassName}`}
       >
         <DialogHeader className="px-6 py-4 border-b shrink-0">
           <DialogTitle>{title}</DialogTitle>

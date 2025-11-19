@@ -22,7 +22,7 @@ export function CardMaterial() {
     enabled: !!enterpriseId,
   });
 
-  if (data <= 0) {
+  if (data !== undefined && data.length === 0) {
     return (
       <div className="">
         <Modal

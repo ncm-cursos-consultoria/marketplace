@@ -1,4 +1,4 @@
-import { getAllModules } from "@/service/module/get-all-modules";
+import { getAllModules, ModuleParams } from "@/service/module/get-all-modules";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import ncm from "@/assets/logo-ncm-horizontal.svg"
+import { UseUserCandidate } from "@/context/user-candidate.context";
 
 type Module = {
   id: string;
@@ -91,9 +92,13 @@ function ModuleSkeletonCard() {
 }
 
 export function ModuleSection() {
+  const userCandidate = UseUserCandidate();
+  const params: ModuleParams = {
+    freePlan: !userCandidate?.userCandidate?.canViewCourses,
+  };
   const { data: modules, isPending, isError } = useQuery<Module[]>({
     queryKey: ["module"],
-    queryFn: () => getAllModules(),
+    queryFn: () => getAllModules(params),
     staleTime: 1000 * 60 * 5,
   });
 
@@ -104,7 +109,6 @@ export function ModuleSection() {
       {isError && (
         <div className="rounded-lg border p-4 text-sm text-red-600 bg-red-50">
           Oops! Não foi possível carregar os módulos agora.
-
         </div>
       )}
 
