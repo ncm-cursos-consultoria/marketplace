@@ -36,4 +36,13 @@ public class SubscriptionControllerImpl implements SubscriptionController {
     public ResponseEntity<SubscriptionResponse> createUserCandidateSubscription(@Valid @RequestBody CreateSubscriptionRequest request) throws StripeException {
         return ResponseEntity.ok(subscriptionService.createUserCandidateSubscription(request));
     }
+
+    @PostMapping("/cancel/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Cancel user subscription using Stripe")
+    @Override
+    public ResponseEntity<Void> cancelSubscription(@PathVariable String id) throws StripeException {
+        subscriptionService.cancelSubscription(id);
+        return ResponseEntity.ok().build();
+    }
 }

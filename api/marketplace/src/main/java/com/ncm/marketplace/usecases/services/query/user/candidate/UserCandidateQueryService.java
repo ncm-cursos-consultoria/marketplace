@@ -56,4 +56,8 @@ public class UserCandidateQueryService {
     public Boolean existsByStripeCustomerId(String stripeCustomerId) {
         return userCandidateRepository.existsByStripeCustomerId(stripeCustomerId);
     }
+
+    public Boolean existsById(String id) {
+        return userCandidateRepository.existsById(id);
+    }
 }
