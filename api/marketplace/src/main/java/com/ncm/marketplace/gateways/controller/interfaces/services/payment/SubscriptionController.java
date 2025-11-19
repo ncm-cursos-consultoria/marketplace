@@ -8,4 +8,5 @@ import org.springframework.http.ResponseEntity;
 public interface SubscriptionController {
     ResponseEntity<SubscriptionResponse> createEnterpriseSubscription(CreateSubscriptionRequest request) throws StripeException;
     ResponseEntity<SubscriptionResponse> createUserCandidateSubscription(CreateSubscriptionRequest request) throws StripeException;
+    ResponseEntity<Void> cancelSubscription(String id) throws StripeException;
 }

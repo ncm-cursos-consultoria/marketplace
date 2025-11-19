@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 import static com.ncm.marketplace.domains.enums.SubscriptionStatusEnum.*;
 
 @Slf4j
@@ -196,15 +198,18 @@ public class SubscriptionService {
             UserEnterprise userEnterprise = userEnterpriseQueryService.findByStripeCustomerIdOrThrow(stripeCustomerId);
             userEnterprise.setSubscriptionStatus(newStatus);
 
-            if (newStatus == ACTIVE && userEnterprise.getEnterprise() != null) {
-                log.info("Ativando plano STANDARD para a empresa: {}", userEnterprise.getEnterprise().getId());
-                crudEnterprise.updateEnterprisePlan(userEnterprise.getEnterprise().getId(), PlansEnum.STANDARD.getName());
+            if (userEnterprise.getEnterprise() != null) {
+                if (Objects.requireNonNull(newStatus) == ACTIVE) {
+                    log.info("Ativando plano STANDARD para a empresa: {}", userEnterprise.getEnterprise().getId());
+                    crudEnterprise.updateEnterprisePlan(userEnterprise.getEnterprise().getId(), PlansEnum.STANDARD.getName());
+                }
             }
 
             log.info("Status de assinatura atualizado para {} para o usuário {}", newStatus, userEnterprise.getId());
         } else if (userCandidateQueryService.existsByStripeCustomerId(stripeCustomerId)) {
             UserCandidate userCandidate = userCandidateQueryService.findByStripeCustomerIdOrThrow(stripeCustomerId);
             userCandidate.setSubscriptionStatus(newStatus);
+            log.info("Plano new status {}", newStatus);
 
             if (newStatus == ACTIVE) {
                 log.info("Ativando plano STANDARD para o usuário: {}", userCandidate.getId());
@@ -241,5 +246,24 @@ public class SubscriptionService {
             default:
                 log.debug("Evento Stripe não tratado: {}", event.getType());
         }
+    }
+
+    public void cancelSubscription(String id) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+        String stripeSubscriptionId = null;
+
+        if (userEnterpriseQueryService.existsById(id)) {
+            UserEnterprise userEnterprise = userEnterpriseQueryService.findByIdOrThrow(id);
+            stripeSubscriptionId = userEnterprise.getStripeSubscriptionId();
+        } else if (userCandidateQueryService.existsById(id)) {
+            UserCandidate userCandidate = userCandidateQueryService.findByIdOrThrow(id);
+            stripeSubscriptionId = userCandidate.getStripeSubscriptionId();
+        } else {
+            throw new NotFoundException("User not found with id " + id);
+        }
+
+        Subscription subscription = Subscription.retrieve(stripeSubscriptionId);
+
+        subscription.cancel();
     }
 }
