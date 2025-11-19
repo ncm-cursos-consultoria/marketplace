@@ -38,7 +38,7 @@ export function ModalUpdateUser() {
   });
 
   const { data: user, isLoading } = useQuery({
-    queryKey: ["authUser", userCandidate?.id],
+    queryKey: ["authUser"],
     queryFn: () => getUniqueUser(userCandidate!.id),
     enabled: !!userCandidate?.id,
   });

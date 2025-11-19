@@ -63,7 +63,7 @@ function CandidateCheckoutForm({ userId, onSuccess }: CandidateCheckoutFormProps
             toast.success("Upgrade para Plano Standard realizado!");
 
             // Invalida a query de usuário logado para refletir o novo plano
-            queryClient.invalidateQueries({ queryKey: ["authUser", userId] });
+            queryClient.invalidateQueries({ queryKey: ["authUser"] });
 
             setTimeout(() => {
                 onSuccess(); // Fecha o modal
