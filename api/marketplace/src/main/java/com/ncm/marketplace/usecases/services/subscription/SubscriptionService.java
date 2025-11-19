@@ -209,11 +209,10 @@ public class SubscriptionService {
         } else if (userCandidateQueryService.existsByStripeCustomerId(stripeCustomerId)) {
             UserCandidate userCandidate = userCandidateQueryService.findByStripeCustomerIdOrThrow(stripeCustomerId);
             userCandidate.setSubscriptionStatus(newStatus);
-            log.info("Plano new status {}", newStatus);
 
             if (newStatus == ACTIVE) {
                 log.info("Ativando plano STANDARD para o usuário: {}", userCandidate.getId());
-                crudEnterprise.updateEnterprisePlan(userCandidate.getId(), PlansEnum.STANDARD.getName());
+                crudUserCandidate.updateUserCandidatePlan(userCandidate.getId(), PlansEnum.STANDARD.getName());
             }
 
             log.info("Status de assinatura atualizado para {} para o usuário {}", newStatus, userCandidate.getId());
@@ -224,23 +223,37 @@ public class SubscriptionService {
 
     @Transactional
     public void getWebhook(Event event) {
+        EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
+        StripeObject stripeObject = null;
+
+        if (dataObjectDeserializer.getObject().isPresent()) {
+            stripeObject = dataObjectDeserializer.getObject().get();
+        } else {
+            log.warn("Falha na deserialização do objeto Stripe para o evento {}. Versão da API incompatível?", event.getType());
+            log.warn(String.valueOf(event));
+            return;
+        }
+
         switch (event.getType()) {
             case "invoice.payment_succeeded":
-                Invoice invoice = (Invoice) event.getDataObjectDeserializer().getObject().orElseThrow();
-                log.info("Pagamento sucedido para o cliente: {}", invoice.getCustomer());
-                updateSubscriptionStatus(invoice.getCustomer(), ACTIVE);
+                if (stripeObject instanceof Invoice invoice) {
+                    log.info("Pagamento sucedido para o cliente: {}", invoice.getCustomer());
+                    updateSubscriptionStatus(invoice.getCustomer(), ACTIVE);
+                }
                 break;
 
             case "invoice.payment_failed":
-                Invoice failedInvoice = (Invoice) event.getDataObjectDeserializer().getObject().orElseThrow();
-                log.warn("Pagamento falhou para o cliente: {}", failedInvoice.getCustomer());
-                updateSubscriptionStatus(failedInvoice.getCustomer(), PAST_DUE);
+                if (stripeObject instanceof Invoice failedInvoice) {
+                    log.warn("Pagamento falhou para o cliente: {}", failedInvoice.getCustomer());
+                    updateSubscriptionStatus(failedInvoice.getCustomer(), PAST_DUE);
+                }
                 break;
 
             case "customer.subscription.deleted":
-                Subscription subscription = (Subscription) event.getDataObjectDeserializer().getObject().orElseThrow();
-                log.info("Assinatura cancelada para o cliente: {}", subscription.getCustomer());
-                updateSubscriptionStatus(subscription.getCustomer(), CANCELED);
+                if (stripeObject instanceof Subscription subscription) {
+                    log.info("Assinatura cancelada para o cliente: {}", subscription.getCustomer());
+                    updateSubscriptionStatus(subscription.getCustomer(), CANCELED);
+                }
                 break;
 
             default:
