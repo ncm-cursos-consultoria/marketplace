@@ -213,5 +213,9 @@ public class CrudCourseImpl implements CrudCourse {
                             .status(status)
                     .build());
         }
+        if (status.equals(CourseStatusEnum.ONGOING) || status.equals(CourseStatusEnum.FINISHED)) {
+            course.setView(course.getView() + 1);
+            course.getModule().setView(course.getModule().getView() + 1);
+        }
     }
 }

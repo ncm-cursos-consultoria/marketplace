@@ -29,10 +29,12 @@ public class Module {
     @UpdateTimestamp
     private Instant updatedAt;
     private String title;
-    @Column(length = 500)
+    @Column(length = 1000)
     private String description;
     @Builder.Default
     private Boolean freePlan = Boolean.FALSE;
+    @Builder.Default
+    private Integer view = 0;
 
     @Builder.Default
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
