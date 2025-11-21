@@ -12,6 +12,7 @@ export interface ApiModule {
   description: string;
   courseCount: number;
   freePlan: boolean;
+  view: number;
 }
 
 export const getAllModules = async (params?: ModuleParams): Promise<ApiModule[]> => {

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Layers, PlayCircle } from "lucide-react";
+import { BookOpen, Layers, PlayCircle, Eye } from "lucide-react";
 import { EmptyState } from "./complementary/empty-state";
 import { getAllModules } from "@/service/module/get-all-modules";
 import Image from "next/image";
@@ -16,6 +16,7 @@ type Module = {
   description?: string;
   courseCount?: number;
   coverUrl?: string;
+  view?: number;
   // enterprise?: string; // se vier da API
 };
 
@@ -123,13 +124,25 @@ function ModuleCard({
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
+        {/* 3. Alteração no layout do cabeçalho do card */}
         <div className="flex items-start justify-between gap-2">
           <h3 className="line-clamp-1 text-base font-semibold">
             {module.title}
           </h3>
-          <Badge variant="secondary" className="whitespace-nowrap">
-            {module.courseCount ?? 0} aula(s)
-          </Badge>
+
+          {/* Agrupamos os indicadores da direita */}
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Indicador de Visualizações */}
+            <div className="flex items-center gap-1 text-sm text-muted-foreground" title="Visualizações">
+              <Eye className="h-4 w-4" />
+              <span>{module.view ?? 0}</span>
+            </div>
+
+            {/* Badge de Aulas existente */}
+            <Badge variant="secondary" className="whitespace-nowrap">
+              {module.courseCount ?? 0} aula(s)
+            </Badge>
+          </div>
         </div>
 
         <p className="line-clamp-2 text-sm text-muted-foreground">

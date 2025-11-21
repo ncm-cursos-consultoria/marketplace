@@ -14,7 +14,7 @@ type Course = {
   moduleId: string;
   videoUrl: string;
   status: userCourseStatus;
-  createdAt?: string;
+  createdAt: string;
   updatedAt?: string;
 };
 
@@ -252,9 +252,9 @@ export default function CursoPage() {
 
   const sorted =
     (courses ?? []).slice().sort((a, b) => {
-      const numA = Number(a.title.match(/\d+/)?.[0] ?? 9999);
-      const numB = Number(b.title.match(/\d+/)?.[0] ?? 9999);
-      return numA - numB || a.title.localeCompare(b.title);
+      const numA = Number(a.createdAt.match(/\d+/)?.[0] ?? 9999);
+      const numB = Number(b.createdAt.match(/\d+/)?.[0] ?? 9999);
+      return numA - numB || a.createdAt.localeCompare(b.createdAt);
     });
 
   return (
