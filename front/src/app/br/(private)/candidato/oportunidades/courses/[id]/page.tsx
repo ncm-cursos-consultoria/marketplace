@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import ncm from "@/assets/logo-ncm-horizontal.svg";
 import Link from "next/link";
 import { UseUserCandidate } from "@/context/user-candidate.context";
+import { useMemo } from "react";
 
 export default function CoursesPage() {
   const userCandidate = UseUserCandidate();
@@ -14,6 +15,19 @@ export default function CoursesPage() {
     queryKey: [],
     queryFn: () => getAllModules(),
   });
+
+  const sortedList = useMemo(() => {
+    if (!data) return [];
+    // 1. Fazemos uma cópia com [...lista] para não mutar o estado original
+    return [...(data || [])].sort((a, b) => {
+      // 2. Convertemos para Date para comparar matematicamente
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+
+      // 3. B - A = Ordem Decrescente (Mais novo primeiro)
+      return dateB - dateA;
+    });
+  }, [data]);
 
   return (
     <div className="flex min-h-screen">
@@ -29,8 +43,8 @@ export default function CoursesPage() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {Array.isArray(data) &&
-              data.map((module: ApiModule) => {
+            {Array.isArray(sortedList) &&
+              sortedList.map((module: ApiModule) => {
 
                 // 2. CALCULA O BLOQUEIO AQUI (Se não é permitido E o curso não é free)
                 const isAccessBlocked = !canViewCourses && !module.freePlan;

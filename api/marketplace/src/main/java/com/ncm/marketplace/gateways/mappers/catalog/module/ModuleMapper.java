@@ -26,6 +26,7 @@ public class ModuleMapper {
                 .description(module.getDescription())
                 .courseCount(module.getCourses().size())
                 .freePlan(module.getFreePlan())
+                .view(module.getView())
 //                .enterpriseId(module.getEnterprise() != null
 //                        ? module.getEnterprise().getId()
 //                        : null)

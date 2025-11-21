@@ -28,13 +28,17 @@ public class Course {
     @UpdateTimestamp
     private Instant updatedAt;
     private String title;
-    @Column(length = 500)
+    @Column(length = 1000)
     private String description;
     @Column(name = "courseOrder")
     private Integer order;
     @Builder.Default
     private Boolean freePlan = Boolean.FALSE;
     private String lastVideoUrl;
+    @Builder.Default
+    private Integer view = 0;
+    //TODO adcionar view ao course e module
+    //TODO ordenar corretamente os videos do course
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "moduleId", referencedColumnName = "id", nullable = false)

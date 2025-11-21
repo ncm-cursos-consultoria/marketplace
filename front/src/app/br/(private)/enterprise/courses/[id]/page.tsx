@@ -54,6 +54,19 @@ export default function CoursesByModulePage() {
     )
   }, [courses, search])
 
+  const sortedList = useMemo(() => {
+    if (!filtered) return [];
+    // 1. Fazemos uma cópia com [...lista] para não mutar o estado original
+    return [...(filtered || [])].sort((a, b) => {
+      // 2. Convertemos para Date para comparar matematicamente
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+
+      // 3. B - A = Ordem Decrescente (Mais novo primeiro)
+      return dateA - dateB;
+    });
+  }, [filtered]);
+
   const totalCourses = courses.length
 
   return (
@@ -73,9 +86,9 @@ export default function CoursesByModulePage() {
             </Badge>
           </h1>
 
-          <div>
+          {/* <div>
             <ModalCreateCourse moduleId={id} />
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -126,9 +139,9 @@ export default function CoursesByModulePage() {
 
       {!isLoadingModule && !isLoadingCourses && (
         <>
-          {filtered.length > 0 ? (
+          {sortedList.length > 0 ? (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {filtered.map((c) => (
+              {sortedList.map((c) => (
                 <CourseCard key={c.id} course={c} />
               ))}
             </div>

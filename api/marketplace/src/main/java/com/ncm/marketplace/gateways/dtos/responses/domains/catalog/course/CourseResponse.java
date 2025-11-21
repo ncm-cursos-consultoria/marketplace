@@ -25,4 +25,5 @@ public class CourseResponse {
     private String videoUrl;
     private CourseStatusEnum status;
     private Boolean freePlan;
+    private Integer view;
 }

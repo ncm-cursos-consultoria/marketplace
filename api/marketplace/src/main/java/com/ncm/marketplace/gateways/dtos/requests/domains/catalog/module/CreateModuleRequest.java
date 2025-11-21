@@ -14,7 +14,7 @@ import lombok.extern.jackson.Jacksonized;
 public class CreateModuleRequest {
     @Size(min = 1, max = 255)
     private String title;
-    @Size(max = 500)
+    @Size(max = 1000)
     private String description;
 //    @NotEmpty
 //    private String enterpriseId;

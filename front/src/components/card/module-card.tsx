@@ -1,5 +1,5 @@
 import { ApiModule } from "@/service/module/get-all-modules";
-import { Lock } from "lucide-react";
+import { Eye, Lock } from "lucide-react";
 import Image from "next/image";
 
 // 3. A interface do componente recebe as flags
@@ -12,15 +12,15 @@ export function ModuleCard({
     module,
     isUserPermitted,
 }: ModuleCardProps) {
-    
+
     const { title, description, freePlan } = module;
-    
+
     // 4. Lógica de Bloqueio
     const isAccessBlocked = !isUserPermitted && !freePlan;
 
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden relative">
-            
+
             {/* --- 5. OVERLAY DE BLOQUEIO (Paywall) --- */}
             {isAccessBlocked && (
                 <div className="absolute inset-0 z-10 bg-black/60 grid place-items-center cursor-not-allowed">
@@ -36,16 +36,22 @@ export function ModuleCard({
                     </div>
                 </div>
             )}
-            
+
             {/* 6. CONTEÚDO (Borro e Desabilitado se houver bloqueio) */}
             <div className={isAccessBlocked ? "blur-sm pointer-events-none" : ""}>
-                
+
                 {/* 7. SUBSTITUÍMOS IMAGE/VIDEO PELO SEU CÓDIGO LITERAL PARA MANTER COMPATIBILIDADE */}
                 {/* Usamos o seu logo original como placeholder de imagem */}
                 <Image src={require("@/assets/ncm-logo.png")} alt={title} className=" object-cover p-10 bg-neutral-200" />
-                
+
                 <div className="p-4">
-                    <h3 className="text-lg font-semibold">{title}</h3>
+                    <div className="mb-2 flex items-center justify-between">
+                        <h3 className="text-lg font-semibold">{title}</h3>
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground" title="Visualizações">
+                            <Eye className="h-4 w-4" />
+                            <span>{module.view ?? 0}</span>
+                        </div>
+                    </div>
                     <p className="text-sm text-gray-600">{description}</p>
                 </div>
             </div>
