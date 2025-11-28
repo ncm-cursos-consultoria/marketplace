@@ -1,3 +1,4 @@
+import { TermsOfUseContent } from "@/components/candidate/terms-of-use";
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -133,18 +134,7 @@ export function CandidateSignUp() {
               className="text-[12px] underline text-blue-700 cursor-pointer hover:text-blue-800"
               headerTitle="Termos e condições"
             >
-              <div>
-                <p>
-                  Bem-vindo ao Marketplace da NCM. Estes Termos e Condições de
-                  Uso regulam o acesso e a utilização da Plataforma e dos
-                  serviços oferecidos por NCM CONSULTORIA LTDA - ME, inscrita no
-                  CNPJ sob nº 08.631.537/0001-61, com sede em [Endereço
-                  Completo]. Ao criar uma conta, acessar ou usar
-                  a Plataforma, você concorda com estes Termos e com nossa
-                  Política de Privacidade . Se você não concorda, não deve
-                  utilizar a Plataforma.
-                </p>
-              </div>
+              <TermsOfUseContent />
             </Modal>
             <span></span>
           </div>
