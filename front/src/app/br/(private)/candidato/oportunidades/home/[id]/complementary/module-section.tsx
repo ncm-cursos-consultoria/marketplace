@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import ncm from "@/assets/logo-ncm-horizontal.svg"
 import { UseUserCandidate } from "@/context/user-candidate.context";
+import { useMemo } from "react";
 
 type Module = {
   id: string;
@@ -16,6 +17,7 @@ type Module = {
   description?: string | null;
   coverUrl?: string | null;      // URL da thumb/capa (opcional)
   coursesCount?: number | null;  // Quantidade de aulas/cursos dentro do módulo (opcional)
+  createdAt?: string | Date; // 2. Adicionar createdAt na tipagem
   level?: "Básico" | "Intermediário" | "Avançado" | string | null; // opcional
 };
 
@@ -23,14 +25,14 @@ function ModuleCard({ mod }: { mod: Module }) {
   return (
     <Card className="overflow-hidden rounded-2xl shadow-sm hover:shadow-md transition">
       <div className="relative h-36 w-full bg-muted p-10">
-          <Image
-            src={ncm}
-            alt={mod.title}
-            fill
-            className=""
-            sizes="(max-width: 768px) 100vw, 33vw"
-            priority={false}
-          />
+        <Image
+          src={ncm}
+          alt={mod.title}
+          fill
+          className=""
+          sizes="(max-width: 768px) 100vw, 33vw"
+          priority={false}
+        />
       </div>
 
       <CardHeader className="pb-2">
@@ -93,18 +95,34 @@ function ModuleSkeletonCard() {
 
 export function ModuleSection() {
   const userCandidate = UseUserCandidate();
+  const isUserLoaded = userCandidate?.userCandidate !== undefined;
+  const canViewCourses = userCandidate?.userCandidate?.canViewCourses || false;
   const params: ModuleParams = {
-    freePlan: userCandidate?.userCandidate?.canViewCourses ? undefined : !userCandidate?.userCandidate?.canViewCourses,
+    freePlan: canViewCourses ? undefined : true,
   };
+  
   const { data: modules, isPending, isError } = useQuery<Module[]>({
-    queryKey: ["module"],
+    queryKey: ["module", params], 
     queryFn: () => getAllModules(params),
     staleTime: 1000 * 60 * 5,
+    enabled: isUserLoaded, 
   });
+
+  const recentModules = useMemo(() => {
+    if (!modules || !Array.isArray(modules)) return [];
+
+    return [...modules] // Cria uma cópia para não alterar o original
+      .sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return dateB - dateA; // Do mais novo para o mais antigo
+      })
+      .slice(0, 3); // Pega apenas os 3 primeiros
+  }, [modules]);
 
   return (
     <section>
-      <h2 className="text-2xl font-semibold mb-6">Cursos disponíveis</h2>
+      <h2 className="text-2xl font-semibold mb-6">Últimos Lançamentos</h2>
 
       {isError && (
         <div className="rounded-lg border p-4 text-sm text-red-600 bg-red-50">
@@ -114,13 +132,14 @@ export function ModuleSection() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {isPending &&
-          Array.from({ length: 6 }).map((_, i) => <ModuleSkeletonCard key={i} />)}
+          Array.from({ length: 3 }).map((_, i) => <ModuleSkeletonCard key={i} />)}
 
-        {!isPending && Array.isArray(modules) && modules.length > 0 && (
-          modules.map((m) => <ModuleCard key={m.id} mod={m} />)
+        {/* 4. Renderiza a lista filtrada (recentModules) */}
+        {!isPending && recentModules.length > 0 && (
+          recentModules.map((m) => <ModuleCard key={m.id} mod={m} />)
         )}
 
-        {!isPending && (!modules || modules.length === 0) && (
+        {!isPending && recentModules.length === 0 && (
           <div className="col-span-full text-sm text-muted-foreground">
             Nenhum módulo disponível no momento.
           </div>
