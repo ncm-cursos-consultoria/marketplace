@@ -22,6 +22,9 @@ export const getAllModules = async (params?: ModuleParams): Promise<ApiModule[]>
         params: params
       }
     )
+    console.log("param fp: ", params?.freePlan);
+    console.log("modules: ", res.data);
+    
     return res.data
   } catch (err) {
     console.log(err);

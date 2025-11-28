@@ -18,16 +18,33 @@ export default function CoursesPage() {
 
   const sortedList = useMemo(() => {
     if (!data) return [];
-    // 1. Fazemos uma cópia com [...lista] para não mutar o estado original
-    return [...(data || [])].sort((a, b) => {
-      // 2. Convertemos para Date para comparar matematicamente
-      const dateA = new Date(a.createdAt).getTime();
-      const dateB = new Date(b.createdAt).getTime();
 
-      // 3. B - A = Ordem Decrescente (Mais novo primeiro)
+    return [...data].sort((a, b) => {
+      // Datas para comparação (usado em ambos os casos)
+      const dateA = new Date(a.createdAt || 0).getTime();
+      const dateB = new Date(b.createdAt || 0).getTime();
+
+      // CASO 1: Usuário TEM permissão total
+      // Ordena APENAS pela data (mais novo primeiro)
+      if (canViewCourses) {
+        return dateB - dateA;
+      }
+
+      // CASO 2: Usuário NÃO tem permissão (Lógica antiga)
+      // Prioridade 1: Plano Gratuito
+      const isFreeA = !!a.freePlan;
+      const isFreeB = !!b.freePlan;
+
+      if (isFreeA !== isFreeB) {
+        return isFreeA ? -1 : 1; // Free primeiro
+      }
+
+      // Prioridade 2: Data (subordenação)
       return dateB - dateA;
     });
-  }, [data]);
+
+    // IMPORTANTE: Adicione canViewCourses nas dependências
+  }, [data, canViewCourses]);
 
   return (
     <div className="flex min-h-screen">
