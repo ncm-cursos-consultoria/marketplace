@@ -94,7 +94,7 @@ function ModuleSkeletonCard() {
 export function ModuleSection() {
   const userCandidate = UseUserCandidate();
   const params: ModuleParams = {
-    freePlan: !userCandidate?.userCandidate?.canViewCourses,
+    freePlan: userCandidate?.userCandidate?.canViewCourses ? undefined : !userCandidate?.userCandidate?.canViewCourses,
   };
   const { data: modules, isPending, isError } = useQuery<Module[]>({
     queryKey: ["module"],
