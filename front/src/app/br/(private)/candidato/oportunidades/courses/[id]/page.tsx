@@ -72,6 +72,7 @@ export default function CoursesPage() {
                     key={module.id}
                     module={module}
                     isUserPermitted={canViewCourses}
+                    userId={userCandidate.userCandidate?.id || ""}
                   />
                 );
 
