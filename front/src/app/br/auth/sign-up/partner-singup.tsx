@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useCreatePartner } from "@/hooks/forms/create-partner";
 import { Modal } from "@/components/modal";
-import { EnterpriseTermsOfUse } from "@/components/enterprise/enterprise-terms-of-use";
+import { PartnerTermsOfUse } from "@/components/partner/partner-terms-of-use";
 
 export function PartnerSignUp() {
   const { form, isPending, onSubmit } = useCreatePartner();
@@ -192,7 +192,7 @@ export function PartnerSignUp() {
                 className="text-[12px] underline text-blue-700 cursor-pointer hover:text-blue-800"
                 headerTitle="Termos e condições"
               >
-                <EnterpriseTermsOfUse />
+                <PartnerTermsOfUse />
               </Modal>
               <span></span>
             </div>
