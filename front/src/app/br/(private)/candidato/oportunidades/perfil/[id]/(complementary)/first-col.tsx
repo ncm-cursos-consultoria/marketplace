@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   Github,
   Globe2,
@@ -15,7 +15,10 @@ import {
   Search,
   Zap,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  RefreshCw,
+  Upload,
+  FileUp
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -34,6 +37,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"; // <-- CORREÇÃO AQUI
 import { Checkbox } from "@/components/ui/checkbox";
 import { UpgradeCandidateModal } from "@/components/candidate/upgrade-candidate-modal";
 import { cancelSubscription } from "@/service/subscription/cancel-subscription";
+import { api } from "@/service/api";
 
 // --- SKELETONS (Componentes de Carregamento) ---
 function SkeletonCard() {
@@ -298,6 +302,110 @@ function AddressModal({ isOpen, setIsOpen, userId, currentAddress }: AddressModa
             </DialogFooter>
           </form>
         </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+interface CvModalProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  userId: string;
+}
+
+function CvModal({ isOpen, setIsOpen, userId }: CvModalProps) {
+  const [file, setFile] = useState<File | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
+
+  // Função de upload usando FormData e Axios (api)
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (fileToUpload: File) => {
+      const formData = new FormData();
+      formData.append("file", fileToUpload);
+
+      // Endpoint: Ajuste conforme sua rota de backend. 
+      // Geralmente é algo como PATCH /user/{id}/upload?fileType=CURRICULUM_VITAE
+      const { data } = await api.patch(`/user/${userId}/upload`, formData, {
+        params: { fileType: "CURRICULUM_VITAE" },
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Currículo enviado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ['authUser'] });
+      setFile(null);
+      setIsOpen(false);
+    },
+    onError: (err: any) => {
+      console.error(err);
+      toast.error(err?.response?.data?.message || "Erro ao enviar o arquivo.");
+    }
+  });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      if (selectedFile.type !== "application/pdf") {
+        toast.error("Por favor, selecione um arquivo PDF.");
+        return;
+      }
+      if (selectedFile.size > 5 * 1024 * 1024) { // 5MB
+        toast.error("O arquivo deve ter no máximo 5MB.");
+        return;
+      }
+      setFile(selectedFile);
+    }
+  };
+
+  const handleUpload = () => {
+    if (file) mutate(file);
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Upload de Currículo</DialogTitle>
+          <DialogDescription>
+            Envie seu currículo em formato PDF (Máx. 5MB).
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="flex flex-col items-center justify-center gap-4 py-6 border-2 border-dashed border-neutral-200 rounded-xl bg-neutral-50 hover:bg-neutral-100 transition-colors cursor-pointer"
+          onClick={() => inputRef.current?.click()}
+        >
+          <input
+            ref={inputRef}
+            type="file"
+            accept="application/pdf"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+
+          {file ? (
+            <div className="flex flex-col items-center text-center">
+              <FileText className="h-10 w-10 text-blue-600 mb-2" />
+              <span className="font-medium text-blue-700 break-all px-4">{file.name}</span>
+              <span className="text-xs text-neutral-500 mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+              <span className="text-xs text-blue-500 mt-2 hover:underline">Clique para trocar</span>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center text-center">
+              <Upload className="h-10 w-10 text-neutral-400 mb-2" />
+              <span className="font-medium text-neutral-600">Clique para selecionar</span>
+            </div>
+          )}
+        </div>
+
+        <DialogFooter className="gap-2 sm:gap-0">
+          <Button variant="outline" onClick={() => setIsOpen(false)}>Cancelar</Button>
+          <Button onClick={handleUpload} disabled={!file || isPending}>
+            {isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <FileUp className="h-4 w-4 mr-2" />}
+            Enviar Arquivo
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
@@ -604,6 +712,7 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [isCvModalOpen, setIsCvModalOpen] = useState(false);
 
   const { hardSkills, softSkills } = useMemo(() => {
     const hard: TagResponse[] = [];
@@ -728,14 +837,37 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
               </div>
 
               {/* Currículo */}
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 flex-shrink-0" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <FileText className="h-4 w-4 flex-shrink-0" />
+                  {user.curriculumVitaeUrl ? (
+                    <a className="text-blue-600 hover:underline truncate" href={user.curriculumVitaeUrl} target="_blank" rel="noreferrer">
+                      Visualizar Currículo
+                    </a>
+                  ) : (
+                    <span className="text-neutral-400">Currículo não informado</span>
+                  )}
+                </div>
+
+                {/* Botão de Upload/Trocar */}
                 {user.curriculumVitaeUrl ? (
-                  <a className="text-blue-600 hover:underline truncate" href={user.curriculumVitaeUrl} target="_blank" rel="noreferrer">
-                    Visualizar Currículo
-                  </a>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-neutral-500 hover:text-blue-600"
+                    onClick={() => setIsCvModalOpen(true)}
+                    title="Trocar currículo"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" />
+                  </Button>
                 ) : (
-                  <span className="text-neutral-400">Currículo não informado</span>
+                  <Button
+                    variant="link"
+                    className="h-auto p-0 text-blue-600 font-semibold text-xs"
+                    onClick={() => setIsCvModalOpen(true)}
+                  >
+                    Adicionar
+                  </Button>
                 )}
               </div>
 
@@ -907,11 +1039,17 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
         user={user}
       />
 
-      <CancelSubscriptionModal 
+      <CancelSubscriptionModal
         isOpen={isCancelModalOpen}
         setIsOpen={setIsCancelModalOpen}
         onConfirm={() => cancelPlan(user.id)} // A ação real acontece aqui
         isPending={isCanceling}
+      />
+
+      <CvModal
+        isOpen={isCvModalOpen}
+        setIsOpen={setIsCvModalOpen}
+        userId={user.id}
       />
 
     </div>
