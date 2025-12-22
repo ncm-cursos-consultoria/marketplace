@@ -4,6 +4,7 @@ import com.ncm.marketplace.gateways.controller.interfaces.services.auth.AuthCont
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.ResetPasswordRequest;
 import com.ncm.marketplace.gateways.dtos.responses.services.auth.MeResponse;
+import com.ncm.marketplace.usecases.services.scheduled.QuickinScheduledService;
 import com.ncm.marketplace.usecases.services.security.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthControllerImpl implements AuthController {
 
     private final AuthService authService;
+    private final QuickinScheduledService quickinScheduledService;
 
     @PostMapping("/login")
     @Operation(summary = "Login with any user using cookie")
