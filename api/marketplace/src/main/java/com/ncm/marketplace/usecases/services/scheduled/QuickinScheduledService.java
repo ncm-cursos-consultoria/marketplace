@@ -1,11 +1,11 @@
 package com.ncm.marketplace.usecases.services.scheduled;
 
 import com.ncm.marketplace.domains.enterprise.JobOpening;
-import com.ncm.marketplace.domains.enums.JobOpeningStatusEnum;
 import com.ncm.marketplace.domains.enums.WorkModelEnum;
 import com.ncm.marketplace.gateways.dtos.responses.services.quickin.QuickinJobDoc;
 import com.ncm.marketplace.gateways.dtos.responses.services.quickin.QuickinJobResponse;
 import com.ncm.marketplace.gateways.mappers.enterprises.jobOpening.JobOpeningMapper;
+import com.ncm.marketplace.usecases.interfaces.enterprises.CrudJobOpening;
 import com.ncm.marketplace.usecases.services.command.enterprises.JobOpeningCommandService;
 import com.ncm.marketplace.usecases.services.openFeign.QuickinApiClient;
 import com.ncm.marketplace.usecases.services.query.enterprises.JobOpeningQueryService;
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.ncm.marketplace.domains.enums.JobOpeningStatusEnum.*;
 import static com.ncm.marketplace.gateways.mappers.enterprises.jobOpening.JobOpeningMapper.quickinToJobOpeningEntity;
 
 @Slf4j
@@ -30,6 +31,7 @@ public class QuickinScheduledService {
     private final QuickinApiClient quickinApiClient;
     private final JobOpeningQueryService jobOpeningQueryService;
     private final JobOpeningCommandService jobOpeningCommandService;
+    private final CrudJobOpening crudJobOpening;
 
 
     @Value("${quickin.api.candidatura-id}")
@@ -76,6 +78,16 @@ public class QuickinScheduledService {
                 allJobs.addAll(response.getDocs());
                 currentPage++;
 
+                if (currentPage <= totalPages) {
+                    long delayMilliseconds = 5000;
+                    log.info("Aguardando {}ms antes de buscar a próxima página...", delayMilliseconds);
+                    try {
+                        Thread.sleep(delayMilliseconds);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+
             } while (currentPage <= totalPages);
 
         } catch (Exception e) {
@@ -86,12 +98,16 @@ public class QuickinScheduledService {
         log.info("Total de {} vagas 'open' encontradas. Iniciando sincronização...", allJobs.size());
 
         for (QuickinJobDoc quickinJob : allJobs) {
-            JobOpening job = jobOpeningQueryService.findByThirdPartyIdOrNull(quickinJob.get_id());
+            log.info("QuickIn id: {}",quickinJob.get_id());
+            log.info("QuickIn url: {}",quickinJob.getCareer_url());
+            JobOpening job = jobOpeningQueryService.findByThirdPartyIdOrUrlOrNull(quickinJob.getCareer_url(), quickinJob.get_id());
             if (job != null) {
-                updateJobOpeningFromQuickin(quickinJob,job);
-                job.setStatus(isJobStillInApplicationPhase(quickinJob)
-                        ? JobOpeningStatusEnum.ACTIVE
-                        : JobOpeningStatusEnum.CLOSED);
+                job = updateJobOpeningFromQuickin(quickinJob,job);
+                if (isJobStillInApplicationPhase(quickinJob)) {
+                    job.setStatus(ACTIVE);
+                } else {
+                    crudJobOpening.changeStatus(job.getId(), CLOSED);
+                }
                 updatedJobs++;
             } else {
                 if (isJobStillInApplicationPhase(quickinJob)) {
@@ -122,7 +138,7 @@ public class QuickinScheduledService {
         return !hasCandidatesInNextSteps;
     }
 
-    private void updateJobOpeningFromQuickin(QuickinJobDoc quickinJob, JobOpening jobOpening) {
+    private JobOpening updateJobOpeningFromQuickin(QuickinJobDoc quickinJob, JobOpening jobOpening) {
         jobOpening.setTitle(quickinJob.getTitle());
         jobOpening.setSalary(quickinJob.getRemuneration());
         jobOpening.setCurrencyCode(quickinJob.getCurrency());
@@ -136,5 +152,8 @@ public class QuickinScheduledService {
                 .findFirst()
                 .orElse(WorkModelEnum.ON_SITE));
         jobOpening.setSeniority(JobOpeningMapper.mapSeniority(quickinJob.getExperience_level()));
+        jobOpening.setThirdParty(Boolean.TRUE);
+        jobOpening.setThirdPartyId(quickinJob.get_id());
+        return jobOpening;
     }
 }

@@ -27,6 +27,12 @@ public class ModuleMapper {
                 .courseCount(module.getCourses().size())
                 .freePlan(module.getFreePlan())
                 .view(module.getView())
+                .mentorId(module.getMentor() != null
+                        ? module.getMentor().getId()
+                        : null)
+                .hasMentor(module.getHasMentor())
+                .hasMentorship(module.getHasMentorship())
+                .mentorshipValuePerHour(module.getMentorshipValuePerHour())
 //                .enterpriseId(module.getEnterprise() != null
 //                        ? module.getEnterprise().getId()
 //                        : null)

@@ -14,5 +14,6 @@ public interface CrudModule {
     ModuleResponse findById(String id);
     List<ModuleResponse> findAll(ModuleSpecificationRequest specificationRequest);
     String init(String enterpriseId);
+    ModuleResponse updateMentor(String id, String mentorId);
 //    List<ModuleResponse> findAllByEnterpriseId(String id);
 }

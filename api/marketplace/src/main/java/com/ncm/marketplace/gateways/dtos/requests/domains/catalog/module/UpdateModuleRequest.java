@@ -1,5 +1,6 @@
 package com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,5 +16,10 @@ public class UpdateModuleRequest {
     private String title;
     @Size(max = 500)
     private String description;
+    @NotNull
     private Boolean freePlan;
+    @NotNull
+    private Boolean hasMentorship;
+    @NotNull
+    private Double mentorshipValuePerHour;
 }

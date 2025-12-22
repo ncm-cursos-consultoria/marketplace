@@ -57,4 +57,14 @@ public class JobOpeningQueryService {
         return jobOpeningRepository.findByThirdPartyId(id)
                 .orElse(null);
     }
+
+    public JobOpening findByThirdPartyIdOrUrlOrNull(String url, String id) {
+        return jobOpeningRepository.findByUrl(url)
+                .orElse(findByThirdPartyIdOrNull(id));
+    }
+
+    public JobOpening findByUrlOrNull(String url) {
+        return jobOpeningRepository.findByUrl(url)
+                .orElse(null);
+    }
 }

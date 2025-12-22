@@ -83,6 +83,7 @@ public class AuthService {
                     .canCreateJobOpenings(Boolean.FALSE)
                     .canViewTests(Boolean.FALSE)
                     .canViewCurriculumVitaeBase(Boolean.FALSE)
+                    .admin(Boolean.FALSE)
                     .build();
         }
 
@@ -108,6 +109,7 @@ public class AuthService {
         Boolean canCreateJobOpenings = null;
         Boolean canViewTests = null;
         Boolean canViewCurriculumVitaeBase = null;
+        Boolean admin = null;
 
         Object details = auth.getDetails();
         if (details instanceof java.util.Map<?,?> map) {
@@ -153,6 +155,7 @@ public class AuthService {
                 canViewTests = userEnterprise.getEnterprise().getCanViewTests();
                 canViewCurriculumVitaeBase = userEnterprise.getEnterprise().getCanViewCurriculumVitaeBase();
             }
+            admin = userEnterprise.getAdmin();
         } else if (user instanceof UserPartner userPartner) {
             partnerId = userPartner.getPartner() != null ? userPartner.getPartner().getId() : null;
             enterpriseId = userPartner.getPartner() != null
@@ -183,6 +186,7 @@ public class AuthService {
                 .canCreateJobOpenings(canCreateJobOpenings)
                 .canViewTests(canViewTests)
                 .canViewCurriculumVitaeBase(canViewCurriculumVitaeBase)
+                .admin(admin)
                 .build();
     }
 

@@ -6,10 +6,23 @@ import { login } from "@/service/auth/login";
 import { useRouter } from "next/navigation";
 import { UseUserPartner } from "@/context/user-partner.context";
 import { me } from "@/service/auth/me";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export function useLoginPartner() {
+  const [hasCookieConsent, setHasCookieConsent] = useState(false);
+  
+    useEffect(() => {
+      // Checa o consentimento inicial
+      const checkConsent = () => {
+        setHasCookieConsent(localStorage.getItem('ncm_cookie_consent') === 'true');
+      };
+      
+      checkConsent();
+      // Ouve o evento do banner
+      window.addEventListener("cookieConsentChanged", checkConsent);
+      return () => window.removeEventListener("cookieConsentChanged", checkConsent);
+    }, []);
   const router = useRouter();
   const { setUserPartner } = UseUserPartner();
   const queryClient = useQueryClient();
@@ -50,5 +63,11 @@ export function useLoginPartner() {
       setIsProcessing(false);
     }
   };
-  return { onSubmit, isPending: isProcessing, form };
+  return { 
+    onSubmit, 
+    isPending: isProcessing, 
+    form,
+    isButtonDisabled: !hasCookieConsent || isProcessing
+  };
 }
+

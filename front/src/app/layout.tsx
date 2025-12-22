@@ -5,6 +5,7 @@ import { Providers } from "@/provider/provider";
 import { fontVars } from "@/styles/fonts";
 import { AppProviders } from "@/components/provider/AppProviders";
 import { Inter } from "next/font/google";
+import { CookieBanner } from "@/components/cookies/banner";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* 2. Envolva o {children} APENAS com o AppProviders */}
         <AppProviders>
           {children}
+          <CookieBanner />
         </AppProviders>
       </body>
     </html>

@@ -27,7 +27,8 @@ public class CookieService {
                 .path("/")
                 .maxAge(Duration.ofDays(1))
                 .secure(isProd)
-                .sameSite(isProd ? "None" : "Lax");
+                .sameSite("Lax")
+                .domain(isProd ? "ncmconsultoria.com.br" : null);
 
         if (isProd && cookieDomain != null && !cookieDomain.isBlank()) {
             cookieBuilder.domain(cookieDomain);
