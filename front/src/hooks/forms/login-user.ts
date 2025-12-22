@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { LoginFormSchema, loginFormSchema } from "../schemas/login-formschema";
@@ -10,6 +10,19 @@ import { UseUserCandidate } from "@/context/user-candidate.context";
 import { me } from "@/service/auth/me";
 
 export function useLogin() {
+  const [hasCookieConsent, setHasCookieConsent] = useState(false);
+  
+    useEffect(() => {
+      // Checa o consentimento inicial
+      const checkConsent = () => {
+        setHasCookieConsent(localStorage.getItem('ncm_cookie_consent') === 'true');
+      };
+      
+      checkConsent();
+      // Ouve o evento do banner
+      window.addEventListener("cookieConsentChanged", checkConsent);
+      return () => window.removeEventListener("cookieConsentChanged", checkConsent);
+    }, []);
   const router = useRouter();
   const { setUserCandidate } = UseUserCandidate();
 
@@ -49,5 +62,11 @@ export function useLogin() {
       setIsProcessing(false);
     }
   };
-  return { onSubmit, isPending: isProcessing, form };
+  return { 
+    onSubmit, 
+    isPending: isProcessing, 
+    form,
+    isButtonDisabled: !hasCookieConsent || isProcessing
+  };
 }
+
