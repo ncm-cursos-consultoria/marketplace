@@ -27,4 +27,5 @@ public class UserEnterpriseResponse {
     private String profilePictureUrl;
     private String enterpriseId;
     private UserTypeEnum type;
+    private Boolean admin;
 }

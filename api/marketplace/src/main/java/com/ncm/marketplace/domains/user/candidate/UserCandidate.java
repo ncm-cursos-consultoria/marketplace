@@ -3,6 +3,7 @@ package com.ncm.marketplace.domains.user.candidate;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ncm.marketplace.domains.enums.*;
+import com.ncm.marketplace.domains.mentorship.MentorshipAppointment;
 import com.ncm.marketplace.domains.others.Address;
 import com.ncm.marketplace.domains.others.File;
 import com.ncm.marketplace.domains.relationships.partner.PartnerUserCandidate;
@@ -97,6 +98,11 @@ public class UserCandidate extends User {
     @OneToOne(mappedBy = "userCandidate", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("plan_user_candidate-user_candidate")
     private PlanUserCandidate planUserCandidate;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference("appointments-user_candidate")
+    private Set<MentorshipAppointment> appointments = new HashSet<>();
 
     @Override
     public UserTypeEnum getType() {

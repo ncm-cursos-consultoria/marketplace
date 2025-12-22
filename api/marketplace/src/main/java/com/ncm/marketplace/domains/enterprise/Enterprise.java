@@ -99,4 +99,13 @@ public class Enterprise {
 //    @OneToOne(mappedBy = "enterprise", cascade = CascadeType.ALL)
 //    @JsonBackReference("mp_customer-enterprise")
 //    private MercadoPagoCustomer mercadoPagoCustomer;
+
+    @PrePersist
+    public void prePersist() {
+        plan = PlansEnum.BASIC.getName();
+        canUploadModules = Boolean.FALSE;
+        canCreateJobOpenings = Boolean.TRUE;
+        canViewTests = Boolean.FALSE;
+        canViewCurriculumVitaeBase = Boolean.FALSE;
+    }
 }

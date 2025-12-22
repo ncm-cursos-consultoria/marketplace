@@ -44,6 +44,13 @@ public class ModuleControllerImpl implements ModuleController {
         return ResponseEntity.ok(crudModule.update(id, request));
     }
 
+    @PatchMapping("{id}/mentor/{mentorId}/update")
+    @ResponseStatus(HttpStatus.OK)
+    @Override
+    public ResponseEntity<ModuleResponse> updateMentor(@PathVariable String id, @PathVariable String mentorId) {
+        return ResponseEntity.ok(crudModule.updateMentor(id,mentorId));
+    }
+
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Override

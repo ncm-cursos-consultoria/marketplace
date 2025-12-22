@@ -2,6 +2,7 @@ package com.ncm.marketplace.usecases.impl.catalog;
 
 import com.ncm.marketplace.domains.catalog.Module;
 import com.ncm.marketplace.domains.enterprise.Enterprise;
+import com.ncm.marketplace.domains.user.UserMentor;
 import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.CreateModuleRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.ModuleSpecificationRequest;
@@ -11,6 +12,7 @@ import com.ncm.marketplace.usecases.interfaces.catalog.CrudModule;
 import com.ncm.marketplace.usecases.services.command.catalog.ModuleCommandService;
 import com.ncm.marketplace.usecases.services.query.catalog.ModuleQueryService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
+import com.ncm.marketplace.usecases.services.query.user.UserMentorQueryService;
 import com.ncm.marketplace.usecases.services.specification.catalog.ModuleSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ public class CrudModuleImpl implements CrudModule {
     private final EnterpriseQueryService enterpriseQueryService;
     private final ModuleCommandService moduleCommandService;
     private final ModuleSpecification moduleSpecification;
+    private final UserMentorQueryService userMentorQueryService;
 
     @Transactional
     @Override
@@ -88,6 +91,15 @@ public class CrudModuleImpl implements CrudModule {
             log.info("Module already exists ℹ️");
             return modules.get(0).getId();
         }
+    }
+
+    @Transactional
+    @Override
+    public ModuleResponse updateMentor(String id, String mentorId) {
+        Module module = moduleQueryService.findByIdOrThrow(id);
+        UserMentor mentor = userMentorQueryService.findByIdOrThrow(mentorId);
+        module.setMentor(mentor);
+        return toResponse(module);
     }
 
 //    @Override

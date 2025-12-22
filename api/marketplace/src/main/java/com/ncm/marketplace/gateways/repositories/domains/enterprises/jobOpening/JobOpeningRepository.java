@@ -17,4 +17,5 @@ public interface JobOpeningRepository extends JpaRepository<JobOpening, String>,
     Integer countByEnterprise_PartnerEnterprise_Partner_IdAndUserCandidateJobOpenings_Status(String id, JobOpeningUserCandidateStatus status);
     List<JobOpening> findAllByThirdParty(Boolean thirdParty);
     Optional<JobOpening> findByThirdPartyId(String id);
+    Optional<JobOpening> findByUrl(String url);
 }

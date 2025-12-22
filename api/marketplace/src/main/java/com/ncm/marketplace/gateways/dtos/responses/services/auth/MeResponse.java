@@ -39,4 +39,5 @@ public class MeResponse {
     private Boolean canCreateJobOpenings;
     private Boolean canViewTests;
     private Boolean canViewCurriculumVitaeBase;
+    private Boolean admin;
 }

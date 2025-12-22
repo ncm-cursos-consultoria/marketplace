@@ -22,15 +22,21 @@ public class UserEnterprise extends User {
     private String stripeSubscriptionId;
     @Enumerated(EnumType.STRING)
     private SubscriptionStatusEnum subscriptionStatus;
+    @Builder.Default
+    private Boolean admin = Boolean.FALSE;
 
     @OneToOne
     @JoinColumn(name = "enterpriseId", referencedColumnName = "id")
     @JsonManagedReference("user_enterprise-enterprise")
     private Enterprise enterprise;
 
-
     @Override
     public UserTypeEnum getType() {
         return UserTypeEnum.ENTERPRISE;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        admin = Boolean.FALSE;
     }
 }

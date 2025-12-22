@@ -22,5 +22,9 @@ public class ModuleResponse {
     private Integer courseCount;
     private Boolean freePlan;
     private Integer view;
+    private String mentorId;
+    private Boolean hasMentor;
+    private Boolean hasMentorship;
+    private Double mentorshipValuePerHour;
 //    private String enterpriseId;
 }

@@ -12,6 +12,7 @@ public interface ModuleController {
     ResponseEntity<ModuleResponse> save(CreateModuleRequest request);
     ResponseEntity<Void> deleteById(String id);
     ResponseEntity<ModuleResponse> update(String id, UpdateModuleRequest request);
+    ResponseEntity<ModuleResponse> updateMentor(String id, String mentorId);
     ResponseEntity<ModuleResponse> findById(String id);
     ResponseEntity<List<ModuleResponse>> findAll(ModuleSpecificationRequest specificationRequest);
 //    ResponseEntity<List<ModuleResponse>> findAllByEnterpriseId(String id);

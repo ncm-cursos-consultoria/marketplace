@@ -2,8 +2,9 @@ package com.ncm.marketplace.domains.catalog;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.ncm.marketplace.domains.enterprise.Enterprise;
+import com.ncm.marketplace.domains.mentorship.MentorshipAppointment;
 import com.ncm.marketplace.domains.relationships.user.candidate.UserCandidateModule;
+import com.ncm.marketplace.domains.user.UserMentor;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -35,6 +36,11 @@ public class Module {
     private Boolean freePlan = Boolean.FALSE;
     @Builder.Default
     private Integer view = 0;
+    @Builder.Default
+    private Boolean hasMentor = Boolean.FALSE;
+    @Builder.Default
+    private Boolean hasMentorship = Boolean.FALSE;
+    private Double mentorshipValuePerHour;
 
     @Builder.Default
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -50,4 +56,24 @@ public class Module {
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL)
     @JsonBackReference("user_candidate_module-module")
     private Set<UserCandidateModule> userCandidateModules = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userMentorId", referencedColumnName = "id", nullable = true)
+    @JsonManagedReference("modules-user_mentor")
+    private UserMentor mentor;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference("appointments-module")
+    private Set<MentorshipAppointment> appointments = new HashSet<>();
+
+    @PrePersist
+    public void prePersist() {
+        hasMentor = mentor != null;
+        hasMentorship = !hasMentor
+                ? Boolean.FALSE
+                : hasMentorship == null
+                    ? Boolean.FALSE
+                    : Boolean.TRUE;
+    }
 }

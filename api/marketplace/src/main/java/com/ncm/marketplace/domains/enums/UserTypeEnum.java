@@ -4,5 +4,6 @@ public enum UserTypeEnum {
     UNKNOWN,
     CANDIDATE,
     ENTERPRISE,
-    PARTNER
+    PARTNER,
+    MENTOR
 }
