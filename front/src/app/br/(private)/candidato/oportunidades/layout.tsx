@@ -19,7 +19,7 @@ export default function LayoutOportunidades({ children }: { children: React.Reac
       <Aside isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
       
       {/* Ajuste: ml-0 no mobile e ml-72 (ou 300px) no desktop */}
-      <main className="min-h-screen bg-neutral-200 transition-all md:ml-[300px]">
+      <main className="transition-all md:ml-72 min-h-screen bg-gray-50">
         {children}
       </main>
     </div>
