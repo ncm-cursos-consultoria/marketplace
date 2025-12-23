@@ -6,15 +6,21 @@ import { useParams, usePathname } from "next/navigation";
 import logo from "@/assets/ncm-logo.png";
 import avatar from "@/assets/avatar.png";
 import { UseUserCandidate } from "@/context/user-candidate.context";
-import { LogOut, Loader2, Home, BookCopy, Briefcase, NotebookPenIcon } from "lucide-react";
+import { LogOut, Loader2, Home, BookCopy, Briefcase, NotebookPenIcon, X } from "lucide-react";
 import { NotificationBell } from "../notification/NotificationBell";
 
 type NavItem = {
   label: string;
   slug: "home" | "courses" | "jobs" | "teste-comportamental" | "minhas-candidaturas";
   requiresId?: boolean;
-  icon: React.ReactNode; // Adicionando o ícone ao tipo
+  icon: React.ReactNode;
 };
+
+// Interface para as novas Props de responsividade
+interface AsideProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
 
 const NAV: NavItem[] = [
   { label: "Início", slug: "home", requiresId: true, icon: <Home className="h-5 w-5" /> },
@@ -24,7 +30,7 @@ const NAV: NavItem[] = [
   { label: "Minhas Candidaturas", slug: "minhas-candidaturas", requiresId: true, icon: <Briefcase className="h-5 w-5" /> }
 ];
 
-export function Aside() {
+export function Aside({ isOpen, onClose }: AsideProps) {
   const { userCandidate, logout, isLoggingOut } = UseUserCandidate();
   const pathname = usePathname() || "";
   const params = useParams();
@@ -53,80 +59,93 @@ export function Aside() {
   };
 
   return (
-    // 1. O container principal agora é um flex-col
-    <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col bg-blue-900 text-white md:flex">
-      {/* Seção do Logo (não muda) */}
-      <div className="px-6 py-6 border-b border-white/10">
-        <Image src={logo} alt="Logo NCM" width={200} priority />
-      </div>
+    <>
+      {/* Overlay: Escurece a tela quando o menu abre no mobile */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/50 md:hidden" 
+          onClick={onClose}
+        />
+      )}
 
-      {/* Seção da Navegação */}
-      <nav className="flex-1 px-4 py-4 space-y-2">
-        {NAV.map(({ label, slug, requiresId, icon }) => {
-          const disabled = !!(requiresId && !id);
-          const href = disabled ? "#" : hrefFor(slug);
-          const active = isActive(slug);
+      {/* Aside com lógica de transição */}
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-blue-900 text-white transition-transform duration-300 ease-in-out
+        ${isOpen ? "translate-x-0" : "-translate-x-full"} 
+        md:translate-x-0
+      `}>
+        
+        {/* Seção do Logo + Botão Fechar no Mobile */}
+        <div className="flex items-center justify-between px-6 py-6 border-b border-white/10">
+          <Image src={logo} alt="Logo NCM" width={160} priority />
+          <button onClick={onClose} className="md:hidden">
+            <X className="h-6 w-6 text-white" />
+          </button>
+        </div>
 
-          return (
-            <li key={slug} style={{ listStyleType: 'none' }}>
-              <Link
-                href={href}
-                aria-disabled={disabled}
-                aria-current={active ? "page" : undefined}
-                className={itemCls(active, disabled)}
-              >
-                {icon}
-                <span>{label}</span>
-              </Link>
-            </li>
-          );
-        })}
-      </nav>
+        {/* Seção da Navegação */}
+        <nav className="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
+          {NAV.map(({ label, slug, requiresId, icon }) => {
+            const disabled = !!(requiresId && !id);
+            const href = disabled ? "#" : hrefFor(slug);
+            const active = isActive(slug);
 
-      <div className="mt-auto border-t border-white/10 p-4">
-        <div className="flex items-center justify-between gap-3">
-          {/* Agrupar Avatar e Nome */}
-          <div className="flex items-center gap-3 min-w-0">
-            <Image
-              src={userCandidate?.profilePictureUrl || avatar}
-              alt="Avatar"
-              width={40}
-              height={40}
-              className="rounded-full object-cover flex-shrink-0"
-            />
-            <div className="flex flex-col leading-tight min-w-0">
-              <Link href={id ? `/br/candidato/oportunidades/perfil/${id}` : '#'}>
-                <p className="font-semibold hover:underline truncate">
-                  {userCandidate?.firstName} {userCandidate?.lastName}
-                </p>
-              </Link>
-              <p className="text-xs text-white/70 truncate">{userCandidate?.email}</p>
+            return (
+              <li key={slug} className="list-none">
+                <Link
+                  href={href}
+                  onClick={onClose} // Fecha ao clicar no item no mobile
+                  aria-disabled={disabled}
+                  aria-current={active ? "page" : undefined}
+                  className={itemCls(active, disabled)}
+                >
+                  {icon}
+                  <span>{label}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </nav>
+
+        {/* Rodapé: Perfil e Logout */}
+        <div className="mt-auto border-t border-white/10 p-4">
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <Image
+                src={userCandidate?.profilePictureUrl || avatar}
+                alt="Avatar"
+                width={40}
+                height={40}
+                className="rounded-full object-cover flex-shrink-0 border border-white/20"
+              />
+              <div className="flex flex-col leading-tight min-w-0">
+                <Link href={id ? `/br/candidato/oportunidades/perfil/${id}` : '#'} onClick={onClose}>
+                  <p className="font-semibold hover:underline truncate text-sm">
+                    {userCandidate?.firstName} {userCandidate?.lastName}
+                  </p>
+                </Link>
+                <p className="text-[10px] text-white/70 truncate">{userCandidate?.email}</p>
+              </div>
+            </div>
+            <div className="flex-shrink-0">
+              <NotificationBell />
             </div>
           </div>
 
-          {/* 3. SINO ADICIONADO AQUI */}
-          <div className="flex-shrink-0">
-            <NotificationBell />
-          </div>
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-sm font-medium hover:bg-white/20 disabled:opacity-60 transition-colors"
+          >
+            {isLoggingOut ? (
+              <><Loader2 className="h-4 w-4 animate-spin" /> Saindo...</>
+            ) : (
+              <><LogOut className="h-4 w-4" /> Sair</>
+            )}
+          </button>
         </div>
-
-        <button
-          type="button"
-          onClick={handleLogout}
-          disabled={isLoggingOut}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-sm font-medium hover:bg-white/20 disabled:opacity-60"
-        >
-          {isLoggingOut ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" /> Saindo...
-            </>
-          ) : (
-            <>
-              <LogOut className="h-4 w-4" /> Sair
-            </>
-          )}
-        </button>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }
