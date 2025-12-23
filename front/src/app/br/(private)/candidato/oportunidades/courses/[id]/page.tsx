@@ -1,106 +1,89 @@
 "use client";
 
 import { ModuleCard } from "@/components/card/module-card";
-import { ApiModule, getAllModules, ModuleParams } from "@/service/module/get-all-modules";
+import { ApiModule, getAllModules } from "@/service/module/get-all-modules";
 import { useQuery } from "@tanstack/react-query";
-import ncm from "@/assets/logo-ncm-horizontal.svg";
 import Link from "next/link";
 import { UseUserCandidate } from "@/context/user-candidate.context";
 import { useMemo } from "react";
+import { BookOpen } from "lucide-react";
 
 export default function CoursesPage() {
-  const userCandidate = UseUserCandidate();
-  const canViewCourses = userCandidate?.userCandidate?.canViewCourses || false;
+  const { userCandidate } = UseUserCandidate();
+  const canViewCourses = userCandidate?.canViewCourses || false;
+
   const { data, isLoading } = useQuery<ApiModule[]>({
-    queryKey: [],
+    queryKey: ["all-modules-candidate"],
     queryFn: () => getAllModules(),
   });
 
   const sortedList = useMemo(() => {
     if (!data) return [];
-
     return [...data].sort((a, b) => {
-      // Datas para comparação (usado em ambos os casos)
       const dateA = new Date(a.createdAt || 0).getTime();
       const dateB = new Date(b.createdAt || 0).getTime();
-
-      // CASO 1: Usuário TEM permissão total
-      // Ordena APENAS pela data (mais novo primeiro)
-      if (canViewCourses) {
-        return dateB - dateA;
-      }
-
-      // CASO 2: Usuário NÃO tem permissão (Lógica antiga)
-      // Prioridade 1: Plano Gratuito
+      if (canViewCourses) return dateB - dateA;
       const isFreeA = !!a.freePlan;
       const isFreeB = !!b.freePlan;
-
-      if (isFreeA !== isFreeB) {
-        return isFreeA ? -1 : 1; // Free primeiro
-      }
-
-      // Prioridade 2: Data (subordenação)
+      if (isFreeA !== isFreeB) return isFreeA ? -1 : 1;
       return dateB - dateA;
     });
-
-    // IMPORTANTE: Adicione canViewCourses nas dependências
   }, [data, canViewCourses]);
 
+  if (isLoading) return <div className="p-10 animate-pulse text-gray-400">Carregando catálogo...</div>;
+
   return (
-    <div className="flex min-h-screen">
-      <main className="flex-1 bg-gray-100 p-8 space-y-16">
-        <h1 className="text-3xl font-bold mb-4">Cursos Disponíveis</h1>
-        <p className="text-gray-700 text-lg mb-10">
-          Explore os cursos por tema e escolha o que mais combina com seus
-          objetivos.
-        </p>
-        <section>
-          <h2 className="text-2xl font-semibold mb-6">
-            Cursos Marketplace das Oportunidades
-          </h2>
+    // md:ml-72 alinha o conteúdo com o Aside fixo que configuramos anteriormente
+    <div className="w-full flex flex-col items-center">
+      <main className="w-full max-w-[1400px] p-6 lg:p-10 space-y-8">
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {Array.isArray(sortedList) &&
-              sortedList.map((module: ApiModule) => {
+        <header className="space-y-2 border-b border-gray-200 pb-6">
+          <h1 className="text-2xl font-bold tracking-tight inline-flex items-center gap-2 text-gray-900">
+            <BookOpen className="h-6 w-6 text-blue-900" /> Catálogo de Cursos
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Explore nossa biblioteca de módulos e escolha um tema para iniciar sua jornada.
+          </p>
+        </header>
 
-                // 2. CALCULA O BLOQUEIO AQUI (Se não é permitido E o curso não é free)
-                const isAccessBlocked = !canViewCourses && !module.freePlan;
-                const moduleHref = `/br/candidato/oportunidades/curso/${module.id}`;
+        <section className="w-full">
+          {/* grid-rows-1 junto com items-stretch no card garante tamanhos iguais por linha */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {sortedList.map((module) => {
+              // 1. Definimos a URL de destino
+              const moduleHref = `/br/candidato/oportunidades/curso/${module.id}`;
 
-                const card = (
+              // 2. Verificamos se o acesso está bloqueado para este módulo específico
+              const isAccessBlocked = !canViewCourses && !module.freePlan;
+
+              // 3. O card em si
+              const cardContent = (
+                <div className="flex h-full w-full">
                   <ModuleCard
-                    key={module.id}
                     module={module}
                     isUserPermitted={canViewCourses}
-                    userId={userCandidate.userCandidate?.id || ""}
+                    userId={userCandidate?.id || ""}
                   />
-                );
+                </div>
+              );
 
-                // 3. RENDERIZAÇÃO CONDICIONAL DO LINK
-                if (isAccessBlocked) {
-                  // Se bloqueado, renderiza apenas uma DIV com cursor desabilitado
-                  return (
-                    <div
-                      key={module.id}
-                      className="cursor-not-allowed" // Desabilita o cursor
-                    >
-                      {card}
-                    </div>
-                  );
-                }
+              // 4. Se estiver bloqueado, renderizamos apenas o card (o modal de upgrade abre dentro dele)
+              if (isAccessBlocked) {
+                return <div key={module.id}>{cardContent}</div>;
+              }
 
-                // Se permitido (ou se o curso for gratuito), renderiza o LINK
-                return (
-                  <Link key={module.id} href={moduleHref}>
-                    {card}
-                  </Link>
-                );
-              })}
+              // 5. Se tiver acesso, envolvemos o card com o Link de navegação
+              return (
+                <Link key={module.id} href={moduleHref} className="flex h-full w-full transition-transform hover:scale-[1.01]">
+                  {cardContent}
+                </Link>
+              );
+            })}
           </div>
         </section>
-        <footer className="text-center text-gray-500 text-sm pt-6 border-t mt-10">
-          &copy; {new Date().getFullYear()} Marketplace das Oportunidades. Todos
-          os direitos reservados.
+
+        <footer className="pt-10 border-t border-gray-200 text-center text-xs text-gray-400">
+          &copy; {new Date().getFullYear()} Marketplace das Oportunidades &bull; NCM Consultoria.
         </footer>
       </main>
     </div>
