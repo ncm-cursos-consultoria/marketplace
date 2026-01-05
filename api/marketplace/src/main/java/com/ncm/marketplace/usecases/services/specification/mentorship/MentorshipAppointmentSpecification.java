@@ -23,11 +23,24 @@ public class MentorshipAppointmentSpecification {
         };
     }
 
+    public static Specification<MentorshipAppointment> byCandidateIds(List<String> candidateIds) {
+        return (root, query, criteriaBuilder) ->  {
+            if (candidateIds == null || candidateIds.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            } else {
+                assert query != null;
+                query.distinct(true);
+                return root.get("candidate").get("id").in(candidateIds);
+            }
+        };
+    }
+
     public Specification<MentorshipAppointment> toSpecification(MentorshipAppointmentSpecificationRequest request) {
         Specification<MentorshipAppointment> specification = (root, query, criteriaBuilder) ->
                 criteriaBuilder.conjunction();
         if (request != null) {
             specification = specification.and(byMentorIds(request.getMentorIds()));
+            specification = specification.and(byCandidateIds(request.getCandidateIds()));
         }
 
         return specification;

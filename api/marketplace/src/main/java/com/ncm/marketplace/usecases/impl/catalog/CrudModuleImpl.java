@@ -39,11 +39,10 @@ public class CrudModuleImpl implements CrudModule {
     @Override
     public ModuleResponse save(CreateModuleRequest request) {
         Module module = toEntityCreate(request);
-//        Enterprise enterprise = enterpriseQueryService.findByIdOrThrow(request.getEnterpriseId());
-//        if (!enterprise.getCanUploadModules()) {
-//            throw new IllegalStateException("This enterprise can't create modules");
-//        }
-//        module.setEnterprise(enterprise);
+        if (request.getMentorId() != null && !request.getMentorId().isEmpty()) {
+            UserMentor mentor = userMentorQueryService.findByIdOrThrow(request.getMentorId());
+            module.setMentor(mentor);
+        }
         return toResponse(moduleCommandService.save(module));
     }
 
@@ -60,6 +59,10 @@ public class CrudModuleImpl implements CrudModule {
 
         module.setTitle(request.getTitle());
         module.setDescription(request.getDescription());
+        module.setHasMentorship(request.getHasMentorship());
+        if (request.getHasMentorship()) {
+            module.setMentorshipValuePerHour(request.getMentorshipValuePerHour());
+        }
 
         return toResponse(moduleCommandService.save(module));
     }

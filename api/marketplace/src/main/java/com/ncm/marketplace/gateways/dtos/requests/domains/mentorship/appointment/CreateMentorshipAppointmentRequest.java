@@ -17,8 +17,6 @@ public class CreateMentorshipAppointmentRequest {
     @NotEmpty
     private String candidateId;
     @NotEmpty
-    private String mentorId;
-    @NotEmpty
     private String moduleId;
     @NotNull
     private Instant startTime;

@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.time.Instant;
 
 public interface MentorshipAppointmentRepository extends JpaRepository<MentorshipAppointment, String>, JpaSpecificationExecutor<MentorshipAppointment> {
-    // No MentorshipAppointmentRepository
     @Query("SELECT COUNT(m) > 0 FROM MentorshipAppointment m " +
             "WHERE m.mentor.id = :mentorId " +
             "AND m.status IN (com.ncm.marketplace.domains.enums.AppointmentStatus.CONFIRMED, com.ncm.marketplace.domains.enums.AppointmentStatus.PENDING, com.ncm.marketplace.domains.enums.AppointmentStatus.PAID) " +

@@ -10,4 +10,5 @@ import java.util.List;
 public class ModuleSpecificationRequest {
 //    private List<String> enterpriseIds;
     private Boolean freePlan;
+    private List<String> mentorIds;
 }

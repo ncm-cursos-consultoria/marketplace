@@ -13,4 +13,5 @@ import java.util.List;
 @Jacksonized
 public class MentorshipAppointmentSpecificationRequest {
     private List<String> mentorIds;
+    private List<String> candidateIds;
 }

@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,8 @@ public class CreateModuleRequest {
     private String title;
     @Size(max = 1000)
     private String description;
-//    @NotEmpty
-//    private String enterpriseId;
+    private String mentorId;
+    private Boolean freePlan;
+    private Boolean hasMentorship;
+    private Double mentorshipValuePerHour;
 }

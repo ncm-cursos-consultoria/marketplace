@@ -47,6 +47,7 @@ public class SecurityConfig {
                                 "/user/candidate",
                                 "/enterprise/with-user",
                                 "/partner/with-enterprise-and-user",
+                                "/user/mentor",
                                 "/stripe/webhook"
                         ).permitAll()
                         .anyRequest().authenticated()

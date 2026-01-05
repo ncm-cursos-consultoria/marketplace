@@ -14,6 +14,9 @@ public class ModuleMapper {
         return Module.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
+                .freePlan(request.getFreePlan())
+                .hasMentorship(request.getHasMentorship())
+                .mentorshipValuePerHour(request.getMentorshipValuePerHour())
                 .build();
     }
 

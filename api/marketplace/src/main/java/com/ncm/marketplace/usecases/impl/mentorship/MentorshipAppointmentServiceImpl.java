@@ -42,14 +42,17 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
     @Override
     @Transactional
     public MentorshipAppointmentResponse save(CreateMentorshipAppointmentRequest request) {
+        Module module = moduleQueryService.findByIdOrThrow(request.getModuleId());
+        if (!module.getHasMentorship() || module.getMentor() == null) {
+            throw new IllegalStateException("Module with id " + request.getModuleId() + " does not have mentorship");
+        }
         if (mentorshipAppointmentQueryService.existsOverlappingAppointment(
-                request.getMentorId(), request.getStartTime(), request.getEndTime())) {
+                module.getMentor().getId(), request.getStartTime(), request.getEndTime())) {
             throw new IllegalStateException("O mentor já possui um agendamento neste horário.");
         }
         MentorshipAppointment appointment = toEntityCreate(request);
-        UserMentor mentor = userMentorQueryService.findByIdOrThrow(request.getMentorId());
+        UserMentor mentor = userMentorQueryService.findByIdOrThrow(module.getMentor().getId());
         UserCandidate candidate = userCandidateQueryService.findByIdOrThrow(request.getCandidateId());
-        Module module = moduleQueryService.findByIdOrThrow(request.getModuleId());
         appointment.setMentor(mentor);
         appointment.setCandidate(candidate);
         appointment.setModule(module);
@@ -90,6 +93,7 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
         }
     }
 
+    @Transactional
     @Override
     public void updateStatus(String id, UpdateMentorshipAppointmentStatusRequest request) {
         MentorshipAppointment appointment = mentorshipAppointmentQueryService.findByIdOrThrow(id);

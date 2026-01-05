@@ -13,8 +13,6 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 public class UpdateMentorshipAppointmentStatusRequest {
-    @NotEmpty
-    private String id;
     @NotNull
     private AppointmentStatus status;
     private String cancellationReason;

@@ -58,10 +58,10 @@ public class MentorAvailabilityControllerImpl implements MentorAvailabilityContr
         return ResponseEntity.ok(mentorAvailabilityService.findAll(specificationRequest));
     }
 
-    @GetMapping("/schedule")
+    @GetMapping("/{id}/schedule")
     @ResponseStatus(HttpStatus.OK)
     @Override
-    public ResponseEntity<ScheduleResponse> getScheduleById(String id) {
+    public ResponseEntity<ScheduleResponse> getScheduleById(@PathVariable String id) {
         return ResponseEntity.ok(mentorAvailabilityService.getScheduleById(id));
     }
 }

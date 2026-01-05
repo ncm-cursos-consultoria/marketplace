@@ -10,17 +10,17 @@ import java.util.List;
 
 @Service
 public class ModuleSpecification {
-//    public static Specification<Module> byEnterpriseIds(List<String> enterpriseIds) {
-//        return ((root, query, criteriaBuilder) -> {
-//            if (enterpriseIds == null || enterpriseIds.isEmpty()) {
-//                return criteriaBuilder.conjunction();
-//            } else {
-//                assert query != null;
-//                query.distinct(true);
-//                return root.get("enterprise").get("id").in(enterpriseIds);
-//            }
-//        });
-//    }
+    public static Specification<Module> byMentorIds(List<String> mentorIds) {
+        return ((root, query, criteriaBuilder) -> {
+            if (mentorIds == null || mentorIds.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            } else {
+                assert query != null;
+                query.distinct(true);
+                return root.get("mentor").get("id").in(mentorIds);
+            }
+        });
+    }
 
     public static Specification<Module> byFreePlan(Boolean freePlan) {
         return ((root, query, criteriaBuilder) -> {
@@ -38,7 +38,7 @@ public class ModuleSpecification {
         Specification<Module> specification = (root, query, criteriaBuilder) ->
                 criteriaBuilder.conjunction();
         if (request != null) {
-//            specification = specification.and(byEnterpriseIds(request.getEnterpriseIds()));
+            specification = specification.and(byMentorIds(request.getMentorIds()));
             specification = specification.and(byFreePlan(request.getFreePlan()));
         }
 
