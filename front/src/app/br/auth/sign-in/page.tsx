@@ -4,8 +4,9 @@ import { JSX, useState } from "react";
 import { CandidateLogin } from "./candidate-login";
 import { EnterpriseLogin } from "./enterprise-login";
 import PartnerLogin from "./partner-login";
+import { MentorLogin } from "./mentor-login";
 
-type SelectType = "candidato" | "empresa" | "parceiro";
+type SelectType = "candidato" | "empresa" | "parceiro" | "mentor";
 
 export default function SignIn() {
   const [selectType, setSelectType] = useState<SelectType>("candidato");
@@ -22,6 +23,7 @@ export default function SignIn() {
     candidato: <CandidateLogin />,
     empresa: <EnterpriseLogin />,
     parceiro: <PartnerLogin />,
+    mentor: <MentorLogin />,
   };
 
   return (
@@ -64,6 +66,15 @@ export default function SignIn() {
           className={btn(selectType === "empresa")}
         >
           Empresa
+        </button>
+
+        <button
+          type="button"
+          aria-pressed={selectType === "mentor"}
+          onClick={() => setSelectType("mentor")}
+          className={btn(selectType === "mentor")}
+        >
+          Mentor
         </button>
       </div>
 

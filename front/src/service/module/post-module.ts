@@ -1,8 +1,12 @@
 import { api } from "../api";
 
-interface postModuleProps {
+export interface postModuleProps {
   title: string;
   description: string;
+  freePlan?: boolean;
+  hasMentorship?: boolean;
+  mentorshipValuePerHour?: number;
+  mentorId?: string;
 }
 
 export const postModule = async (data: postModuleProps) => {

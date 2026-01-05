@@ -46,6 +46,15 @@ export interface UserEnterpriseProps {
   canViewCurriculumVitaeBase: boolean;
 }
 
+export interface UserMentorProps {
+  id: string;
+  profilePictureUrl: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  type: string;
+}
+
 export interface workModelEnum {
   ON_SITE: string;
   HYBRID: string;

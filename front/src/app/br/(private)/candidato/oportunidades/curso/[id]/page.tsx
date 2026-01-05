@@ -7,6 +7,10 @@ import YouTube, { YouTubeEvent, YouTubeProps } from "react-youtube"; // Import n
 import { UseUserCandidate } from "@/context/user-candidate.context";
 import { getCourses } from "@/service/course/get-courses";
 import { changeCourseStatus, userCourseStatus } from "@/service/course/change-status";
+import { Button } from "@/components/ui/button";
+import { Clock } from "lucide-react";
+import { AppointmentModal } from "@/components/mentorship/appointment-modal";
+import { getModule } from "@/service/module/get-module";
 
 type Course = {
   id: string;
@@ -180,7 +184,7 @@ function CourseCard({
 
   const handleUpdate = (status: userCourseStatus) => {
     console.log(`Changed course id ${course.id} to status ${status}`);
-    
+
     onUpdateStatus(status);
   };
 
@@ -192,13 +196,13 @@ function CourseCard({
         onStartVideo={() => onUpdateStatus("ONGOING")}
         onFinishVideo={() => onUpdateStatus("FINISHED")}
       />
-      
+
       <div className="flex flex-col flex-1 p-4 gap-3">
         {/* Título */}
         <h3 className="line-clamp-2 text-base font-semibold text-neutral-900 leading-tight">
           {course.title}
         </h3>
-        
+
         {/* Status e Duração */}
         <div className="flex items-center justify-between mt-auto pt-2">
           <StatusBadge status={course.status} />
@@ -221,6 +225,15 @@ export default function CursoPage() {
   const { userCandidate } = UseUserCandidate();
   const params = useParams<{ id: string }>();
   const id = params?.id;
+  const moduleId = params?.id; // O ID na URL é o do Módulo
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // 1. Busca os dados do Módulo para verificar se possui mentoria
+  const { data: module } = useQuery({
+    queryKey: ["module", moduleId],
+    queryFn: () => getModule(moduleId as string),
+    enabled: !!moduleId,
+  });
 
   const {
     data: courses,
@@ -259,9 +272,37 @@ export default function CursoPage() {
 
   return (
     <div className="px-6 py-6">
-      <header className="mb-6">
-        <h1 className="text-2xl font-semibold">Cursos</h1>
+      <header className="flex justify-between items-center mb-6 border-b pb-4">
+        <div>
+          <h1 className="text-2xl font-bold text-neutral-900">
+            {module?.title || "Cursos"}
+          </h1>
+          <p className="text-sm text-neutral-500">
+            Assista às aulas e acompanhe seu progresso.
+          </p>
+        </div>
+
+        {/* 3. Validação: Só mostra o botão se o módulo permitir mentoria */}
+        {module?.hasMentorship && (
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-blue-900 hover:bg-blue-800 text-white rounded-xl gap-2 h-11 px-6 shadow-md"
+          >
+            <Clock className="h-4 w-4" /> Agendar Mentoria
+          </Button>
+        )}
       </header>
+
+      {/* Modal de Agendamento */}
+      {module && (
+        <AppointmentModal
+          moduleId={module.id}
+          mentorId={module.mentorId} // Pegamos o mentor direto do módulo
+          candidateId={userCandidate?.id ?? ""}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
 
       {isLoading ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">

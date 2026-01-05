@@ -6,12 +6,12 @@ import { useParams, usePathname } from "next/navigation";
 import logo from "@/assets/ncm-logo.png";
 import avatar from "@/assets/avatar.png";
 import { UseUserCandidate } from "@/context/user-candidate.context";
-import { LogOut, Loader2, Home, BookCopy, Briefcase, NotebookPenIcon, X } from "lucide-react";
+import { LogOut, Loader2, Home, BookCopy, Briefcase, NotebookPenIcon, X, Clock } from "lucide-react";
 import { NotificationBell } from "../notification/NotificationBell";
 
 type NavItem = {
   label: string;
-  slug: "home" | "courses" | "jobs" | "teste-comportamental" | "minhas-candidaturas";
+  slug: "home" | "courses" | "jobs" | "teste-comportamental" | "minhas-candidaturas" | "mentorships";
   requiresId?: boolean;
   icon: React.ReactNode;
 };
@@ -27,7 +27,8 @@ const NAV: NavItem[] = [
   { label: "Teste Comportamental", slug: "teste-comportamental", requiresId: true, icon: <BookCopy className="h-5 w-5" /> },
   { label: "Cursos", slug: "courses", requiresId: true, icon: <NotebookPenIcon className="h-5 w-5" /> },
   { label: "Vagas", slug: "jobs", requiresId: true, icon: <Briefcase className="h-5 w-5" /> },
-  { label: "Minhas Candidaturas", slug: "minhas-candidaturas", requiresId: true, icon: <Briefcase className="h-5 w-5" /> }
+  { label: "Minhas Candidaturas", slug: "minhas-candidaturas", requiresId: true, icon: <Briefcase className="h-5 w-5" /> },
+  { label: "Minhas Mentorias", slug: "mentorships", requiresId: true, icon: <Clock className="h-5 w-5" /> }
 ];
 
 export function Aside({ isOpen, onClose }: AsideProps) {

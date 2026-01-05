@@ -3,6 +3,8 @@ import { api } from "../api";
 interface createCourseProps {
   title: string;
   description: string;
+  moduleId: string,
+  videoUrl: string,
 }
 
 export const createCourse = async (data: createCourseProps) => {

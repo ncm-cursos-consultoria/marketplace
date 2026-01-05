@@ -2,6 +2,7 @@ import { api } from "../api";
 
 export interface ModuleParams {
   freePlan?: boolean;
+  mentorIds?: string[];
 }
 
 export interface ApiModule {
@@ -22,8 +23,6 @@ export const getAllModules = async (params?: ModuleParams): Promise<ApiModule[]>
         params: params
       }
     )
-    console.log("param fp: ", params?.freePlan);
-    console.log("modules: ", res.data);
     
     return res.data
   } catch (err) {
