@@ -79,4 +79,22 @@ public class MentorshipAppointmentControllerImpl implements MentorshipAppointmen
     public ResponseEntity<Map<String, String>> createMentorshipPayment(@PathVariable String id) throws StripeException {
         return ResponseEntity.ok(subscriptionService.createMentorshipPayment(id));
     }
+
+    @PatchMapping("/{id}/enter/candidate")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Control candidate entering meeting")
+    @Override
+    public ResponseEntity<Void> candidateEnteredAppointment(@PathVariable String id) {
+        mentorshipAppointmentService.candidateEnteredAppointment(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/enter/mentor")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Control mentor entering meeting")
+    @Override
+    public ResponseEntity<Void> mentorEnteredAppointment(@PathVariable String id) {
+        mentorshipAppointmentService.mentorEnteredAppointment(id);
+        return ResponseEntity.noContent().build();
+    }
 }

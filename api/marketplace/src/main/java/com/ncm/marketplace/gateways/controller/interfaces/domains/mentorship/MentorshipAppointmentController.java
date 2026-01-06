@@ -19,4 +19,6 @@ public interface MentorshipAppointmentController {
     ResponseEntity<MentorshipAppointmentResponse> findById(String id);
     ResponseEntity<List<MentorshipAppointmentResponse>> findAll(MentorshipAppointmentSpecificationRequest specificationRequest);
     ResponseEntity<Map<String, String>> createMentorshipPayment(String id) throws StripeException;
+    ResponseEntity<Void> candidateEnteredAppointment(String id);
+    ResponseEntity<Void> mentorEnteredAppointment(String id);
 }

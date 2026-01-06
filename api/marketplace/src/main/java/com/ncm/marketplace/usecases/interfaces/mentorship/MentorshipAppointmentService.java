@@ -17,4 +17,6 @@ public interface MentorshipAppointmentService {
     void updateStatus(String id, UpdateMentorshipAppointmentStatusRequest request);
     void confirmPayment(String appointmentId);
     String generateJitsiLink(String id);
+    void candidateEnteredAppointment(String id);
+    void mentorEnteredAppointment(String id);
 }

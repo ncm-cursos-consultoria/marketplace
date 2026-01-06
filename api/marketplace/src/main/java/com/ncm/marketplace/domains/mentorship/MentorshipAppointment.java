@@ -32,6 +32,12 @@ public class MentorshipAppointment {
     private String meetingUrl;
     private AppointmentStatus status;
     private String cancellationReason;
+    @Builder.Default
+    private Boolean mentorEntered = Boolean.FALSE;
+    private Instant mentorEnteredAt;
+    @Builder.Default
+    private Boolean candidateEntered = Boolean.FALSE;
+    private Instant candidateEnteredAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "moduleId", referencedColumnName = "id", nullable = false)

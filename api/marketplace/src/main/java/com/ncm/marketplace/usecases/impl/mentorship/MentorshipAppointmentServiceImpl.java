@@ -129,4 +129,20 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
 
         return baseUrl + roomName;
     }
+
+    @Transactional
+    @Override
+    public void candidateEnteredAppointment(String id) {
+        MentorshipAppointment appointment = mentorshipAppointmentQueryService.findByIdOrThrow(id);
+        appointment.setCandidateEntered(Boolean.TRUE);
+        appointment.setCandidateEnteredAt(Instant.now());
+    }
+
+    @Transactional
+    @Override
+    public void mentorEnteredAppointment(String id) {
+        MentorshipAppointment appointment = mentorshipAppointmentQueryService.findByIdOrThrow(id);
+        appointment.setMentorEntered(Boolean.TRUE);
+        appointment.setMentorEnteredAt(Instant.now());
+    }
 }
