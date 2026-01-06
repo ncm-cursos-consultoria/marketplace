@@ -23,7 +23,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { format, isAfter, subMinutes } from "date-fns";
+import { format, isAfter, isBefore, subMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { getMentorshipAppointments, MentorshipAppointmentResponse, MentorshipAppointmentStatus } from "@/service/mentorship/appointment/get-appointments";
 import { getModule } from "@/service/module/get-module";
@@ -31,6 +31,7 @@ import { getMentorById } from "@/service/user/mentor/get-mentor";
 import { updateAppointmentStatus } from "@/service/mentorship/appointment/update-status";
 import { toast } from "sonner";
 import { createCheckoutSession } from "@/service/subscription/pay-mentorship";
+import { enterCandidateMentorshipAppointment } from "@/service/mentorship/appointment/enter-appointment";
 
 // Mapeamento visual atualizado com os novos status
 const STATUS_MAP: Record<string | number, { label: string; color: string; icon: React.ReactNode }> = {
@@ -106,8 +107,9 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
 
   const now = new Date();
   const startTime = new Date(appt.startTime);
+  const endTime = new Date(appt.endTime);
   const tenMinutesBefore = subMinutes(startTime, 10);
-  const isLinkAvailable = isAfter(now, tenMinutesBefore);
+  const isLinkAvailable = isAfter(now, tenMinutesBefore) && isBefore(now, endTime);
 
   return (
     <Card className="group relative overflow-hidden border-slate-200 rounded-3xl transition-all hover:shadow-xl hover:border-blue-100 bg-white">
@@ -183,7 +185,7 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
                 <Button
                   variant="outline"
                   className="rounded-2xl gap-2 font-bold h-12 border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 disabled:opacity-50"
-                  onClick={() => appt.meetingUrl && window.open(appt.meetingUrl, '_blank')}
+                  onClick={() => appt.meetingUrl && window.open(appt.meetingUrl, '_blank') && enterCandidateMentorshipAppointment(appt.id)}
                   // O botão fica desabilitado se não houver URL OU se ainda não estiver no horário
                   disabled={!appt.meetingUrl || !isLinkAvailable}
                 >

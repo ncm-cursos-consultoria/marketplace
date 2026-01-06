@@ -10,8 +10,9 @@ import { UseUserMentor } from "@/context/user-mentor.context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { getMentorshipAppointments, MentorshipAppointmentStatus } from "@/service/mentorship/appointment/get-appointments";
-import { format, isSameDay, isAfter, subMinutes } from "date-fns";
+import { format, isSameDay, isAfter, subMinutes, isBefore } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { enterMentorMentorshipAppointment } from "@/service/mentorship/appointment/enter-appointment";
 
 export default function MentorHomePage() {
   const { id: mentorId } = useParams();
@@ -122,8 +123,10 @@ export default function MentorHomePage() {
 
 // Subcomponente para itens da agenda com lógica de tempo
 function UpcomingItem({ appt }: { appt: any }) {
+  const now = new Date();
   const startTime = new Date(appt.startTime);
-  const isAvailable = isAfter(new Date(), subMinutes(startTime, 10));
+  const endTime = new Date(appt.endTime);
+  const isAvailable = isAfter(new Date(), subMinutes(startTime, 10))  && isBefore(now, endTime);;
 
   return (
     <div className="flex items-center gap-4 p-3 rounded-xl bg-gray-50">
@@ -135,7 +138,7 @@ function UpcomingItem({ appt }: { appt: any }) {
       </div>
       {isAvailable && appt.meetingUrl ? (
         <button
-          onClick={() => window.open(appt.meetingUrl, "_blank")}
+          onClick={() => {window.open(appt.meetingUrl, "_blank") && enterMentorMentorshipAppointment(appt.id)}}
           className="p-2 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
         >
           <Video className="h-4 w-4" />

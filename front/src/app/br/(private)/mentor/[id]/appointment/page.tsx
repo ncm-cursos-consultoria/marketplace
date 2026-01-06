@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { format, isAfter, subMinutes } from "date-fns";
+import { format, isAfter, isBefore, subMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
   Check, X, Clock, Calendar as CalendarIcon,
@@ -21,6 +21,7 @@ import { updateAppointmentStatus } from "@/service/mentorship/appointment/update
 import { getModule } from "@/service/module/get-module";
 import { getUniqueUser } from "@/service/user/get-unique-user";
 import { useMemo } from "react";
+import { enterMentorMentorshipAppointment } from "@/service/mentorship/appointment/enter-appointment";
 
 // Mapeamento visual utilizando o Enum como chave
 const STATUS_THEME: Record<string | number, { label: string; color: string; icon: React.ReactNode }> = {
@@ -193,10 +194,11 @@ function AppointmentMentorCard({
 
   const now = new Date();
   const startTime = new Date(appt.startTime);
+  const endTime = new Date(appt.endTime);
   const tenMinutesBefore = subMinutes(startTime, 10);
 
   // Define se o botão de "Iniciar" deve estar habilitado
-  const isMeetingTime = isAfter(now, tenMinutesBefore);
+  const isMeetingTime = isAfter(now, tenMinutesBefore) && isBefore(now, endTime);
 
   return (
     <Card className={`rounded-3xl border-none shadow-sm transition-all hover:shadow-md ${isPending ? 'ring-2 ring-amber-400 ring-offset-2' : 'bg-white'}`}>
@@ -245,7 +247,7 @@ function AppointmentMentorCard({
             ) : isPaid && appt.meetingUrl ? (
               <div className="flex flex-col items-end gap-1">
                 <Button
-                  onClick={() => window.open(appt.meetingUrl, "_blank")}
+                  onClick={() => {window.open(appt.meetingUrl, "_blank") && enterMentorMentorshipAppointment(appt.id)}}
                   disabled={!isMeetingTime}
                   className="bg-blue-900 hover:bg-blue-800 text-white rounded-xl gap-2 h-11 px-6 shadow-lg shadow-blue-900/20 font-bold disabled:opacity-50 disabled:bg-slate-400"
                 >
