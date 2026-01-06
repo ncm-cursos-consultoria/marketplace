@@ -23,7 +23,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { format } from "date-fns";
+import { format, isAfter, subMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { getMentorshipAppointments, MentorshipAppointmentResponse, MentorshipAppointmentStatus } from "@/service/mentorship/appointment/get-appointments";
 import { getModule } from "@/service/module/get-module";
@@ -90,19 +90,24 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
   });
 
   const { mutate: handlePayment, isPending: isPaying } = useMutation({
-  mutationFn: () => createCheckoutSession(appt.id),
-  onSuccess: (data) => {
-    if (data.checkoutUrl) {
-      // Abre o Stripe em uma nova aba
-      window.open(data.checkoutUrl, '_blank');
+    mutationFn: () => createCheckoutSession(appt.id),
+    onSuccess: (data) => {
+      if (data.checkoutUrl) {
+        // Abre o Stripe em uma nova aba
+        window.open(data.checkoutUrl, '_blank');
+      }
     }
-  }
-});
+  });
 
   const canCancel = appt.status === MentorshipAppointmentStatus.PENDING ||
     appt.status === MentorshipAppointmentStatus.CONFIRMED;
 
   const status = STATUS_MAP[appt.status as keyof typeof STATUS_MAP] || STATUS_MAP.PENDING;
+
+  const now = new Date();
+  const startTime = new Date(appt.startTime);
+  const tenMinutesBefore = subMinutes(startTime, 10);
+  const isLinkAvailable = isAfter(now, tenMinutesBefore);
 
   return (
     <Card className="group relative overflow-hidden border-slate-200 rounded-3xl transition-all hover:shadow-xl hover:border-blue-100 bg-white">
@@ -173,16 +178,31 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
               </Button>
             )}
 
-            {appt.status == MentorshipAppointmentStatus.PAID && (
-              <Button
-                variant="outline"
-                className="rounded-2xl gap-2 font-bold h-12 border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
-                onClick={() => appt.meetingUrl && window.open(appt.meetingUrl, '_blank')}
-                disabled={!appt.meetingUrl}
-              >
-                <Video className="h-4 w-4" />
-                {appt.meetingUrl ? "Entrar na Sala" : "Link em breve"}
-              </Button>
+            {appt.status === MentorshipAppointmentStatus.PAID && (
+              <div className="flex flex-col items-center md:items-end gap-1">
+                <Button
+                  variant="outline"
+                  className="rounded-2xl gap-2 font-bold h-12 border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 disabled:opacity-50"
+                  onClick={() => appt.meetingUrl && window.open(appt.meetingUrl, '_blank')}
+                  // O botão fica desabilitado se não houver URL OU se ainda não estiver no horário
+                  disabled={!appt.meetingUrl || !isLinkAvailable}
+                >
+                  <Video className="h-4 w-4" />
+                  {!isLinkAvailable
+                    ? "Link disponível em breve"
+                    : appt.meetingUrl
+                      ? "Entrar na Sala"
+                      : "Gerando link..."
+                  }
+                </Button>
+
+                {/* Feedback visual opcional para o aluno saber quando libera */}
+                {!isLinkAvailable && (
+                  <span className="text-[10px] text-slate-400 font-medium">
+                    Disponível 10 min antes do horário marcado
+                  </span>
+                )}
+              </div>
             )}
 
             {/* Botão de Cancelamento Coeso */}

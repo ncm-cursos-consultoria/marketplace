@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { format } from "date-fns";
+import { format, isAfter, subMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
   Check, X, Clock, Calendar as CalendarIcon,
@@ -49,6 +49,7 @@ export default function MentorAppointmentsPage() {
     queryKey: ["mentor-appointments", mentorId],
     queryFn: () => getMentorshipAppointments({ mentorIds: [mentorId as string] }),
     enabled: !!mentorId,
+    refetchInterval: 60000,
   });
 
   const organizedAppointments = useMemo(() => {
@@ -190,6 +191,13 @@ function AppointmentMentorCard({
     appt.status === MentorshipAppointmentStatus.CANCELED_BY_CANDIDATE ||
     appt.status === MentorshipAppointmentStatus.CANCELED_BY_MENTOR;
 
+  const now = new Date();
+  const startTime = new Date(appt.startTime);
+  const tenMinutesBefore = subMinutes(startTime, 10);
+
+  // Define se o botão de "Iniciar" deve estar habilitado
+  const isMeetingTime = isAfter(now, tenMinutesBefore);
+
   return (
     <Card className={`rounded-3xl border-none shadow-sm transition-all hover:shadow-md ${isPending ? 'ring-2 ring-amber-400 ring-offset-2' : 'bg-white'}`}>
       <CardContent className="p-6">
@@ -235,12 +243,22 @@ function AppointmentMentorCard({
                 </Button>
               </>
             ) : isPaid && appt.meetingUrl ? (
-              <Button
-                onClick={() => window.open(appt.meetingUrl, "_blank")}
-                className="bg-blue-900 hover:bg-blue-800 text-white rounded-xl gap-2 h-11 px-6 shadow-lg shadow-blue-900/20 font-bold"
-              >
-                <Video className="h-4 w-4" /> Iniciar Mentoria
-              </Button>
+              <div className="flex flex-col items-end gap-1">
+                <Button
+                  onClick={() => window.open(appt.meetingUrl, "_blank")}
+                  disabled={!isMeetingTime}
+                  className="bg-blue-900 hover:bg-blue-800 text-white rounded-xl gap-2 h-11 px-6 shadow-lg shadow-blue-900/20 font-bold disabled:opacity-50 disabled:bg-slate-400"
+                >
+                  <Video className="h-4 w-4" />
+                  {isMeetingTime ? "Iniciar Mentoria" : "Iniciar em breve"}
+                </Button>
+
+                {!isMeetingTime && (
+                  <span className="text-[10px] text-slate-400 font-medium italic">
+                    Liberado 10 min antes do início
+                  </span>
+                )}
+              </div>
             ) : isCanceled ? (
               <span className="text-xs text-slate-400 font-medium italic">Cancelado</span>
             ) : (
