@@ -1,12 +1,25 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import {
-  Clock, Calendar, Video, CreditCard,
-  AlertCircle, CheckCircle2, XCircle, UserX,
-  X
+  Clock, Video, CreditCard,
+  AlertCircle, CheckCircle2,
+  X,
+  XCircle,
+  Loader2
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,42 +28,46 @@ import { ptBR } from "date-fns/locale";
 import { getMentorshipAppointments, MentorshipAppointmentResponse, MentorshipAppointmentStatus } from "@/service/mentorship/appointment/get-appointments";
 import { getModule } from "@/service/module/get-module";
 import { getMentorById } from "@/service/user/mentor/get-mentor";
+import { updateAppointmentStatus } from "@/service/mentorship/appointment/update-status";
+import { toast } from "sonner";
+import { createCheckoutSession } from "@/service/subscription/pay-mentorship";
 
 // Mapeamento visual atualizado com os novos status
 const STATUS_MAP: Record<string | number, { label: string; color: string; icon: React.ReactNode }> = {
-  [MentorshipAppointmentStatus.PENDING]: { 
-    label: "Nova Solicitação", 
-    color: "bg-amber-100 text-amber-700", 
-    icon: <AlertCircle className="h-4 w-4" /> 
+  [MentorshipAppointmentStatus.PENDING]: {
+    label: "Nova Solicitação",
+    color: "bg-amber-100 text-amber-700",
+    icon: <AlertCircle className="h-4 w-4" />
   },
-  [MentorshipAppointmentStatus.CONFIRMED]: { 
-    label: "Aguardando Pagamento", 
-    color: "bg-blue-100 text-blue-700", 
-    icon: <Clock className="h-4 w-4" /> 
+  [MentorshipAppointmentStatus.CONFIRMED]: {
+    label: "Aguardando Pagamento",
+    color: "bg-blue-100 text-blue-700",
+    icon: <Clock className="h-4 w-4" />
   },
-  [MentorshipAppointmentStatus.PAID]: { 
-    label: "Confirmado & Pago", 
-    color: "bg-emerald-100 text-emerald-700", 
-    icon: <CheckCircle2 className="h-4 w-4" /> 
+  [MentorshipAppointmentStatus.PAID]: {
+    label: "Confirmado & Pago",
+    color: "bg-emerald-100 text-emerald-700",
+    icon: <CheckCircle2 className="h-4 w-4" />
   },
-  [MentorshipAppointmentStatus.CANCELED_BY_CANDIDATE]: { 
-    label: "Cancelado pelo Aluno", 
-    color: "bg-red-100 text-red-700", 
-    icon: <X className="h-4 w-4" /> 
+  [MentorshipAppointmentStatus.CANCELED_BY_CANDIDATE]: {
+    label: "Cancelado por você",
+    color: "bg-red-100 text-red-700",
+    icon: <X className="h-4 w-4" />
   },
-  [MentorshipAppointmentStatus.CANCELED_BY_MENTOR]: { 
-    label: "Cancelado por Você", 
-    color: "bg-gray-100 text-gray-600", 
-    icon: <X className="h-4 w-4" /> 
+  [MentorshipAppointmentStatus.CANCELED_BY_MENTOR]: {
+    label: "Cancelado pelo Mentor",
+    color: "bg-gray-100 text-gray-600",
+    icon: <X className="h-4 w-4" />
   },
-  [MentorshipAppointmentStatus.COMPLETED]: { 
-    label: "Concluída", 
-    color: "bg-slate-100 text-slate-700", 
-    icon: <CheckCircle2 className="h-4 w-4" /> 
+  [MentorshipAppointmentStatus.COMPLETED]: {
+    label: "Concluída",
+    color: "bg-slate-100 text-slate-700",
+    icon: <CheckCircle2 className="h-4 w-4" />
   }
 };
 
 function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
+  const queryClient = useQueryClient();
   // Busca os detalhes do módulo para obter título e nome do mentor
   const { data: module, isLoading } = useQuery({
     queryKey: ["module-details", appt.moduleId],
@@ -63,6 +80,27 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
     queryFn: () => getMentorById(appt.mentorId), // Função de serviço correta
     enabled: !!appt.mentorId,
   });
+
+  const { mutate: cancelMentorship, isPending: isCanceling } = useMutation({
+    mutationFn: () => updateAppointmentStatus(appt.id, MentorshipAppointmentStatus.CANCELED_BY_CANDIDATE),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["candidate-mentorships"] });
+      toast.success("Cancelado com sucesso!");
+    }
+  });
+
+  const { mutate: handlePayment, isPending: isPaying } = useMutation({
+  mutationFn: () => createCheckoutSession(appt.id),
+  onSuccess: (data) => {
+    if (data.checkoutUrl) {
+      // Abre o Stripe em uma nova aba
+      window.open(data.checkoutUrl, '_blank');
+    }
+  }
+});
+
+  const canCancel = appt.status === MentorshipAppointmentStatus.PENDING ||
+    appt.status === MentorshipAppointmentStatus.CONFIRMED;
 
   const status = STATUS_MAP[appt.status as keyof typeof STATUS_MAP] || STATUS_MAP.PENDING;
 
@@ -117,9 +155,21 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
 
           {/* Ações Dinâmicas */}
           <div className="p-6 md:pr-8 flex flex-col justify-center items-start md:items-end gap-3">
-            {appt.status == MentorshipAppointmentStatus.CONFIRMED && (
-              <Button className="bg-blue-900 hover:bg-blue-800 text-white rounded-2xl gap-2 font-bold px-8 h-12 shadow-lg shadow-blue-900/20">
-                <CreditCard className="h-4 w-4" /> Efetuar Pagamento
+
+            {/* Botão de Pagamento */}
+            {appt.status === MentorshipAppointmentStatus.CONFIRMED && (
+              <Button
+                onClick={() => handlePayment()}
+                disabled={isPaying}
+                className="bg-blue-900 hover:bg-blue-800 text-white rounded-2xl gap-2 font-bold px-8 h-12 shadow-lg shadow-blue-900/20"
+              >
+                {isPaying ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <CreditCard className="h-4 w-4" /> Efetuar Pagamento
+                  </>
+                )}
               </Button>
             )}
 
@@ -134,6 +184,38 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
                 {appt.meetingUrl ? "Entrar na Sala" : "Link em breve"}
               </Button>
             )}
+
+            {/* Botão de Cancelamento Coeso */}
+            {canCancel && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full md:w-auto rounded-2xl gap-2 font-bold h-12 border-red-100 text-red-500 hover:bg-red-50 transition-all"
+                  >
+                    <XCircle className="h-4 w-4" /> Cancelar Mentoria
+                  </Button>
+                </AlertDialogTrigger>
+
+                <AlertDialogContent className="rounded-3xl border-none p-8">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-xl font-bold text-slate-900">Confirmar Cancelamento?</AlertDialogTitle>
+                    <AlertDialogDescription className="text-slate-500">
+                      Ao confirmar, o horário selecionado ficará disponível para outros candidatos. Esta ação não pode ser revertida.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter className="mt-6 gap-3">
+                    <AlertDialogCancel className="rounded-2xl h-12 font-bold border-slate-200 text-slate-500">Voltar</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => cancelMentorship()}
+                      className="bg-red-600 hover:bg-red-700 text-white rounded-2xl h-12 font-bold px-8"
+                    >
+                      Sim, Cancelar
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
         </div>
       </CardContent>
@@ -145,7 +227,7 @@ export default function CandidateMentorshipsPage() {
   const { id: candidateId } = useParams();
 
   const { data: appointments, isLoading } = useQuery({
-    queryKey: ["candidate-mentorships", candidateId],
+    queryKey: ["candidate-mentorships"],
     queryFn: () => getMentorshipAppointments({ candidateIds: [candidateId as string] }),
     enabled: !!candidateId,
   });
