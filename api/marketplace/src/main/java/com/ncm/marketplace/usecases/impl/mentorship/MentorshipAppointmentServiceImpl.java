@@ -116,5 +116,17 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
     public void confirmPayment(String appointmentId) {
         MentorshipAppointment appointment = mentorshipAppointmentQueryService.findByIdOrThrow(appointmentId);
         appointment.setStatus(AppointmentStatus.PAID);
+        String meetingUrl = generateJitsiLink(appointmentId);
+        appointment.setMeetingUrl(meetingUrl);
+    }
+
+    @Transactional
+    @Override
+    public String generateJitsiLink(String appointmentId) {
+        String baseUrl = "https://meet.jit.si/";
+
+        String roomName = "NCM-Mentoria-" + appointmentId;
+
+        return baseUrl + roomName;
     }
 }
