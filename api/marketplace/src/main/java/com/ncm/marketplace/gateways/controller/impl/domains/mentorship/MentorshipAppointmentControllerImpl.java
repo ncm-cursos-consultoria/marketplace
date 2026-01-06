@@ -7,6 +7,9 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.UpdateMentorshipAppointmentStatusRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.mentorship.MentorshipAppointmentResponse;
 import com.ncm.marketplace.usecases.interfaces.mentorship.MentorshipAppointmentService;
+import com.ncm.marketplace.usecases.services.subscription.SubscriptionService;
+import com.stripe.exception.StripeException;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ import java.util.List;
 @Tag(name = "Mentor Appointment")
 public class MentorshipAppointmentControllerImpl implements MentorshipAppointmentController {
     private final MentorshipAppointmentService mentorshipAppointmentService;
+    private final SubscriptionService subscriptionService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -65,5 +70,13 @@ public class MentorshipAppointmentControllerImpl implements MentorshipAppointmen
     @Override
     public ResponseEntity<List<MentorshipAppointmentResponse>> findAll(MentorshipAppointmentSpecificationRequest specificationRequest) {
         return ResponseEntity.ok(mentorshipAppointmentService.findAll(specificationRequest));
+    }
+
+    @PostMapping("/{id}/pay")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Pay for the mentorship")
+    @Override
+    public ResponseEntity<Map<String, String>> createMentorshipPayment(@PathVariable String id) throws StripeException {
+        return ResponseEntity.ok(subscriptionService.createMentorshipPayment(id));
     }
 }

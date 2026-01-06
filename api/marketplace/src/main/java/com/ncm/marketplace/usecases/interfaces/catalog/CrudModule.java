@@ -1,5 +1,6 @@
 package com.ncm.marketplace.usecases.interfaces.catalog;
 
+import com.ncm.marketplace.domains.catalog.Module;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.CreateModuleRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.ModuleSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.module.UpdateModuleRequest;
@@ -15,5 +16,6 @@ public interface CrudModule {
     List<ModuleResponse> findAll(ModuleSpecificationRequest specificationRequest);
     String init(String enterpriseId);
     ModuleResponse updateMentor(String id, String mentorId);
+    Boolean hasStripeProduct(Module module);
 //    List<ModuleResponse> findAllByEnterpriseId(String id);
 }

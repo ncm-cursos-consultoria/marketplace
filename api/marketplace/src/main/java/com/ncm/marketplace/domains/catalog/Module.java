@@ -41,6 +41,10 @@ public class Module {
     @Builder.Default
     private Boolean hasMentorship = Boolean.FALSE;
     private Double mentorshipValuePerHour;
+    @Column(unique = true)
+    private String stripeProductId;
+    @Column(unique = true)
+    private String stripePriceId;
 
     @Builder.Default
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)

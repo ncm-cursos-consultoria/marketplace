@@ -26,5 +26,7 @@ public class ModuleResponse {
     private Boolean hasMentor;
     private Boolean hasMentorship;
     private Double mentorshipValuePerHour;
+    private String stripeProductId;
+    private String stripePriceId;
 //    private String enterpriseId;
 }

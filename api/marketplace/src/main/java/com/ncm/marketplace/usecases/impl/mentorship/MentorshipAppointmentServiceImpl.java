@@ -1,6 +1,7 @@
 package com.ncm.marketplace.usecases.impl.mentorship;
 
 import com.ncm.marketplace.domains.catalog.Module;
+import com.ncm.marketplace.domains.enums.AppointmentStatus;
 import com.ncm.marketplace.domains.mentorship.MentorshipAppointment;
 import com.ncm.marketplace.domains.user.UserMentor;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
@@ -108,5 +109,12 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
             }
             default -> throw new IllegalStateException("Unexpected value: " + request.getStatus());
         }
+    }
+
+    @Transactional
+    @Override
+    public void confirmPayment(String appointmentId) {
+        MentorshipAppointment appointment = mentorshipAppointmentQueryService.findByIdOrThrow(appointmentId);
+        appointment.setStatus(AppointmentStatus.PAID);
     }
 }

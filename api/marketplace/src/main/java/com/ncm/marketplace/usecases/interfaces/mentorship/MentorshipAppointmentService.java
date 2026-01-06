@@ -15,4 +15,5 @@ public interface MentorshipAppointmentService {
     MentorshipAppointmentResponse findById(String id);
     List<MentorshipAppointmentResponse> findAll(MentorshipAppointmentSpecificationRequest specificationRequest);
     void updateStatus(String id, UpdateMentorshipAppointmentStatusRequest request);
+    void confirmPayment(String appointmentId);
 }

@@ -1,9 +1,10 @@
 package com.ncm.marketplace.usecases.services.subscription;
 
+import com.ncm.marketplace.domains.catalog.Module;
 import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enums.PlansEnum;
 import com.ncm.marketplace.domains.enums.SubscriptionStatusEnum;
-import com.ncm.marketplace.domains.others.Plan;
+import com.ncm.marketplace.domains.mentorship.MentorshipAppointment;
 import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.exceptions.IllegalStateException;
@@ -11,23 +12,28 @@ import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.dtos.requests.services.subscription.CreateSubscriptionRequest;
 import com.ncm.marketplace.gateways.dtos.responses.services.subscription.SubscriptionResponse;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
+import com.ncm.marketplace.usecases.interfaces.mentorship.MentorshipAppointmentService;
 import com.ncm.marketplace.usecases.interfaces.relationships.plan.user.candidate.PlanUserCandidateService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
+import com.ncm.marketplace.usecases.services.query.catalog.ModuleQueryService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
+import com.ncm.marketplace.usecases.services.query.mentorship.MentorshipAppointmentQueryService;
 import com.ncm.marketplace.usecases.services.query.others.PlanQueryService;
 import com.ncm.marketplace.usecases.services.query.user.UserEnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
-import com.stripe.param.CustomerCreateParams;
-import com.stripe.param.SubscriptionCreateParams;
+import com.stripe.model.checkout.Session;
+import com.stripe.param.*;
+import com.stripe.param.checkout.SessionCreateParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Objects;
 
 import static com.ncm.marketplace.domains.enums.SubscriptionStatusEnum.*;
@@ -44,6 +50,9 @@ public class SubscriptionService {
     private final PlanQueryService planQueryService;
     private final PlanUserCandidateService planUserCandidateService;
     private final EnterpriseQueryService enterpriseQueryService;
+    private final MentorshipAppointmentService mentorshipAppointmentService;
+    private final MentorshipAppointmentQueryService mentorshipAppointmentQueryService;
+    private final ModuleQueryService moduleQueryService;
 
     @Value("${stripe.api.secret-key}")
     private String stripeSecretKey;
@@ -240,6 +249,11 @@ public class SubscriptionService {
         }
 
         switch (event.getType()) {
+            case "checkout.session.completed":
+                if (stripeObject instanceof Session session) {
+                    handleCheckoutCompleted(session);
+                }
+                break;
             case "invoice.payment_succeeded":
                 if (stripeObject instanceof Invoice invoice) {
                     log.info("Pagamento sucedido para o cliente: {}", invoice.getCustomer());
@@ -283,5 +297,94 @@ public class SubscriptionService {
         Subscription subscription = Subscription.retrieve(stripeSubscriptionId);
 
         subscription.cancel();
+    }
+
+    @Transactional
+    public void createMentorshipProduct(Module module) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        // 1. Criar o Produto no Stripe
+        ProductCreateParams productParams = ProductCreateParams.builder()
+                .setName("Mentoria: " + module.getTitle())
+                .setDescription("Sessão de mentoria individual para o módulo " + module.getTitle())
+                .build();
+
+        Product product = Product.create(productParams);
+
+        module.setStripeProductId(product.getId());
+
+        // 2. Criar o Preço associado (Valor por hora)
+        // O Stripe usa centavos (ex: R$ 100,00 = 10000)
+        PriceCreateParams priceParams = PriceCreateParams.builder()
+                .setProduct(product.getId())
+                .setUnitAmount((long) (module.getMentorshipValuePerHour() * 100))
+                .setCurrency("brl")
+                .build();
+
+        Price price = Price.create(priceParams);
+
+        module.setStripePriceId(price.getId());
+    }
+
+    private void handleCheckoutCompleted(Session session) {
+        Stripe.apiKey = stripeSecretKey;
+        // Recupera o ID que você enviou nos metadados ao criar a sessão
+        String appointmentId = session.getMetadata().get("appointmentId");
+        String type = session.getMetadata().get("type");
+
+        if ("MENTORSHIP".equals(type) && appointmentId != null) {
+            log.info("Pagamento confirmado para mentoria ID: {}", appointmentId);
+            // Aqui você chama o seu service de agendamento para mudar para PAID
+            mentorshipAppointmentService.confirmPayment(appointmentId);
+        }
+    }
+
+    public Map<String, String> createMentorshipPayment(String id) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        MentorshipAppointment appt = mentorshipAppointmentQueryService.findByIdOrThrow(id);
+        Module module = moduleQueryService.findByIdOrThrow(appt.getModule().getId());
+
+        SessionCreateParams params = SessionCreateParams.builder()
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl("https://marketplace.ncmconsultoria.com.br/payment/success")
+                .setCancelUrl("https://marketplace.ncmconsultoria.com.br/payment/failed")
+                .putMetadata("appointmentId", id) // Fundamental para o Webhook
+                .putMetadata("type", "MENTORSHIP")
+                .addLineItem(SessionCreateParams.LineItem.builder()
+                        .setPrice(module.getStripePriceId())
+                        .setQuantity(1L)
+                        .build())
+                .build();
+
+        Session session = Session.create(params);
+
+        return Map.of("checkoutUrl", session.getUrl());
+    }
+
+    public void updateMentorshipPrice(Module module) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        // 1. Criar um NOVO preço para o produto já existente
+        PriceCreateParams priceParams = PriceCreateParams.builder()
+                .setProduct(module.getStripePriceId()) // Usa o ID do produto que você já salvou
+                .setUnitAmount((long) (module.getMentorshipValuePerHour() * 100))
+                .setCurrency("brl")
+                .build();
+
+        Price newPrice = Price.create(priceParams);
+
+        // 2. Opcional: Arquivar o preço antigo no Stripe para ele não aparecer mais no Dashboard
+        if (module.getStripePriceId() != null) {
+            Price oldPrice = Price.retrieve(module.getStripePriceId());
+            PriceUpdateParams updateParams = PriceUpdateParams.builder()
+                    .setActive(false)
+                    .build();
+            oldPrice.update(updateParams);
+        }
+
+        // 3. Retornar o ID do novo preço para atualizar o banco
+        module.setStripePriceId(newPrice.getId());
     }
 }

@@ -5,6 +5,8 @@ import com.ncm.marketplace.gateways.dtos.responses.services.subscription.Subscri
 import com.stripe.exception.StripeException;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Map;
+
 public interface SubscriptionController {
     ResponseEntity<SubscriptionResponse> createEnterpriseSubscription(CreateSubscriptionRequest request) throws StripeException;
     ResponseEntity<SubscriptionResponse> createUserCandidateSubscription(CreateSubscriptionRequest request) throws StripeException;

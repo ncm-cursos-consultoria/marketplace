@@ -5,9 +5,11 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.UpdateMentorshipAppointmentRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.UpdateMentorshipAppointmentStatusRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.mentorship.MentorshipAppointmentResponse;
+import com.stripe.exception.StripeException;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MentorshipAppointmentController {
     ResponseEntity<MentorshipAppointmentResponse> save(CreateMentorshipAppointmentRequest request);
@@ -16,4 +18,5 @@ public interface MentorshipAppointmentController {
     ResponseEntity<Void> deleteById(String id);
     ResponseEntity<MentorshipAppointmentResponse> findById(String id);
     ResponseEntity<List<MentorshipAppointmentResponse>> findAll(MentorshipAppointmentSpecificationRequest specificationRequest);
+    ResponseEntity<Map<String, String>> createMentorshipPayment(String id) throws StripeException;
 }

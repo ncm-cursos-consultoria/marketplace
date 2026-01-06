@@ -20,6 +20,5 @@ public class UpdateModuleRequest {
     private Boolean freePlan;
     @NotNull
     private Boolean hasMentorship;
-    @NotNull
     private Double mentorshipValuePerHour;
 }

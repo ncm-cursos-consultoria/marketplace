@@ -36,6 +36,8 @@ public class ModuleMapper {
                 .hasMentor(module.getHasMentor())
                 .hasMentorship(module.getHasMentorship())
                 .mentorshipValuePerHour(module.getMentorshipValuePerHour())
+                .stripeProductId(module.getStripeProductId())
+                .stripePriceId(module.getStripePriceId())
 //                .enterpriseId(module.getEnterprise() != null
 //                        ? module.getEnterprise().getId()
 //                        : null)
