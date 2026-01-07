@@ -23,7 +23,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { format, isAfter, isBefore, subMinutes } from "date-fns";
+import { differenceInHours, format, isAfter, isBefore, subMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { getMentorshipAppointments, MentorshipAppointmentResponse, MentorshipAppointmentStatus } from "@/service/mentorship/appointment/get-appointments";
 import { getModule } from "@/service/module/get-module";
@@ -32,6 +32,8 @@ import { updateAppointmentStatus } from "@/service/mentorship/appointment/update
 import { toast } from "sonner";
 import { createCheckoutSession } from "@/service/subscription/pay-mentorship";
 import { enterCandidateMentorshipAppointment } from "@/service/mentorship/appointment/enter-appointment";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
 // Mapeamento visual atualizado com os novos status
 const STATUS_MAP: Record<string | number, { label: string; color: string; icon: React.ReactNode }> = {
@@ -69,7 +71,9 @@ const STATUS_MAP: Record<string | number, { label: string; color: string; icon: 
 
 function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
   const queryClient = useQueryClient();
-  // Busca os detalhes do módulo para obter título e nome do mentor
+  const [cancelReason, setCancelReason] = useState("");
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+
   const { data: module, isLoading } = useQuery({
     queryKey: ["module-details", appt.moduleId],
     queryFn: () => getModule(appt.moduleId),
@@ -83,10 +87,11 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
   });
 
   const { mutate: cancelMentorship, isPending: isCanceling } = useMutation({
-    mutationFn: () => updateAppointmentStatus(appt.id, MentorshipAppointmentStatus.CANCELED_BY_CANDIDATE),
+    mutationFn: () => updateAppointmentStatus(appt.id, MentorshipAppointmentStatus.CANCELED_BY_CANDIDATE, cancelReason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["candidate-mentorships"] });
       toast.success("Cancelado com sucesso!");
+      setIsCancelModalOpen(false);
     }
   });
 
@@ -100,9 +105,6 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
     }
   });
 
-  const canCancel = appt.status === MentorshipAppointmentStatus.PENDING ||
-    appt.status === MentorshipAppointmentStatus.CONFIRMED;
-
   const status = STATUS_MAP[appt.status as keyof typeof STATUS_MAP] || STATUS_MAP.PENDING;
 
   const now = new Date();
@@ -110,6 +112,11 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
   const endTime = new Date(appt.endTime);
   const tenMinutesBefore = subMinutes(startTime, 10);
   const isLinkAvailable = isAfter(now, tenMinutesBefore) && isBefore(now, endTime);
+  const hoursUntilMeeting = differenceInHours(startTime, now);
+  const canCancel = appt.status === MentorshipAppointmentStatus.PENDING ||
+    appt.status === MentorshipAppointmentStatus.CONFIRMED ||
+    (appt.status === MentorshipAppointmentStatus.PAID &&
+      hoursUntilMeeting >= 24);
 
   return (
     <Card className="group relative overflow-hidden border-slate-200 rounded-3xl transition-all hover:shadow-xl hover:border-blue-100 bg-white">
@@ -208,35 +215,73 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
             )}
 
             {/* Botão de Cancelamento Coeso */}
-            {canCancel && (
-              <AlertDialog>
+            {/* Botão de Cancelamento condicional */}
+            {(appt.status === MentorshipAppointmentStatus.PENDING || appt.status === MentorshipAppointmentStatus.CONFIRMED) && (
+              <AlertDialog open={isCancelModalOpen} onOpenChange={setIsCancelModalOpen}>
                 <AlertDialogTrigger asChild>
                   <Button
                     variant="outline"
-                    className="w-full md:w-auto rounded-2xl gap-2 font-bold h-12 border-red-100 text-red-500 hover:bg-red-50 transition-all"
+                    disabled={!canCancel}
+                    className={`w-full md:w-auto rounded-2xl gap-2 font-bold h-12 border-red-100 transition-all ${!canCancel ? "opacity-50 grayscale cursor-not-allowed" : "text-red-500 hover:bg-red-50"
+                      }`}
                   >
-                    <XCircle className="h-4 w-4" /> Cancelar Mentoria
+                    <XCircle className="h-4 w-4" />
+                    {hoursUntilMeeting < 24 ? "Cancelamento bloqueado" : "Cancelar Mentoria"}
                   </Button>
                 </AlertDialogTrigger>
 
                 <AlertDialogContent className="rounded-3xl border-none p-8">
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="text-xl font-bold text-slate-900">Confirmar Cancelamento?</AlertDialogTitle>
+                    <AlertDialogTitle className="text-xl font-bold text-slate-900">
+                      Por que você deseja cancelar?
+                    </AlertDialogTitle>
                     <AlertDialogDescription className="text-slate-500">
-                      Ao confirmar, o horário selecionado ficará disponível para outros candidatos. Esta ação não pode ser revertida.
+                      Seu cancelamento será enviado ao mentor. Lembre-se que faltam {hoursUntilMeeting}h para o encontro.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
-                  <AlertDialogFooter className="mt-6 gap-3">
-                    <AlertDialogCancel className="rounded-2xl h-12 font-bold border-slate-200 text-slate-500">Voltar</AlertDialogCancel>
+
+                  <div className="py-4">
+                    <Textarea
+                      placeholder="Descreva brevemente o motivo..."
+                      className="rounded-2xl border-slate-200 focus:ring-red-500 min-h-[100px]"
+                      value={cancelReason}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                    />
+                    {hoursUntilMeeting < 48 && hoursUntilMeeting >= 24 && (
+                      <p className="text-[11px] text-amber-600 mt-2 font-medium flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" /> Atenção: Você está cancelando com menos de 48h de antecedência.
+                      </p>
+                    )}
+                  </div>
+
+                  <AlertDialogFooter className="gap-3">
+                    <AlertDialogCancel className="rounded-2xl h-12 font-bold border-slate-200 text-slate-500">
+                      Voltar
+                    </AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={() => cancelMentorship()}
+                      onClick={(e) => {
+                        e.preventDefault(); // Evita fechar antes da mutation terminar
+                        if (cancelReason.trim().length < 5) {
+                          toast.error("Por favor, descreva o motivo (mínimo 5 caracteres)");
+                          return;
+                        }
+                        cancelMentorship();
+                      }}
+                      disabled={isCanceling || cancelReason.trim().length < 5}
                       className="bg-red-600 hover:bg-red-700 text-white rounded-2xl h-12 font-bold px-8"
                     >
-                      Sim, Cancelar
+                      {isCanceling ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirmar Cancelamento"}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
+            )}
+
+            {/* Tooltip de aviso se não puder cancelar */}
+            {appt.status !== MentorshipAppointmentStatus.PAID && hoursUntilMeeting < 24 && (
+              <span className="text-[10px] text-red-400 font-medium italic">
+                Cancelamento disponível apenas até 24h antes do início.
+              </span>
             )}
           </div>
         </div>

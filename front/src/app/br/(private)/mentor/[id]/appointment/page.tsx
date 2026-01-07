@@ -20,8 +20,10 @@ import {
 import { updateAppointmentStatus } from "@/service/mentorship/appointment/update-status";
 import { getModule } from "@/service/module/get-module";
 import { getUniqueUser } from "@/service/user/get-unique-user";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { enterMentorMentorshipAppointment } from "@/service/mentorship/appointment/enter-appointment";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 // Mapeamento visual utilizando o Enum como chave
 const STATUS_THEME: Record<string | number, { label: string; color: string; icon: React.ReactNode }> = {
@@ -35,7 +37,7 @@ const STATUS_THEME: Record<string | number, { label: string; color: string; icon
     label: "Confirmado & Pago", color: "bg-emerald-100 text-emerald-700", icon: <CheckCircle2 className="h-4 w-4" />
   },
   [MentorshipAppointmentStatus.CANCELED_BY_CANDIDATE]: {
-    label: "Cancelado pelo Aluno", color: "bg-red-100 text-red-700", icon: <X className="h-4 w-4" />
+    label: "Cancelado pelo Candidato", color: "bg-red-100 text-red-700", icon: <X className="h-4 w-4" />
   },
   [MentorshipAppointmentStatus.CANCELED_BY_MENTOR]: {
     label: "Cancelado por Você", color: "bg-gray-100 text-gray-600", icon: <X className="h-4 w-4" />
@@ -47,7 +49,7 @@ export default function MentorAppointmentsPage() {
   const queryClient = useQueryClient();
 
   const { data: appointments, isLoading } = useQuery({
-    queryKey: ["mentor-appointments", mentorId],
+    queryKey: ["mentor-appointments"],
     queryFn: () => getMentorshipAppointments({ mentorIds: [mentorId as string] }),
     enabled: !!mentorId,
     refetchInterval: 60000,
@@ -63,7 +65,7 @@ export default function MentorAppointmentsPage() {
       // Prioridade 2: Pagas e prontas para iniciar (Upcoming)
       upcoming: appointments.filter(a => a.status === MentorshipAppointmentStatus.PAID),
 
-      // Prioridade 3: Aceitas, mas aguardando pagamento do aluno
+      // Prioridade 3: Aceitas, mas aguardando pagamento do candidato
       waiting: appointments.filter(a => a.status === MentorshipAppointmentStatus.CONFIRMED),
 
       // Prioridade 4: Finalizadas ou Canceladas
@@ -78,7 +80,7 @@ export default function MentorAppointmentsPage() {
   const { mutate: handleStatusUpdate, isPending: isUpdating } = useMutation({
     mutationFn: ({ id, status }: { id: string; status: MentorshipAppointmentStatus }) => updateAppointmentStatus(id, status),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["mentor-appointments", mentorId] });
+      queryClient.invalidateQueries({ queryKey: ["mentor-appointments"] });
       toast.success("Status atualizado com sucesso!");
     },
     onError: () => toast.error("Erro ao atualizar status."),
@@ -127,11 +129,11 @@ export default function MentorAppointmentsPage() {
         </section>
       )}
 
-      {/* SEÇÃO 3: Aguardando Aluno (CONFIRMED) */}
+      {/* SEÇÃO 3: Aguardando Candidato (CONFIRMED) */}
       {organizedAppointments.waiting.length > 0 && (
         <section className="space-y-4">
           <h2 className="text-sm font-bold uppercase tracking-wider text-blue-600 flex items-center gap-2">
-            <Clock className="h-4 w-4" /> Aguardando Pagamento do Aluno
+            <Clock className="h-4 w-4" /> Aguardando Pagamento do Candidato
           </h2>
           <div className="grid gap-4 opacity-80">
             {organizedAppointments.waiting.map((appt) => (
@@ -165,14 +167,26 @@ export default function MentorAppointmentsPage() {
 // Subcomponente para gerenciar a busca de detalhes de cada agendamento
 function AppointmentMentorCard({
   appt,
-  isUpdating,
   onUpdate
 }: {
   appt: MentorshipAppointmentResponse;
   isUpdating: boolean;
   onUpdate: (data: { id: string, status: MentorshipAppointmentStatus }) => void
 }) {
-  // Busca detalhes do módulo para mostrar o título correto no card do mentor
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { mutate: handleStatusUpdate, isPending: isUpdating } = useMutation({
+    mutationFn: ({ id, status, reason }: { id: string; status: MentorshipAppointmentStatus; reason?: string }) =>
+      updateAppointmentStatus(id, status, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["mentor-appointments"] });
+      toast.success("Agendamento atualizado!");
+      setIsCancelModalOpen(false); // Fecha o modal após sucesso
+    },
+    onError: () => toast.error("Erro ao atualizar status."),
+  });
+
   const { data: module } = useQuery({
     queryKey: ["module", appt.moduleId],
     queryFn: () => getModule(appt.moduleId),
@@ -201,75 +215,137 @@ function AppointmentMentorCard({
   const isMeetingTime = isAfter(now, tenMinutesBefore) && isBefore(now, endTime);
 
   return (
-    <Card className={`rounded-3xl border-none shadow-sm transition-all hover:shadow-md ${isPending ? 'ring-2 ring-amber-400 ring-offset-2' : 'bg-white'}`}>
-      <CardContent className="p-6">
-        <div className="flex flex-col md:flex-row md:items-center gap-6">
+    <>
+      <Card className={`rounded-3xl border-none shadow-sm transition-all hover:shadow-md ${isPending ? 'ring-2 ring-amber-400 ring-offset-2' : 'bg-white'}`}>
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row md:items-center gap-6">
 
-          {/* Calendário Lateral */}
-          <div className="flex flex-row md:flex-col items-center justify-center bg-slate-50 p-4 rounded-2xl min-w-[100px] gap-1">
-            <span className="text-2xl font-black text-blue-900">{format(new Date(appt.startTime), "dd")}</span>
-            <span className="text-xs font-bold uppercase text-slate-400">{format(new Date(appt.startTime), "MMM", { locale: ptBR })}</span>
-            <span className="text-sm font-medium text-slate-600">{format(new Date(appt.startTime), "HH:mm")}</span>
+            {/* Calendário Lateral */}
+            <div className="flex flex-row md:flex-col items-center justify-center bg-slate-50 p-4 rounded-2xl min-w-[100px] gap-1">
+              <span className="text-2xl font-black text-blue-900">{format(new Date(appt.startTime), "dd")}</span>
+              <span className="text-xs font-bold uppercase text-slate-400">{format(new Date(appt.startTime), "MMM", { locale: ptBR })}</span>
+              <span className="text-sm font-medium text-slate-600">{format(new Date(appt.startTime), "HH:mm")}</span>
+            </div>
+
+            {/* Informações Centrais */}
+            <div className="flex-1 space-y-2">
+              <Badge variant="outline" className={`${theme.color} border-none px-3 py-1 flex w-fit items-center gap-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider`}>
+                {theme.icon} {theme.label}
+              </Badge>
+              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <User className="h-4 w-4 text-slate-400" />
+                Candidato: {isLoadingCandidate ? "Carregando..." : `${candidate?.firstName} ${candidate?.lastName}`}
+              </h3>
+              <p className="text-sm text-slate-500 italic">Módulo: {module?.title || "Carregando..."}</p>
+            </div>
+
+            {/* Ações Dinâmicas */}
+            <div className="flex items-center gap-3">
+              {isPending ? (
+                <>
+                  <Button
+                    onClick={() => onUpdate({ id: appt.id, status: MentorshipAppointmentStatus.CONFIRMED })}
+                    disabled={isUpdating}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl gap-2 px-6 h-11 font-bold"
+                  >
+                    <Check className="h-4 w-4" /> Aceitar
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setIsCancelModalOpen(true)} // ABRE O MODAL AQUI
+                    disabled={isUpdating}
+                    className="text-red-600 hover:bg-red-50 rounded-xl h-11 font-bold"
+                  >
+                    <X className="h-4 w-4" /> Recusar
+                  </Button>
+                </>
+              ) : isPaid && appt.meetingUrl ? (
+                <div className="flex flex-col items-end gap-1">
+                  <Button
+                    onClick={() => { window.open(appt.meetingUrl, "_blank") && enterMentorMentorshipAppointment(appt.id) }}
+                    disabled={!isMeetingTime}
+                    className="bg-blue-900 hover:bg-blue-800 text-white rounded-xl gap-2 h-11 px-6 shadow-lg shadow-blue-900/20 font-bold disabled:opacity-50 disabled:bg-slate-400"
+                  >
+                    <Video className="h-4 w-4" />
+                    {isMeetingTime ? "Iniciar Mentoria" : "Iniciar em breve"}
+                  </Button>
+
+                  {!isMeetingTime && (
+                    <span className="text-[10px] text-slate-400 font-medium italic">
+                      Liberado 10 min antes do início
+                    </span>
+                  )}
+                </div>
+              ) : isCanceled ? (
+                <span className="text-xs text-slate-400 font-medium italic">Cancelado</span>
+              ) : (
+                <span className="text-xs text-slate-400 font-medium italic">Aguardando próximas etapas...</span>
+              )}
+            </div>
+
           </div>
+        </CardContent>
+      </Card>
 
-          {/* Informações Centrais */}
-          <div className="flex-1 space-y-2">
-            <Badge variant="outline" className={`${theme.color} border-none px-3 py-1 flex w-fit items-center gap-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider`}>
-              {theme.icon} {theme.label}
-            </Badge>
-            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <User className="h-4 w-4 text-slate-400" />
-              Aluno: {isLoadingCandidate ? "Carregando..." : `${candidate?.firstName} ${candidate?.lastName}`}
-            </h3>
-            <p className="text-sm text-slate-500 italic">Módulo: {module?.title || "Carregando..."}</p>
-          </div>
+      <CancelReasonModal
+        isOpen={isCancelModalOpen}
+        onClose={() => setIsCancelModalOpen(false)}
+        isLoading={isUpdating}
+        onConfirm={(reason) => {
+          handleStatusUpdate({
+            id: appt.id,
+            status: MentorshipAppointmentStatus.CANCELED_BY_MENTOR,
+            reason
+          });
+        }}
+      />
+    </>
+  );
+}
 
-          {/* Ações Dinâmicas */}
-          <div className="flex items-center gap-3">
-            {isPending ? (
-              <>
-                <Button
-                  onClick={() => onUpdate({ id: appt.id, status: MentorshipAppointmentStatus.CONFIRMED })}
-                  disabled={isUpdating}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl gap-2 px-6 h-11 font-bold"
-                >
-                  <Check className="h-4 w-4" /> Aceitar
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => onUpdate({ id: appt.id, status: MentorshipAppointmentStatus.CANCELED_BY_MENTOR })}
-                  disabled={isUpdating}
-                  className="text-red-600 hover:bg-red-50 rounded-xl h-11 font-bold"
-                >
-                  <X className="h-4 w-4" /> Recusar
-                </Button>
-              </>
-            ) : isPaid && appt.meetingUrl ? (
-              <div className="flex flex-col items-end gap-1">
-                <Button
-                  onClick={() => {window.open(appt.meetingUrl, "_blank") && enterMentorMentorshipAppointment(appt.id)}}
-                  disabled={!isMeetingTime}
-                  className="bg-blue-900 hover:bg-blue-800 text-white rounded-xl gap-2 h-11 px-6 shadow-lg shadow-blue-900/20 font-bold disabled:opacity-50 disabled:bg-slate-400"
-                >
-                  <Video className="h-4 w-4" />
-                  {isMeetingTime ? "Iniciar Mentoria" : "Iniciar em breve"}
-                </Button>
+function CancelReasonModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  isLoading
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: (reason: string) => void;
+  isLoading: boolean;
+}) {
+  const [reason, setReason] = useState("");
 
-                {!isMeetingTime && (
-                  <span className="text-[10px] text-slate-400 font-medium italic">
-                    Liberado 10 min antes do início
-                  </span>
-                )}
-              </div>
-            ) : isCanceled ? (
-              <span className="text-xs text-slate-400 font-medium italic">Cancelado</span>
-            ) : (
-              <span className="text-xs text-slate-400 font-medium italic">Aguardando próximas etapas...</span>
-            )}
-          </div>
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="rounded-3xl border-none p-8">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold text-slate-900">Motivo do Cancelamento</DialogTitle>
+          <DialogDescription className="text-slate-500">
+            Por favor, explique brevemente o motivo da recusa ou cancelamento. Esta mensagem será enviada ao candidato.
+          </DialogDescription>
+        </DialogHeader>
 
-        </div>
-      </CardContent>
-    </Card>
+        <Textarea
+          placeholder="Ex: Não terei disponibilidade neste horário devido a um imprevisto..."
+          className="rounded-2xl border-slate-200 focus:ring-red-500 min-h-[120px]"
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+        />
+
+        <DialogFooter className="mt-6 gap-3">
+          <Button variant="ghost" onClick={onClose} disabled={isLoading} className="rounded-2xl h-12 font-bold">
+            Voltar
+          </Button>
+          <Button
+            onClick={() => onConfirm(reason)}
+            disabled={!reason.trim() || isLoading}
+            className="bg-red-600 hover:bg-red-700 text-white rounded-2xl h-12 font-bold px-8"
+          >
+            {isLoading ? <Loader2 className="animate-spin h-4 w-4" /> : "Confirmar Cancelamento"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
