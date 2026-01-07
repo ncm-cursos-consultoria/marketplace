@@ -20,6 +20,8 @@ import com.ncm.marketplace.usecases.services.query.mentorship.MentorshipAppointm
 import com.ncm.marketplace.usecases.services.query.user.UserMentorQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import com.ncm.marketplace.usecases.services.specification.mentorship.MentorshipAppointmentSpecification;
+import com.ncm.marketplace.usecases.services.subscription.MentorshipFinishingService;
+import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,7 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
     private final MentorshipAppointmentSpecification mentorshipAppointmentSpecification;
     private final EmailService emailService;
     private final NotificationService notificationService;
+    private final MentorshipFinishingService mentorshipFinishingService;
 
     @Override
     @Transactional
@@ -122,7 +125,7 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
 
     @Transactional
     @Override
-    public void updateStatus(String id, UpdateMentorshipAppointmentStatusRequest request) throws IOException {
+    public void updateStatus(String id, UpdateMentorshipAppointmentStatusRequest request) throws IOException, StripeException {
         MentorshipAppointment appointment = mentorshipAppointmentQueryService.findByIdOrThrow(id);
         String candidateName = appointment.getCandidate().getFullName();
         String candidateEmail = appointment.getCandidate().getEmail();
@@ -142,19 +145,31 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
                 emailService.sendCandidateAppointmentApproved(candidateEmail, moduleTitle, moduleValue.toString());
                 notificationService.saveMentorshipApprovedNotification(appointment.getCandidate().getId(),moduleTitle);
             }
-            case PAID -> {
-            }
             case CANCELED_BY_CANDIDATE -> {
+                AppointmentStatusEnum oldStatus = appointment.getStatus();
                 appointment.setStatus(request.getStatus());
                 appointment.setCancellationReason(request.getCancellationReason());
                 emailService.sendCandidateAppointmentCanceled(candidateEmail, moduleTitle);
                 notificationService.saveMentorshipCanceledNotification(appointment.getMentor().getId(), appointment.getModule().getTitle(), appointment.getCancellationReason());
+                if (oldStatus == AppointmentStatusEnum.PAID) {
+                    // Você precisará salvar o paymentIntentId no agendamento quando o pagamento for confirmado
+                    if (appointment.getStripePaymentIntentId() != null) {
+                        mentorshipFinishingService.refund(appointment.getId());
+                    }
+                }
             }
             case CANCELED_BY_MENTOR -> {
+                AppointmentStatusEnum oldStatus = appointment.getStatus();
                 appointment.setStatus(request.getStatus());
                 appointment.setCancellationReason(request.getCancellationReason());
                 emailService.sendMentorCanceledByStudent(mentorEmail,mentorName,candidateName,moduleTitle,dateFormatted, startTimeFormatted);
                 notificationService.saveMentorshipCanceledNotification(appointment.getCandidate().getId(), appointment.getModule().getTitle(), appointment.getCancellationReason());
+                if (oldStatus == AppointmentStatusEnum.PAID) {
+                    // Você precisará salvar o paymentIntentId no agendamento quando o pagamento for confirmado
+                    if (appointment.getStripePaymentIntentId() != null) {
+                        mentorshipFinishingService.refund(appointment.getId());
+                    }
+                }
             }
             case COMPLETED -> {
                 appointment.setStatus(request.getStatus());
@@ -165,9 +180,10 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
 
     @Transactional
     @Override
-    public void confirmPayment(String appointmentId) throws IOException {
+    public void confirmPayment(String appointmentId, String paymentIntentId) throws IOException {
         MentorshipAppointment appointment = mentorshipAppointmentQueryService.findByIdOrThrow(appointmentId);
         appointment.setStatus(AppointmentStatusEnum.PAID);
+        appointment.setStripePaymentIntentId(paymentIntentId);
         String meetingUrl = generateJitsiLink(appointmentId);
         appointment.setMeetingUrl(meetingUrl);
         emailService.sendCandidatePaymentConfirmed(appointment.getCandidate().getEmail(), appointment.getModule().getTitle());
@@ -200,5 +216,11 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
         MentorshipAppointment appointment = mentorshipAppointmentQueryService.findByIdOrThrow(id);
         appointment.setMentorEntered(Boolean.TRUE);
         appointment.setMentorEnteredAt(Instant.now());
+    }
+
+    @Transactional
+    @Override
+    public MentorshipAppointment cancel(String appointmentId, String reason) {
+        return null;
     }
 }

@@ -13,12 +13,10 @@ import com.ncm.marketplace.gateways.dtos.requests.services.subscription.CreateSu
 import com.ncm.marketplace.gateways.dtos.responses.services.subscription.SubscriptionResponse;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
 import com.ncm.marketplace.usecases.interfaces.mentorship.MentorshipAppointmentService;
-import com.ncm.marketplace.usecases.interfaces.relationships.plan.user.candidate.PlanUserCandidateService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
 import com.ncm.marketplace.usecases.services.query.catalog.ModuleQueryService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.mentorship.MentorshipAppointmentQueryService;
-import com.ncm.marketplace.usecases.services.query.others.PlanQueryService;
 import com.ncm.marketplace.usecases.services.query.user.UserEnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import com.stripe.Stripe;
@@ -48,8 +46,6 @@ public class SubscriptionService {
     private final UserEnterpriseQueryService userEnterpriseQueryService;
     private final UserCandidateQueryService userCandidateQueryService;
     private final CrudUserCandidate crudUserCandidate;
-    private final PlanQueryService planQueryService;
-    private final PlanUserCandidateService planUserCandidateService;
     private final EnterpriseQueryService enterpriseQueryService;
     private final MentorshipAppointmentService mentorshipAppointmentService;
     private final MentorshipAppointmentQueryService mentorshipAppointmentQueryService;
@@ -331,12 +327,13 @@ public class SubscriptionService {
         Stripe.apiKey = stripeSecretKey;
         // Recupera o ID que você enviou nos metadados ao criar a sessão
         String appointmentId = session.getMetadata().get("appointmentId");
+        String paymentIntentId = session.getPaymentIntent();
         String type = session.getMetadata().get("type");
 
         if ("MENTORSHIP".equals(type) && appointmentId != null) {
             log.info("Pagamento confirmado para mentoria ID: {}", appointmentId);
             // Aqui você chama o seu service de agendamento para mudar para PAID
-            mentorshipAppointmentService.confirmPayment(appointmentId);
+            mentorshipAppointmentService.confirmPayment(appointmentId, paymentIntentId);
         }
     }
 

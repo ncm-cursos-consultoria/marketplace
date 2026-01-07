@@ -46,7 +46,7 @@ public class MentorshipAppointmentControllerImpl implements MentorshipAppointmen
     @PatchMapping("/{id}/status")
     @ResponseStatus(HttpStatus.OK)
     @Override
-    public ResponseEntity<Void> updateStatus(@PathVariable String id, @RequestBody @Valid UpdateMentorshipAppointmentStatusRequest request) throws IOException {
+    public ResponseEntity<Void> updateStatus(@PathVariable String id, @RequestBody @Valid UpdateMentorshipAppointmentStatusRequest request) throws IOException, StripeException {
         mentorshipAppointmentService.updateStatus(id,request);
         return ResponseEntity.noContent().build();
     }

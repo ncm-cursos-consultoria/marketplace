@@ -15,7 +15,7 @@ import java.util.Map;
 public interface MentorshipAppointmentController {
     ResponseEntity<MentorshipAppointmentResponse> save(CreateMentorshipAppointmentRequest request);
     ResponseEntity<MentorshipAppointmentResponse> update(String id, UpdateMentorshipAppointmentRequest request);
-    ResponseEntity<Void> updateStatus(String id, UpdateMentorshipAppointmentStatusRequest request) throws IOException;
+    ResponseEntity<Void> updateStatus(String id, UpdateMentorshipAppointmentStatusRequest request) throws IOException, StripeException;
     ResponseEntity<Void> deleteById(String id);
     ResponseEntity<MentorshipAppointmentResponse> findById(String id);
     ResponseEntity<List<MentorshipAppointmentResponse>> findAll(MentorshipAppointmentSpecificationRequest specificationRequest);

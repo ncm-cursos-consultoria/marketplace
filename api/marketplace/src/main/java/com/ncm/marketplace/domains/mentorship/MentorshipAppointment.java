@@ -40,6 +40,8 @@ public class MentorshipAppointment {
     private Instant candidateEnteredAt;
     @Builder.Default
     private Boolean reminderEmailSent = Boolean.FALSE;
+    @Column(unique = true)
+    private String stripePaymentIntentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "moduleId", referencedColumnName = "id", nullable = false)
