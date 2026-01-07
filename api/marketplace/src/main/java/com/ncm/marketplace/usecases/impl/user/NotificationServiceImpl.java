@@ -149,4 +149,52 @@ public class NotificationServiceImpl implements NotificationService {
         Specification<Notification> specification = notificationSpecification.toSpecification(specificationRequest);
         return toResponse(notificationQueryService.findAll(specification, pageable));
     }
+
+    @Transactional
+    @Override
+    public void saveMentorshipRequestedNotification(String mentorId, String candidateName, String moduleTitle) {
+        save(CreateNotificationRequest.builder()
+                .title("Nova solicitação de mentoria")
+                .body("O candidato " + candidateName + " solicitou uma mentoria para o módulo " + moduleTitle + "."
+                        + "\nAcesse sua agenda para aceitar ou recusar.")
+                .userId(mentorId)
+                .build());
+    }
+
+    @Transactional
+    @Override
+    public void saveMentorshipApprovedNotification(String candidateId, String moduleTitle) {
+        save(CreateNotificationRequest.builder()
+                .title("Sua mentoria foi aprovada! 🎉")
+                .body("O mentor aceitou sua solicitação para o módulo " + moduleTitle + "."
+                        + "\nEfetue o pagamento para confirmar seu horário.")
+                .userId(candidateId)
+                .build());
+    }
+
+    @Transactional
+    @Override
+    public void saveMentorshipPaidNotification(String userId, String moduleTitle, boolean isMentor) {
+        String title = isMentor ? "Pagamento confirmado!" : "Tudo pronto!";
+        String body = isMentor
+                ? "O pagamento para a mentoria do módulo " + moduleTitle + " foi realizado. O link da sala já está disponível."
+                : "Seu pagamento para o módulo " + moduleTitle + " foi confirmado. O link da sala será liberado 10 min antes do início.";
+
+        save(CreateNotificationRequest.builder()
+                .title(title)
+                .body(body)
+                .userId(userId)
+                .build());
+    }
+
+    @Transactional
+    @Override
+    public void saveMentorshipCanceledNotification(String userId, String moduleTitle, String reason) {
+        save(CreateNotificationRequest.builder()
+                .title("Mentoria cancelada")
+                .body("A mentoria para o módulo " + moduleTitle + " foi cancelada."
+                        + (reason != null ? "\nMotivo: " + reason : ""))
+                .userId(userId)
+                .build());
+    }
 }

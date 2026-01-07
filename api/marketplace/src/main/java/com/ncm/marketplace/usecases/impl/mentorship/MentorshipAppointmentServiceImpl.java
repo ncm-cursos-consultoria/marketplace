@@ -12,6 +12,7 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.UpdateMentorshipAppointmentStatusRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.mentorship.MentorshipAppointmentResponse;
 import com.ncm.marketplace.usecases.interfaces.mentorship.MentorshipAppointmentService;
+import com.ncm.marketplace.usecases.interfaces.user.NotificationService;
 import com.ncm.marketplace.usecases.services.command.mentorship.MentorshipAppointmentCommandService;
 import com.ncm.marketplace.usecases.services.email.EmailService;
 import com.ncm.marketplace.usecases.services.query.catalog.ModuleQueryService;
@@ -43,6 +44,7 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
     private final MentorshipAppointmentQueryService mentorshipAppointmentQueryService;
     private final MentorshipAppointmentSpecification mentorshipAppointmentSpecification;
     private final EmailService emailService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -78,6 +80,7 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        notificationService.saveMentorshipRequestedNotification(appointment.getMentor().getId(),appointment.getCandidate().getFullName(),appointment.getModule().getTitle());
         return toResponse(appointment);
     }
 
@@ -134,6 +137,7 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
             case CONFIRMED -> {
                 appointment.setStatus(request.getStatus());
                 emailService.sendCandidateAppointmentApproved(candidateEmail, moduleTitle, moduleValue.toString());
+                notificationService.saveMentorshipApprovedNotification(appointment.getCandidate().getId(),moduleTitle);
             }
             case PAID -> {
             }
@@ -141,11 +145,13 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
                 appointment.setStatus(request.getStatus());
                 appointment.setCancellationReason(request.getCancellationReason());
                 emailService.sendCandidateAppointmentCanceled(candidateEmail, moduleTitle);
+                notificationService.saveMentorshipCanceledNotification(appointment.getMentor().getId(), appointment.getModule().getTitle(), appointment.getCancellationReason());
             }
             case CANCELED_BY_MENTOR -> {
                 appointment.setStatus(request.getStatus());
                 appointment.setCancellationReason(request.getCancellationReason());
                 emailService.sendMentorCanceledByStudent(mentorEmail,mentorName,candidateName,moduleTitle,dateFormatted, startTimeFormatted);
+                notificationService.saveMentorshipCanceledNotification(appointment.getCandidate().getId(), appointment.getModule().getTitle(), appointment.getCancellationReason());
             }
             case COMPLETED -> {
                 appointment.setStatus(request.getStatus());
@@ -163,6 +169,8 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
         appointment.setMeetingUrl(meetingUrl);
         emailService.sendCandidatePaymentConfirmed(appointment.getCandidate().getEmail(), appointment.getModule().getTitle());
         emailService.sendMentorPaymentConfirmed(appointment.getMentor().getEmail(), appointment.getMentor().getFullName(), appointment.getCandidate().getFullName());
+        notificationService.saveMentorshipPaidNotification(appointment.getMentor().getId(),appointment.getModule().getTitle(), Boolean.TRUE);
+        notificationService.saveMentorshipPaidNotification(appointment.getCandidate().getId(),appointment.getModule().getTitle(), Boolean.FALSE);
     }
 
     @Transactional

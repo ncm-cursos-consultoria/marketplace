@@ -5,6 +5,7 @@ import com.ncm.marketplace.gateways.dtos.responses.domains.user.notification.Not
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,4 +21,8 @@ public interface NotificationService {
     void markAsRead(String id);
     NotificationResponse findById(String id);
     Page<NotificationResponse> findAll(NotificationSpecificationRequest specificationRequest, Pageable pageable);
+    void saveMentorshipRequestedNotification(String mentorId, String candidateName, String moduleTitle);
+    void saveMentorshipApprovedNotification(String candidateId, String moduleTitle);
+    void saveMentorshipPaidNotification(String userId, String moduleTitle, boolean isMentor);
+    void saveMentorshipCanceledNotification(String userId, String moduleTitle, String reason);
 }
