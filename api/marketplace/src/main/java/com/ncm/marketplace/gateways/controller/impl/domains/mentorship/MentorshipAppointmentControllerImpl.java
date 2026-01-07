@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ public class MentorshipAppointmentControllerImpl implements MentorshipAppointmen
     @PatchMapping("/{id}/status")
     @ResponseStatus(HttpStatus.OK)
     @Override
-    public ResponseEntity<Void> updateStatus(@PathVariable String id, @RequestBody @Valid UpdateMentorshipAppointmentStatusRequest request) {
+    public ResponseEntity<Void> updateStatus(@PathVariable String id, @RequestBody @Valid UpdateMentorshipAppointmentStatusRequest request) throws IOException {
         mentorshipAppointmentService.updateStatus(id,request);
         return ResponseEntity.noContent().build();
     }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -41,9 +42,7 @@ public class EmailScheduledService {
                         appt.getMentor().getEmail(),
                         appt.getMentor().getFirstName(),
                         appt.getCandidate().getFullName(),
-                        appt.getModule().getTitle(),
-                        appt.getMeetingUrl(),
-                        appt.getMentor().getId()
+                        appt.getModule().getTitle()
                 );
 
                 appt.setReminderEmailSent(true);

@@ -1,6 +1,6 @@
 package com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment;
 
-import com.ncm.marketplace.domains.enums.AppointmentStatus;
+import com.ncm.marketplace.domains.enums.AppointmentStatusEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,5 +14,5 @@ import java.time.Instant;
 @Jacksonized
 public class UpdateMentorshipAppointmentRequest {
     private Instant startTime;
-    private AppointmentStatus status;
+    private AppointmentStatusEnum status;
 }

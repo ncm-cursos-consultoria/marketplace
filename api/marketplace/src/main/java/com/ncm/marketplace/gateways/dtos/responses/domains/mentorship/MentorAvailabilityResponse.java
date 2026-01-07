@@ -1,7 +1,7 @@
 package com.ncm.marketplace.gateways.dtos.responses.domains.mentorship;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.ncm.marketplace.domains.enums.AppointmentStatus;
+import com.ncm.marketplace.domains.enums.AppointmentStatusEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,6 @@ import lombok.extern.jackson.Jacksonized;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -24,6 +23,6 @@ public class MentorAvailabilityResponse {
     private DayOfWeek dayOfWeek;
     private LocalTime startTime;
     private LocalTime endTime;
-    private AppointmentStatus status;
+    private AppointmentStatusEnum status;
     private String mentorId;
 }

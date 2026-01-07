@@ -1,6 +1,6 @@
 package com.ncm.marketplace.domains.enums;
 
-public enum AppointmentStatus {
+public enum AppointmentStatusEnum {
     PENDING,
     CONFIRMED,
     PAID,

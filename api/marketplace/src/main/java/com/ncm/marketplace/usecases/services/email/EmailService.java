@@ -168,15 +168,14 @@ public class EmailService {
         sendEmail(email, subject, content);
     }
 
-    public void sendMentorReminder(String email, String mentorName, String candidateName, String moduloName, String mentorId) throws IOException {
+    public void sendMentorReminder(String email, String mentorName, String candidateName, String moduloName) throws IOException {
         String subject = "Lembrete: Sua mentoria começa em 1 hora";
         String template = loadTemplate("mentorAppointmentRemember.html");
 
         String content = template
                 .replace("#NOME_MENTOR#", mentorName)
                 .replace("#NOME_ALUNO#", candidateName)
-                .replace("#NOME_MODULO#", moduloName)
-                .replace("#ID_MENTOR#", mentorId);
+                .replace("#NOME_MODULO#", moduloName);
 
         sendEmail(email, subject, content);
     }

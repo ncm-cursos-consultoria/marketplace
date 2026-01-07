@@ -1,7 +1,7 @@
 package com.ncm.marketplace.gateways.dtos.responses.domains.mentorship;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.ncm.marketplace.domains.enums.AppointmentStatus;
+import com.ncm.marketplace.domains.enums.AppointmentStatusEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +20,7 @@ public class MentorshipAppointmentResponse {
     private Instant updatedAt;
     private Instant startTime;
     private Instant endTime;
-    private AppointmentStatus status;
+    private AppointmentStatusEnum status;
     private String cancellationReason;
     private String moduleId;
     private String mentorId;

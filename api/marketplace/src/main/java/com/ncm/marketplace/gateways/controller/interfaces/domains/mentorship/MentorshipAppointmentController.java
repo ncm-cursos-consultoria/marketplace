@@ -8,13 +8,14 @@ import com.ncm.marketplace.gateways.dtos.responses.domains.mentorship.Mentorship
 import com.stripe.exception.StripeException;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 public interface MentorshipAppointmentController {
     ResponseEntity<MentorshipAppointmentResponse> save(CreateMentorshipAppointmentRequest request);
     ResponseEntity<MentorshipAppointmentResponse> update(String id, UpdateMentorshipAppointmentRequest request);
-    ResponseEntity<Void> updateStatus(String id, UpdateMentorshipAppointmentStatusRequest request);
+    ResponseEntity<Void> updateStatus(String id, UpdateMentorshipAppointmentStatusRequest request) throws IOException;
     ResponseEntity<Void> deleteById(String id);
     ResponseEntity<MentorshipAppointmentResponse> findById(String id);
     ResponseEntity<List<MentorshipAppointmentResponse>> findAll(MentorshipAppointmentSpecificationRequest specificationRequest);

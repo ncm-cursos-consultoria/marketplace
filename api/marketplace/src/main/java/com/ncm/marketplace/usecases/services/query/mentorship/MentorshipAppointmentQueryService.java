@@ -1,5 +1,6 @@
 package com.ncm.marketplace.usecases.services.query.mentorship;
 
+import com.ncm.marketplace.domains.enums.AppointmentStatusEnum;
 import com.ncm.marketplace.domains.mentorship.MentorshipAppointment;
 import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.mentorship.MentorshipAppointmentRepository;
@@ -36,6 +37,6 @@ public class MentorshipAppointmentQueryService {
     }
 
     public List<MentorshipAppointment> findPaidAppointmentsInTimeRange(LocalDateTime rangeStart, LocalDateTime rangeEnd) {
-        return mentorshipAppointmentRepository.findPaidAppointmentsInTimeRange(rangeStart, rangeEnd);
+        return mentorshipAppointmentRepository.findPaidAppointmentsInTimeRange(AppointmentStatusEnum.PAID, rangeStart, rangeEnd);
     }
 }

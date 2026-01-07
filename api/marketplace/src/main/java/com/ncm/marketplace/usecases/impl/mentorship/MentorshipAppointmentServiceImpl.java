@@ -1,7 +1,7 @@
 package com.ncm.marketplace.usecases.impl.mentorship;
 
 import com.ncm.marketplace.domains.catalog.Module;
-import com.ncm.marketplace.domains.enums.AppointmentStatus;
+import com.ncm.marketplace.domains.enums.AppointmentStatusEnum;
 import com.ncm.marketplace.domains.mentorship.MentorshipAppointment;
 import com.ncm.marketplace.domains.user.UserMentor;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -73,8 +74,9 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
-            String dateFormatted = dateFormatter.format(appointment.getStartTime());
-            String startTimeFormatted = timeFormatter.format(appointment.getStartTime());
+            ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
+            String dateFormatted = dateFormatter.format(appointment.getStartTime().atZone(zoneId));
+            String startTimeFormatted = timeFormatter.format(appointment.getStartTime().atZone(zoneId));
             emailService.sendCandidateAppointmentRequested(candidateEmail, moduleTitle, dateFormatted, startTimeFormatted);
             emailService.sendMentorNewRequest(mentorEmail,mentorName,candidateName,moduleTitle,dateFormatted,startTimeFormatted);
         } catch (IOException e) {
@@ -130,8 +132,9 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
         Double moduleValue = appointment.getModule().getMentorshipValuePerHour();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        String dateFormatted = dateFormatter.format(appointment.getStartTime());
-        String startTimeFormatted = timeFormatter.format(appointment.getStartTime());
+        ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
+        String dateFormatted = dateFormatter.format(appointment.getStartTime().atZone(zoneId));
+        String startTimeFormatted = timeFormatter.format(appointment.getStartTime().atZone(zoneId));
 
         switch (request.getStatus()) {
             case CONFIRMED -> {
@@ -164,7 +167,7 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
     @Override
     public void confirmPayment(String appointmentId) throws IOException {
         MentorshipAppointment appointment = mentorshipAppointmentQueryService.findByIdOrThrow(appointmentId);
-        appointment.setStatus(AppointmentStatus.PAID);
+        appointment.setStatus(AppointmentStatusEnum.PAID);
         String meetingUrl = generateJitsiLink(appointmentId);
         appointment.setMeetingUrl(meetingUrl);
         emailService.sendCandidatePaymentConfirmed(appointment.getCandidate().getEmail(), appointment.getModule().getTitle());

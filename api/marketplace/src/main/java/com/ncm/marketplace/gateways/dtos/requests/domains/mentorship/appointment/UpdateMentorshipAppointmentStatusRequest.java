@@ -1,7 +1,6 @@
 package com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment;
 
-import com.ncm.marketplace.domains.enums.AppointmentStatus;
-import jakarta.validation.constraints.NotEmpty;
+import com.ncm.marketplace.domains.enums.AppointmentStatusEnum;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +13,6 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class UpdateMentorshipAppointmentStatusRequest {
     @NotNull
-    private AppointmentStatus status;
+    private AppointmentStatusEnum status;
     private String cancellationReason;
 }

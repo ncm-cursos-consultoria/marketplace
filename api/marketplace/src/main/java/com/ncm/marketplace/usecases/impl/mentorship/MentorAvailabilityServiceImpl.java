@@ -1,13 +1,11 @@
 package com.ncm.marketplace.usecases.impl.mentorship;
 
-import com.ncm.marketplace.domains.enums.AppointmentStatus;
 import com.ncm.marketplace.domains.mentorship.MentorAvailability;
 import com.ncm.marketplace.domains.mentorship.MentorshipAppointment;
 import com.ncm.marketplace.domains.user.UserMentor;
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.availability.MentorAvailabilityRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.availability.MentorAvailabilitySpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.mentorship.MentorAvailabilityResponse;
-import com.ncm.marketplace.gateways.dtos.responses.domains.mentorship.MentorshipAppointmentResponse;
 import com.ncm.marketplace.gateways.dtos.responses.domains.mentorship.ScheduleResponse;
 import com.ncm.marketplace.gateways.mappers.mentorship.MentorshipAppointmentMapper;
 import com.ncm.marketplace.usecases.interfaces.mentorship.MentorAvailabilityService;
@@ -25,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ncm.marketplace.domains.enums.AppointmentStatus.*;
+import static com.ncm.marketplace.domains.enums.AppointmentStatusEnum.*;
 import static com.ncm.marketplace.gateways.mappers.mentorship.MentorAvailabilityMapper.*;
 
 @Service

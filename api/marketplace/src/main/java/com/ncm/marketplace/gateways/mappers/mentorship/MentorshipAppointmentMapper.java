@@ -1,6 +1,6 @@
 package com.ncm.marketplace.gateways.mappers.mentorship;
 
-import com.ncm.marketplace.domains.enums.AppointmentStatus;
+import com.ncm.marketplace.domains.enums.AppointmentStatusEnum;
 import com.ncm.marketplace.domains.mentorship.MentorshipAppointment;
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.CreateMentorshipAppointmentRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.mentorship.MentorshipAppointmentResponse;
@@ -12,7 +12,7 @@ public class MentorshipAppointmentMapper {
         return MentorshipAppointment.builder()
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
-                .status(AppointmentStatus.PENDING)
+                .status(AppointmentStatusEnum.PENDING)
                 .build();
     }
 

@@ -2,7 +2,7 @@ package com.ncm.marketplace.domains.mentorship;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ncm.marketplace.domains.catalog.Module;
-import com.ncm.marketplace.domains.enums.AppointmentStatus;
+import com.ncm.marketplace.domains.enums.AppointmentStatusEnum;
 import com.ncm.marketplace.domains.user.UserMentor;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import jakarta.persistence.*;
@@ -30,7 +30,7 @@ public class MentorshipAppointment {
     private Instant startTime;
     private Instant endTime;
     private String meetingUrl;
-    private AppointmentStatus status;
+    private AppointmentStatusEnum status;
     private String cancellationReason;
     @Builder.Default
     private Boolean mentorEntered = Boolean.FALSE;
