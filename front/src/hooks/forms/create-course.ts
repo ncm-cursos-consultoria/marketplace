@@ -5,28 +5,28 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCourse } from "@/service/course/create-course";
 
 export function useCreateCourse(moduleId: string) {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const form = useForm<CreateCourseFormSchema>({
     resolver: zodResolver(createCourseFormSchema)
-  })
+  });
 
-  const {mutate, isPending} = useMutation({
-    mutationFn: (data: CreateCourseFormSchema) => createCourse(data),
+  const { mutate, isPending } = useMutation({
+    // AJUSTE: O tipo aqui deve aceitar o moduleId junto com os dados do form
+    mutationFn: (data: CreateCourseFormSchema & { moduleId: string }) => createCourse(data),
     mutationKey: ['course'],
     onSuccess: () => {
-      // window.location.reload()
-      queryClient.invalidateQueries({queryKey: ['course']})
+      queryClient.invalidateQueries({ queryKey: ['course'] });
+      form.reset(); // Dica: limpa o form após sucesso
     }
-  })
+  });
 
-  const onSubmit = async(data: CreateCourseFormSchema) => {
-    const payload = {
+  const onSubmit = async (data: CreateCourseFormSchema) => {
+    // Agora o mutate reconhecerá que este payload é válido
+    mutate({
       ...data,
       moduleId: moduleId
-    }
-    
-    mutate(payload)
-  }
+    });
+  };
 
-  return{onSubmit, isPending, form}
+  return { onSubmit, isPending, form };
 }
