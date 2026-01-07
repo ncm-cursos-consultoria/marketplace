@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -233,7 +234,7 @@ public class SubscriptionService {
     }
 
     @Transactional
-    public void getWebhook(Event event) {
+    public void getWebhook(Event event) throws IOException {
         EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
         StripeObject stripeObject = null;
 
@@ -326,7 +327,7 @@ public class SubscriptionService {
         module.setStripePriceId(price.getId());
     }
 
-    private void handleCheckoutCompleted(Session session) {
+    private void handleCheckoutCompleted(Session session) throws IOException {
         Stripe.apiKey = stripeSecretKey;
         // Recupera o ID que você enviou nos metadados ao criar a sessão
         String appointmentId = session.getMetadata().get("appointmentId");

@@ -38,6 +38,8 @@ public class MentorshipAppointment {
     @Builder.Default
     private Boolean candidateEntered = Boolean.FALSE;
     private Instant candidateEnteredAt;
+    @Builder.Default
+    private Boolean reminderEmailSent = Boolean.FALSE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "moduleId", referencedColumnName = "id", nullable = false)

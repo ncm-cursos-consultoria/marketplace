@@ -13,6 +13,7 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment
 import com.ncm.marketplace.gateways.dtos.responses.domains.mentorship.MentorshipAppointmentResponse;
 import com.ncm.marketplace.usecases.interfaces.mentorship.MentorshipAppointmentService;
 import com.ncm.marketplace.usecases.services.command.mentorship.MentorshipAppointmentCommandService;
+import com.ncm.marketplace.usecases.services.email.EmailService;
 import com.ncm.marketplace.usecases.services.query.catalog.ModuleQueryService;
 import com.ncm.marketplace.usecases.services.query.mentorship.MentorshipAppointmentQueryService;
 import com.ncm.marketplace.usecases.services.query.user.UserMentorQueryService;
@@ -23,7 +24,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -39,6 +42,7 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
     private final MentorshipAppointmentCommandService mentorshipAppointmentCommandService;
     private final MentorshipAppointmentQueryService mentorshipAppointmentQueryService;
     private final MentorshipAppointmentSpecification mentorshipAppointmentSpecification;
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -57,7 +61,24 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
         appointment.setMentor(mentor);
         appointment.setCandidate(candidate);
         appointment.setModule(module);
-        return toResponse(mentorshipAppointmentCommandService.save(appointment));
+        appointment = mentorshipAppointmentCommandService.save(appointment);
+        try {
+            String candidateName = candidate.getFullName();
+            String candidateEmail = candidate.getEmail();
+            String mentorName = mentor.getFullName();
+            String mentorEmail = mentor.getEmail();
+            String moduleTitle = module.getTitle();
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+            String dateFormatted = dateFormatter.format(appointment.getStartTime());
+            String startTimeFormatted = timeFormatter.format(appointment.getStartTime());
+            emailService.sendCandidateAppointmentRequested(candidateEmail, moduleTitle, dateFormatted, startTimeFormatted);
+            emailService.sendMentorNewRequest(mentorEmail,mentorName,candidateName,moduleTitle,dateFormatted,startTimeFormatted);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return toResponse(appointment);
     }
 
     @Override
@@ -96,16 +117,38 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
 
     @Transactional
     @Override
-    public void updateStatus(String id, UpdateMentorshipAppointmentStatusRequest request) {
+    public void updateStatus(String id, UpdateMentorshipAppointmentStatusRequest request) throws IOException {
         MentorshipAppointment appointment = mentorshipAppointmentQueryService.findByIdOrThrow(id);
+        String candidateName = appointment.getCandidate().getFullName();
+        String candidateEmail = appointment.getCandidate().getEmail();
+        String mentorName = appointment.getMentor().getFullName();
+        String mentorEmail = appointment.getMentor().getEmail();
+        String moduleTitle = appointment.getModule().getTitle();
+        Double moduleValue = appointment.getModule().getMentorshipValuePerHour();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        String dateFormatted = dateFormatter.format(appointment.getStartTime());
+        String startTimeFormatted = timeFormatter.format(appointment.getStartTime());
 
         switch (request.getStatus()) {
-            case CONFIRMED, COMPLETED -> {
+            case CONFIRMED -> {
                 appointment.setStatus(request.getStatus());
+                emailService.sendCandidateAppointmentApproved(candidateEmail, moduleTitle, moduleValue.toString());
             }
-            case CANCELED_BY_CANDIDATE, CANCELED_BY_MENTOR -> {
+            case PAID -> {
+            }
+            case CANCELED_BY_CANDIDATE -> {
                 appointment.setStatus(request.getStatus());
                 appointment.setCancellationReason(request.getCancellationReason());
+                emailService.sendCandidateAppointmentCanceled(candidateEmail, moduleTitle);
+            }
+            case CANCELED_BY_MENTOR -> {
+                appointment.setStatus(request.getStatus());
+                appointment.setCancellationReason(request.getCancellationReason());
+                emailService.sendMentorCanceledByStudent(mentorEmail,mentorName,candidateName,moduleTitle,dateFormatted, startTimeFormatted);
+            }
+            case COMPLETED -> {
+                appointment.setStatus(request.getStatus());
             }
             default -> throw new IllegalStateException("Unexpected value: " + request.getStatus());
         }
@@ -113,11 +156,13 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
 
     @Transactional
     @Override
-    public void confirmPayment(String appointmentId) {
+    public void confirmPayment(String appointmentId) throws IOException {
         MentorshipAppointment appointment = mentorshipAppointmentQueryService.findByIdOrThrow(appointmentId);
         appointment.setStatus(AppointmentStatus.PAID);
         String meetingUrl = generateJitsiLink(appointmentId);
         appointment.setMeetingUrl(meetingUrl);
+        emailService.sendCandidatePaymentConfirmed(appointment.getCandidate().getEmail(), appointment.getModule().getTitle());
+        emailService.sendMentorPaymentConfirmed(appointment.getMentor().getEmail(), appointment.getMentor().getFullName(), appointment.getCandidate().getFullName());
     }
 
     @Transactional

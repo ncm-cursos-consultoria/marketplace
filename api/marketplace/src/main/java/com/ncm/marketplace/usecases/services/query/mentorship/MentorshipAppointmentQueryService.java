@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -32,5 +33,9 @@ public class MentorshipAppointmentQueryService {
 
     public Boolean existsOverlappingAppointment(String id, Instant startTime, Instant endTime) {
         return mentorshipAppointmentRepository.existsOverlappingAppointment(id, startTime, endTime);
+    }
+
+    public List<MentorshipAppointment> findPaidAppointmentsInTimeRange(LocalDateTime rangeStart, LocalDateTime rangeEnd) {
+        return mentorshipAppointmentRepository.findPaidAppointmentsInTimeRange(rangeStart, rangeEnd);
     }
 }

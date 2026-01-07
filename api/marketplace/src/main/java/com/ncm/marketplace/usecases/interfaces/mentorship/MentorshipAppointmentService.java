@@ -6,6 +6,7 @@ import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.UpdateMentorshipAppointmentStatusRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.mentorship.MentorshipAppointmentResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface MentorshipAppointmentService {
@@ -14,8 +15,8 @@ public interface MentorshipAppointmentService {
     void deleteById(String id);
     MentorshipAppointmentResponse findById(String id);
     List<MentorshipAppointmentResponse> findAll(MentorshipAppointmentSpecificationRequest specificationRequest);
-    void updateStatus(String id, UpdateMentorshipAppointmentStatusRequest request);
-    void confirmPayment(String appointmentId);
+    void updateStatus(String id, UpdateMentorshipAppointmentStatusRequest request) throws IOException;
+    void confirmPayment(String appointmentId) throws IOException;
     String generateJitsiLink(String id);
     void candidateEnteredAppointment(String id);
     void mentorEnteredAppointment(String id);

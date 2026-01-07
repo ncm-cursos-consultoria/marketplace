@@ -1,5 +1,6 @@
 package com.ncm.marketplace.usecases.services.email;
 
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 @Service
@@ -54,7 +56,7 @@ public class EmailService {
         try {
             final String RECOVERY_URL = "https://marketplace.ncmconsultoria.com.br/br/auth/recover-password";
 
-            String htmlBody = loadHtmlTemplate("forgotPasswordTemplate.html");
+            String htmlBody = loadTemplate("forgotPasswordTemplate.html");
 
             htmlBody = htmlBody.replace("#CODIGO#", fourDigitCode);
             htmlBody = htmlBody.replace("#URL_RECUPERACAO#", RECOVERY_URL);
@@ -76,12 +78,122 @@ public class EmailService {
         }
     }
 
-    private String loadHtmlTemplate(String templateName) throws IOException {
+    private String loadTemplate(String templateName) throws IOException {
         ClassPathResource resource = new ClassPathResource("templates/" + templateName);
 
         try (InputStream inputStream = resource.getInputStream()) {
             byte[] bytes = inputStream.readAllBytes();
             return new String(bytes, StandardCharsets.UTF_8);
+        }
+    }
+
+    public void sendCandidateAppointmentRequested(String email, String moduloName, String data, String hora) throws IOException {
+        String subject = "Solicitação de Mentoria Enviada - NCM Marketplace";
+        String template = loadTemplate("candidateAppointmentSolicited.html"); // Carrega o HTML definido anteriormente
+
+        String content = template
+                .replace("#NOME_MODULO#", moduloName)
+                .replace("#DATA#", data)
+                .replace("#HORA#", hora);
+
+        sendEmail(email, subject, content);
+    }
+
+    public void sendCandidateAppointmentApproved(String email, String moduloName, String valor) throws IOException {
+        String subject = "Sua mentoria foi aprovada! Efetue o pagamento";
+        String template = loadTemplate("candidateAppointmentConfirmedByMentor.html");
+
+        String content = template
+                .replace("#NOME_MODULO#", moduloName)
+                .replace("#VALOR#", valor);
+
+        sendEmail(email, subject, content);
+    }
+
+    public void sendCandidatePaymentConfirmed(String email, String moduloName) throws IOException {
+        String subject = "Pagamento Confirmado - Tudo pronto para sua Mentoria!";
+        String template = loadTemplate("candidateAppointmentPaid.html");
+
+        String content = template
+                .replace("#NOME_MODULO#", moduloName);
+
+        sendEmail(email, subject, content);
+    }
+
+    public void sendCandidateAppointmentCanceled(String email, String moduloName) throws IOException {
+        String subject = "Agendamento de Mentoria Cancelado";
+        String template = loadTemplate("candidateAppointmentCanceled.html");
+
+        String content = template.replace("#NOME_MODULO#", moduloName);
+
+        sendEmail(email, subject, content);
+    }
+
+    public void sendMentorNewRequest(String email, String mentorName, String candidateName, String moduloName, String data, String hora) throws IOException {
+        String subject = "Nova Solicitação de Mentoria Recebida";
+        String template = loadTemplate("mentorAppointmentSolicited.html");
+
+        String content = template
+                .replace("#NOME_MENTOR#", mentorName)
+                .replace("#NOME_ALUNO#", candidateName)
+                .replace("#NOME_MODULO#", moduloName)
+                .replace("#DATA#", data)
+                .replace("#HORA#", hora);
+
+        sendEmail(email, subject, content);
+    }
+
+    public void sendMentorPaymentConfirmed(String email, String mentorName, String candidateName) throws IOException {
+        String subject = "Mentoria Confirmada e Paga!";
+        String template = loadTemplate("mentorAppointmentPaid.html");
+
+        String content = template
+                .replace("#NOME_MENTOR#", mentorName)
+                .replace("#NOME_ALUNO#", candidateName);
+
+        sendEmail(email, subject, content);
+    }
+
+    public void sendMentorCanceledByStudent(String email, String mentorName, String candidateName, String moduloName, String data, String hora) throws IOException {
+        String subject = "Um agendamento foi cancelado";
+        String template = loadTemplate("mentorAppointmentCancelled.html");
+
+        String content = template
+                .replace("#NOME_MENTOR#", mentorName)
+                .replace("#NOME_ALUNO#", candidateName)
+                .replace("#NOME_MODULO#", moduloName)
+                .replace("#DATA#", data)
+                .replace("#HORA#", hora);
+
+        sendEmail(email, subject, content);
+    }
+
+    public void sendMentorReminder(String email, String mentorName, String candidateName, String moduloName, String mentorId) throws IOException {
+        String subject = "Lembrete: Sua mentoria começa em 1 hora";
+        String template = loadTemplate("mentorAppointmentRemember.html");
+
+        String content = template
+                .replace("#NOME_MENTOR#", mentorName)
+                .replace("#NOME_ALUNO#", candidateName)
+                .replace("#NOME_MODULO#", moduloName)
+                .replace("#ID_MENTOR#", mentorId);
+
+        sendEmail(email, subject, content);
+    }
+
+    private void sendEmail(String to, String subject, String content) throws UnsupportedEncodingException {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(content, true);
+            helper.setFrom(new InternetAddress(fromEmail, "NCM Marketplace (No-Reply)"));
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Falha ao enviar e-mail", e);
         }
     }
 }
