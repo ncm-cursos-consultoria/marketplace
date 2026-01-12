@@ -5,6 +5,7 @@ import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserCandidateRepository extends JpaRepository<UserCandidate, String>, JpaSpecificationExecutor<UserCandidate> {
@@ -13,4 +14,6 @@ public interface UserCandidateRepository extends JpaRepository<UserCandidate, St
     Integer countByPartnerUserCandidate_Partner_IdAndUserCandidateJobOpenings_Status(String id, JobOpeningUserCandidateStatus status);
     Optional<UserCandidate> findByStripeCustomerId(String stripeCustomerId);
     Boolean existsByStripeCustomerId(String stripeCustomerId);
+    List<UserCandidate> findAllByFinishedProfile(Boolean isFinished);
+    Optional<UserCandidate> findByEmail(String email);
 }

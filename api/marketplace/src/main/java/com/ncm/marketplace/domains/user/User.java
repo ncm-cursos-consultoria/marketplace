@@ -44,6 +44,8 @@ public abstract class User {
     @Column(length = 4)
     private String forgetPasswordCode;
     private Instant forgetPasswordCodeExpiry;
+    @Builder.Default
+    private Boolean receiveEmail = Boolean.TRUE;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profilePictureId", referencedColumnName = "id")

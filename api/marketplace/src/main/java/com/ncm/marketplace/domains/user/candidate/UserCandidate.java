@@ -55,6 +55,8 @@ public class UserCandidate extends User {
     private String plan = PlansEnum.BASIC.getName();
     @Builder.Default
     private Boolean canViewCourses = Boolean.FALSE;
+    @Builder.Default
+    private Boolean finishedProfile = Boolean.FALSE;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "curriculumVitaeId", referencedColumnName = "id")

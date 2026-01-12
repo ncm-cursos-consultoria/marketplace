@@ -291,6 +291,15 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
         planUserCandidate.setEndDate(LocalDate.now().plusMonths(1));
     }
 
+    @Transactional
+    @Override
+    public void unsubscribeEmail(String email) {
+        UserCandidate candidate = userCandidateQueryService.findByEmailOrNull(email);
+        if (candidate != null) {
+            candidate.setReceiveEmail(Boolean.FALSE);
+        }
+    }
+
     private PDDocument createProfilePage(UserCandidate candidate) throws IOException {
         PDDocument document = new PDDocument();
         PDPage page = new PDPage();

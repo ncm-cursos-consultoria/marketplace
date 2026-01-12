@@ -195,4 +195,15 @@ public class EmailService {
             throw new RuntimeException("Falha ao enviar e-mail", e);
         }
     }
+
+    public void sendFinishProfileEmail(String email, String candidateName) throws IOException {
+        String subject = "Termine seu perfil!";
+        String template = loadTemplate("finishProfile.html");
+
+        String content = template
+                .replace("#NOME_ALUNO#", candidateName)
+                .replace("#EMAIL_CANDIDATO#", email);
+
+        sendEmail(email, subject, content);
+    }
 }

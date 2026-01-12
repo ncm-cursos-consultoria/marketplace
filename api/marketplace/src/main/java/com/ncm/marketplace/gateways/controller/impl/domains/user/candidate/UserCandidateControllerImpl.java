@@ -129,4 +129,13 @@ public class UserCandidateControllerImpl implements UserCandidateController {
         headers.setContentLength(pdfBytes.length);
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
+
+    @PatchMapping("/{email}/unsubscribe-email")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Unsubscribe user from receiving promotional emails")
+    @Override
+    public ResponseEntity<Void> unsubscribeEmail(@PathVariable String email) {
+        crudUserCandidate.unsubscribeEmail(email);
+        return ResponseEntity.noContent().build();
+    }
 }

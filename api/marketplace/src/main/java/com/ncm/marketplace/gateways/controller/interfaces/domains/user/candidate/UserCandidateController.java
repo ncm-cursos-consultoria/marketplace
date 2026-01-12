@@ -24,4 +24,5 @@ public interface UserCandidateController {
     ResponseEntity<List<UserCandidateResponse>> findAll(UserCandidateSpecificationRequest specificationRequest);
     ResponseEntity<Page<UserCandidateResponse>> findAllPageable(UserCandidateSpecificationRequest specificationRequest, int page, int size, String sort, Sort.Direction direction);
     ResponseEntity<byte[]> downloadFullReport(String id) throws Exception;
+    ResponseEntity<Void> unsubscribeEmail(String email);
 }

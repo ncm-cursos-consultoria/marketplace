@@ -60,4 +60,13 @@ public class UserCandidateQueryService {
     public Boolean existsById(String id) {
         return userCandidateRepository.existsById(id);
     }
+
+    public List<UserCandidate> findAllByFinishedProfiles(Boolean isFinished) {
+        return userCandidateRepository.findAllByFinishedProfile(isFinished);
+    }
+
+    public UserCandidate findByEmailOrNull(String email) {
+        return userCandidateRepository.findByEmail(email)
+                .orElse(null);
+    }
 }
