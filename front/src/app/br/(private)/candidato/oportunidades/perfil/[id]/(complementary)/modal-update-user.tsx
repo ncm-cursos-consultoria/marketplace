@@ -6,7 +6,7 @@ import { UseUserCandidate } from "@/context/user-candidate.context";
 import { getUniqueUser } from "@/service/user/get-unique-user";
 import { updateUser } from "@/service/user/update-user";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -18,15 +18,17 @@ const updateUserFormSchema = z.object({
   email: z.string().optional(),
   birthday: z.string().optional(),
   cpf: z.string().optional(),
-  linkedInUrl: z.string().optional(), 
+  linkedInUrl: z.string().optional(),
   githubUrl: z.string().optional(),
   mySiteUrl: z.string().optional(),
+  phoneNumber: z.string().optional(),
 });
 
 type UpdateUserFormSchema = z.infer<typeof updateUserFormSchema>;
 
 export function ModalUpdateUser() {
   const { userCandidate } = UseUserCandidate();
+  const qc = useQueryClient();
 
   const {
     register,
@@ -54,6 +56,7 @@ export function ModalUpdateUser() {
     setValue("linkedInUrl", user.linkedInUrl ?? "");
     setValue("githubUrl", user.githubUrl ?? "");
     setValue("mySiteUrl", user.mySiteUrl ?? "");
+    setValue("phoneNumber", user.phoneNumber ?? "");
   }, [user, setValue]);
 
   const { mutate, isPending } = useMutation({
@@ -66,11 +69,12 @@ export function ModalUpdateUser() {
     mutationKey: ["authUser"],
     onSuccess: (data) => {
       toast.success("Sucesso ao atualizar usuario ")
+      qc.invalidateQueries({ queryKey: ["authUser"] });
       // window.location.reload()
     },
-    onError:(err) => {
+    onError: (err) => {
       toast.error("Erro ao atualizar usário")
-    } 
+    }
   });
 
   const onSubmit = async (data: UpdateUserFormSchema) => {
@@ -118,6 +122,10 @@ export function ModalUpdateUser() {
             <div>
               <Label>Portfólio</Label>
               <Input {...register("mySiteUrl")} disabled={loading} />
+            </div>
+            <div>
+              <Label>Telefone</Label>
+              <Input {...register("phoneNumber")} disabled={loading} />
             </div>
           </div>
 

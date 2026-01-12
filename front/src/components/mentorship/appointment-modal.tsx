@@ -159,7 +159,7 @@ export function AppointmentModal({ moduleId, mentorId, candidateId, isOpen, onCl
                 <p className="text-[10px] uppercase font-bold text-blue-400 leading-none">Investimento por hora</p>
                 <p className="text-lg font-black text-blue-900">
                   {module?.mentorshipValuePerHour
-                    ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(module.mentorshipValuePerHour)
+                    ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format((module.mentorshipValuePerHour * (1 + (0.16 + 0.30))))
                     : "Grátis"
                   }
                 </p>

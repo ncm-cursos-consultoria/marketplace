@@ -14,6 +14,7 @@ export interface UserCandidateProps {
   email: string;
   cpf: string;
   profilePictureUrl?: string;
+  phoneNUmber?: string;
   birthday?: string;
   curriculumVitaeUrl?: string
   hasCurriculumVitaeUrl?: boolean

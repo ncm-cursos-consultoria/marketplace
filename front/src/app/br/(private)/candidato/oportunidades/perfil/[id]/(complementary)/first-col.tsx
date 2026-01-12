@@ -707,6 +707,8 @@ function CancelSubscriptionModal({ isOpen, setIsOpen, onConfirm, isPending }: Ca
 }
 
 export function FirstCol({ user, address, isLoading }: FirstColProps) {
+  console.log("User recebido: ", user);
+  
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isSkillsModalOpen, setIsSkillsModalOpen] = useState(false);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
