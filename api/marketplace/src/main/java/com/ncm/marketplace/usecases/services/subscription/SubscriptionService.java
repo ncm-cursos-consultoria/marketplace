@@ -314,7 +314,7 @@ public class SubscriptionService {
         // O Stripe usa centavos (ex: R$ 100,00 = 10000)
         PriceCreateParams priceParams = PriceCreateParams.builder()
                 .setProduct(product.getId())
-                .setUnitAmount((long) (module.getMentorshipValuePerHour() * 100))
+                .setUnitAmount((long) (module.getMentorshipValuePerHour() * 100 * (1 + (0.16 + 0.30)))) // 16% de taxa e 30% taxa administrativa
                 .setCurrency("brl")
                 .build();
 

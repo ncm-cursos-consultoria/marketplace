@@ -50,6 +50,9 @@ public class SecurityConfig {
                                 "/user/mentor",
                                 "/stripe/webhook"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.PATCH,
+                                "/user/candidate/{email}/unsubscribe-email"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(AbstractHttpConfigurer::disable)
