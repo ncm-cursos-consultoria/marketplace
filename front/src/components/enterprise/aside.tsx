@@ -8,13 +8,14 @@ import { UseUserEnteprise } from "@/context/user-enterprise.context";
 import { useQuery } from "@tanstack/react-query";
 import { getEnterprise } from "@/service/enterprise/get-enterprise";
 import { UserEnterpriseProps } from "@/utils/interfaces";
-import { LogOut, Loader2, Home, Building2, Briefcase, NotebookPenIcon, Users, X } from "lucide-react";
+import { LogOut, Loader2, Home, Building2, Briefcase, NotebookPenIcon, Users, X, Mail } from "lucide-react";
 import { NotificationBell } from "./enterprise-notification-bell";
 
 type NavItem = {
   label: string;
-  slug: "home" | "profile" | "vaga" | "module" | "talent-base";
+  slug: "home" | "profile" | "vaga" | "module" | "talent-base" | "invite-mentor";
   icon: React.ReactNode;
+  adminOnly?: boolean;
 };
 
 // Interface para controle de estado mobile
@@ -29,18 +30,22 @@ const NAV: NavItem[] = [
   { label: "Minhas Vagas", slug: "vaga", icon: <Briefcase className="h-5 w-5" /> },
   { label: "Banco de Talentos", slug: "talent-base", icon: <Users className="h-5 w-5" /> },
   { label: "Portfólio de Cursos", slug: "module", icon: <NotebookPenIcon className="h-5 w-5" /> },
+  { label: "Convidar Mentores", slug: "invite-mentor", icon: <Mail className="h-5 w-5" />, adminOnly: true },
 ];
 
 export function AsideEnterprise({ isOpen, onClose }: AsideEnterpriseProps) {
   const { userEnterprise, logout, isLoggingOut } = UseUserEnteprise();
   const pathname = usePathname() || "";
   const enterpriseId = userEnterprise?.enterpriseId;
+  const isAdmin = userEnterprise?.admin === true;
 
   const { data: enterpriseData, isLoading } = useQuery<UserEnterpriseProps>({
     queryKey: ["enterprise", enterpriseId],
     queryFn: () => getEnterprise(enterpriseId as string),
     enabled: !!enterpriseId,
   });
+
+  const filteredNav = NAV.filter(item => !item.adminOnly || isAdmin);
 
   const base = "/br/enterprise";
 
@@ -82,8 +87,8 @@ export function AsideEnterprise({ isOpen, onClose }: AsideEnterpriseProps) {
     <>
       {/* Fundo escurecido no mobile quando o menu está aberto */}
       {isOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-black/50 md:hidden" 
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
           onClick={onClose}
         />
       )}
@@ -104,7 +109,7 @@ export function AsideEnterprise({ isOpen, onClose }: AsideEnterpriseProps) {
               <p className="text-xs text-white/70 truncate">{enterpriseData?.legalName}</p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <NotificationBell />
             <button onClick={onClose} className="md:hidden text-white p-1">
@@ -116,16 +121,16 @@ export function AsideEnterprise({ isOpen, onClose }: AsideEnterpriseProps) {
         {/* Navegação */}
         <nav className="flex-1 px-4 py-4 overflow-y-auto">
           <ul className="space-y-2">
-            {NAV.map(({ label, slug, icon }) => {
+            {filteredNav.map(({ label, slug, icon }) => {
               const href = slug === 'home' ? `${base}/${enterpriseId}` : `${base}/${slug}/${enterpriseId}`;
               const active = isActive(slug);
 
               return (
                 <li key={slug}>
-                  <Link 
-                    href={href} 
+                  <Link
+                    href={href}
                     onClick={onClose} // Fecha o menu ao clicar em um link no mobile
-                    aria-current={active ? "page" : undefined} 
+                    aria-current={active ? "page" : undefined}
                     className={itemCls(active)}
                   >
                     {icon}

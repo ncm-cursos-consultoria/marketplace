@@ -45,6 +45,7 @@ export interface UserEnterpriseProps {
   canCreateJobOpenings: boolean;
   canViewTests: boolean;
   canViewCurriculumVitaeBase: boolean;
+  admin: boolean;
 }
 
 export interface UserMentorProps {
