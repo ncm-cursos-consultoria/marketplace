@@ -27,7 +27,7 @@ public interface MentorshipAppointmentRepository extends JpaRepository<Mentorshi
             "AND a.startTime BETWEEN :start AND :end")
     List<MentorshipAppointment> findPaidAppointmentsInTimeRange(
             @Param("status") AppointmentStatusEnum status, // Use o seu Enum aqui
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end
+            @Param("start") Instant start,
+            @Param("end") Instant end
     );
 }

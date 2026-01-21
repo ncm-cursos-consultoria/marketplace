@@ -9,8 +9,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Slf4j
@@ -24,9 +25,9 @@ public class EmailScheduledService {
     @Transactional
     @Scheduled(cron = "0 0 * * * *", zone = "America/Sao_Paulo")
     public void sendMeetingReminders() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime rangeStart = now.plusMinutes(59);
-        LocalDateTime rangeEnd = now.plusMinutes(61);
+        Instant now = Instant.now();
+        Instant rangeStart = now.plus(59, ChronoUnit.MINUTES);
+        Instant rangeEnd = now.plus(61, ChronoUnit.MINUTES);
 
         List<MentorshipAppointment> appointments = mentorshipAppointmentQueryService.findPaidAppointmentsInTimeRange(rangeStart, rangeEnd);
 

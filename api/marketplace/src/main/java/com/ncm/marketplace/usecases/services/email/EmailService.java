@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +20,9 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmailService {
 
-    private static final Logger log = LoggerFactory.getLogger(EmailService.class);
     private final JavaMailSender mailSender;
 
     @Value("${myapp.mail.from}")
@@ -183,7 +184,7 @@ public class EmailService {
     private void sendEmail(String to, String subject, String content) throws UnsupportedEncodingException {
         try {
             MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
             helper.setTo(to);
             helper.setSubject(subject);
@@ -192,6 +193,7 @@ public class EmailService {
 
             mailSender.send(message);
         } catch (MessagingException e) {
+            log.error("Erro técnico ao enviar e-mail para {}: {}", to, e.getMessage());
             throw new RuntimeException("Falha ao enviar e-mail", e);
         }
     }
@@ -205,5 +207,7 @@ public class EmailService {
                 .replace("#EMAIL_CANDIDATO#", email);
 
         sendEmail(email, subject, content);
+
+        log.info("Finish profile email sent to user email {}", email);
     }
 }

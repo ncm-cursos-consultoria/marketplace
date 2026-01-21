@@ -79,7 +79,7 @@ public class QuickinScheduledService {
                 currentPage++;
 
                 if (currentPage <= totalPages) {
-                    long delayMilliseconds = 5000;
+                    long delayMilliseconds = 10000;
                     log.info("Aguardando {}ms antes de buscar a próxima página...", delayMilliseconds);
                     try {
                         Thread.sleep(delayMilliseconds);

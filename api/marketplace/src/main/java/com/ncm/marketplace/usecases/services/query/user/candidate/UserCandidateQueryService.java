@@ -69,4 +69,8 @@ public class UserCandidateQueryService {
         return userCandidateRepository.findByEmail(email)
                 .orElse(null);
     }
+
+    public List<UserCandidate> findAllByReceiveEmail(Boolean receiveEmail) {
+        return userCandidateRepository.findAllByReceiveEmail(receiveEmail);
+    }
 }

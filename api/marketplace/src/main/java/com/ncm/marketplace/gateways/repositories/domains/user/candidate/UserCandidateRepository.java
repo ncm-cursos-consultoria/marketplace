@@ -16,4 +16,5 @@ public interface UserCandidateRepository extends JpaRepository<UserCandidate, St
     Boolean existsByStripeCustomerId(String stripeCustomerId);
     List<UserCandidate> findAllByFinishedProfile(Boolean isFinished);
     Optional<UserCandidate> findByEmail(String email);
+    List<UserCandidate> findAllByReceiveEmail(Boolean receiveEmail);
 }

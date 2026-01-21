@@ -36,7 +36,7 @@ public class MentorshipAppointmentQueryService {
         return mentorshipAppointmentRepository.existsOverlappingAppointment(id, startTime, endTime);
     }
 
-    public List<MentorshipAppointment> findPaidAppointmentsInTimeRange(LocalDateTime rangeStart, LocalDateTime rangeEnd) {
+    public List<MentorshipAppointment> findPaidAppointmentsInTimeRange(Instant rangeStart, Instant rangeEnd) {
         return mentorshipAppointmentRepository.findPaidAppointmentsInTimeRange(AppointmentStatusEnum.PAID, rangeStart, rangeEnd);
     }
 }

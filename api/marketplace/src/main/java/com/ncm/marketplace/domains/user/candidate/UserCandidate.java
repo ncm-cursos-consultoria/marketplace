@@ -57,6 +57,8 @@ public class UserCandidate extends User {
     private Boolean canViewCourses = Boolean.FALSE;
     @Builder.Default
     private Boolean finishedProfile = Boolean.FALSE;
+    @Builder.Default
+    private Boolean isWeeklyEmailSent = Boolean.FALSE;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "curriculumVitaeId", referencedColumnName = "id")
