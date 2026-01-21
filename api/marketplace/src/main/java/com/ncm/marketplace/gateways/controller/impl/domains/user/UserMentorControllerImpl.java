@@ -2,9 +2,11 @@ package com.ncm.marketplace.gateways.controller.impl.domains.user;
 
 import com.ncm.marketplace.gateways.controller.interfaces.domains.user.UserMentorController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.mentor.CreateUserMentorRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.mentor.InviteUserMentorRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.mentor.UpdateUserMentorRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.mentor.UserMentorResponse;
 import com.ncm.marketplace.usecases.interfaces.user.UserMentorService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -40,6 +43,15 @@ public class UserMentorControllerImpl implements UserMentorController {
     @Override
     public ResponseEntity<Void> deleteById(@PathVariable String id) {
         userMentorService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/invite")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Invite a new mentor")
+    @Override
+    public ResponseEntity<Void> inviteByEmail(@RequestBody @Valid InviteUserMentorRequest request) throws IOException {
+        userMentorService.inviteByEmail(request);
         return ResponseEntity.noContent().build();
     }
 

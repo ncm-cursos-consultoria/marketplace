@@ -2,17 +2,21 @@ package com.ncm.marketplace.usecases.impl.user;
 
 import com.ncm.marketplace.domains.user.UserMentor;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.mentor.CreateUserMentorRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.mentor.InviteUserMentorRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.mentor.UpdateUserMentorRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.user.mentor.UserMentorResponse;
 import com.ncm.marketplace.usecases.interfaces.user.UserMentorService;
 import com.ncm.marketplace.usecases.services.command.user.UserMentorCommandService;
+import com.ncm.marketplace.usecases.services.email.EmailService;
 import com.ncm.marketplace.usecases.services.query.user.UserMentorQueryService;
+import com.ncm.marketplace.usecases.services.security.RandomPasswordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.ncm.marketplace.gateways.mappers.user.mentor.UserMentorMapper.*;
@@ -25,6 +29,8 @@ public class UserMentorServiceImpl implements UserMentorService {
     private final UserMentorCommandService userMentorCommandService;
     private final UserMentorQueryService userMentorQueryService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final RandomPasswordService randomPasswordService;
+    private final EmailService emailService;
 
     @Transactional
     @Override
@@ -65,5 +71,21 @@ public class UserMentorServiceImpl implements UserMentorService {
     @Override
     public List<UserMentorResponse> findAll() {
         return toResponse(userMentorQueryService.findAll());
+    }
+
+    @Transactional
+    @Override
+    public void inviteByEmail(InviteUserMentorRequest request) throws IOException {
+        String firstName = request.getFirstName();
+        String email = request.getEmail();
+        UserMentor user = UserMentor.builder()
+                .firstName(firstName)
+                .email(email)
+                .build();
+        String randomPassword = randomPasswordService.generateSecurePassword();
+        String encryptedPassword = passwordEncoder.encode(randomPassword);
+        user.setPassword(encryptedPassword);
+        userMentorCommandService.save(user);
+        emailService.sendInviteEmail(email, firstName, randomPassword);
     }
 }

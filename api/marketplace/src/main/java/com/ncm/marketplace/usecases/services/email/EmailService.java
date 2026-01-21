@@ -210,4 +210,18 @@ public class EmailService {
 
         log.info("Finish profile email sent to user email {}", email);
     }
+
+    public void sendInviteEmail(String email, String firstName, String randomPassword) throws IOException {
+        String subject = "Convite para a plataforma NCM Marketplace!";
+        String template = loadTemplate("inviteMentor.html");
+
+        String content = template
+                .replace("#NOME_MENTOR#", firstName)
+                .replace("#EMAIL_MENTOR#", email)
+                .replace("#RANDOM_PASSWORD#", randomPassword);
+
+        sendEmail(email, subject, content);
+
+        log.info("Invite email sent to mentor email {}", email);
+    }
 }
