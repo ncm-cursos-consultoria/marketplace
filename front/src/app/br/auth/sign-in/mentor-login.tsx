@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLoginMentor } from "@/hooks/forms/login-mentor";
 import { Label } from "@radix-ui/react-label";
-import { Link } from "lucide-react";
+import Link from "next/link";
 
 export function MentorLogin() {
   const { form, isPending, onSubmit } = useLoginMentor();
