@@ -1,6 +1,7 @@
 package com.ncm.marketplace.usecases.impl.user;
 
 import com.ncm.marketplace.domains.user.UserMentor;
+import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.mentor.CreateUserMentorRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.mentor.InviteUserMentorRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.mentor.UpdateUserMentorRequest;
@@ -9,6 +10,7 @@ import com.ncm.marketplace.usecases.interfaces.user.UserMentorService;
 import com.ncm.marketplace.usecases.services.command.user.UserMentorCommandService;
 import com.ncm.marketplace.usecases.services.email.EmailService;
 import com.ncm.marketplace.usecases.services.query.user.UserMentorQueryService;
+import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
 import com.ncm.marketplace.usecases.services.security.RandomPasswordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ public class UserMentorServiceImpl implements UserMentorService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final RandomPasswordService randomPasswordService;
     private final EmailService emailService;
+    private final UserQueryService userQueryService;
 
     @Transactional
     @Override
@@ -76,16 +79,20 @@ public class UserMentorServiceImpl implements UserMentorService {
     @Transactional
     @Override
     public void inviteByEmail(InviteUserMentorRequest request) throws IOException {
-        String firstName = request.getFirstName();
-        String email = request.getEmail();
-        UserMentor user = UserMentor.builder()
-                .firstName(firstName)
-                .email(email)
-                .build();
-        String randomPassword = randomPasswordService.generateSecurePassword();
-        String encryptedPassword = passwordEncoder.encode(randomPassword);
-        user.setPassword(encryptedPassword);
-        userMentorCommandService.save(user);
-        emailService.sendInviteEmail(email, firstName, randomPassword);
+        if (userQueryService.existByEmail(request.getEmail())) {
+            throw new IllegalStateException("Email já existente na plataforma");
+        } else {
+            String firstName = request.getFirstName();
+            String email = request.getEmail();
+            UserMentor user = UserMentor.builder()
+                    .firstName(firstName)
+                    .email(email)
+                    .build();
+            String randomPassword = randomPasswordService.generateSecurePassword();
+            String encryptedPassword = passwordEncoder.encode(randomPassword);
+            user.setPassword(encryptedPassword);
+            userMentorCommandService.save(user);
+            emailService.sendInviteEmail(email, firstName, randomPassword);
+        }
     }
 }
