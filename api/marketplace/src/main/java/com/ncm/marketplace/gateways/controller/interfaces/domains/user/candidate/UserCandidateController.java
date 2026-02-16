@@ -2,6 +2,7 @@ package com.ncm.marketplace.gateways.controller.interfaces.domains.user.candidat
 
 import com.ncm.marketplace.domains.enums.ActionEnum;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.CreateUserLinkedinRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
@@ -25,4 +26,5 @@ public interface UserCandidateController {
     ResponseEntity<Page<UserCandidateResponse>> findAllPageable(UserCandidateSpecificationRequest specificationRequest, int page, int size, String sort, Sort.Direction direction);
     ResponseEntity<byte[]> downloadFullReport(String id) throws Exception;
     ResponseEntity<Void> unsubscribeEmail(String email);
+    ResponseEntity<Void> createLinkedinUser(CreateUserLinkedinRequest request);
 }

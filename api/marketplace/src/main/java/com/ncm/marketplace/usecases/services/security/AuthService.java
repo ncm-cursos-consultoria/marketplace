@@ -14,6 +14,8 @@ import com.ncm.marketplace.exceptions.UserBlockedException;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.ResetPasswordRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.others.tag.TagResponse;
+import com.ncm.marketplace.gateways.dtos.responses.services.auth.LinkedInLoginResponse;
+import com.ncm.marketplace.gateways.dtos.responses.services.auth.LinkedInUserInfo;
 import com.ncm.marketplace.gateways.dtos.responses.services.auth.MeResponse;
 import com.ncm.marketplace.gateways.mappers.others.tag.TagMapper;
 import com.ncm.marketplace.usecases.services.email.EmailService;
@@ -41,6 +43,7 @@ public class AuthService {
     private final CookieService cookieService;
     private final RandomPasswordService randomPasswordService;
     private final EmailService emailService;
+    private final LinkedInApiService linkedInApiService;
 
     public ResponseCookie login(AuthRequest request) {
         String email = request.getEmail() != null
@@ -188,6 +191,48 @@ public class AuthService {
                 .canViewCurriculumVitaeBase(canViewCurriculumVitaeBase)
                 .admin(admin)
                 .build();
+    }
+
+    public LinkedInLoginResponse loginWithLinkedin(String token) {
+        LinkedInUserInfo linkedinUser = linkedInApiService.getUserInfo(token);
+
+        User user = userQueryService.findBySsoIdOrNull(linkedinUser.getSub());
+
+        if (user != null) {
+            if (user.getIsBlocked().equals(Boolean.TRUE)) {
+                throw new UserBlockedException("User is blocked");
+            }
+
+            return LinkedInLoginResponse.builder()
+                    .needsRegistration(false)
+                    .message("Login efetuado com sucesso")
+                    .build();
+        } else {
+            return LinkedInLoginResponse.builder()
+                    .needsRegistration(true)
+                    .firstName(linkedinUser.getGiven_name())
+                    .lastName(linkedinUser.getFamily_name())
+                    .email(linkedinUser.getEmail())
+                    .ssoId(linkedinUser.getSub())
+                    .profilePictureUrl(linkedinUser.getPicture())
+                    .message("Usuário não encontrado. Complete o cadastro.")
+                    .build();
+        }
+    }
+
+    public ResponseCookie generateCookieForSso(String email) {
+        User user = userQueryService.findByEmailOrNull(email);
+
+        if (user == null) {
+            throw new InvalidCredentialsException("Utilizador não encontrado para vincular SSO");
+        }
+
+        String jwtToken = jwtService.generateToken(
+                user.getId(),
+                user.getEmail()
+        );
+
+        return cookieService.createJwtCookie(jwtToken);
     }
 
     public record LoginResult(boolean ok, String token, ResponseCookie cookie) {

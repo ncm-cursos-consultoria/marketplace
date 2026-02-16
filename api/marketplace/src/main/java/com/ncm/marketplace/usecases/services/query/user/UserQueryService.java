@@ -26,4 +26,9 @@ public class UserQueryService {
     public Boolean existByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    public User findBySsoIdOrNull(String ssoId) {
+        return userRepository.findBySsoId(ssoId)
+                .orElse(null);
+    }
 }

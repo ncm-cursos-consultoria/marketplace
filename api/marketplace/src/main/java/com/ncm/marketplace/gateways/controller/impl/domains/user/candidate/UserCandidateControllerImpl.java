@@ -3,6 +3,7 @@ package com.ncm.marketplace.gateways.controller.impl.domains.user.candidate;
 import com.ncm.marketplace.domains.enums.ActionEnum;
 import com.ncm.marketplace.gateways.controller.interfaces.domains.user.candidate.UserCandidateController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.CreateUserLinkedinRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
@@ -136,6 +137,15 @@ public class UserCandidateControllerImpl implements UserCandidateController {
     @Override
     public ResponseEntity<Void> unsubscribeEmail(@PathVariable String email) {
         crudUserCandidate.unsubscribeEmail(email);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/linkedin")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create user using Linkedin info")
+    @Override
+    public ResponseEntity<Void> createLinkedinUser(CreateUserLinkedinRequest request) {
+        crudUserCandidate.createUsingLinkedin(request);
         return ResponseEntity.noContent().build();
     }
 }

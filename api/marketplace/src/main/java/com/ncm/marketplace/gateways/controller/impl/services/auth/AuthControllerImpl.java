@@ -3,8 +3,9 @@ package com.ncm.marketplace.gateways.controller.impl.services.auth;
 import com.ncm.marketplace.gateways.controller.interfaces.services.auth.AuthController;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.ResetPasswordRequest;
+import com.ncm.marketplace.gateways.dtos.requests.services.auth.linkedin.LinkedinAuthRequest;
+import com.ncm.marketplace.gateways.dtos.responses.services.auth.LinkedInLoginResponse;
 import com.ncm.marketplace.gateways.dtos.responses.services.auth.MeResponse;
-import com.ncm.marketplace.usecases.services.scheduled.QuickinScheduledService;
 import com.ncm.marketplace.usecases.services.security.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,13 +24,12 @@ import org.springframework.web.bind.annotation.*;
 public class AuthControllerImpl implements AuthController {
 
     private final AuthService authService;
-    private final QuickinScheduledService quickinScheduledService;
 
     @PostMapping("/login")
     @Operation(summary = "Login with any user using cookie")
     @ResponseStatus(HttpStatus.OK)
     @Override
-    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<?> login(@RequestBody @Valid AuthRequest request) {
         ResponseCookie cookie = authService.login(request);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
@@ -73,5 +73,20 @@ public class AuthControllerImpl implements AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/linkedin")
+    @Operation(summary = "Login using LinkedIn account")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<LinkedInLoginResponse> linkedinLogin(@Valid @RequestBody LinkedinAuthRequest request) {
+        LinkedInLoginResponse response = authService.loginWithLinkedin(request.getToken());
 
+        if (!response.getNeedsRegistration()) {
+            ResponseCookie cookie = authService.generateCookieForSso(response.getEmail());
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .body(response);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }

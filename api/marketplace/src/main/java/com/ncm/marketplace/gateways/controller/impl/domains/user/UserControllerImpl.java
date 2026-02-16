@@ -2,6 +2,7 @@ package com.ncm.marketplace.gateways.controller.impl.domains.user;
 
 import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.gateways.controller.interfaces.domains.user.UserController;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.CreateUserLinkedinRequest;
 import com.ncm.marketplace.usecases.interfaces.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

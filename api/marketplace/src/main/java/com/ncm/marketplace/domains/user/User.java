@@ -2,6 +2,7 @@ package com.ncm.marketplace.domains.user;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ncm.marketplace.domains.enums.AlternativeLoginEnum;
 import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.domains.enums.UserTypeEnum;
 import com.ncm.marketplace.domains.others.File;
@@ -46,6 +47,9 @@ public abstract class User {
     private Instant forgetPasswordCodeExpiry;
     @Builder.Default
     private Boolean receiveEmail = Boolean.TRUE;
+    @Column(unique = true)
+    private String ssoId;
+    private AlternativeLoginEnum ssoProvider;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profilePictureId", referencedColumnName = "id")

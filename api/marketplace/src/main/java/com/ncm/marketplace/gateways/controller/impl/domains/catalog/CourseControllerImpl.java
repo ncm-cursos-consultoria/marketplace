@@ -4,6 +4,7 @@ import com.ncm.marketplace.domains.enums.CourseStatusEnum;
 import com.ncm.marketplace.gateways.controller.interfaces.domains.catalog.CourseController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CourseSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateMultipleCoursesRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.UpdateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.catalog.course.CourseResponse;
 import com.ncm.marketplace.usecases.interfaces.catalog.CrudCourse;
@@ -30,6 +31,13 @@ public class CourseControllerImpl implements CourseController {
     @Override
     public ResponseEntity<CourseResponse> save(@Valid @RequestBody CreateCourseRequest request) {
         return ResponseEntity.ok(crudCourse.save(request));
+    }
+
+    @PostMapping("/multiple")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Override
+    public ResponseEntity<List<CourseResponse>> saveMultiple(@Valid @RequestBody CreateMultipleCoursesRequest request) {
+        return ResponseEntity.ok(crudCourse.saveMultiple(request));
     }
 
     @DeleteMapping("/{id}")

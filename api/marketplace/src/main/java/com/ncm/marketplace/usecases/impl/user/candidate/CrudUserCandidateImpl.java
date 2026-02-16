@@ -1,6 +1,7 @@
 package com.ncm.marketplace.usecases.impl.user.candidate;
 
 import com.ncm.marketplace.domains.enterprise.JobOpening;
+import com.ncm.marketplace.domains.enums.AlternativeLoginEnum;
 import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.domains.enums.PartnerStatusEnum;
 import com.ncm.marketplace.domains.enums.PlansEnum;
@@ -16,6 +17,7 @@ import com.ncm.marketplace.domains.user.candidate.disc.Disc;
 import com.ncm.marketplace.exceptions.BadRequestException;
 import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.CreateUserLinkedinRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
@@ -298,6 +300,30 @@ public class CrudUserCandidateImpl implements CrudUserCandidate {
         if (candidate != null) {
             candidate.setReceiveEmail(Boolean.FALSE);
         }
+    }
+
+    @Transactional
+    @Override
+    public void createUsingLinkedin(CreateUserLinkedinRequest request) {
+        if (userQueryService.existByEmail(request.getEmail())) {
+            throw new BadRequestException("Email já existente");
+        }
+        if (userCandidateQueryService.existsByCpf(request.getCpf())) {
+            throw new BadRequestException("CPF já existente");
+        }
+
+        UserCandidate user = UserCandidate.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .cpf(request.getCpf())
+                .ssoId(request.getSsoId())
+                .ssoProvider(AlternativeLoginEnum.LINKEDIN)
+                .build();
+
+        user = userCandidateCommandService.save(user);
+        Plan plan = planQueryService.findByNameOrThrow("Basic");
+        planUserCandidateService.save(user.getId(),plan.getId());
     }
 
     private PDDocument createProfilePage(UserCandidate candidate) throws IOException {

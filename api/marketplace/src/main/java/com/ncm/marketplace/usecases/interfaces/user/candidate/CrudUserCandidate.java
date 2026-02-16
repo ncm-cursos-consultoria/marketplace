@@ -2,6 +2,7 @@ package com.ncm.marketplace.usecases.interfaces.user.candidate;
 
 
 import com.ncm.marketplace.gateways.dtos.requests.domains.others.address.CreateAddressRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.CreateUserLinkedinRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.CreateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UpdateUserCandidateRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.user.candidate.UserCandidateSpecificationRequest;
@@ -25,4 +26,5 @@ public interface CrudUserCandidate {
     byte[] generateFullReport(String candidateId) throws Exception;
     void updateUserCandidatePlan(String id, String planName);
     void unsubscribeEmail(String email);
+    void createUsingLinkedin(CreateUserLinkedinRequest request);
 }

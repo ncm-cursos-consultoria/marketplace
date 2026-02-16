@@ -11,6 +11,7 @@ import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CourseSpecificationRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateCourseRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.CreateMultipleCoursesRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.course.UpdateCourseRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.catalog.video.CreateVideoRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.catalog.course.CourseResponse;
@@ -36,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -217,5 +219,30 @@ public class CrudCourseImpl implements CrudCourse {
             course.setView(course.getView() + 1);
             course.getModule().setView(course.getModule().getView() + 1);
         }
+    }
+
+    @Transactional
+    @Override
+    public List<CourseResponse> saveMultiple(CreateMultipleCoursesRequest request) {
+        Module module = moduleQueryService.findByIdOrThrow(request.getModuleId());
+        List<Course> createdCourses = new ArrayList<>();
+        for (CreateMultipleCoursesRequest.CourseRequest courseRequest : request.getCourses()) {
+            Course course = Course.builder()
+                    .title(courseRequest.getTitle())
+                    .description(courseRequest.getDescription())
+                    .module(module)
+                    .freePlan(request.getFreePlan())
+                    .build();
+
+            course = courseCommandService.save(course);
+            crudVideo.save(CreateVideoRequest.builder()
+                    .title(course.getTitle())
+                    .url(courseRequest.getVideoUrl())
+                    .courseId(course.getId())
+                    .build());
+            course.setLastVideoUrl(courseRequest.getVideoUrl());
+            createdCourses.add(course);
+        }
+        return toResponse(createdCourses);
     }
 }
