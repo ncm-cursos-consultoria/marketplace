@@ -154,30 +154,27 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
         setIsOpen={setIsOpen}
         disabled={!canCreate}
         footer={
-          <Button
-            // Damos ao botão um 'form' ID e ao formulário o mesmo 'id'
-            form="create-job-form"
-            className="bg-blue-600 hover:bg-blue-700"
-            type="submit" // O 'type' submit funciona fora do form por causa do 'form' ID
-            disabled={isPending}
-          >
-            {isPending ? "Criando..." : "Criar vaga"}
-          </Button>
+          <div className="flex justify-end w-full">
+            <Button
+              form="create-job-form"
+              className="bg-blue-600 hover:bg-blue-700 w-full md:w-auto"
+              type="submit"
+              disabled={isPending}
+            >
+              {isPending ? "Criando..." : "Criar vaga"}
+            </Button>
+          </div>
         }
       >
         <form
           id="create-job-form"
-          // Adicione padding ao formulário (ex: p-6)
-          className="flex flex-col gap-6 p-6" // Removido 'overflow-auto'
-          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-6"
         >
           {isError && (
             <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md p-2">
               {(error as any)?.message ?? "Erro ao criar vaga."}
             </div>
           )}
-
-          {/* --- 5. CAMPOS REORGANIZADOS EM SEÇÕES --- */}
 
           {/* --- SEÇÃO 1: INFORMAÇÕES PRINCIPAIS --- */}
           <fieldset className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -515,6 +512,7 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
               <button type="button" onClick={clearTags} /* ... */ >Limpar tudo</button>
             </div>
           )}
+          
           <div className="flex flex-col gap-1">
             <Label>Descrição</Label>
             <textarea
@@ -542,17 +540,8 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
               {errors.enterpriseId.message as string}
             </span>
           )}
-
-          {/* <Button
-            className="bg-blue-600 hover:bg-blue-700 cursor-pointer rounded-md h-10"
-            type="submit"
-            disabled={isPending}
-          >
-            {isPending ? "Criando..." : "Criar vaga"}
-          </Button> */}
         </form>
       </Modal>
-
     </div>
   );
 }

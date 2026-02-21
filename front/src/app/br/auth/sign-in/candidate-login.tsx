@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLogin } from "@/hooks/forms/login-user";
 import Link from "next/link";
+import { LinkedInButton } from "@/components/auth/linkedin-login-button";
 
 export function CandidateLogin() {
   const [showPassword, setShowPassword] = useState(false);
@@ -90,6 +91,14 @@ export function CandidateLogin() {
           >
             {isPending ? "Carregando..." : "Entrar"}
           </Button>
+
+          <div className="w-full flex items-center gap-2">
+            <div className="h-[1px] bg-gray-200 flex-1"></div>
+            <span className="text-xs font-semibold text-gray-400 uppercase">Ou</span>
+            <div className="h-[1px] bg-gray-200 flex-1"></div>
+          </div>
+
+          <LinkedInButton />
         </div>
       </form>
     </div>

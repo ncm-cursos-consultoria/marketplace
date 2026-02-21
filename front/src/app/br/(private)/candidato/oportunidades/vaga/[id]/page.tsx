@@ -21,7 +21,8 @@ import Link from "next/link";
 import { ModalCandidate } from "../../modal-candidate";
 import { Button } from "@/components/ui/button";
 import { pumpViews } from "@/service/job/pump-views";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { ModalThirdPartyConfirm } from "@/components/candidate/modal-third-party-confirm";
 
 type Job = {
   id: string;
@@ -63,6 +64,7 @@ export default function JobUniquePage() {
   const { userCandidate } = UseUserCandidate();
   const params = useParams<{ id: string }>();
   const id = params?.id;
+  const [showThirdPartyModal, setShowThirdPartyModal] = useState(false);
 
   const {
     data: job,
@@ -282,12 +284,16 @@ export default function JobUniquePage() {
                   {WORK_MODEL_LABEL[workModel] ?? workModel}
                 </span>
               ) : null}
+              
               {thirdParty ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 ring-1 ring-amber-200">
-                  <Globe2 className="h-3.5 w-3.5" />
-                  Vaga de terceiro
-                </span>
-              ) : null}
+                <ModalThirdPartyConfirm
+                  jobId={id}
+                  candidateId={userCandidate?.id}
+                  jobUrl={url}
+                />
+              ) : (
+                <ModalCandidate title={title} />
+              )}
             </div>
           </div>
 
@@ -300,7 +306,6 @@ export default function JobUniquePage() {
               <Share2 className="h-4 w-4" />
               Compartilhar
             </button>
-            {thirdParty ? <a className="bg-blue-600 hover:bg-blue-700 cursor-pointer p-2 rounded-md text-white font-medium" href={job.url}>Candidatar-se</a> : <ModalCandidate title={title} />}
           </div>
         </div>
 

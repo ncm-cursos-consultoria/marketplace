@@ -52,9 +52,7 @@ export function Modal({
       </DialogTrigger>
 
       <DialogContent
-        // CORREÇÃO AQUI: Mudei 'max-h-[90vh]' para 'h-[90vh]'
-        // Isso força o modal a ser grande, permitindo que o 'flex-1' interno funcione.
-        className={`sm:max-w-3xl ${contentClassName}`}
+        className={`sm:max-w-3xl flex flex-col max-h-[90vh] p-0 ${contentClassName}`}
       >
         <DialogHeader className="px-6 py-4 border-b shrink-0">
           <DialogTitle>{title}</DialogTitle>

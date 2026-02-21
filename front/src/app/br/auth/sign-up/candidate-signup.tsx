@@ -1,3 +1,4 @@
+import { LinkedInButton } from "@/components/auth/linkedin-login-button";
 import { TermsOfUseContent } from "@/components/candidate/terms-of-use";
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
@@ -140,7 +141,19 @@ export function CandidateSignUp() {
           </div>
         </div>
 
-        <span className="font-semibold text-gray-500">OU</span>
+        <div className="w-full flex items-center gap-2">
+            <div className="h-[1px] bg-gray-300 flex-1"></div>
+            <span className="font-semibold text-gray-500 text-sm">OU</span>
+            <div className="h-[1px] bg-gray-300 flex-1"></div>
+        </div>
+
+        <LinkedInButton />
+
+        <div className="w-full flex items-center gap-2">
+            <div className="h-[1px] bg-gray-300 flex-1"></div>
+            <span className="font-semibold text-gray-500 text-sm">OU</span>
+            <div className="h-[1px] bg-gray-300 flex-1"></div>
+        </div>
 
         <Link
           href="/br/auth/sign-in"
