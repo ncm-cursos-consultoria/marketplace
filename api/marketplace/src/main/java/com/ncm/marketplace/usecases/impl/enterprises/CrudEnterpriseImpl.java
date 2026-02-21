@@ -164,7 +164,7 @@ public class CrudEnterpriseImpl implements CrudEnterprise {
         if (oldPlanName != null && !oldPlanName.equals(plan.getName())) {
             if (planName.equals(PlansEnum.BASIC.getName())) {
                 enterprise.getPlanEnterprise().setEndDate(null);
-                if (!enterprise.getJobOpenings().isEmpty()) {
+                if (enterprise.getJobOpenings().size() >= 3) {
                     enterprise.setCanCreateJobOpenings(Boolean.FALSE);
                 }
             } else if (planName.equals(PlansEnum.STANDARD.getName())) {

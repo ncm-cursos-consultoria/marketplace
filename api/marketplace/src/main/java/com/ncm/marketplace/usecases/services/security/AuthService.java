@@ -204,6 +204,7 @@ public class AuthService {
             }
 
             return LinkedInLoginResponse.builder()
+                    .id(user.getId())
                     .needsRegistration(false)
                     .message("Login efetuado com sucesso")
                     .build();

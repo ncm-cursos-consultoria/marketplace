@@ -41,6 +41,7 @@ public class SecurityConfig {
                                 "/auth/login",
                                 "/auth/forgot-my-password",
                                 "/auth/reset-password-by-code",
+                                "/auth/linkedin",
                                 "/email/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST,

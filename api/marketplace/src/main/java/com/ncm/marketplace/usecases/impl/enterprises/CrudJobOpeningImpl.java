@@ -83,7 +83,7 @@ public class CrudJobOpeningImpl implements CrudJobOpening {
         }
         jobOpening = jobOpeningCommandService.save(jobOpening);
         if (enterprise.getPlan().equals(PlansEnum.BASIC.getName())
-                && !enterprise.getJobOpenings().isEmpty()) {
+                && enterprise.getJobOpenings().size() >= 3) {
             enterprise.setCanCreateJobOpenings(Boolean.FALSE);
             enterpriseCommandService.save(enterprise);
         }

@@ -12,6 +12,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class LinkedInLoginResponse {
+    private String id;
     private Boolean needsRegistration;
     private String firstName;
     private String lastName;
