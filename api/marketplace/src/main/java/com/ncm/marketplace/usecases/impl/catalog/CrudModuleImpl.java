@@ -69,6 +69,7 @@ public class CrudModuleImpl implements CrudModule {
         module.setTitle(request.getTitle() != null ? request.getTitle() : module.getTitle());
         module.setDescription(request.getDescription() != null ? request.getDescription() : module.getDescription());
         module.setHasMentorship(request.getHasMentorship() != null ? request.getHasMentorship() : module.getHasMentorship());
+        module.setFreePlan(request.getFreePlan() != null ? request.getFreePlan() : module.getFreePlan());
         Boolean createProduct = Boolean.FALSE;
         Boolean updatePrice = Boolean.FALSE;
         if (module.getHasMentorship()) {
