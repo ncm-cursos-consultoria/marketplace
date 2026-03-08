@@ -60,9 +60,9 @@ export default function Home() {
         >
           <h2 className="text-4xl font-bold mb-4">Sobre o projeto</h2>
           <p className="text-gray-600 text-[20px]">
-            Uma plataforma feita para conectar pessoas a oportunidades reais de
-            crescimento profissional e social. Empresas, prefeituras e talentos
-            se encontram aqui para mudar realidades.
+            Uma plataforma desenvolvida para conectar profissionais de TI a oportunidades 
+            reais de desenvolvimento profissional e pessoal. Empresas, Prefeituras e Talentos 
+            de Tecnologia se encontram para a Transformação Social.
           </p>
         </motion.div>
       </section>
