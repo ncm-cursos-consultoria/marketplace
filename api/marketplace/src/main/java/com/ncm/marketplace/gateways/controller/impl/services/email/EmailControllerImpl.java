@@ -5,10 +5,9 @@ import com.ncm.marketplace.usecases.services.email.EmailService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,4 +21,10 @@ public class EmailControllerImpl implements EmailController {
     public ResponseEntity<String> helloWorld(@RequestParam String email) {
         return ResponseEntity.ok(emailService.sendHelloWorldEmail(email));
     }
+    @GetMapping("/marketing")
+    @Override
+    public ResponseEntity<String> sendMarketingEmail(@RequestParam String subject, @RequestParam String templateName) throws IOException {
+        return ResponseEntity.ok(emailService.sendMarketingEmail(subject, templateName));
+    }
+
 }

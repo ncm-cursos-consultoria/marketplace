@@ -1,5 +1,7 @@
 package com.ncm.marketplace.usecases.services.email;
 
+import com.ncm.marketplace.domains.user.candidate.UserCandidate;
+import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -17,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 public class EmailService {
 
     private final JavaMailSender mailSender;
+    private final UserCandidateQueryService userCandidateQueryService;
 
     @Value("${myapp.mail.from}")
     private String fromEmail;
@@ -223,5 +228,19 @@ public class EmailService {
         sendEmail(email, subject, content);
 
         log.info("Invite email sent to mentor email {}", email);
+    }
+
+    public String sendMarketingEmail(String subject, String templateName) throws IOException {
+        List<UserCandidate> candidates = userCandidateQueryService.findAllByReceiveEmail(Boolean.TRUE);
+        candidates.sort(Comparator.comparing(UserCandidate::getCreatedAt).reversed());
+        Integer counter = 0;
+        Integer limit = 200;
+        String template = loadTemplate(templateName + ".html");
+        for (UserCandidate userCandidate : candidates) {
+            if (counter >= limit) break;
+            sendEmail(userCandidate.getEmail(), subject, template);
+            counter++;
+        }
+        return "Marketing emails sent to newest 200 candidates on the platform";
     }
 }
