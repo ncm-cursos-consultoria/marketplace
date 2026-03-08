@@ -37,7 +37,7 @@ export default function MentorModulesPage() {
 
   // Dentro do componente MentorModulesPage
   const { data: modules, isLoading } = useQuery({
-    queryKey: ["mentor-modules", mentorId],
+    queryKey: ["mentor-modules"],
     queryFn: () => getAllModules({ mentorIds: [mentorId as string] })
   });
 
