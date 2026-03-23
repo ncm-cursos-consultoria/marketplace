@@ -10,7 +10,8 @@ import {
   MoreVertical,
   ArrowRight,
   Search,
-  Eye
+  Eye,
+  Trash2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -125,7 +126,7 @@ interface MentorModuleCardProps {
 }
 
 function MentorModuleCard({ mentorId, module, onEdit }: MentorModuleCardProps) {
-  // Definimos a imagem (capa ou logo padrão) conforme a lógica estabelecida anteriormente
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const imageUrl = ncmHorizontal;
 
   return (
@@ -202,6 +203,15 @@ function MentorModuleCard({ mentorId, module, onEdit }: MentorModuleCardProps) {
             className="rounded-xl border-blue-200 text-blue-900 hover:bg-blue-50"
           >
             Editar
+          </Button>
+
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="rounded-xl border-red-100 text-red-500 hover:bg-red-50 hover:border-red-200"
+          >
+            <Trash2 className="h-4 w-4" />
           </Button>
         </div>
       </div>
