@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { UpgradeCandidateModal } from "../candidate/upgrade-candidate-modal";
 import { useState } from "react";
 // Certifique-se de importar o logo horizontal que a Empresa usa
-import ncmHorizontal from "@/assets/logo-ncm-horizontal.svg"; 
+import ncmHorizontal from "@/assets/logo-ncm-horizontal.svg";
 
 interface ModuleCardProps {
     module: ApiModule;
@@ -19,14 +19,14 @@ export function ModuleCard({ module, isUserPermitted, userId }: ModuleCardProps)
     const { title, description, freePlan, view } = module;
     const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
     const isAccessBlocked = !isUserPermitted && !freePlan;
-    
+
     // Define a imagem: Prioriza a capa, senão usa o logo horizontal
     const imageUrl = ncmHorizontal;
 
     return (
         <>
             <div className="group relative flex w-full flex-col overflow-hidden rounded-2xl border bg-white text-left shadow-sm transition hover:shadow-md">
-                
+
                 {/* --- CONTAINER DA IMAGEM --- */}
                 <div className="relative aspect-video w-full bg-gray-100 overflow-hidden">
                     {/* A imagem agora só fica com blur se estiver bloqueado */}
@@ -46,9 +46,13 @@ export function ModuleCard({ module, isUserPermitted, userId }: ModuleCardProps)
                             onClick={() => setIsUpgradeModalOpen(true)}
                             className="absolute inset-0 z-20 bg-black/40 grid place-items-center cursor-pointer hover:bg-black/50 transition-colors"
                         >
-                            <div className="flex flex-col items-center gap-1 text-white">
-                                <Lock className="h-6 w-6 text-yellow-400" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest">Premium</span>
+                            <div className="text-center p-6 bg-white rounded-xl shadow-2xl max-w-[85%] animate-in fade-in zoom-in duration-300">
+                                <Lock className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+                                <p className="font-bold text-gray-900">Conteúdo Exclusivo</p>
+                                <p className="text-xs text-gray-600 mt-2 mb-4 leading-relaxed">
+                                    Este módulo exige um plano superior. <br />
+                                    <strong>Faça o upgrade para acessar.</strong>
+                                </p>
                             </div>
                         </div>
                     )}
@@ -74,10 +78,10 @@ export function ModuleCard({ module, isUserPermitted, userId }: ModuleCardProps)
                     {/* RODAPÉ DO CARD - Muda o comportamento se estiver bloqueado */}
                     <div className="mt-auto pt-4 border-t border-gray-50">
                         {isAccessBlocked ? (
-                            <Button 
+                            <Button
                                 onClick={() => setIsUpgradeModalOpen(true)}
-                                variant="ghost" 
-                                size="sm" 
+                                variant="ghost"
+                                size="sm"
                                 className="w-full justify-between text-blue-900 font-bold hover:bg-blue-50 h-8"
                             >
                                 <span className="flex items-center gap-2">
