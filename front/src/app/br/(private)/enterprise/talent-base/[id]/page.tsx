@@ -90,7 +90,10 @@ export default function TalentBasePage() {
     return (
       <div className="p-6 lg:p-10">
         <h1 className="text-2xl font-bold mb-6">Banco de Talentos</h1>
-        <AccessDenied />
+        <AccessDenied
+          enterprise={userEnterprise}
+          enterpriseId={userEnterprise.id}
+        />
       </div>
     );
   }

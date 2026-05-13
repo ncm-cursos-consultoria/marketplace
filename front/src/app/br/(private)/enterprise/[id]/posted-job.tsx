@@ -84,7 +84,7 @@ export function PostedJobs() {
           data.map((v: any) => (
             <Link
               key={v.id}
-              href={`/br/enterprise/vaga/${v.id}`}
+              href={`/br/enterprise/vaga/${enterpriseId}`}
               className="group block rounded-xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="p-4 md:p-5">

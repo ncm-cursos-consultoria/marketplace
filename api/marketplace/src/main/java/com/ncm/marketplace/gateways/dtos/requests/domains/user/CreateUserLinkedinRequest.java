@@ -9,13 +9,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 import org.hibernate.validator.constraints.br.CPF;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @Builder
 @Jacksonized
 public class CreateUserLinkedinRequest {
-    @NotNull
     private UserTypeEnum userType;
     @NotEmpty
     private String firstName;
@@ -29,4 +29,5 @@ public class CreateUserLinkedinRequest {
     @NotEmpty
     private String ssoId;
     private String profilePictureUrl;
+    private LocalDate birthday;
 }

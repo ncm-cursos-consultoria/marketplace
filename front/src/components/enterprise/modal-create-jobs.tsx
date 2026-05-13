@@ -169,6 +169,7 @@ export function ModalCreateJob({ onSuccess }: ModalCreateJobProps) { // 2. Receb
         <form
           id="create-job-form"
           className="flex flex-col gap-6"
+          onSubmit={handleSubmit(onSubmit)}
         >
           {isError && (
             <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md p-2">

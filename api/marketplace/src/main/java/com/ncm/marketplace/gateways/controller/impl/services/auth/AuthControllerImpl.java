@@ -1,6 +1,7 @@
 package com.ncm.marketplace.gateways.controller.impl.services.auth;
 
 import com.ncm.marketplace.gateways.controller.interfaces.services.auth.AuthController;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.CreateUserLinkedinRequest;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.ResetPasswordRequest;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.linkedin.LinkedinAuthRequest;
@@ -88,5 +89,16 @@ public class AuthControllerImpl implements AuthController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/linkedin/register")
+    @Operation(summary = "Register a new candidate using LinkedIn data")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<LinkedInLoginResponse> linkedinRegister(@Valid @RequestBody CreateUserLinkedinRequest request) {
+        LinkedInLoginResponse response = authService.registerWithLinkedin(request);
+        ResponseCookie cookie = authService.generateCookieForSso(response.getEmail());
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .header(HttpHeaders.SET_COOKIE, cookie.toString())
+            .body(response);
     }
 }

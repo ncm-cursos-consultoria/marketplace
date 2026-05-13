@@ -11,15 +11,18 @@ import com.ncm.marketplace.exceptions.BadRequestException;
 import com.ncm.marketplace.exceptions.IllegalStateException;
 import com.ncm.marketplace.exceptions.InvalidCredentialsException;
 import com.ncm.marketplace.exceptions.UserBlockedException;
+import com.ncm.marketplace.gateways.dtos.requests.domains.user.CreateUserLinkedinRequest;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.AuthRequest;
 import com.ncm.marketplace.gateways.dtos.requests.services.auth.ResetPasswordRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.others.tag.TagResponse;
+import com.ncm.marketplace.gateways.dtos.responses.domains.user.candidate.UserCandidateResponse;
 import com.ncm.marketplace.gateways.dtos.responses.services.auth.LinkedInLoginResponse;
 import com.ncm.marketplace.gateways.dtos.responses.services.auth.LinkedInUserInfo;
 import com.ncm.marketplace.gateways.dtos.responses.services.auth.MeResponse;
 import com.ncm.marketplace.gateways.mappers.others.tag.TagMapper;
 import com.ncm.marketplace.usecases.services.email.EmailService;
 import com.ncm.marketplace.usecases.services.query.user.UserQueryService;
+import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -44,6 +47,7 @@ public class AuthService {
     private final RandomPasswordService randomPasswordService;
     private final EmailService emailService;
     private final LinkedInApiService linkedInApiService;
+    private final CrudUserCandidate crudUserCandidate;
 
     public ResponseCookie login(AuthRequest request) {
         String email = request.getEmail() != null
@@ -194,7 +198,8 @@ public class AuthService {
     }
 
     public LinkedInLoginResponse loginWithLinkedin(String token) {
-        LinkedInUserInfo linkedinUser = linkedInApiService.getUserInfo(token);
+        String accessToken = linkedInApiService.exchangeCodeForToken(token);
+        LinkedInUserInfo linkedinUser = linkedInApiService.getUserInfo(accessToken);
 
         User user = userQueryService.findBySsoIdOrNull(linkedinUser.getSub());
 
@@ -295,5 +300,17 @@ public class AuthService {
             user.setForgetPasswordCode(null);
             user.setForgetPasswordCodeExpiry(null);
         }
+    }
+    @Transactional
+    public LinkedInLoginResponse registerWithLinkedin(CreateUserLinkedinRequest request) {
+        request.setUserType(com.ncm.marketplace.domains.enums.UserTypeEnum.CANDIDATE);
+        crudUserCandidate.createUsingLinkedin(request);
+        User user = userQueryService.findByEmailOrNull(request.getEmail());
+        return LinkedInLoginResponse.builder()
+        .id(user.getId())
+        .email(user.getEmail())
+        .needsRegistration(false)
+        .message("Cadastro realizado com sucesso")
+        .build();
     }
 }
