@@ -5,9 +5,10 @@ import { UserEnterpriseProvider } from "@/context/user-enterprise.context";
 import { UserPartnerProvider } from "@/context/user-partner.context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
+import { useState } from "react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const queryClient = new QueryClient({
+  const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false,
@@ -16,7 +17,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         staleTime: 1000 * 60 * 5,
       },
     },
-  });
+  }));
 
   return (
     <QueryClientProvider client={queryClient}>

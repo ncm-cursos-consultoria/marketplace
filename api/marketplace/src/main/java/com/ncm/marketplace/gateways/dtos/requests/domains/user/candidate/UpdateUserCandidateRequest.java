@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 import org.hibernate.validator.constraints.URL;
 import org.hibernate.validator.constraints.br.CPF;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
 
@@ -22,6 +23,7 @@ public class UpdateUserCandidateRequest {
     @Email
     @NotEmpty
     private String email;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate birthday;
     @CPF
     @NotEmpty

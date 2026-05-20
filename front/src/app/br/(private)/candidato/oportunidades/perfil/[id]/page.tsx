@@ -13,9 +13,10 @@ export default function UserProfilePage() {
 
   // 1. Busca de dados do usuário
   const { data: user, isLoading: isLoadingUser } = useQuery({
-    queryKey: ["authUser"],
+    queryKey: ["candidateProfile", userCandidate?.id],
     queryFn: () => getUniqueUser(userCandidate!.id),
     enabled: !!userCandidate?.id,
+    staleTime: 0,
   });
 
   const addressId = user?.addressId;
@@ -25,6 +26,7 @@ export default function UserProfilePage() {
     queryKey: ["userAddress", addressId],
     queryFn: () => getAddress(addressId!),
     enabled: !!addressId, // Só executa se 'addressId' não for nulo
+    staleTime: 0,
   });
 
   // 3. Combina o estado de carregamento

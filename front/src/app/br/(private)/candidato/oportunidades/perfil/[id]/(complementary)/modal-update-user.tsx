@@ -40,9 +40,10 @@ export function ModalUpdateUser() {
   });
 
   const { data: user, isLoading } = useQuery({
-    queryKey: ["authUser"],
+    queryKey: ["candidateProfile", userCandidate?.id],
     queryFn: () => getUniqueUser(userCandidate!.id),
     enabled: !!userCandidate?.id,
+    staleTime: 0,
   });
 
   useEffect(() => {
@@ -69,6 +70,7 @@ export function ModalUpdateUser() {
     mutationKey: ["authUser"],
     onSuccess: (data) => {
       toast.success("Sucesso ao atualizar usuario ")
+      qc.invalidateQueries({ queryKey: ["candidateProfile", userCandidate?.id] });
       qc.invalidateQueries({ queryKey: ["authUser"] });
       // window.location.reload()
     },
@@ -105,7 +107,8 @@ export function ModalUpdateUser() {
             </div>
             <div>
               <Label>Data de nascimento</Label>
-              <Input {...register("birthday")} disabled={loading} />
+              <Input {...register("birthday")} disabled={loading} placeholder="DD/MM/AAAA" />
+              <p className="text-xs text-gray-400 mt-1">Formato: DD/MM/AAAA. Ex: 01/02/2004</p>
             </div>
             <div>
               <Label>CPF</Label>
@@ -113,19 +116,23 @@ export function ModalUpdateUser() {
             </div>
             <div>
               <Label>LinkedIn</Label>
-              <Input {...register("linkedInUrl")} disabled={loading} />
+              <Input {...register("linkedInUrl")} disabled={loading} placeholder="https://www.linkedin.com/in/seu-perfil" />
+               <p className="text-xs text-gray-400 mt-1">Inclua o https://. Ex: https://www.linkedin.com/in/seu-perfil</p>
             </div>
             <div>
               <Label>Github</Label>
-              <Input {...register("githubUrl")} disabled={loading} />
+              <Input {...register("githubUrl")} disabled={loading} placeholder="https://github.com/seu-usuario" />
+              <p className="text-xs text-gray-400 mt-1">Inclua o https://. Ex: https://github.com/seu-usuario</p>
             </div>
             <div>
               <Label>Portfólio</Label>
-              <Input {...register("mySiteUrl")} disabled={loading} />
+              <Input {...register("mySiteUrl")} disabled={loading} placeholder="https://seu-portfolio.com" />
+              <p className="text-xs text-gray-400 mt-1">Inclua o https://. Ex: https://seu-portfolio.com</p>
             </div>
             <div>
               <Label>Telefone</Label>
-              <Input {...register("phoneNumber")} disabled={loading} />
+              <Input {...register("phoneNumber")} disabled={loading} placeholder="seu telefone"/>
+              <p className="text-xs text-gray-400 mt-1">Formato: DDD9XXXX-XXXX Ex: 11999998888 </p>
             </div>
           </div>
 

@@ -468,14 +468,14 @@ function SkillsModal({ isOpen, setIsOpen, user }: SkillsModalProps) {
       const { tagId, action } = variablesSent;
 
       // 3.1. Cancela queries pendentes do 'authUser'
-      await queryClient.cancelQueries({ queryKey: ['authUser'] });
+      await queryClient.cancelQueries({ queryKey: ['candidateProfile', user.id] });
 
       // 3.2. Pega um snapshot dos dados atuais
-      const previousUserData = queryClient.getQueryData<UserCandidateResponse>(['authUser']);
+      const previousUserData = queryClient.getQueryData<UserCandidateResponse>(['candidateProfile', user.id]);
       if (!previousUserData) return; // Se não houver dados, não faz nada
 
       // 3.3. ATUALIZA O CACHE IMEDIATAMENTE (A UI MUDA AGORA)
-      queryClient.setQueryData<UserCandidateResponse>(['authUser'], (oldData) => {
+      queryClient.setQueryData<UserCandidateResponse>(['candidateProfile', user.id], (oldData) => {
         if (!oldData) return oldData;
 
         let newTags = [...(oldData.tags || [])];
@@ -503,7 +503,7 @@ function SkillsModal({ isOpen, setIsOpen, user }: SkillsModalProps) {
       toast.error("Não foi possível atualizar a tag. Revertendo.");
       // Reverte o cache para o estado anterior
       if (context?.previousUserData) {
-        queryClient.setQueryData(['authUser'], context.previousUserData);
+        queryClient.setQueryData(['candidateProfile', user.id], context.previousUserData);
       }
     },
 
@@ -528,7 +528,7 @@ function SkillsModal({ isOpen, setIsOpen, user }: SkillsModalProps) {
     if (!open) {
       // O modal está fechando. Agora sim, invalidamos a query
       // para garantir que os dados fiquem 100% sincronizados.
-      queryClient.invalidateQueries({ queryKey: ['authUser'] });
+      queryClient.invalidateQueries({ queryKey: ['candidateProfile', user.id] });
     }
     setIsOpen(open);
   };

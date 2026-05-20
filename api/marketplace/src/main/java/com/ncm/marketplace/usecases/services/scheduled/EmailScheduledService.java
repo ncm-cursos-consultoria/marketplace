@@ -54,4 +54,18 @@ public class EmailScheduledService {
             }
         }
     }
+
+    @Scheduled(cron = "0 0 8 */10 * *", zone = "America/Sao_Paulo")
+    public void sendMarketingEmails() {
+        log.info("Iniciando envio de emails de marketing...");
+        try {
+            emailService.sendMarketingEmailToAll(
+            "Novidades do NCM Marketplace!",
+            "marketingCandidateMentorships"
+            );
+            log.info("Emails de marketing enviados com sucesso.");
+        } catch (Exception e) {
+            log.error("Erro ao enviar emails de marketing: {}", e.getMessage());
+        }
+    }
 }

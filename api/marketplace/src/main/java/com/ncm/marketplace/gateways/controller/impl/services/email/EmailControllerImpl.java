@@ -26,5 +26,12 @@ public class EmailControllerImpl implements EmailController {
     public ResponseEntity<String> sendMarketingEmail(@RequestParam String subject, @RequestParam String templateName) throws IOException {
         return ResponseEntity.ok(emailService.sendMarketingEmail(subject, templateName));
     }
+    @GetMapping("/marketing-all")
+    public ResponseEntity<String> sendMarketingEmailToAll(
+            @RequestParam String subject,
+            @RequestParam String templateName) throws IOException {
+        emailService.sendMarketingEmailToAll(subject, templateName);
+        return ResponseEntity.ok("Emails de marketing enviados para candidatos e empresas!");
+}
 
 }

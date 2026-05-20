@@ -3,6 +3,7 @@
 import { Linkedin } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID;
 const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL;
@@ -13,6 +14,7 @@ export const LINKEDIN_AUTH_URL = `https://www.linkedin.com/oauth/v2/authorizatio
 
 export function LinkedInButton() {
     const router = useRouter();
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
@@ -20,6 +22,9 @@ export function LinkedInButton() {
             if (event.data?.type !== "LINKEDIN_AUTH_SUCCESS") return;
 
             const data = event.data.data;
+
+            // Invalida o cache para forçar busca imediata dos dados do usuário
+            queryClient.invalidateQueries({ queryKey: ["authUser"] });
 
             if (data.needsRegistration) {
                 sessionStorage.setItem("linkedin_user", JSON.stringify(data));
@@ -31,7 +36,7 @@ export function LinkedInButton() {
 
         window.addEventListener("message", handleMessage);
         return () => window.removeEventListener("message", handleMessage);
-    }, [router]);
+    }, [router, queryClient]);
 
     const handleLinkedInLogin = () => {
         const width = 600;

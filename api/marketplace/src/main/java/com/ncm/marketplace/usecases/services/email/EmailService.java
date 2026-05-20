@@ -1,5 +1,8 @@
 package com.ncm.marketplace.usecases.services.email;
 
+import com.ncm.marketplace.usecases.services.query.user.UserEnterpriseQueryService;
+import com.ncm.marketplace.domains.user.UserEnterprise;
+
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import com.ncm.marketplace.usecases.services.query.user.candidate.UserCandidateQueryService;
 import jakarta.mail.MessagingException;
@@ -29,6 +32,7 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
     private final UserCandidateQueryService userCandidateQueryService;
+    private final UserEnterpriseQueryService userEnterpriseQueryService;
 
     @Value("${myapp.mail.from}")
     private String fromEmail;
@@ -243,4 +247,40 @@ public class EmailService {
         }
         return "Marketing emails sent to newest 200 candidates on the platform";
     }
+
+   public void sendMarketingEmailToAll(String subject, String templateName) throws IOException {
+    String template = loadTemplate(templateName + ".html");
+    int counter = 0;
+    int limit = 200;
+
+    // Envia para candidatos
+    List<UserCandidate> candidates = userCandidateQueryService.findAllByReceiveEmail(Boolean.TRUE);
+    candidates.sort(Comparator.comparing(UserCandidate::getCreatedAt).reversed());
+    for (UserCandidate candidate : candidates) {
+        if (counter >= limit) break;
+        try {
+            sendEmail(candidate.getEmail(), subject, template);
+            counter++;
+            log.info("Marketing email enviado para candidato: {}", candidate.getEmail());
+        } catch (Exception e) {
+            log.error("Erro ao enviar para candidato {}: {}", candidate.getEmail(), e.getMessage());
+        }
+    }
+
+    // Envia para empresas
+    List<UserEnterprise> enterprises = userEnterpriseQueryService.findAll();
+    for (UserEnterprise enterprise : enterprises) {
+        if (counter >= limit) break;
+        try {
+            sendEmail(enterprise.getEmail(), subject, template);
+            counter++;
+            log.info("Marketing email enviado para empresa: {}", enterprise.getEmail());
+        } catch (Exception e) {
+            log.error("Erro ao enviar para empresa {}: {}", enterprise.getEmail(), e.getMessage());
+        }
+    }
+
+    log.info("Total de marketing emails enviados: {}", counter);
+   }
+    
 }
