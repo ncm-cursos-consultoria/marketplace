@@ -239,7 +239,7 @@ public class EmailService {
         candidates.sort(Comparator.comparing(UserCandidate::getCreatedAt).reversed());
         Integer counter = 0;
         Integer limit = 200;
-        String template = loadTemplate(templateName + ".html");
+        String template = loadTemplate("marketingPlatformEmail.html");
         for (UserCandidate userCandidate : candidates) {
             if (counter >= limit) break;
             sendEmail(userCandidate.getEmail(), subject, template);
@@ -249,7 +249,7 @@ public class EmailService {
     }
 
    public void sendMarketingEmailToAll(String subject, String templateName) throws IOException {
-    String template = loadTemplate(templateName + ".html");
+    String template = loadTemplate("marketingPlatformEmail.html");
     int counter = 0;
     int limit = 200;
 
@@ -281,6 +281,58 @@ public class EmailService {
     }
 
     log.info("Total de marketing emails enviados: {}", counter);
+   }
+
+   public void sendMarketingEmailToLeads(String subject, String templateName) throws IOException {
+    String template = loadTemplate("marketingPlatformEmail.html");
+    
+    List<String> leadEmails = List.of(
+        "adm@indicaempresarial.com.br",
+        "sebastiao.pessoa@contabilsaelite.com.br",
+        "financeirojm@gmail.com",
+        "albertina.nepomuceno@pedrofonsecaadvogados.com.br",
+        "sebastiao.pessoa@contabilsatelite.com.br",
+        "caio@jpamacedo.com.br",
+        "abcarvalho10@gmail.com",
+        "goaheadintermediacao@hotmail.com",
+        "sac.lunacenter@gmail.com",
+        "thaynabibiano31@gmail.com",
+        "paulo@sanz.com.br",
+        "financeiro@sittrade.com.br",
+        "procuradoria@dmfcontabilidade.com",
+        "contabilidadedigital@gerenciavale.com",
+        "brazil-holding@loboprime.com",
+        "yoshiinvestimentos@gmail.com",
+        "edson-silva@outlook.com",
+        "balboawork@outlook.com",
+        "email@email.com.br",
+        "brasilfmg@gmail.com",
+        "bianca@balbo.me",
+        "contato@pbmadm.com.br",
+        "bpg@brazilpactualgroup.com",
+        "walasmyke72@gmail.com",
+        "contato@qualitycont.com.br",
+        "drmarcospediatra@hotmail.com",
+        "limeiras@terra.com.br",
+        "marcelo.lefol@gmail.com",
+        "gerezim@gmail.com",
+        "adsystem@terra.com.br",
+        "paulo.tasso1@terra.com.br",
+        "daniel@saeengenharia.com.br",
+        "societario@tcprimecontabil.com.br",
+        "contabil@rockfile.com.br",
+        "tatianapimenta615@gmail.com",
+        "psilvaleite018@gmail.com"
+    );
+
+    for (String email : leadEmails) {
+        try {
+            sendEmail(email, subject, template);
+            log.info("Marketing email enviado para lead: {}", email);
+        } catch (Exception e) {
+            log.error("Erro ao enviar para lead {}: {}", email, e.getMessage());
+        }
+    }
    }
     
 }

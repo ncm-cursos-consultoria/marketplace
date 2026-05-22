@@ -61,7 +61,11 @@ public class EmailScheduledService {
         try {
             emailService.sendMarketingEmailToAll(
             "Novidades do NCM Marketplace!",
-            "marketingCandidateMentorships"
+            "marketingPlatformEmail"
+            );
+            emailService.sendMarketingEmailToLeads(
+            "Novidades do NCM Marketplace!",
+            "marketingPlatformEmail"
             );
             log.info("Emails de marketing enviados com sucesso.");
         } catch (Exception e) {

@@ -63,7 +63,7 @@ public class UserScheduledService {
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 6 * * Mon", zone = "America/Sao_Paulo")
+    @Scheduled(cron = "0 0 6 * * MON", zone = "America/Sao_Paulo")
     public void markWeeklyEmailAsNotSent() {
         List<UserCandidate> userCandidates = userCandidateQueryService.findAllByReceiveEmail(Boolean.TRUE);
 
