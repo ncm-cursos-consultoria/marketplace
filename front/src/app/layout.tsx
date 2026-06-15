@@ -6,6 +6,7 @@ import { fontVars } from "@/styles/fonts";
 import { AppProviders } from "@/components/provider/AppProviders";
 import { Inter } from "next/font/google";
 import { CookieBanner } from "@/components/cookies/banner";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <CookieBanner />
         </AppProviders>
+        {process.env.NEXT_PUBLIC_GA_ID && (<GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />)}
       </body>
     </html>
   );
