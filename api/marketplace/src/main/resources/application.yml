@@ -118,3 +118,5 @@ linkedin:
   client-secret: ${LINKEDIN_CLIENT_SECRET}
   redirect-uri: ${LINKEDIN_REDIRECT_URI} # URL do seu Front-end
   user-info-uri: "https://api.linkedin.com/v2/userinfo"
+app:
+  admin-key: ${ADMIN_KEY}
