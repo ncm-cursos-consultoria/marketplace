@@ -80,4 +80,12 @@ public class Module {
                     ? Boolean.FALSE
                     : Boolean.TRUE;
     }
+
+    @PreUpdate
+    public void preUpdate() {
+        hasMentor = mentor != null;
+        if (!hasMentor) {
+            hasMentorship = Boolean.FALSE;
+        }
+    }     
 }

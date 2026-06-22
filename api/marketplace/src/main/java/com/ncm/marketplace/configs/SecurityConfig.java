@@ -43,14 +43,16 @@ public class SecurityConfig {
                                 "/auth/reset-password-by-code",
                                 "/auth/linkedin",
                                 "/auth/linkedin/register",
-                                "/email/**"
+                                "/email/**",
+                                "/disc/learning-trail/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/user/candidate",
                                 "/enterprise/with-user",
                                 "/partner/with-enterprise-and-user",
                                 "/user/mentor",
-                                "/stripe/webhook"
+                                "/stripe/webhook",
+                                "/candidate-lead/batch"
                         ).permitAll()
                         .requestMatchers(HttpMethod.PATCH,
                                 "/user/candidate/{email}/unsubscribe-email"
@@ -76,7 +78,7 @@ public class SecurityConfig {
                 "https://marketplace.ncmconsultoria.com.br"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "X-Admin-Key"));
         configuration.setExposedHeaders(List.of("Set-Cookie"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);

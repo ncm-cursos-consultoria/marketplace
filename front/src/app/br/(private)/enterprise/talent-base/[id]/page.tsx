@@ -27,6 +27,9 @@ import { AccessDenied } from "@/components/enterprise/talent-base/access-denied"
 import { TalentCard } from "@/components/enterprise/talent-base/talent-card";
 import { getAllTags } from "@/service/tag/get-all-tags";
 
+import { getCandidateLeads } from "@/service/user/get-candidate-leads";
+import { LeadCard } from "@/components/enterprise/talent-base/LeadCard";
+
 export default function TalentBasePage() {
   const { userEnterprise } = UseUserEnteprise();
 
@@ -68,6 +71,18 @@ export default function TalentBasePage() {
     }),
     enabled: !!canView, // Só busca se tiver permissão
     staleTime: 1000 * 60 * 2, // Cache de 2 min
+  });
+
+  // Adicionar junto com as outras queries existentes:
+  const { data: leadsData, isLoading: isLoadingLeads } = useQuery({
+    queryKey: ["candidateLeads", debouncedSearch, page],
+    queryFn: () => getCandidateLeads({
+      search: debouncedSearch || undefined,
+      page,
+      size: 10
+    }),
+    enabled: !!canView,
+    staleTime: 1000 * 60 * 2,
   });
 
   // --- Handlers ---
@@ -235,35 +250,52 @@ export default function TalentBasePage() {
               </Button>
             </div>
           ) : (
-            <div className="space-y-4">
-              <div className="text-sm text-gray-500 mb-2">
-                Encontrados <strong>{pageData?.totalElements}</strong> profissionais
+            <>
+              <div className="space-y-4">
+                <div className="text-sm text-gray-500 mb-2">
+                  Encontrados <strong>{pageData?.totalElements}</strong> profissionais
+                </div>
+
+                {pageData?.content.map((candidate) => (
+                  <TalentCard key={candidate.id} candidate={candidate} />
+                ))}
+
+                {pageData && pageData.totalPages > 1 && (
+                  <div className="flex justify-center gap-2 pt-6">
+                    <Button
+                      variant="outline"
+                      disabled={page === 0}
+                      onClick={() => setPage(p => p - 1)}
+                    >
+                      Anterior
+                    </Button>
+                    <Button
+                      variant="outline"
+                      disabled={page + 1 >= pageData.totalPages}
+                      onClick={() => setPage(p => p + 1)}
+                    >
+                      Próxima
+                    </Button>
+                  </div>
+                )}
               </div>
 
-              {pageData?.content.map((candidate) => (
-                <TalentCard key={candidate.id} candidate={candidate} />
-              ))}
-
-              {/* Paginação Simples */}
-              {pageData && pageData.totalPages > 1 && (
-                <div className="flex justify-center gap-2 pt-6">
-                  <Button
-                    variant="outline"
-                    disabled={page === 0}
-                    onClick={() => setPage(p => p - 1)}
-                  >
-                    Anterior
-                  </Button>
-                  <Button
-                    variant="outline"
-                    disabled={page + 1 >= pageData.totalPages}
-                    onClick={() => setPage(p => p + 1)}
-                  >
-                    Próxima
-                  </Button>
+              {(leadsData?.content?.length ?? 0) > 0 && (
+                <div className="mt-10">
+                  <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">
+                    Banco de Currículos NCM
+                    <span className="ml-2 text-sm font-normal text-gray-400">
+                      ({leadsData?.totalElements} profissionais)
+                    </span>
+                  </h2>
+                  <div className="space-y-4">
+                    {leadsData?.content.map((lead) => (
+                      <LeadCard key={lead.id} lead={lead} />
+                    ))}
+                  </div>
                 </div>
               )}
-            </div>
+            </>
           )}
         </section>
 

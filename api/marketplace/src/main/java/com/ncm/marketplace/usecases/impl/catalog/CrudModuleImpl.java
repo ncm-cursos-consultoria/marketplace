@@ -135,7 +135,8 @@ public class CrudModuleImpl implements CrudModule {
         Module module = moduleQueryService.findByIdOrThrow(id);
         UserMentor mentor = userMentorQueryService.findByIdOrThrow(mentorId);
         module.setMentor(mentor);
-        return toResponse(module);
+        module.setHasMentor(Boolean.TRUE);  // ← garante imediato, o @PreUpdate confirma
+        return toResponse(moduleCommandService.save(module));  // ← estava sem o .save()!
     }
 
     @Override
