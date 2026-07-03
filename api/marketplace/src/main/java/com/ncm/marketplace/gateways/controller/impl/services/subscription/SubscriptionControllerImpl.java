@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,5 +45,15 @@ public class SubscriptionControllerImpl implements SubscriptionController {
     public ResponseEntity<Void> cancelSubscription(@PathVariable String id) throws StripeException {
         subscriptionService.cancelSubscription(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/pix/enterprise/{id}")
+    public ResponseEntity<Map<String, String>> pixCheckoutEnterprise(@PathVariable String id) throws StripeException {
+        return ResponseEntity.ok(subscriptionService.createPixCheckoutEnterprise(id));
+    }
+
+    @PostMapping("/pix/candidate/{id}")
+    public ResponseEntity<Map<String, String>> pixCheckoutCandidate(@PathVariable String id) throws StripeException {
+        return ResponseEntity.ok(subscriptionService.createPixCheckoutCandidate(id));
     }
 }

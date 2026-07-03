@@ -87,6 +87,17 @@ public class CrudFileImpl implements CrudFile {
                     throw new BadRequestException("Invalid file format");
                 }
             }
+            case PAYMENT_RECEIPT -> {
+                List<String> allowedReceiptTypes = List.of(
+                        MediaType.IMAGE_JPEG_VALUE,
+                        MediaType.IMAGE_PNG_VALUE,
+                        MediaType.APPLICATION_PDF_VALUE
+                );
+
+                if (!allowedReceiptTypes.contains(file.getContentType())) {
+                    throw new BadRequestException("Invalid file format");
+                }
+            }
             default -> throw new IllegalStateException("Unexpected value: " + fileType);
         }
     }

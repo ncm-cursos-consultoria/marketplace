@@ -54,6 +54,8 @@ public class SecurityConfig {
                                 "/stripe/webhook",
                                 "/candidate-lead/batch"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/manual-pix/admin/pending").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/manual-pix/admin/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH,
                                 "/user/candidate/{email}/unsubscribe-email"
                         ).permitAll()

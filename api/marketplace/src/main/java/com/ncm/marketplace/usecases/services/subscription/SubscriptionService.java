@@ -385,4 +385,54 @@ public class SubscriptionService {
         // 3. Retornar o ID do novo preço para atualizar o banco
         module.setStripePriceId(newPrice.getId());
     }
+
+    public Map<String, String> createPixCheckoutEnterprise(String enterpriseId) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        UserEnterprise userEnterprise = userEnterpriseQueryService.findByIdOrThrow(enterpriseId);
+
+        SessionCreateParams params = SessionCreateParams.builder()
+            .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+            .addPaymentMethodType(SessionCreateParams.PaymentMethodType.PIX)
+            .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
+            .setSuccessUrl("https://marketplace.ncmconsultoria.com.br/payment/success")
+            .setCancelUrl("https://marketplace.ncmconsultoria.com.br/payment/failed")
+            .setCustomerEmail(userEnterprise.getEmail())
+            .putMetadata("enterpriseId", enterpriseId)
+            .putMetadata("type", "ENTERPRISE_SUBSCRIPTION")
+            .addLineItem(SessionCreateParams.LineItem.builder()
+                    .setPrice(stripePriceId)
+                    .setQuantity(1L)
+                    .build())
+            .build();
+
+        Session session = Session.create(params);
+
+        return Map.of("checkoutUrl", session.getUrl());
+    }
+
+    public Map<String, String> createPixCheckoutCandidate(String candidateId) throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
+
+        UserCandidate userCandidate = userCandidateQueryService.findByIdOrThrow(candidateId);
+
+        SessionCreateParams params = SessionCreateParams.builder()
+            .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+            .addPaymentMethodType(SessionCreateParams.PaymentMethodType.PIX)
+            .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
+            .setSuccessUrl("https://marketplace.ncmconsultoria.com.br/payment/success")
+            .setCancelUrl("https://marketplace.ncmconsultoria.com.br/payment/failed")
+            .setCustomerEmail(userCandidate.getEmail())
+            .putMetadata("candidateId", candidateId)
+            .putMetadata("type", "CANDIDATE_SUBSCRIPTION")
+            .addLineItem(SessionCreateParams.LineItem.builder()
+                    .setPrice(stripeUserCandidatePriceId)
+                    .setQuantity(1L)
+                    .build())
+            .build();
+
+        Session session = Session.create(params);
+
+        return Map.of("checkoutUrl", session.getUrl());
+    }
 }

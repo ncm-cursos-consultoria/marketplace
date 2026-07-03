@@ -120,3 +120,8 @@ linkedin:
   user-info-uri: "https://api.linkedin.com/v2/userinfo"
 app:
   admin-key: ${ADMIN_KEY}
+pix:
+  manual:
+    key: ${PIX_KEY}
+    beneficiary-name: ${PIX_BENEFICIARY_NAME}
+    beneficiary-city: ${PIX_BENEFICIARY_CITY:SAO PAULO} 

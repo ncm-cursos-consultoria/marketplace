@@ -2,11 +2,13 @@ package com.ncm.marketplace.usecases.services.scheduled;
 
 import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enums.PlansEnum;
+import com.ncm.marketplace.domains.enums.PixPayerTypeEnum;
 import com.ncm.marketplace.domains.relationships.plan.enterprise.PlanEnterprise;
 import com.ncm.marketplace.domains.relationships.plan.user.candidate.PlanUserCandidate;
 import com.ncm.marketplace.domains.user.UserEnterprise;
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
+import com.ncm.marketplace.usecases.services.payment.ManualPixPaymentService;
 import com.ncm.marketplace.usecases.services.query.relationship.plan.enterprise.PlanEnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.relationship.plan.user.candidate.PlanUserCandidateQueryService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ public class SubscriptionScheduledService {
     private final CrudEnterprise crudEnterprise;
     private final PlanUserCandidateQueryService planUserCandidateQueryService;
     private final CrudUserCandidate crudUserCandidate;
+    private final ManualPixPaymentService manualPixPaymentService;
 
     @Scheduled(cron = "0 0 1 * * *")
     @Transactional
@@ -41,7 +44,11 @@ public class SubscriptionScheduledService {
                     UserEnterprise userEnterprise = enterprise.getUserEnterprise();
                     switch (userEnterprise.getSubscriptionStatus()) {
                         case ACTIVE -> {
-                            planEnterprise.setEndDate(LocalDate.now().plusMonths(1));
+                            if (manualPixPaymentService.isApprovedAnnualPixEndDate(PixPayerTypeEnum.ENTERPRISE, userEnterprise.getId(), planEnterprise.getEndDate())) {
+                                crudEnterprise.updateEnterprisePlan(enterprise.getId(), PlansEnum.BASIC.getName());
+                            } else {
+                                planEnterprise.setEndDate(LocalDate.now().plusMonths(1));
+                            }
                         }
                         case PENDING, PAST_DUE, CANCELED, INACTIVE -> {
                             crudEnterprise.updateEnterprisePlan(enterprise.getId(), PlansEnum.BASIC.getName());
@@ -62,7 +69,11 @@ public class SubscriptionScheduledService {
             if (planUserCandidate.getUserCandidate() != null) {
                 switch (planUserCandidate.getUserCandidate().getSubscriptionStatus()) {
                     case ACTIVE -> {
-                        planUserCandidate.setEndDate(LocalDate.now().plusMonths(1));
+                        if (manualPixPaymentService.isApprovedAnnualPixEndDate(PixPayerTypeEnum.CANDIDATE, planUserCandidate.getUserCandidate().getId(), planUserCandidate.getEndDate())) {
+                            crudUserCandidate.updateUserCandidatePlan(planUserCandidate.getUserCandidate().getId(), PlansEnum.BASIC.getName());
+                        } else {
+                            planUserCandidate.setEndDate(LocalDate.now().plusMonths(1));
+                        }
                     }
                     case PENDING, PAST_DUE, CANCELED, INACTIVE -> {
                         crudUserCandidate.updateUserCandidatePlan(planUserCandidate.getUserCandidate().getId(), PlansEnum.BASIC.getName());
@@ -71,5 +82,11 @@ public class SubscriptionScheduledService {
                 }
             }
         }
+    }
+
+    @Scheduled(cron = "0 0 2 * * *")
+    @Transactional
+    public void expireManualPixRequests() {
+        manualPixPaymentService.expireOpenRequests();
     }
 }
