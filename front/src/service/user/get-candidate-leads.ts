@@ -7,6 +7,7 @@ export type CandidateLeadProfile = {
   lastName: string;
   email: string;
   area?: string;
+  curriculumVitaeUrl?: string;
 };
 
 export type CandidateLeadPage = {
@@ -24,4 +25,3 @@ export const getCandidateLeads = async (params: {
   const { data } = await api.get("/candidate-lead", { params });
   return data;
 };
-

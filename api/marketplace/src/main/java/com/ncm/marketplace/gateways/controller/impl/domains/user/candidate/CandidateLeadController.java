@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
@@ -45,6 +46,19 @@ public class CandidateLeadController {
         }
         service.saveBatch(leads);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    // PATCH — anexa o currículo (PDF) que o lead mandou para a empresa (só ADMIN)
+    @PatchMapping(value = "/{id}/curriculum-vitae", consumes = "multipart/form-data")
+    public ResponseEntity<CandidateLeadResponse> uploadCurriculumVitae(
+        @RequestHeader("X-Admin-Key") String adminKey,
+        @PathVariable String id,
+        @RequestPart("file") MultipartFile file
+    ) {
+        if (!this.adminKey.equals(adminKey)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(service.uploadCurriculumVitae(id, file));
     }
 
 }

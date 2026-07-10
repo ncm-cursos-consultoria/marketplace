@@ -1,5 +1,7 @@
 package com.ncm.marketplace.domains.user.candidate;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ncm.marketplace.domains.others.File;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
@@ -23,6 +25,11 @@ public class CandidateLead {
     private String email;
 
     private String area;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "curriculumVitaeId", referencedColumnName = "id")
+    @JsonManagedReference("candidate_lead-file")
+    private File curriculumVitae;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;

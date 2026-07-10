@@ -8,7 +8,8 @@ public enum FilePathEnum {
     USER_CV("user/curriculumVitae/{userId}"),
     USER_PROFILE_PICTURE("user/profilePicture/{userId}"),
     ENTERPRISE_PROFILE_PICTURE("enterprise/profilePicture/{enterpriseId}"),
-    PIX_PAYMENT_RECEIPT("payments/pix/{paymentRequestId}");
+    PIX_PAYMENT_RECEIPT("payments/pix/{paymentRequestId}"),
+    CANDIDATE_LEAD_CV("candidate-lead/curriculumVitae/{leadId}");
 
     private final String path;
 

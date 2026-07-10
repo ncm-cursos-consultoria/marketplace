@@ -56,6 +56,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/manual-pix/admin/pending").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/manual-pix/admin/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/candidate-lead/*/curriculum-vitae").permitAll()
                         .requestMatchers(HttpMethod.PATCH,
                                 "/user/candidate/{email}/unsubscribe-email"
                         ).permitAll()

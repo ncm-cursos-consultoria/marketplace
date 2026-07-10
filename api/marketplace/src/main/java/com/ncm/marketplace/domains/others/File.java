@@ -5,6 +5,7 @@ import com.ncm.marketplace.domains.enterprise.Enterprise;
 import com.ncm.marketplace.domains.enums.FileTypeEnum;
 import com.ncm.marketplace.domains.payment.PixPaymentRequest;
 import com.ncm.marketplace.domains.user.User;
+import com.ncm.marketplace.domains.user.candidate.CandidateLead;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
 import jakarta.persistence.*;
 import lombok.*;
@@ -44,6 +45,10 @@ public class File {
     @OneToOne(mappedBy = "curriculumVitae")
     @JsonBackReference("user_candidate-file")
     private UserCandidate userCandidate;
+
+    @OneToOne(mappedBy = "curriculumVitae")
+    @JsonBackReference("candidate_lead-file")
+    private CandidateLead candidateLead;
 
     @OneToOne(mappedBy = "receiptFile")
     @JsonBackReference("pix_payment_request-receipt")

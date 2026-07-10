@@ -9,4 +9,5 @@ public class CandidateLeadResponse {
     private String lastName;
     private String email;
     private String area;
+    private String curriculumVitaeUrl;
 }

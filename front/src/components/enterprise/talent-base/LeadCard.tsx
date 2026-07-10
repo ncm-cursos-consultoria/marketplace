@@ -1,6 +1,6 @@
 // components/enterprise/talent-base/lead-card.tsx
 import { Badge } from "@/components/ui/badge";
-import { Mail, User } from "lucide-react";
+import { Mail, User, FileText } from "lucide-react";
 import { CandidateLeadProfile } from "@/service/user/get-candidate-leads";
 
 export function LeadCard({ lead }: { lead: CandidateLeadProfile }) {
@@ -21,6 +21,17 @@ export function LeadCard({ lead }: { lead: CandidateLeadProfile }) {
           <Badge variant="secondary" className="bg-green-100 text-green-700">
             {lead.area}
           </Badge>
+        )}
+        {lead.curriculumVitaeUrl && (
+          <a
+            href={lead.curriculumVitaeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm text-green-700 hover:text-green-800 hover:underline w-fit"
+          >
+            <FileText className="h-4 w-4" />
+            Ver currículo
+          </a>
         )}
       </div>
       <div className="flex items-center">
