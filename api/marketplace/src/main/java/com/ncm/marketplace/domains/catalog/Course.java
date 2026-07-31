@@ -40,6 +40,10 @@ public class Course {
     //TODO adcionar view ao course e module
     //TODO ordenar corretamente os videos do course
 
+    @Builder.Default
+    @Column(name = "certificateWorkloadHours")
+    private Integer certificateWorkloadHours = 8;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "moduleId", referencedColumnName = "id", nullable = false)
     @JsonManagedReference("courses-module")

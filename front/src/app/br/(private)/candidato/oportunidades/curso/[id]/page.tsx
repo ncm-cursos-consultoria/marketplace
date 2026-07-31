@@ -7,10 +7,13 @@ import YouTube, { YouTubeEvent, YouTubeProps } from "react-youtube"; // Import n
 import { UseUserCandidate } from "@/context/user-candidate.context";
 import { getCourses } from "@/service/course/get-courses";
 import { changeCourseStatus, userCourseStatus } from "@/service/course/change-status";
+import { downloadCertificateForModule } from "@/service/certificate/download-certificate";
 import { Button } from "@/components/ui/button";
-import { Clock } from "lucide-react";
+import { Clock, Award, Lock, Loader2 } from "lucide-react";
 import { AppointmentModal } from "@/components/mentorship/appointment-modal";
+import { UpgradeCandidateModal } from "@/components/candidate/upgrade-candidate-modal";
 import { getModule } from "@/service/module/get-module";
+import { toast } from "sonner";
 
 type Course = {
   id: string;
@@ -227,6 +230,8 @@ export default function CursoPage() {
   const id = params?.id;
   const moduleId = params?.id; // O ID na URL é o do Módulo
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+  const [isDownloadingCertificate, setIsDownloadingCertificate] = useState(false);
 
   // 1. Busca os dados do Módulo para verificar se possui mentoria
   const { data: module } = useQuery({
@@ -270,6 +275,59 @@ export default function CursoPage() {
       return numA - numB || a.createdAt.localeCompare(b.createdAt);
     });
 
+  // Certificado do módulo só libera quando TODAS as aulas estão concluídas
+  const allCoursesFinished =
+    sorted.length > 0 && sorted.every((c) => c.status === "FINISHED");
+
+  const hasCertificatePlan =
+    userCandidate?.plan === "STANDARD" || userCandidate?.plan === "PREMIUM";
+
+  const handleCertificateClick = async () => {
+    if (!moduleId) return;
+
+    // Ainda faltam aulas: botão fica bloqueado, não faz nada ao clicar
+    if (!allCoursesFinished) {
+      toast.error("Conclua todas as aulas do módulo para liberar o certificado.");
+      return;
+    }
+
+    // Candidato BASIC: leva para a tela de pagamento (modal de upgrade)
+    if (!hasCertificatePlan) {
+      setIsUpgradeModalOpen(true);
+      return;
+    }
+
+    // Candidato STANDARD/PREMIUM: gera e baixa o PDF automaticamente
+    try {
+      setIsDownloadingCertificate(true);
+      const blob = await downloadCertificateForModule(moduleId);
+
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `certificado_${(module?.title ?? "modulo").replace(/ /g, "_")}.pdf`
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      const status = err?.response?.status;
+      if (status === 403) {
+        toast.error("Seu plano atual não permite emitir certificado.");
+        setIsUpgradeModalOpen(true);
+      } else if (status === 400) {
+        toast.error("Você ainda não concluiu todas as aulas deste módulo.");
+      } else {
+        toast.error("Não foi possível gerar o certificado. Tente novamente.");
+      }
+    } finally {
+      setIsDownloadingCertificate(false);
+    }
+  };
+
   return (
     <div className="px-6 py-6">
       <header className="flex justify-between items-center mb-6 border-b pb-4">
@@ -282,15 +340,56 @@ export default function CursoPage() {
           </p>
         </div>
 
-        {/* 3. Validação: Só mostra o botão se o módulo permitir mentoria */}
-        {module?.hasMentorship && (
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-900 hover:bg-blue-800 text-white rounded-xl gap-2 h-11 px-6 shadow-md"
-          >
-            <Clock className="h-4 w-4" /> Agendar Mentoria
-          </Button>
-        )}
+        <div className="flex items-center gap-3">
+          {/* Botão de certificado - aparece sempre que o módulo tem aulas.
+              Fica bloqueado até todas as aulas serem concluídas; depois disso,
+              segue a regra de plano (BASIC -> upgrade, STANDARD/PREMIUM -> download). */}
+          {sorted.length > 0 && (
+            <Button
+              onClick={handleCertificateClick}
+              disabled={isDownloadingCertificate || !allCoursesFinished}
+              variant={allCoursesFinished && hasCertificatePlan ? "default" : "outline"}
+              title={
+                !allCoursesFinished
+                  ? "Conclua todas as aulas do módulo para liberar o certificado"
+                  : undefined
+              }
+              className={
+                allCoursesFinished && hasCertificatePlan
+                  ? "bg-blue-900 hover:bg-blue-800 text-white rounded-xl gap-2 h-11 px-6 shadow-md"
+                  : "text-blue-900 border-blue-900/30 hover:bg-blue-50 rounded-xl gap-2 h-11 px-6 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+              }
+            >
+              {isDownloadingCertificate ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> Gerando certificado...
+                </>
+              ) : !allCoursesFinished ? (
+                <>
+                  <Lock className="h-4 w-4" /> Certificado bloqueado
+                </>
+              ) : hasCertificatePlan ? (
+                <>
+                  <Award className="h-4 w-4" /> Emitir certificado
+                </>
+              ) : (
+                <>
+                  <Lock className="h-4 w-4" /> Emitir certificado
+                </>
+              )}
+            </Button>
+          )}
+
+          {/* Só mostra o botão de mentoria se o módulo permitir mentoria */}
+          {module?.hasMentorship && (
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-900 hover:bg-blue-800 text-white rounded-xl gap-2 h-11 px-6 shadow-md"
+            >
+              <Clock className="h-4 w-4" /> Agendar Mentoria
+            </Button>
+          )}
+        </div>
       </header>
 
       {/* Modal de Agendamento */}
@@ -303,6 +402,13 @@ export default function CursoPage() {
           onClose={() => setIsModalOpen(false)}
         />
       )}
+
+      {/* Modal de upgrade de plano - usado quando um candidato BASIC clica em emitir certificado */}
+      <UpgradeCandidateModal
+        isOpen={isUpgradeModalOpen}
+        setIsOpen={setIsUpgradeModalOpen}
+        userId={userCandidate?.id ?? ""}
+      />
 
       {isLoading ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">

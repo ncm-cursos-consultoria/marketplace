@@ -49,6 +49,11 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.CONFLICT, ex.getMessage(), req);
     }
 
+    @ExceptionHandler(PlanRestrictedException.class)
+    public ResponseEntity<?> handlePlanRestricted(PlanRestrictedException ex, HttpServletRequest req) {
+        return buildError(HttpStatus.FORBIDDEN, ex.getMessage(), req);
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> handleEntityNotFound(EntityNotFoundException ex, HttpServletRequest req) {
         return buildError(HttpStatus.NOT_FOUND, ex.getMessage(), req);

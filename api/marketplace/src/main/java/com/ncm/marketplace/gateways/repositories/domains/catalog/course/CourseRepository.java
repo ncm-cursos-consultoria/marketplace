@@ -9,4 +9,5 @@ import java.util.List;
 public interface CourseRepository extends JpaRepository<Course, String>, JpaSpecificationExecutor<Course> {
     Boolean existsByModule_Id(String moduleId);
     List<Course> findAllByModule_Id(String id);
+    long countByModule_Id(String moduleId);
 }

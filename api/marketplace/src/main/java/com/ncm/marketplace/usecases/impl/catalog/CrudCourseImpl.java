@@ -91,6 +91,9 @@ public class CrudCourseImpl implements CrudCourse {
 
         course.setTitle(request.getTitle());
         course.setDescription(request.getDescription());
+        if (request.getCertificateWorkloadHours() != null) {
+            course.setCertificateWorkloadHours(request.getCertificateWorkloadHours());
+        }
         if (course.getVideos() != null) {
             if (!request.getVideoUrl().equals(course.getLastVideoUrl())) {
                 crudVideo.deactivateOldVideos(course.getId());

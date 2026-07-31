@@ -19,4 +19,5 @@ public class UpdateCourseRequest {
     @NotEmpty
     private String videoUrl;
     private Boolean freePlan;
+    private Integer certificateWorkloadHours;
 }

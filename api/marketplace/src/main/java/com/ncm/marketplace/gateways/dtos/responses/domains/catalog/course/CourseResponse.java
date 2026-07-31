@@ -26,4 +26,5 @@ public class CourseResponse {
     private CourseStatusEnum status;
     private Boolean freePlan;
     private Integer view;
+    private Integer certificateWorkloadHours;
 }

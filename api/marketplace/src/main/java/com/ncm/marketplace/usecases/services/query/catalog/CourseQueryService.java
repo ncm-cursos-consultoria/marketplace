@@ -39,4 +39,8 @@ public class CourseQueryService {
     public List<Course> findAllByModuleId(String id) {
         return courseRepository.findAllByModule_Id(id);
     }
+
+    public long countByModuleId(String moduleId) {
+        return courseRepository.countByModule_Id(moduleId);
+    }
 }

@@ -36,6 +36,15 @@ public class Module {
     private Boolean freePlan = Boolean.FALSE;
     @Builder.Default
     private Integer view = 0;
+
+    /**
+     * Carga horária (em horas) exibida no certificado deste módulo.
+     * O certificado agora representa a conclusão do módulo inteiro (todas as aulas/cursos),
+     * não de uma aula isolada. Ajustável rapidamente pelo admin via update.
+     */
+    @Builder.Default
+    @Column(name = "certificateWorkloadHours")
+    private Integer certificateWorkloadHours = 8;
     @Builder.Default
     private Boolean hasMentor = Boolean.FALSE;
     @Builder.Default

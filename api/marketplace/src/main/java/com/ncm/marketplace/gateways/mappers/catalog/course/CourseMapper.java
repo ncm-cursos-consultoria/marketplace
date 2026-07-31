@@ -13,10 +13,15 @@ import java.util.stream.Collectors;
 
 public class CourseMapper {
     public static Course toEntityCreate(CreateCourseRequest request) {
-        return Course.builder()
+        Course.CourseBuilder builder = Course.builder()
                 .title(request.getTitle())
-                .description(request.getDescription())
-                .build();
+                .description(request.getDescription());
+
+        if (request.getCertificateWorkloadHours() != null) {
+            builder.certificateWorkloadHours(request.getCertificateWorkloadHours());
+        }
+
+        return builder.build();
     }
 
     public static CourseResponse toResponse(Course course) {
@@ -33,6 +38,7 @@ public class CourseMapper {
                 .videoUrl(course.getLastVideoUrl())
                 .freePlan(course.getFreePlan())
                 .view(course.getView())
+                .certificateWorkloadHours(course.getCertificateWorkloadHours())
                 .build();
     }
 

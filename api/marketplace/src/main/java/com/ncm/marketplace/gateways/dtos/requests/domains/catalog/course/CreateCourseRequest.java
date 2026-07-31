@@ -19,4 +19,5 @@ public class CreateCourseRequest {
     @NotEmpty
     private String moduleId;
     private String videoUrl;
+    private Integer certificateWorkloadHours;
 }
