@@ -174,6 +174,32 @@ function StatusBadge({ status }: { status?: userCourseStatus }) {
   );
 }
 
+// --- BARRA DE PROGRESSO DO MÓDULO ---
+// Puramente visual: mostra quantas aulas já foram concluídas / total.
+// Não influencia em nenhuma regra de certificado (isso é calculado à parte).
+function ModuleProgressBar({ finished, total }: { finished: number; total: number }) {
+  if (total === 0) return null;
+
+  const percent = Math.round((finished / total) * 100);
+
+  return (
+    <div className="mt-3 w-full max-w-sm">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-xs font-medium text-neutral-600">
+          {finished} de {total} aula{total > 1 ? "s" : ""} concluída{finished !== 1 ? "s" : ""}
+        </span>
+        <span className="text-xs font-semibold text-blue-900">{percent}%</span>
+      </div>
+      <div className="h-2 w-full rounded-full bg-neutral-200 overflow-hidden">
+        <div
+          className="h-full rounded-full bg-blue-900 transition-all duration-500 ease-out"
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 // --- CARD ATUALIZADO ---
 function CourseCard({
   course,
@@ -275,6 +301,10 @@ export default function CursoPage() {
       return numA - numB || a.createdAt.localeCompare(b.createdAt);
     });
 
+  // Progresso do módulo - só visual, não interfere na regra do certificado
+  const totalCoursesCount = sorted.length;
+  const finishedCoursesCount = sorted.filter((c) => c.status === "FINISHED").length;
+
   // Certificado do módulo só libera quando TODAS as aulas estão concluídas
   const allCoursesFinished =
     sorted.length > 0 && sorted.every((c) => c.status === "FINISHED");
@@ -330,7 +360,7 @@ export default function CursoPage() {
 
   return (
     <div className="px-6 py-6">
-      <header className="flex justify-between items-center mb-6 border-b pb-4">
+      <header className="flex justify-between items-start mb-6 border-b pb-4">
         <div>
           <h1 className="text-2xl font-bold text-neutral-900">
             {module?.title || "Cursos"}
@@ -338,6 +368,9 @@ export default function CursoPage() {
           <p className="text-sm text-neutral-500">
             Assista às aulas e acompanhe seu progresso.
           </p>
+
+          {/* Barra de progresso do módulo - puramente visual */}
+          <ModuleProgressBar finished={finishedCoursesCount} total={totalCoursesCount} />
         </div>
 
         <div className="flex items-center gap-3">

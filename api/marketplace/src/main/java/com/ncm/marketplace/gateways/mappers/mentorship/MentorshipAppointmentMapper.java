@@ -25,6 +25,8 @@ public class MentorshipAppointmentMapper {
                 .endTime(appointment.getEndTime())
                 .status(appointment.getStatus())
                 .meetingUrl(appointment.getMeetingUrl())
+                .candidateExpectationsMessage(appointment.getCandidateExpectationsMessage())
+                .candidateExpectationsMessageSentAt(appointment.getCandidateExpectationsMessageSentAt())
                 .moduleId(appointment.getModule() != null
                         ? appointment.getModule().getId()
                         : null)

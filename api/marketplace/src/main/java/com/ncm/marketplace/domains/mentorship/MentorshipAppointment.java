@@ -43,6 +43,10 @@ public class MentorshipAppointment {
     @Column(unique = true)
     private String stripePaymentIntentId;
 
+    @Column(columnDefinition = "TEXT")
+    private String candidateExpectationsMessage;
+    private Instant candidateExpectationsMessageSentAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "moduleId", referencedColumnName = "id", nullable = false)
     @JsonManagedReference("appointments-module")

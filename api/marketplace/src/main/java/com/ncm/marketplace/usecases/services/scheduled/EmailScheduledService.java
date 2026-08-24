@@ -55,7 +55,7 @@ public class EmailScheduledService {
         }
     }
 
-    @Scheduled(cron = "0 0 8 */10 * *", zone = "America/Sao_Paulo")
+    @Scheduled(cron = "0 0 8 */7 * *", zone = "America/Sao_Paulo")
     public void sendMarketingEmails() {
         log.info("Iniciando envio de emails de marketing...");
         try {

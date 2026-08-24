@@ -32,23 +32,27 @@ import { updateAppointmentStatus } from "@/service/mentorship/appointment/update
 import { toast } from "sonner";
 import { createCheckoutSession } from "@/service/subscription/pay-mentorship";
 import { enterCandidateMentorshipAppointment } from "@/service/mentorship/appointment/enter-appointment";
+import { sendAppointmentExpectationsMessage } from "@/service/mentorship/appointment/send-message";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import { MessageSquare, Send } from "lucide-react";
 
 // Mapeamento visual atualizado com os novos status
+// Fluxo invertido: o candidato paga assim que solicita (PENDING) e o mentor
+// confirma depois que o pagamento é feito (PAID -> CONFIRMED).
 const STATUS_MAP: Record<string | number, { label: string; color: string; icon: React.ReactNode }> = {
   [MentorshipAppointmentStatus.PENDING]: {
-    label: "Nova Solicitação",
+    label: "Aguardando Pagamento",
     color: "bg-amber-100 text-amber-700",
     icon: <AlertCircle className="h-4 w-4" />
   },
-  [MentorshipAppointmentStatus.CONFIRMED]: {
-    label: "Aguardando Pagamento",
+  [MentorshipAppointmentStatus.PAID]: {
+    label: "Pago - Aguardando Confirmação do Mentor",
     color: "bg-blue-100 text-blue-700",
     icon: <Clock className="h-4 w-4" />
   },
-  [MentorshipAppointmentStatus.PAID]: {
-    label: "Confirmado & Pago",
+  [MentorshipAppointmentStatus.CONFIRMED]: {
+    label: "Mentoria Confirmada",
     color: "bg-emerald-100 text-emerald-700",
     icon: <CheckCircle2 className="h-4 w-4" />
   },
@@ -73,6 +77,16 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
   const queryClient = useQueryClient();
   const [cancelReason, setCancelReason] = useState("");
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [expectationsMessage, setExpectationsMessage] = useState("");
+
+  const { mutate: sendMessage, isPending: isSendingMessage } = useMutation({
+    mutationFn: () => sendAppointmentExpectationsMessage(appt.id, expectationsMessage),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["candidate-mentorships"] });
+      toast.success("Mensagem enviada ao mentor!");
+    },
+    onError: () => toast.error("Não foi possível enviar a mensagem."),
+  });
 
   const { data: module, isLoading } = useQuery({
     queryKey: ["module-details", appt.moduleId],
@@ -113,9 +127,10 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
   const tenMinutesBefore = subMinutes(startTime, 10);
   const isLinkAvailable = isAfter(now, tenMinutesBefore) && isBefore(now, endTime);
   const hoursUntilMeeting = differenceInHours(startTime, now);
+  // PENDING: ainda não pagou, pode cancelar livremente.
+  // PAID/CONFIRMED: já pagou, só pode cancelar com 24h+ de antecedência.
   const canCancel = appt.status === MentorshipAppointmentStatus.PENDING ||
-    appt.status === MentorshipAppointmentStatus.CONFIRMED ||
-    (appt.status === MentorshipAppointmentStatus.PAID &&
+    ((appt.status === MentorshipAppointmentStatus.PAID || appt.status === MentorshipAppointmentStatus.CONFIRMED) &&
       hoursUntilMeeting >= 24);
 
   return (
@@ -170,8 +185,8 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
           {/* Ações Dinâmicas */}
           <div className="p-6 md:pr-8 flex flex-col justify-center items-start md:items-end gap-3">
 
-            {/* Botão de Pagamento */}
-            {appt.status === MentorshipAppointmentStatus.CONFIRMED && (
+            {/* Botão de Pagamento: agora liberado assim que a mentoria é solicitada (PENDING) */}
+            {appt.status === MentorshipAppointmentStatus.PENDING && (
               <Button
                 onClick={() => handlePayment()}
                 disabled={isPaying}
@@ -187,7 +202,15 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
               </Button>
             )}
 
+            {/* Pago, mas ainda aguardando o mentor confirmar */}
             {appt.status === MentorshipAppointmentStatus.PAID && (
+              <span className="text-xs text-blue-700 font-medium italic">
+                Aguardando confirmação do mentor...
+              </span>
+            )}
+
+            {/* Confirmado pelo mentor: sala liberada */}
+            {appt.status === MentorshipAppointmentStatus.CONFIRMED && (
               <div className="flex flex-col items-center md:items-end gap-1">
                 <Button
                   variant="outline"
@@ -216,7 +239,9 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
 
             {/* Botão de Cancelamento Coeso */}
             {/* Botão de Cancelamento condicional */}
-            {(appt.status === MentorshipAppointmentStatus.PENDING || appt.status === MentorshipAppointmentStatus.CONFIRMED) && (
+            {(appt.status === MentorshipAppointmentStatus.PENDING ||
+              appt.status === MentorshipAppointmentStatus.PAID ||
+              appt.status === MentorshipAppointmentStatus.CONFIRMED) && (
               <AlertDialog open={isCancelModalOpen} onOpenChange={setIsCancelModalOpen}>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -278,10 +303,42 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
             )}
 
             {/* Tooltip de aviso se não puder cancelar */}
-            {appt.status !== MentorshipAppointmentStatus.PAID && hoursUntilMeeting < 24 && (
+            {appt.status !== MentorshipAppointmentStatus.PENDING && hoursUntilMeeting < 24 && (
               <span className="text-[10px] text-red-400 font-medium italic">
                 Cancelamento disponível apenas até 24h antes do início.
               </span>
+            )}
+
+            {/* Recado para o mentor: liberado após o pagamento, envio único */}
+            {(appt.status === MentorshipAppointmentStatus.PAID ||
+              appt.status === MentorshipAppointmentStatus.CONFIRMED) && (
+              <div className="w-full md:w-80 mt-2">
+                {appt.candidateExpectationsMessage ? (
+                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-3 text-xs text-slate-500">
+                    <p className="font-bold text-slate-600 flex items-center gap-1 mb-1">
+                      <MessageSquare className="h-3 w-3" /> Mensagem enviada ao mentor
+                    </p>
+                    <p className="italic">"{appt.candidateExpectationsMessage}"</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Textarea
+                      placeholder="Conte ao mentor o que deseja da mentoria, dúvidas e expectativas para alinharem juntos..."
+                      className="rounded-2xl border-slate-200 text-xs min-h-[70px]"
+                      value={expectationsMessage}
+                      onChange={(e) => setExpectationsMessage(e.target.value)}
+                    />
+                    <Button
+                      size="sm"
+                      onClick={() => sendMessage()}
+                      disabled={isSendingMessage || expectationsMessage.trim().length === 0}
+                      className="w-full rounded-xl gap-2 font-bold bg-slate-900 hover:bg-slate-800 text-white"
+                    >
+                      {isSendingMessage ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Send className="h-3 w-3" /> Enviar mensagem ao mentor</>}
+                    </Button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

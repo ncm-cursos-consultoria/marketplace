@@ -23,4 +23,5 @@ public interface MentorshipAppointmentService {
     void candidateEnteredAppointment(String id);
     void mentorEnteredAppointment(String id);
     MentorshipAppointment cancel(String appointmentId, String reason);
+    void sendExpectationsMessage(String appointmentId, String message) throws IOException;
 }

@@ -3,6 +3,7 @@ package com.ncm.marketplace.gateways.controller.impl.domains.mentorship;
 import com.ncm.marketplace.gateways.controller.interfaces.domains.mentorship.MentorshipAppointmentController;
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.CreateMentorshipAppointmentRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.MentorshipAppointmentSpecificationRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.SendAppointmentMessageRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.UpdateMentorshipAppointmentRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.UpdateMentorshipAppointmentStatusRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.mentorship.MentorshipAppointmentResponse;
@@ -96,6 +97,15 @@ public class MentorshipAppointmentControllerImpl implements MentorshipAppointmen
     @Override
     public ResponseEntity<Void> mentorEnteredAppointment(@PathVariable String id) {
         mentorshipAppointmentService.mentorEnteredAppointment(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/message")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Candidate sends a message to the mentor to align expectations after payment")
+    @Override
+    public ResponseEntity<Void> sendExpectationsMessage(@PathVariable String id, @RequestBody @Valid SendAppointmentMessageRequest request) throws IOException {
+        mentorshipAppointmentService.sendExpectationsMessage(id, request.getMessage());
         return ResponseEntity.noContent().build();
     }
 }

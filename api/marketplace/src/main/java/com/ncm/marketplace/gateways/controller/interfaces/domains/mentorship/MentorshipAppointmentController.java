@@ -2,6 +2,7 @@ package com.ncm.marketplace.gateways.controller.interfaces.domains.mentorship;
 
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.CreateMentorshipAppointmentRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.MentorshipAppointmentSpecificationRequest;
+import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.SendAppointmentMessageRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.UpdateMentorshipAppointmentRequest;
 import com.ncm.marketplace.gateways.dtos.requests.domains.mentorship.appointment.UpdateMentorshipAppointmentStatusRequest;
 import com.ncm.marketplace.gateways.dtos.responses.domains.mentorship.MentorshipAppointmentResponse;
@@ -22,4 +23,5 @@ public interface MentorshipAppointmentController {
     ResponseEntity<Map<String, String>> createMentorshipPayment(String id) throws StripeException;
     ResponseEntity<Void> candidateEnteredAppointment(String id);
     ResponseEntity<Void> mentorEnteredAppointment(String id);
+    ResponseEntity<Void> sendExpectationsMessage(String id, SendAppointmentMessageRequest request) throws IOException;
 }

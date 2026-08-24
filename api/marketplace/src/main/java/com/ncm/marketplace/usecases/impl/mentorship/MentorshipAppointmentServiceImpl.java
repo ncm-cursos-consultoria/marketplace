@@ -141,7 +141,15 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
 
         switch (request.getStatus()) {
             case CONFIRMED -> {
+                // Fluxo invertido: o candidato paga primeiro (status PAID) e só então
+                // o mentor pode confirmar definitivamente o agendamento.
+                if (appointment.getStatus() != AppointmentStatusEnum.PAID) {
+                    throw new IllegalStateException(
+                            "Só é possível confirmar um agendamento depois que o candidato efetuar o pagamento.");
+                }
                 appointment.setStatus(request.getStatus());
+                String meetingUrl = generateJitsiLink(id);
+                appointment.setMeetingUrl(meetingUrl);
                 emailService.sendCandidateAppointmentApproved(candidateEmail, moduleTitle, moduleValue.toString());
                 notificationService.saveMentorshipApprovedNotification(appointment.getCandidate().getId(),moduleTitle);
             }
@@ -151,8 +159,7 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
                 appointment.setCancellationReason(request.getCancellationReason());
                 emailService.sendCandidateAppointmentCanceled(candidateEmail, moduleTitle);
                 notificationService.saveMentorshipCanceledNotification(appointment.getMentor().getId(), appointment.getModule().getTitle(), appointment.getCancellationReason());
-                if (oldStatus == AppointmentStatusEnum.PAID) {
-                    // Você precisará salvar o paymentIntentId no agendamento quando o pagamento for confirmado
+                if (oldStatus == AppointmentStatusEnum.PAID || oldStatus == AppointmentStatusEnum.CONFIRMED) {
                     if (appointment.getStripePaymentIntentId() != null) {
                         mentorshipFinishingService.refund(appointment.getId());
                     }
@@ -164,8 +171,7 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
                 appointment.setCancellationReason(request.getCancellationReason());
                 emailService.sendMentorCanceledByStudent(mentorEmail,mentorName,candidateName,moduleTitle,dateFormatted, startTimeFormatted);
                 notificationService.saveMentorshipCanceledNotification(appointment.getCandidate().getId(), appointment.getModule().getTitle(), appointment.getCancellationReason());
-                if (oldStatus == AppointmentStatusEnum.PAID) {
-                    // Você precisará salvar o paymentIntentId no agendamento quando o pagamento for confirmado
+                if (oldStatus == AppointmentStatusEnum.PAID || oldStatus == AppointmentStatusEnum.CONFIRMED) {
                     if (appointment.getStripePaymentIntentId() != null) {
                         mentorshipFinishingService.refund(appointment.getId());
                     }
@@ -182,10 +188,11 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
     @Override
     public void confirmPayment(String appointmentId, String paymentIntentId) throws IOException {
         MentorshipAppointment appointment = mentorshipAppointmentQueryService.findByIdOrThrow(appointmentId);
+        // Fluxo invertido: o pagamento é feito antes da confirmação do mentor.
+        // Aqui só marcamos como PAGO e avisamos o mentor que ele precisa confirmar.
+        // O link da reunião só é gerado quando o mentor confirmar (ver updateStatus/CONFIRMED).
         appointment.setStatus(AppointmentStatusEnum.PAID);
         appointment.setStripePaymentIntentId(paymentIntentId);
-        String meetingUrl = generateJitsiLink(appointmentId);
-        appointment.setMeetingUrl(meetingUrl);
         emailService.sendCandidatePaymentConfirmed(appointment.getCandidate().getEmail(), appointment.getModule().getTitle());
         emailService.sendMentorPaymentConfirmed(appointment.getMentor().getEmail(), appointment.getMentor().getFullName(), appointment.getCandidate().getFullName());
         notificationService.saveMentorshipPaidNotification(appointment.getMentor().getId(),appointment.getModule().getTitle(), Boolean.TRUE);
@@ -222,5 +229,38 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
     @Override
     public MentorshipAppointment cancel(String appointmentId, String reason) {
         return null;
+    }
+
+    @Transactional
+    @Override
+    public void sendExpectationsMessage(String appointmentId, String message) throws IOException {
+        MentorshipAppointment appointment = mentorshipAppointmentQueryService.findByIdOrThrow(appointmentId);
+
+        // Só faz sentido alinhar expectativas depois que o pagamento foi confirmado
+        if (appointment.getStatus() != AppointmentStatusEnum.PAID
+                && appointment.getStatus() != AppointmentStatusEnum.CONFIRMED) {
+            throw new IllegalStateException(
+                    "Só é possível enviar essa mensagem após a confirmação do pagamento.");
+        }
+
+        // Recado único: uma vez enviada, não pode ser reenviada/alterada
+        if (appointment.getCandidateExpectationsMessage() != null) {
+            throw new IllegalStateException("Você já enviou uma mensagem para este agendamento.");
+        }
+
+        appointment.setCandidateExpectationsMessage(message);
+        appointment.setCandidateExpectationsMessageSentAt(Instant.now());
+
+        emailService.sendCandidateExpectationsMessageToMentor(
+                appointment.getMentor().getEmail(),
+                appointment.getMentor().getFullName(),
+                appointment.getCandidate().getFullName(),
+                appointment.getModule().getTitle(),
+                message);
+
+        notificationService.saveCandidateMessageNotification(
+                appointment.getMentor().getId(),
+                appointment.getCandidate().getFullName(),
+                message);
     }
 }

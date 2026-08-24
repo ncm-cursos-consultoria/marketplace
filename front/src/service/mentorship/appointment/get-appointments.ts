@@ -21,6 +21,8 @@ export interface MentorshipAppointmentResponse {
   mentorId: string;
   candidateId: string;
   meetingUrl?: string;
+  candidateExpectationsMessage?: string;
+  candidateExpectationsMessageSentAt?: string;
 }
 
 // Interface para o Specification do seu Controller

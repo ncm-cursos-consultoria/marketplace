@@ -26,4 +26,6 @@ public class MentorshipAppointmentResponse {
     private String mentorId;
     private String candidateId;
     private String meetingUrl;
+    private String candidateExpectationsMessage;
+    private Instant candidateExpectationsMessageSentAt;
 }

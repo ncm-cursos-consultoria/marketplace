@@ -341,6 +341,15 @@ public class SubscriptionService {
         Stripe.apiKey = stripeSecretKey;
 
         MentorshipAppointment appt = mentorshipAppointmentQueryService.findByIdOrThrow(id);
+
+        // Fluxo invertido: o candidato paga logo após solicitar o agendamento,
+        // antes da confirmação do mentor. Só é possível pagar enquanto o
+        // agendamento estiver com status PENDING (aguardando pagamento).
+        if (appt.getStatus() != com.ncm.marketplace.domains.enums.AppointmentStatusEnum.PENDING) {
+            throw new IllegalStateException(
+                    "Este agendamento não está mais aguardando pagamento (status atual: " + appt.getStatus() + ").");
+        }
+
         Module module = moduleQueryService.findByIdOrThrow(appt.getModule().getId());
 
         SessionCreateParams params = SessionCreateParams.builder()

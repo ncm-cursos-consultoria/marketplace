@@ -156,7 +156,7 @@ public class NotificationServiceImpl implements NotificationService {
         save(CreateNotificationRequest.builder()
                 .title("Nova solicitação de mentoria")
                 .body("O candidato " + candidateName + " solicitou uma mentoria para o módulo " + moduleTitle + "."
-                        + "\nAcesse sua agenda para aceitar ou recusar.")
+                        + "\nAssim que o pagamento for efetuado, você poderá confirmar o horário na sua agenda.")
                 .userId(mentorId)
                 .build());
     }
@@ -165,9 +165,9 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void saveMentorshipApprovedNotification(String candidateId, String moduleTitle) {
         save(CreateNotificationRequest.builder()
-                .title("Sua mentoria foi aprovada! 🎉")
-                .body("O mentor aceitou sua solicitação para o módulo " + moduleTitle + "."
-                        + "\nEfetue o pagamento para confirmar seu horário.")
+                .title("Sua mentoria foi confirmada! 🎉")
+                .body("O mentor confirmou o agendamento para o módulo " + moduleTitle + "."
+                        + "\nO link da sala já está disponível na sua página de mentorias.")
                 .userId(candidateId)
                 .build());
     }
@@ -175,15 +175,25 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     @Override
     public void saveMentorshipPaidNotification(String userId, String moduleTitle, boolean isMentor) {
-        String title = isMentor ? "Pagamento confirmado!" : "Tudo pronto!";
+        String title = isMentor ? "Pagamento recebido! Confirme a mentoria" : "Pagamento confirmado!";
         String body = isMentor
-                ? "O pagamento para a mentoria do módulo " + moduleTitle + " foi realizado. O link da sala já está disponível."
-                : "Seu pagamento para o módulo " + moduleTitle + " foi confirmado. O link da sala será liberado 10 min antes do início.";
+                ? "O candidato efetuou o pagamento da mentoria do módulo " + moduleTitle + ". Acesse sua agenda para confirmar o horário e gerar o link da sala."
+                : "Seu pagamento para o módulo " + moduleTitle + " foi confirmado. Assim que o mentor confirmar o agendamento, o link da sala será disponibilizado.";
 
         save(CreateNotificationRequest.builder()
                 .title(title)
                 .body(body)
                 .userId(userId)
+                .build());
+    }
+
+    @Transactional
+    @Override
+    public void saveCandidateMessageNotification(String mentorId, String candidateName, String message) {
+        save(CreateNotificationRequest.builder()
+                .title("Nova mensagem de " + candidateName)
+                .body(candidateName + " enviou uma mensagem sobre a mentoria:\n\"" + message + "\"")
+                .userId(mentorId)
                 .build());
     }
 
@@ -198,3 +208,4 @@ public class NotificationServiceImpl implements NotificationService {
                 .build());
     }
 }
+

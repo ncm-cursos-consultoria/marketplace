@@ -26,15 +26,17 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Textarea } from "@/components/ui/textarea";
 
 // Mapeamento visual utilizando o Enum como chave
+// Fluxo invertido: o candidato paga assim que solicita (PENDING) e o mentor
+// confirma depois que o pagamento é feito (PAID -> CONFIRMED).
 const STATUS_THEME: Record<string | number, { label: string; color: string; icon: React.ReactNode }> = {
   [MentorshipAppointmentStatus.PENDING]: {
-    label: "Nova Solicitação", color: "bg-amber-100 text-amber-700", icon: <AlertCircle className="h-4 w-4" />
-  },
-  [MentorshipAppointmentStatus.CONFIRMED]: {
-    label: "Aguardando Pagamento", color: "bg-blue-100 text-blue-700", icon: <Clock className="h-4 w-4" />
+    label: "Aguardando Pagamento do Candidato", color: "bg-amber-100 text-amber-700", icon: <AlertCircle className="h-4 w-4" />
   },
   [MentorshipAppointmentStatus.PAID]: {
-    label: "Confirmado & Pago", color: "bg-emerald-100 text-emerald-700", icon: <CheckCircle2 className="h-4 w-4" />
+    label: "Pago - Aguardando sua Confirmação", color: "bg-blue-100 text-blue-700", icon: <Clock className="h-4 w-4" />
+  },
+  [MentorshipAppointmentStatus.CONFIRMED]: {
+    label: "Confirmado", color: "bg-emerald-100 text-emerald-700", icon: <CheckCircle2 className="h-4 w-4" />
   },
   [MentorshipAppointmentStatus.CANCELED_BY_CANDIDATE]: {
     label: "Cancelado pelo Candidato", color: "bg-red-100 text-red-700", icon: <X className="h-4 w-4" />
@@ -59,14 +61,14 @@ export default function MentorAppointmentsPage() {
     if (!appointments) return { actionRequired: [], upcoming: [], waiting: [], history: [] };
 
     return {
-      // Prioridade 1: Mentor precisa Aceitar ou Recusar
-      actionRequired: appointments.filter(a => a.status === MentorshipAppointmentStatus.PENDING),
+      // Prioridade 1: Candidato já pagou, mentor precisa Confirmar ou Recusar
+      actionRequired: appointments.filter(a => a.status === MentorshipAppointmentStatus.PAID),
 
-      // Prioridade 2: Pagas e prontas para iniciar (Upcoming)
-      upcoming: appointments.filter(a => a.status === MentorshipAppointmentStatus.PAID),
+      // Prioridade 2: Confirmadas e prontas para iniciar (Upcoming)
+      upcoming: appointments.filter(a => a.status === MentorshipAppointmentStatus.CONFIRMED),
 
-      // Prioridade 3: Aceitas, mas aguardando pagamento do candidato
-      waiting: appointments.filter(a => a.status === MentorshipAppointmentStatus.CONFIRMED),
+      // Prioridade 3: Solicitadas, mas aguardando pagamento do candidato
+      waiting: appointments.filter(a => a.status === MentorshipAppointmentStatus.PENDING),
 
       // Prioridade 4: Finalizadas ou Canceladas
       history: appointments.filter(a =>
@@ -101,11 +103,11 @@ export default function MentorAppointmentsPage() {
         <p className="text-muted-foreground mt-2">Gerencie suas sessões por ordem de prioridade.</p>
       </header>
 
-      {/* SEÇÃO 1: Ações Necessárias (PENDING) */}
+      {/* SEÇÃO 1: Ações Necessárias - candidato já pagou, mentor precisa confirmar (PAID) */}
       {organizedAppointments.actionRequired.length > 0 && (
         <section className="space-y-4">
           <h2 className="text-sm font-bold uppercase tracking-wider text-amber-600 flex items-center gap-2">
-            <AlertCircle className="h-4 w-4" /> Solicitações para Aprovar
+            <AlertCircle className="h-4 w-4" /> Pagamentos para Confirmar
           </h2>
           <div className="grid gap-4">
             {organizedAppointments.actionRequired.map((appt) => (
@@ -115,11 +117,11 @@ export default function MentorAppointmentsPage() {
         </section>
       )}
 
-      {/* SEÇÃO 2: Agendadas & Pagas (PAID) */}
+      {/* SEÇÃO 2: Confirmadas (CONFIRMED) */}
       {organizedAppointments.upcoming.length > 0 && (
         <section className="space-y-4">
           <h2 className="text-sm font-bold uppercase tracking-wider text-emerald-600 flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4" /> Próximas Mentorias (Pagas)
+            <CheckCircle2 className="h-4 w-4" /> Próximas Mentorias (Confirmadas)
           </h2>
           <div className="grid gap-4">
             {organizedAppointments.upcoming.map((appt) => (
@@ -129,7 +131,7 @@ export default function MentorAppointmentsPage() {
         </section>
       )}
 
-      {/* SEÇÃO 3: Aguardando Candidato (CONFIRMED) */}
+      {/* SEÇÃO 3: Aguardando o candidato efetuar o pagamento (PENDING) */}
       {organizedAppointments.waiting.length > 0 && (
         <section className="space-y-4">
           <h2 className="text-sm font-bold uppercase tracking-wider text-blue-600 flex items-center gap-2">
@@ -202,6 +204,7 @@ function AppointmentMentorCard({
   const theme = STATUS_THEME[appt.status] || STATUS_THEME[MentorshipAppointmentStatus.PENDING];
   const isPending = appt.status === MentorshipAppointmentStatus.PENDING;
   const isPaid = appt.status === MentorshipAppointmentStatus.PAID;
+  const isConfirmed = appt.status === MentorshipAppointmentStatus.CONFIRMED;
   const isCanceled =
     appt.status === MentorshipAppointmentStatus.CANCELED_BY_CANDIDATE ||
     appt.status === MentorshipAppointmentStatus.CANCELED_BY_MENTOR;
@@ -241,25 +244,36 @@ function AppointmentMentorCard({
 
             {/* Ações Dinâmicas */}
             <div className="flex items-center gap-3">
-              {isPending ? (
+              {isPaid ? (
+                // Candidato já pagou: mentor confirma ou recusa (com reembolso automático se recusar)
                 <>
                   <Button
                     onClick={() => onUpdate({ id: appt.id, status: MentorshipAppointmentStatus.CONFIRMED })}
                     disabled={isUpdating}
                     className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl gap-2 px-6 h-11 font-bold"
                   >
-                    <Check className="h-4 w-4" /> Aceitar
+                    <Check className="h-4 w-4" /> Confirmar
                   </Button>
                   <Button
                     variant="ghost"
-                    onClick={() => setIsCancelModalOpen(true)} // ABRE O MODAL AQUI
+                    onClick={() => setIsCancelModalOpen(true)}
                     disabled={isUpdating}
                     className="text-red-600 hover:bg-red-50 rounded-xl h-11 font-bold"
                   >
                     <X className="h-4 w-4" /> Recusar
                   </Button>
                 </>
-              ) : isPaid && appt.meetingUrl ? (
+              ) : isPending ? (
+                // Ainda aguardando o candidato pagar: mentor pode recusar preventivamente
+                <Button
+                  variant="ghost"
+                  onClick={() => setIsCancelModalOpen(true)}
+                  disabled={isUpdating}
+                  className="text-red-600 hover:bg-red-50 rounded-xl h-11 font-bold"
+                >
+                  <X className="h-4 w-4" /> Recusar
+                </Button>
+              ) : isConfirmed && appt.meetingUrl ? (
                 <div className="flex flex-col items-end gap-1">
                   <Button
                     onClick={() => { window.open(appt.meetingUrl, "_blank") && enterMentorMentorshipAppointment(appt.id) }}
@@ -284,6 +298,16 @@ function AppointmentMentorCard({
             </div>
 
           </div>
+
+          {/* Mensagem do candidato para alinhar expectativas (enviada após o pagamento) */}
+          {appt.candidateExpectationsMessage && (
+            <div className="mt-4 bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm text-slate-600">
+              <p className="font-bold text-slate-700 text-xs uppercase tracking-wider mb-1">
+                Mensagem do candidato
+              </p>
+              <p className="italic">"{appt.candidateExpectationsMessage}"</p>
+            </div>
+          )}
         </CardContent>
       </Card>
 

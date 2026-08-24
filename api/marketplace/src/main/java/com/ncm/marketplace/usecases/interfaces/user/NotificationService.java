@@ -25,4 +25,5 @@ public interface NotificationService {
     void saveMentorshipApprovedNotification(String candidateId, String moduleTitle);
     void saveMentorshipPaidNotification(String userId, String moduleTitle, boolean isMentor);
     void saveMentorshipCanceledNotification(String userId, String moduleTitle, String reason);
+    void saveCandidateMessageNotification(String mentorId, String candidateName, String message);
 }

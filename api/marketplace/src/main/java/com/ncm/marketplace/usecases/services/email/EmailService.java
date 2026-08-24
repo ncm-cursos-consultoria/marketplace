@@ -180,6 +180,22 @@ public class EmailService {
         sendEmail(email, subject, content);
     }
 
+    public void sendCandidateExpectationsMessageToMentor(String email, String mentorName, String candidateName, String moduloName, String message) throws IOException {
+        String subject = "Mensagem de " + candidateName + " sobre a mentoria de " + moduloName;
+
+        String content = "<div style=\"font-family: Arial, sans-serif; color: #333; line-height: 1.6;\">"
+                + "<p>Olá, " + mentorName + "!</p>"
+                + "<p>O candidato <strong>" + candidateName + "</strong> confirmou o pagamento da mentoria do módulo "
+                + "<strong>" + moduloName + "</strong> e enviou a seguinte mensagem para alinhar expectativas e o plano do encontro:</p>"
+                + "<blockquote style=\"background:#f9f9f9;border-left:4px solid #1e3a8a;padding:12px 16px;margin:16px 0;\">"
+                + message.replace("\n", "<br/>")
+                + "</blockquote>"
+                + "<p>Acesse sua agenda na plataforma para confirmar o agendamento e ver mais detalhes.</p>"
+                + "</div>";
+
+        sendEmail(email, subject, content);
+    }
+
     public void sendMentorReminder(String email, String mentorName, String candidateName, String moduloName) throws IOException {
         String subject = "Lembrete: Sua mentoria começa em 1 hora";
         String template = loadTemplate("mentorAppointmentRemember.html");
