@@ -29,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.Normalizer;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -49,6 +51,19 @@ public class CrudCertificateImpl implements CrudCertificate {
     // Plano mínimo exigido para emitir certificado
     private static final PlansEnum MIN_PLAN_REQUIRED = PlansEnum.STANDARD;
 
+    /**
+     * Exceção pontual solicitada pela gestão: candidatos do plano BASIC também
+     * podem baixar o certificado destes módulos específicos, mesmo sem
+     * atender ao MIN_PLAN_REQUIRED. Qualquer módulo fora desta lista continua
+     * seguindo a regra normal (exclusivo STANDARD+).
+     * - 32059529-8696-406e-9060-004b406ba89f -> Inteligência Emocional
+     * - 2f90c2b0-7e7a-4c27-a6a6-df0e7dce5a92 -> Comportamento Empreendedor
+     */
+    private static final Set<String> MODULE_IDS_EXEMPT_FROM_PLAN_CHECK = Set.of(
+            "32059529-8696-406e-9060-004b406ba89f",
+            "2f90c2b0-7e7a-4c27-a6a6-df0e7dce5a92"
+    );
+
     // Página A4 landscape (842 x 595 pt)
     private static final float PAGE_W = PDRectangle.A4.getHeight();
     private static final float PAGE_H = PDRectangle.A4.getWidth();
@@ -62,7 +77,8 @@ public class CrudCertificateImpl implements CrudCertificate {
         Course course = courseQueryService.findByIdOrThrow(courseId);
         UserCandidate candidate = userCandidateQueryService.findByIdOrThrow(userId);
 
-        assertPlanAllowsCertificate(candidate);
+        String parentModuleId = course.getModule() != null ? course.getModule().getId() : null;
+        assertPlanAllowsCertificate(candidate, parentModuleId);
 
         boolean finished = userCandidateCourseQueryService
                 .existsByUserIdAndCourseIdAndStatus(userId, courseId, CourseStatusEnum.FINISHED);
@@ -89,7 +105,7 @@ public class CrudCertificateImpl implements CrudCertificate {
         Module module = moduleQueryService.findByIdOrThrow(moduleId);
         UserCandidate candidate = userCandidateQueryService.findByIdOrThrow(userId);
 
-        assertPlanAllowsCertificate(candidate);
+        assertPlanAllowsCertificate(candidate, moduleId);
 
         long totalCourses = courseQueryService.countByModuleId(moduleId);
         if (totalCourses == 0) {
@@ -118,8 +134,16 @@ public class CrudCertificateImpl implements CrudCertificate {
     /**
      * Emissão de certificado é um recurso exclusivo dos planos STANDARD e superiores.
      * A ordem declarada no PlansEnum (BASIC, STANDARD, PREMIUM) é usada como hierarquia.
+     *
+     * Exceção: módulos listados em MODULE_IDS_EXEMPT_FROM_PLAN_CHECK liberam o
+     * certificado também para o plano BASIC. moduleId pode ser nulo (ex.: curso
+     * sem módulo associado); nesse caso a regra padrão é aplicada normalmente.
      */
-    private void assertPlanAllowsCertificate(UserCandidate candidate) {
+    private void assertPlanAllowsCertificate(UserCandidate candidate, String moduleId) {
+        if (moduleId != null && MODULE_IDS_EXEMPT_FROM_PLAN_CHECK.contains(moduleId)) {
+            return;
+        }
+
         PlansEnum currentPlan = PlansEnum.fromName(candidate.getPlan());
 
         if (currentPlan.ordinal() < MIN_PLAN_REQUIRED.ordinal()) {
@@ -208,13 +232,20 @@ public class CrudCertificateImpl implements CrudCertificate {
                                    String text,
                                    float pageW,
                                    float y) throws IOException {
-        float textWidth = font.getStringWidth(text) / 1000 * fontSize;
+        // Normaliza para NFC: alguns textos (ex.: vindos do banco) armazenam
+        // acentos em forma decomposta (ex.: "e" + acento circunflexo combinável
+        // U+0302), que a fonte padrão do PDFBox (WinAnsiEncoding) não sabe
+        // renderizar isoladamente e derruba com IllegalArgumentException.
+        // Forma composta (ex.: "ê" como um único code point) funciona normalmente.
+        String normalizedText = Normalizer.normalize(text, Normalizer.Form.NFC);
+
+        float textWidth = font.getStringWidth(normalizedText) / 1000 * fontSize;
         float x = (pageW - textWidth) / 2f;
 
         cs.beginText();
         cs.setFont(font, fontSize);
         cs.newLineAtOffset(x, y);
-        cs.showText(text);
+        cs.showText(normalizedText);
         cs.endText();
     }
 }

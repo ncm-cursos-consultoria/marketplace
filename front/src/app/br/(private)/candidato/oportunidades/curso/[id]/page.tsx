@@ -309,8 +309,22 @@ export default function CursoPage() {
   const allCoursesFinished =
     sorted.length > 0 && sorted.every((c) => c.status === "FINISHED");
 
+   // Exceção pontual solicitada pela gestão: estes módulos liberam o
+  // certificado também para o plano BASIC (mesma whitelist aplicada no
+  // backend, em CrudCertificateImpl.MODULE_IDS_EXEMPT_FROM_PLAN_CHECK).
+  // - 32059529-8696-406e-9060-004b406ba89f -> Inteligência Emocional
+  // - 2f90c2b0-7e7a-4c27-a6a6-df0e7dce5a92 -> Comportamento Empreendedor
+  const MODULE_IDS_EXEMPT_FROM_PLAN_CHECK = [
+    "32059529-8696-406e-9060-004b406ba89f",
+    "2f90c2b0-7e7a-4c27-a6a6-df0e7dce5a92",
+  ];
+
+  const isExemptModule = !!moduleId && MODULE_IDS_EXEMPT_FROM_PLAN_CHECK.includes(moduleId);
+
   const hasCertificatePlan =
-    userCandidate?.plan === "STANDARD" || userCandidate?.plan === "PREMIUM";
+    isExemptModule ||
+    userCandidate?.plan === "STANDARD" ||
+    userCandidate?.plan === "PREMIUM";
 
   const handleCertificateClick = async () => {
     if (!moduleId) return;
