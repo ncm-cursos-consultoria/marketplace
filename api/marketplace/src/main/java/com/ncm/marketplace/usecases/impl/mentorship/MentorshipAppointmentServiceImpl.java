@@ -23,6 +23,7 @@ import com.ncm.marketplace.usecases.services.specification.mentorship.Mentorship
 import com.ncm.marketplace.usecases.services.subscription.MentorshipFinishingService;
 import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,7 @@ import static com.ncm.marketplace.gateways.mappers.mentorship.MentorshipAppointm
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentService {
     private final UserMentorQueryService userMentorQueryService;
     private final UserCandidateQueryService userCandidateQueryService;
@@ -68,6 +70,13 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
         appointment.setCandidate(candidate);
         appointment.setModule(module);
         appointment = mentorshipAppointmentCommandService.save(appointment);
+        // O envio de e-mail é apenas uma notificação de apoio: uma falha aqui
+        // (ex.: servidor SMTP fora do ar, certificado TLS inválido) não pode
+        // derrubar a criação do agendamento, que já foi persistido com sucesso.
+        // Antes, qualquer exceção não-IOException (como MailSendException)
+        // escapava do catch e estourava um 500, fazendo o @Transactional
+        // reverter o agendamento inteiro — ou seja, ninguém conseguia marcar
+        // mentoria (grátis ou paga) enquanto o e-mail estivesse com problema.
         try {
             String candidateName = candidate.getFullName();
             String candidateEmail = candidate.getEmail();
@@ -82,10 +91,14 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
             String startTimeFormatted = timeFormatter.format(appointment.getStartTime().atZone(zoneId));
             emailService.sendCandidateAppointmentRequested(candidateEmail, moduleTitle, dateFormatted, startTimeFormatted);
             emailService.sendMentorNewRequest(mentorEmail,mentorName,candidateName,moduleTitle,dateFormatted,startTimeFormatted);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            log.error("Falha ao enviar e-mails de notificação para o agendamento id {}. O agendamento foi criado normalmente, apenas o e-mail falhou.", appointment.getId(), e);
         }
-        notificationService.saveMentorshipRequestedNotification(appointment.getMentor().getId(),appointment.getCandidate().getFullName(),appointment.getModule().getTitle());
+        try {
+            notificationService.saveMentorshipRequestedNotification(appointment.getMentor().getId(), appointment.getCandidate().getFullName(), appointment.getModule().getTitle());
+        } catch (Exception e) {
+            log.error("Falha ao salvar notificação interna para o agendamento id {}.", appointment.getId(), e);
+        }
         return toResponse(appointment);
     }
 
@@ -193,10 +206,21 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
         // O link da reunião só é gerado quando o mentor confirmar (ver updateStatus/CONFIRMED).
         appointment.setStatus(AppointmentStatusEnum.PAID);
         appointment.setStripePaymentIntentId(paymentIntentId);
-        emailService.sendCandidatePaymentConfirmed(appointment.getCandidate().getEmail(), appointment.getModule().getTitle());
-        emailService.sendMentorPaymentConfirmed(appointment.getMentor().getEmail(), appointment.getMentor().getFullName(), appointment.getCandidate().getFullName());
-        notificationService.saveMentorshipPaidNotification(appointment.getMentor().getId(),appointment.getModule().getTitle(), Boolean.TRUE);
-        notificationService.saveMentorshipPaidNotification(appointment.getCandidate().getId(),appointment.getModule().getTitle(), Boolean.FALSE);
+        // Assim como em save(), e-mail/notificação são apoio e não podem reverter
+        // a confirmação do pagamento (chamada tanto pelo webhook do Stripe quanto
+        // pela confirmação direta de mentorias gratuitas).
+        try {
+            emailService.sendCandidatePaymentConfirmed(appointment.getCandidate().getEmail(), appointment.getModule().getTitle());
+            emailService.sendMentorPaymentConfirmed(appointment.getMentor().getEmail(), appointment.getMentor().getFullName(), appointment.getCandidate().getFullName());
+        } catch (Exception e) {
+            log.error("Falha ao enviar e-mails de confirmação de pagamento para o agendamento id {}. O pagamento foi confirmado normalmente, apenas o e-mail falhou.", appointment.getId(), e);
+        }
+        try {
+            notificationService.saveMentorshipPaidNotification(appointment.getMentor().getId(), appointment.getModule().getTitle(), Boolean.TRUE);
+            notificationService.saveMentorshipPaidNotification(appointment.getCandidate().getId(), appointment.getModule().getTitle(), Boolean.FALSE);
+        } catch (Exception e) {
+            log.error("Falha ao salvar notificação interna de pagamento para o agendamento id {}.", appointment.getId(), e);
+        }
     }
 
     @Transactional
@@ -264,3 +288,4 @@ public class MentorshipAppointmentServiceImpl implements MentorshipAppointmentSe
                 message);
     }
 }
+

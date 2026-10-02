@@ -14,6 +14,7 @@ import com.ncm.marketplace.gateways.dtos.responses.services.subscription.Subscri
 import com.ncm.marketplace.usecases.interfaces.enterprises.CrudEnterprise;
 import com.ncm.marketplace.usecases.interfaces.mentorship.MentorshipAppointmentService;
 import com.ncm.marketplace.usecases.interfaces.user.candidate.CrudUserCandidate;
+import com.ncm.marketplace.usecases.services.command.catalog.ModuleCommandService;
 import com.ncm.marketplace.usecases.services.query.catalog.ModuleQueryService;
 import com.ncm.marketplace.usecases.services.query.enterprises.EnterpriseQueryService;
 import com.ncm.marketplace.usecases.services.query.mentorship.MentorshipAppointmentQueryService;
@@ -50,6 +51,7 @@ public class SubscriptionService {
     private final MentorshipAppointmentService mentorshipAppointmentService;
     private final MentorshipAppointmentQueryService mentorshipAppointmentQueryService;
     private final ModuleQueryService moduleQueryService;
+    private final ModuleCommandService moduleCommandService;
 
     @Value("${stripe.api.secret-key}")
     private String stripeSecretKey;
@@ -337,6 +339,7 @@ public class SubscriptionService {
         }
     }
 
+    @Transactional
     public Map<String, String> createMentorshipPayment(String id) throws StripeException {
         Stripe.apiKey = stripeSecretKey;
 
@@ -352,11 +355,46 @@ public class SubscriptionService {
 
         Module module = moduleQueryService.findByIdOrThrow(appt.getModule().getId());
 
+        boolean isFreeMentorship = module.getMentorshipValuePerHour() == null || module.getMentorshipValuePerHour() <= 0;
+
+        if (isFreeMentorship) {
+            // Mentoria gratuita: não há nada a cobrar, então o Stripe Checkout
+            // (modo "payment") nem deveria ser acionado aqui — sessões de
+            // pagamento com valor total R$0,00 não são suportadas de forma
+            // confiável pelo Stripe nesse modo, o que fazia a confirmação
+            // nunca completar de verdade (mesmo quando o redirect "funcionava").
+            // Em vez disso, confirmamos a mentoria diretamente, sem Stripe.
+            try {
+                mentorshipAppointmentService.confirmPayment(id, null);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            log.info("Mentoria gratuita confirmada diretamente (sem Stripe) para o agendamento id {}", id);
+            return Map.of("checkoutUrl", "", "free", "true");
+        }
+
+        // Correção: alguns módulos (ex.: criados antes da mentoria ser configurada,
+        // ou migrados de outra base) nunca tiveram o produto/preço criado no Stripe.
+        // Isso faz com que module.getStripePriceId() fique null e o Stripe rejeite
+        // a sessão de checkout com "You must provide one of `price` or `price_data`".
+        // Em vez de estourar um erro 500 pro candidato, criamos o produto/preço agora
+        // (self-healing) e seguimos com o pagamento normalmente.
+        if (module.getStripePriceId() == null || module.getStripePriceId().isBlank()) {
+            log.warn("Módulo id {} está com hasMentorship=true mas sem stripePriceId. Criando produto/preço no Stripe agora (self-healing).", module.getId());
+            createMentorshipProduct(module);
+            module = moduleCommandService.save(module);
+        }
+
         SessionCreateParams params = SessionCreateParams.builder()
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("https://marketplace.ncmconsultoria.com.br/payment/success")
-                .setCancelUrl("https://marketplace.ncmconsultoria.com.br/payment/failed")
+                // BUGFIX: faltava o prefixo "/br" usado por todas as rotas do front
+                // (app/br/...). Sem ele, o redirect do Stripe sempre caía em 404 e
+                // o agendamento ficava "pago no Stripe" mas aparentando não confirmado
+                // para quem olhava a tela (o webhook até confirmava, mas o usuário
+                // nunca via a confirmação pois a aba simplesmente mostrava um 404).
+                .setSuccessUrl("https://marketplace.ncmconsultoria.com.br/br/payment/success")
+                .setCancelUrl("https://marketplace.ncmconsultoria.com.br/br/payment/failed")
                 .putMetadata("appointmentId", id) // Fundamental para o Webhook
                 .putMetadata("type", "MENTORSHIP")
                 .addLineItem(SessionCreateParams.LineItem.builder()
@@ -375,7 +413,7 @@ public class SubscriptionService {
 
         // 1. Criar um NOVO preço para o produto já existente
         PriceCreateParams priceParams = PriceCreateParams.builder()
-                .setProduct(module.getStripePriceId()) // Usa o ID do produto que você já salvou
+                .setProduct(module.getStripeProductId()) // BUGFIX: era getStripePriceId(), um price ID não é um product ID
                 .setUnitAmount((long) (module.getMentorshipValuePerHour() * 100))
                 .setCurrency("brl")
                 .build();
@@ -404,8 +442,8 @@ public class SubscriptionService {
             .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
             .addPaymentMethodType(SessionCreateParams.PaymentMethodType.PIX)
             .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
-            .setSuccessUrl("https://marketplace.ncmconsultoria.com.br/payment/success")
-            .setCancelUrl("https://marketplace.ncmconsultoria.com.br/payment/failed")
+            .setSuccessUrl("https://marketplace.ncmconsultoria.com.br/br/payment/success")
+            .setCancelUrl("https://marketplace.ncmconsultoria.com.br/br/payment/failed")
             .setCustomerEmail(userEnterprise.getEmail())
             .putMetadata("enterpriseId", enterpriseId)
             .putMetadata("type", "ENTERPRISE_SUBSCRIPTION")
@@ -429,8 +467,8 @@ public class SubscriptionService {
             .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
             .addPaymentMethodType(SessionCreateParams.PaymentMethodType.PIX)
             .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
-            .setSuccessUrl("https://marketplace.ncmconsultoria.com.br/payment/success")
-            .setCancelUrl("https://marketplace.ncmconsultoria.com.br/payment/failed")
+            .setSuccessUrl("https://marketplace.ncmconsultoria.com.br/br/payment/success")
+            .setCancelUrl("https://marketplace.ncmconsultoria.com.br/br/payment/failed")
             .setCustomerEmail(userCandidate.getEmail())
             .putMetadata("candidateId", candidateId)
             .putMetadata("type", "CANDIDATE_SUBSCRIPTION")

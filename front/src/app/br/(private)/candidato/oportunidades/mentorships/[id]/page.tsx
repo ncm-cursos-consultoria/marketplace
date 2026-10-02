@@ -115,6 +115,10 @@ function MentorshipCard({ appt }: { appt: MentorshipAppointmentResponse }) {
       if (data.checkoutUrl) {
         // Abre o Stripe em uma nova aba
         window.open(data.checkoutUrl, '_blank');
+      } else {
+        // Mentoria gratuita: já foi confirmada direto no backend, sem Stripe.
+        toast.success("Mentoria gratuita confirmada! Aguarde a confirmação do mentor.");
+        queryClient.invalidateQueries({ queryKey: ["candidate-mentorships"] });
       }
     }
   });
