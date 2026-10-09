@@ -61,7 +61,8 @@ public class CrudCertificateImpl implements CrudCertificate {
      */
     private static final Set<String> MODULE_IDS_EXEMPT_FROM_PLAN_CHECK = Set.of(
             "32059529-8696-406e-9060-004b406ba89f",
-            "2f90c2b0-7e7a-4c27-a6a6-df0e7dce5a92"
+            "2f90c2b0-7e7a-4c27-a6a6-df0e7dce5a92",
+            "c00b6c99-e372-4ed8-ac19-d09f9e804c93"
     );
 
     // Página A4 landscape (842 x 595 pt)
