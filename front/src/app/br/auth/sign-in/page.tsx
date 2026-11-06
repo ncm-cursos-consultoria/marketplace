@@ -1,3 +1,4 @@
+
 "use client";
 
 import { JSX, useState } from "react";
@@ -9,14 +10,19 @@ import { MentorLogin } from "./mentor-login";
 type SelectType = "candidato" | "empresa" | "parceiro" | "mentor";
 
 export default function SignIn() {
-  const [selectType, setSelectType] = useState<SelectType>("candidato");
+  const [selectType, setSelectType] =
+    useState<SelectType>("candidato");
 
   const btn = (active: boolean) =>
     [
-      "w-[320px] px-4 py-2 rounded-md transition-all flex items-center justify-center cursor-pointer",
+      "w-full min-w-0 px-2 sm:px-4 py-2 rounded-md",
+      "transition-colors flex items-center justify-center",
+      "cursor-pointer text-sm sm:text-base",
+      "focus-visible:outline-2 focus-visible:outline-offset-2",
+      "focus-visible:outline-green-700",
       active
-        ? "bg-green-600 text-white  shadow-sm border-none"
-        : "bg-white text-gray-800  border border-neutral-300 hover:bg-gray-50",
+        ? "bg-green-600 text-white shadow-sm border border-green-600"
+        : "bg-white text-gray-800 border border-neutral-300 hover:bg-gray-50",
     ].join(" ");
 
   const forms: Record<SelectType, JSX.Element> = {
@@ -27,20 +33,22 @@ export default function SignIn() {
   };
 
   return (
-    <div className="w-full max-w-md flex flex-col gap-6 items-center">
+    <div className="w-full max-w-md min-w-0 flex flex-col gap-6 items-center">
       <div className="flex flex-col items-center text-center gap-2">
         <h1 className="font-bold text-2xl md:text-3xl text-gray-900">
           Continue sua jornada!
         </h1>
+
         <h2 className="font-medium text-lg md:text-xl text-gray-600">
           Seja bem-vindo novamente
         </h2>
+
         <div className="text-center text-gray-500">
           Escolha uma das opções abaixo para acessar sua conta
         </div>
       </div>
 
-      <div className="flex items-center justify-center border shadow-md p-2 border-neutral-500  gap-2 w-[600px]">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full border shadow-md p-2 border-neutral-300 rounded-md">
         <button
           type="button"
           aria-pressed={selectType === "candidato"}
@@ -54,7 +62,7 @@ export default function SignIn() {
           type="button"
           aria-pressed={selectType === "parceiro"}
           onClick={() => setSelectType("parceiro")}
-          className={btn(selectType === "parceiro")} 
+          className={btn(selectType === "parceiro")}
         >
           Prefeitura
         </button>
@@ -78,7 +86,9 @@ export default function SignIn() {
         </button>
       </div>
 
-      {forms[selectType]}
+      <div className="w-full min-w-0">
+        {forms[selectType]}
+      </div>
     </div>
   );
 }

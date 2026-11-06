@@ -47,9 +47,15 @@ export function Aside({ isOpen, onClose }: AsideProps) {
 
   const itemCls = (active: boolean, disabled: boolean) =>
     [
-      "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-200 transition-colors",
-      "hover:bg-blue-800 hover:text-white",
-      active && "bg-gray-100 text-blue-900 font-semibold",
+      "flex items-center gap-3 rounded-lg px-3 py-2",
+      "transition-colors duration-200",
+      "focus-visible:outline-2 focus-visible:outline-offset-2",
+      "focus-visible:outline-white",
+
+      active
+      ? "bg-gray-100 text-blue-900 font-semibold hover:bg-gray-200 hover:text-blue-900"
+      : "text-gray-100 hover:bg-blue-800 hover:text-white",
+      
       disabled && "opacity-50 pointer-events-none",
     ]
       .filter(Boolean)
