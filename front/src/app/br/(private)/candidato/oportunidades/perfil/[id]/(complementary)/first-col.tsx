@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Github,
   Globe2,
@@ -715,6 +715,20 @@ export function FirstCol({ user, address, isLoading }: FirstColProps) {
   const queryClient = useQueryClient();
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isCvModalOpen, setIsCvModalOpen] = useState(false);
+
+  // Link do e-mail marketing (?upgrade=true): abre o pagamento do Plano Standard
+  useEffect(() => {
+    if (isLoading || !user) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("upgrade") !== "true") return;
+
+    if (user.plan !== "STANDARD") {
+      setIsUpgradeModalOpen(true);
+    }
+    params.delete("upgrade");
+    const query = params.toString();
+    window.history.replaceState(null, "", window.location.pathname + (query ? `?${query}` : ""));
+  }, [isLoading, user]);
 
   const { hardSkills, softSkills } = useMemo(() => {
     const hard: TagResponse[] = [];

@@ -2,6 +2,7 @@ package com.ncm.marketplace.gateways.repositories.domains.user.candidate;
 
 import com.ncm.marketplace.domains.enums.JobOpeningUserCandidateStatus;
 import com.ncm.marketplace.domains.user.candidate.UserCandidate;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -17,4 +18,5 @@ public interface UserCandidateRepository extends JpaRepository<UserCandidate, St
     List<UserCandidate> findAllByFinishedProfile(Boolean isFinished);
     Optional<UserCandidate> findByEmail(String email);
     List<UserCandidate> findAllByReceiveEmail(Boolean receiveEmail);
+    List<UserCandidate> findAllByReceiveEmail(Boolean receiveEmail, Pageable pageable);
 }

@@ -55,15 +55,12 @@ public class EmailScheduledService {
         }
     }
 
-    @Scheduled(cron = "0 0 8 */7 * *", zone = "America/Sao_Paulo")
+  // Diário às 8h: 230 candidatos + 20 empresas mais recentes (limite de 250 e-mails/dia)
+    @Scheduled(cron = "0 0 8 * * *", zone = "America/Sao_Paulo")
     public void sendMarketingEmails() {
-        log.info("Iniciando envio de emails de marketing...");
+        log.info("Iniciando envio diário de emails de marketing...");
         try {
             emailService.sendMarketingEmailToAll(
-            "Novidades do NCM Marketplace!",
-            "marketingPlatformEmail"
-            );
-            emailService.sendMarketingEmailToLeads(
             "Novidades do NCM Marketplace!",
             "marketingPlatformEmail"
             );
@@ -75,7 +72,10 @@ public class EmailScheduledService {
 
     // Dispara a cada 12 dias as 9h (1h depois do anterior para nao sobrecarregar o Brevo)
     // Envia o lote atual de candidatos lead externos (rotativo, ~200 por vez)
-    @Scheduled(cron = "0 0 9 */12 * *", zone = "America/Sao_Paulo")
+    
+    // Dispara todo dia as 9h (1h depois do envio principal para nao sobrecarregar o Brevo)
+    // Envia o lote do dia de candidatos lead externos (rotativo, 30 por vez)
+    @Scheduled(cron = "0 0 9 * * *", zone = "America/Sao_Paulo")
     public void sendMarketingEmailsToCandidateLeads() {
         log.info("Iniciando envio de emails de marketing para candidatos lead (lote rotativo)...");
         try {

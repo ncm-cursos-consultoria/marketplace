@@ -6,6 +6,8 @@ import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.user.candidate.UserCandidateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -72,5 +74,12 @@ public class UserCandidateQueryService {
 
     public List<UserCandidate> findAllByReceiveEmail(Boolean receiveEmail) {
         return userCandidateRepository.findAllByReceiveEmail(receiveEmail);
+    }
+
+    public List<UserCandidate> findNewestByReceiveEmail(Boolean receiveEmail, int limit) {
+        return userCandidateRepository.findAllByReceiveEmail(
+                receiveEmail,
+                PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt"))
+        );
     }
 }

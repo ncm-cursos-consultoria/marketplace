@@ -30,7 +30,12 @@ export function LinkedInButton() {
                 sessionStorage.setItem("linkedin_user", JSON.stringify(data));
                 router.push("/br/auth/complete-register");
             } else {
-                router.push(`/br/candidato/oportunidades/home/${data.id}`);
+                const redirect = new URLSearchParams(window.location.search).get("redirect");
+                router.push(
+                    redirect === "upgrade"
+                        ? `/br/candidato/oportunidades/perfil/${data.id}?upgrade=true`
+                        : `/br/candidato/oportunidades/home/${data.id}`
+                );
             }
         };
 

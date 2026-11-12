@@ -1,8 +1,10 @@
 package com.ncm.marketplace.gateways.repositories.domains.user.enterprise;
 
 import com.ncm.marketplace.domains.user.UserEnterprise;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserEnterpriseRepository extends JpaRepository<UserEnterprise, String> {
@@ -10,4 +12,5 @@ public interface UserEnterpriseRepository extends JpaRepository<UserEnterprise, 
     Boolean existsByEmail(String email);
     Optional<UserEnterprise> findByStripeCustomerId(String stripeCustomerId);
     Boolean existsByStripeCustomerId(String stripeCustomerId);
+    List<UserEnterprise> findAllByReceiveEmail(Boolean receiveEmail, Pageable pageable);
 }

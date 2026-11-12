@@ -5,7 +5,9 @@ import com.ncm.marketplace.exceptions.NotFoundException;
 import com.ncm.marketplace.gateways.repositories.domains.user.enterprise.UserEnterpriseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,13 @@ public class UserEnterpriseQueryService {
 
     public List<UserEnterprise> findAll() {
         return userEnterpriseRepository.findAll();
+    }
+
+    public List<UserEnterprise> findNewestByReceiveEmail(Boolean receiveEmail, int limit) {
+        return userEnterpriseRepository.findAllByReceiveEmail(
+                receiveEmail,
+                PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt"))
+        );
     }
 
     public Page<UserEnterprise> findAll(Pageable pageable) {

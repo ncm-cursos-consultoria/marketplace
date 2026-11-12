@@ -9,6 +9,19 @@ import { useRouter } from "next/navigation";
 import { UseUserCandidate } from "@/context/user-candidate.context";
 import { me } from "@/service/auth/me";
 
+// Destinos permitidos após o login (lista fechada, evita redirecionamento aberto)
+function getPostLoginPath(userId: string): string {
+  const redirect =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("redirect")
+      : null;
+
+  if (redirect === "upgrade") {
+    return `/br/candidato/oportunidades/perfil/${userId}?upgrade=true`;
+  }
+  return `/br/candidato/oportunidades/home/${userId}`;
+}
+
 export function useLogin() {
   const [hasCookieConsent, setHasCookieConsent] = useState(false);
   
@@ -24,7 +37,16 @@ export function useLogin() {
       return () => window.removeEventListener("cookieConsentChanged", checkConsent);
     }, []);
   const router = useRouter();
-  const { setUserCandidate } = UseUserCandidate();
+  const { userCandidate, setUserCandidate } = UseUserCandidate();
+
+  // Candidato que já está logado e chegou pelo link do e-mail: vai direto ao pagamento
+  useEffect(() => {
+    if (!userCandidate?.id) return;
+    const redirect = new URLSearchParams(window.location.search).get("redirect");
+    if (redirect === "upgrade") {
+      router.replace(getPostLoginPath(userCandidate.id));
+    }
+  }, [userCandidate?.id, router]);
 
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
@@ -50,7 +72,7 @@ export function useLogin() {
         }
         setUserCandidate(userData);
         toast.success("Login efetuado com sucesso!");
-        router.push(`/br/candidato/oportunidades/home/${userData.id}`);
+        router.push(getPostLoginPath(userData.id));
       } else {
         throw new Error("Dados do usuário não encontrados após o login.");
       }
