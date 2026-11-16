@@ -22,7 +22,6 @@ public class UserScheduledService {
     private final EmailService emailService;
     private final UserCandidateCommandService userCandidateCommandService;
 
-    @Scheduled(cron = "0 0 9 * * *", zone = "America/Sao_Paulo")
     public void checkFinishedProfiles() throws IOException {
         List<UserCandidate> unfinishedProfileCandidates = userCandidateQueryService.findAllByFinishedProfiles(Boolean.FALSE);
         Integer counter = 0;
@@ -63,7 +62,6 @@ public class UserScheduledService {
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 6 * * MON", zone = "America/Sao_Paulo")
     public void markWeeklyEmailAsNotSent() {
         List<UserCandidate> userCandidates = userCandidateQueryService.findAllByReceiveEmail(Boolean.TRUE);
 

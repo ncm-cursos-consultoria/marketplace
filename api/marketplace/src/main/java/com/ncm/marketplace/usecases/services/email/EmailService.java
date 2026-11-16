@@ -267,14 +267,14 @@ public class EmailService {
     }
 
    // Limite diário total: 250 e-mails (230 candidatos + 20 empresas)
-   private static final int MARKETING_CANDIDATES_LIMIT = 230;
+   private static final int MARKETING_CANDIDATES_LIMIT = 150;
    private static final int MARKETING_ENTERPRISES_LIMIT = 20;
 
    public void sendMarketingEmailToAll(String subject, String templateName) throws IOException {
     int candidatesSent = 0;
     int enterprisesSent = 0;
 
-    // Envia para os 230 candidatos cadastrados mais recentemente (que aceitam receber e-mail)
+    // Envia para os 150 candidatos cadastrados mais recentemente (que aceitam receber e-mail)
     String candidateTemplate = loadTemplate("marketingCandidateMentorships.html");
 
     List<UserCandidate> candidates = userCandidateQueryService
@@ -314,100 +314,7 @@ public class EmailService {
     List<String> leadEmails = List.of(
         "joel@sygmatec.com.br",
         "abertura@terceirizacaocontabil.com.br",
-        "chagas_filhos@ig.com.br",
-        "ocuniao@terra.com.br",
-        "gerencia.sc@ntwcontabilidade.com.br",
-        "toledo@contabilidadetoledo.com.br",
-        "othello@terra.com.br",
-        "carlos.ono@veromundi.com.br",
-        "fiscal.nfe@vagas.com.br",
-        "anne@aamaral.com",
-        "administrativo@lapidus.com.br",
-        "sabio@sabiocontabil.com.br",
-        "nikkeycontabil@nikkeycontabil.com.br",
-        "financeiro@belge.com.br",
-        "sara@especialista.ms",
-        "boni.contabil@bonicontabilidade.com.br",
-        "lauriene@trana.com.br",
-        "marcio.reis@br.havasvillage.com",
-        "moshe@moshe.com.br",
-        "aalbuquerque@agillity.com.br",
-        "jefferson.viana@terra.com.br",
-        "info@intechpro.com.br",
-        "msbarbosa@uol.com.br",
-        "migdotti@uol.com.br",
-        "contabilvairo@uol.com.br",
-        "societario2@pmccontabilidade.com.br",
-        "societario@terceirizacaocontabil.com.br",
-        "secretaria@nrcontabil.com.br",
-        "braston@uol.com.br",
-        "administracao@gridsoftware.com.br",
-        "sirius@siriuscont.com.br",
-        "controladoria@nstechfin.com.br",
-        "ssvsantos@uol.com.br",
-        "contato@affinitycontabil.com.br",
-        "aula.prof.luiz@gmail.com",
-        "geraldominas@hotmail.com",
-        "vbaptistelli@gmail.com",
-        "jmpantunes@gmail.com",
-        "cesar@partnership.com.br",
-        "josmar@josmarcontabil.com.br",
-        "ariga@fractoweb.com.br",
-        "guasti@guasti.com.br",
-        "accounting.br@salesforce.com",
-        "pcgomes05@gmail.com",
-        "legalizacaoconvir@uol.com.br",
-        "sales@salesassessoria.com.br",
-        "marciacomarte@gmail.com",
-        "faturamento@feg.com.br",
-        "carlos@sazio.com.br",
-        "roberto@contabilsolucao.com.br",
-        "hal@colegioguararapes.com.br",
-        "comercial@cjotha.com.br",
-        "sfnunes@sti.com.br",
-        "marcia@marxsoftware.com.br",
-        "fogacaflamarion@gmail.com",
-        "akmurata_br@yahoo.com.br",
-        "cristina.caselatto@capta.com.br",
-        "fenixcontabil@picture.com.br",
-        "advocacia@grupoassist.com.br",
-        "zeus.alex@gmail.com",
-        "inetmidia@inetmidia.com.br",
-        "rother.contabil@uol.com.br",
-        "machadomoretta@machadomoretta.com.br",
-        "wferreira@indracompany.com",
-        "susana@adviserbr.com.br",
-        "info@ludact.com",
-        "atendimento@aksistemas.com.br",
-        "mvbarbieri@terra.com.br",
-        "jhonny.denker@conam.com.br",
-        "contato@scaleyou.com.br",
-        "fiscal@totvs.com.br",
-        "roberto.suzuki@uol.com.br",
-        "fabscaglioni@gmail.com",
-        "nilton@nerv.comm.br",
-        "marcelomainardi@hotmail.com",
-        "freed.lima@uol.com.br",
-        "fernando@glsolutions.com.br",
-        "eliel@empflex.com.br",
-        "systemascontabil@terra.com.br",
-        "financeiro@luminiitsolutions.com",
-        "kmax@kmax.com.br",
-        "celso.antunes@idealconsulting.com.br",
-        "bruno@phisystems.com.br",
-        "cayo.souza@qsdobrasil.com.br",
-        "systemas@systemascontabil.com.br",
-        "escritoriopaulista@gmail.com",
-        "lcnmelo@uol.com.br",
-        "bbotassio@logfacil.com.br",
-        "everson.victor@gmail.com",
-        "josemildo@jfrcontabil.com",
-        "pcferrari@outlook.com",
-        "smdes@campinas.sp.gov.br",
-        "sde@sjc.sp.gov.br",
-        "etide@osasco.sp.gov.br",
-        "ugdect@jundiai.sp.gov.br",
-        "sgri.gabinete@sp.gov.br"
+        "chagas_filhos@ig.com.br"
     );
 
     for (String email : leadEmails) {
@@ -706,12 +613,13 @@ public class EmailService {
     "thiago.bona@gobrax.com",
     "thiago.carneiro@positivasolucoes.com",
     "thiago.castanha@aluguefoco.com.br",
-    "thiago.espsanto@gmail.com"
+    "thiago.espsanto@gmail.com",
+    "comercial@ncmconsultoria.com.br"
         // ^^^ FIM DA LISTA ^^^
     );
  
         // Quantidade de leads que recebem o e-mail por dia
-    private static final int LEADS_DAILY_BATCH_SIZE = 30;
+    private static final int LEADS_DAILY_BATCH_SIZE = 40;
 
     public void sendMarketingEmailToCandidateLeadsBatch(String subject) throws IOException {
         // Remove e-mails repetidos (ignorando maiusculas/minusculas) mantendo a ordem da lista
