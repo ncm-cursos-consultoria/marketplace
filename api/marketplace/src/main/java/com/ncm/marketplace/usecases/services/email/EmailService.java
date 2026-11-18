@@ -25,7 +25,10 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -254,25 +257,32 @@ public class EmailService {
 
    public String sendMarketingEmail(String subject, String templateName) throws IOException {
         List<UserCandidate> candidates = userCandidateQueryService.findAllByReceiveEmail(Boolean.TRUE);
-        candidates.sort(Comparator.comparing(UserCandidate::getCreatedAt).reversed());
-        Integer counter = 0;
-        Integer limit = 200;
-        String template = loadTemplate("marketingPlatformEmail.html");
+        candidates.sort(Comparator.comparing(UserCandidate::getCreatedAt,
+                Comparator.nullsLast(Comparator.reverseOrder())));
+        int counter = 0;
+        int limit = 200;
+        String template = loadTemplate(templateName);
+        Set<String> sentEmails = new HashSet<>();
         for (UserCandidate userCandidate : candidates) {
             if (counter >= limit) break;
-            sendEmail(userCandidate.getEmail(), subject, template);
+            String email = userCandidate.getEmail();
+            if (email == null || email.isBlank()) continue;
+            String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
+            if (!sentEmails.add(normalizedEmail)) continue;
+            sendEmail(email.trim(), subject, template);
             counter++;
         }
         return "Marketing emails sent to newest 200 candidates on the platform";
     }
 
-   // Limite diário total: 250 e-mails (230 candidatos + 20 empresas)
+   // Limite diário total: 170 e-mails (150 candidatos + 20 empresas)
    private static final int MARKETING_CANDIDATES_LIMIT = 150;
    private static final int MARKETING_ENTERPRISES_LIMIT = 20;
 
    public void sendMarketingEmailToAll(String subject, String templateName) throws IOException {
     int candidatesSent = 0;
     int enterprisesSent = 0;
+    Set<String> sentEmails = new HashSet<>();
 
     // Envia para os 150 candidatos cadastrados mais recentemente (que aceitam receber e-mail)
     String candidateTemplate = loadTemplate("marketingCandidateMentorships.html");
@@ -280,12 +290,16 @@ public class EmailService {
     List<UserCandidate> candidates = userCandidateQueryService
             .findNewestByReceiveEmail(Boolean.TRUE, MARKETING_CANDIDATES_LIMIT);
     for (UserCandidate candidate : candidates) {
+        String email = candidate.getEmail();
+        if (email == null || email.isBlank() || !sentEmails.add(email.trim().toLowerCase(Locale.ROOT))) {
+            continue;
+        }
         try {
-            sendEmail(candidate.getEmail(), subject, candidateTemplate);
+            sendEmail(email.trim(), subject, candidateTemplate);
             candidatesSent++;
-            log.info("Marketing email enviado para candidato: {}", candidate.getEmail());
+            log.info("Marketing email enviado para candidato: {}", email.trim());
         } catch (Exception e) {
-            log.error("Erro ao enviar para candidato {}: {}", candidate.getEmail(), e.getMessage());
+            log.error("Erro ao enviar para candidato {}: {}", email.trim(), e.getMessage());
         }
     }
 
@@ -295,12 +309,16 @@ public class EmailService {
     List<UserEnterprise> enterprises = userEnterpriseQueryService
             .findNewestByReceiveEmail(Boolean.TRUE, MARKETING_ENTERPRISES_LIMIT);
     for (UserEnterprise enterprise : enterprises) {
+        String email = enterprise.getEmail();
+        if (email == null || email.isBlank() || !sentEmails.add(email.trim().toLowerCase(Locale.ROOT))) {
+            continue;
+        }
         try {
-            sendEmail(enterprise.getEmail(), subject, enterpriseTemplate);
+            sendEmail(email.trim(), subject, enterpriseTemplate);
             enterprisesSent++;
-            log.info("Marketing email enviado para empresa: {}", enterprise.getEmail());
+            log.info("Marketing email enviado para empresa: {}", email.trim());
         } catch (Exception e) {
-            log.error("Erro ao enviar para empresa {}: {}", enterprise.getEmail(), e.getMessage());
+            log.error("Erro ao enviar para empresa {}: {}", email.trim(), e.getMessage());
         }
     }
 

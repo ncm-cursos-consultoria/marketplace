@@ -209,6 +209,66 @@ export default function Home() {
         </motion.div>
       </section>
 
+      {/* Informações comerciais, legais e de contato */}
+      <section className="py-16 bg-gray-50 px-4">
+        <div className="max-w-5xl mx-auto space-y-10">
+          <div>
+            <h2 className="text-3xl font-bold text-center mb-4">Serviços, contratação e valores</h2>
+            <p className="text-gray-600 text-center max-w-3xl mx-auto">
+              O Marketplace das Oportunidades conecta candidatos, empresas e parceiros. O cadastro
+              permite acessar as funcionalidades disponíveis para cada perfil; serviços pagos são
+              opcionais e suas condições são apresentadas antes da contratação.
+            </p>
+            <div className="grid md:grid-cols-2 gap-6 mt-8">
+              <article className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-xl font-semibold mb-3">Para candidatos</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-600">
+                  <li>Acesso gratuito às vagas publicadas e a cursos de capacitação.</li>
+                  <li>A assinatura Standard é opcional e custa R$ 19,99 por mês no cartão de crédito ou R$ 200,00 no plano anual, pago via Pix.</li>
+                  <li>Cursos adicionais são opcionais; preço e condições são informados na plataforma antes da compra.</li>
+                  <li>Mentorias são contratadas pela plataforma após a escolha do módulo, mentor, horário disponível e valor por hora informado. A solicitação depende da aprovação do mentor; o pagamento é realizado após a aprovação e antes da sessão.</li>
+                  <li>Não há cobrança do candidato por conseguir emprego ou ser contratado por empresa parceira.</li>
+                </ul>
+              </article>
+              <article className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-xl font-semibold mb-3">Para empresas</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-600">
+                  <li>A publicação de vagas e o uso das ferramentas de recrutamento seguem as condições aceitas no cadastro empresarial.</li>
+                  <li>O acesso premium a relatórios comportamentais e cursos corporativos custa R$ 499,00 por mês, conforme os termos de adesão.</li>
+                  <li>Em caso de contratação de candidato intermediado pela plataforma, aplica-se taxa de sucesso de 40% do primeiro salário bruto, independentemente da assinatura premium.</li>
+                  <li>As condições completas, inclusive vigência e rescisão, constam nos termos apresentados no cadastro e devem ser conferidas antes do aceite.</li>
+                </ul>
+              </article>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm p-6 md:p-8">
+            <h2 className="text-3xl font-bold text-center mb-6">Termos e condições</h2>
+            <div className="space-y-4 text-gray-600">
+              <p>O uso da plataforma depende da criação de uma conta e do aceite dos termos aplicáveis ao perfil de candidato, empresa ou parceiro, apresentados durante o cadastro.</p>
+              <p>Vagas podem ser consultadas gratuitamente. Cursos extras, assinaturas e mentorias são opcionais. Para contratar uma mentoria, o candidato escolhe a oferta e horário, envia uma solicitação e aguarda a aprovação do mentor. Após a aprovação, o pagamento deve ser concluído para confirmar a sessão. O preço da mentoria é informado antes da solicitação.</p>
+              <p>Os preços e condições de serviços pagos são exibidos antes da confirmação da compra. Assinaturas e serviços empresariais seguem também os prazos, cobranças e regras de cancelamento descritos nos termos apresentados à empresa no cadastro.</p>
+              <p>A plataforma facilita o encontro entre candidatos e oportunidades; não garante contratação. Não existe cobrança do candidato por conseguir emprego. O tratamento de dados pessoais segue a legislação aplicável e as finalidades informadas no uso da plataforma.</p>
+              <p>Ao criar uma conta, cada usuário declara que leu e aceitou os termos aplicáveis ao seu perfil.</p>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <article className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-2xl font-bold mb-4">Identificação da empresa</h2>
+              <p className="text-gray-600"><strong>Razão social:</strong> NCM Sistemas e Consultoria Ltda</p>
+              <p className="text-gray-600 mt-2"><strong>CNPJ / identificação fiscal:</strong> 08.631.537/0002-42</p>
+            </article>
+            <article className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-2xl font-bold mb-4">Fale conosco</h2>
+              <p className="text-gray-600">Para dúvidas sobre a plataforma, serviços ou contratação, entre em contato pelo e-mail ou pelo WhatsApp (exclusivo para mensagens):</p>
+              <a className="inline-block mt-3 text-blue-700 font-semibold underline" href="mailto:suporte@ncmconsultoria.com.br">suporte@ncmconsultoria.com.br</a>
+              <a className="inline-block mt-2 text-blue-700 font-semibold underline" href="https://wa.me/5511948233217" target="_blank" rel="noopener noreferrer">WhatsApp: +55 11 94823-3217</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="text-center text-gray-500 text-sm py-6 border-t bg-white flex items-center justify-center">
         <div className="flex items-center gap-2">
