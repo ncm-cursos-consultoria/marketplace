@@ -1,8 +1,8 @@
 import React from "react";
 
-export function EnterpriseTermsOfUse() {
+export function EnterpriseTermsOfUse({ fullPage = false }: { fullPage?: boolean }) {
   return (
-    <div className="space-y-4 text-sm text-gray-700 max-h-[60vh] overflow-y-auto p-2 pr-4 text-justify">
+    <div className={`space-y-4 text-sm text-gray-700 ${fullPage ? "p-2 text-justify" : "max-h-[60vh] overflow-y-auto p-2 pr-4 text-justify"}`}>
       <h2 className="font-bold text-lg text-center text-black mb-4">
         CONTRATO DE ADESÃO E TERMOS DE USO PARA EMPRESAS
         MARKETPLACE DAS OPORTUNIDADES

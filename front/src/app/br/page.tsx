@@ -242,17 +242,6 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 md:p-8">
-            <h2 className="text-3xl font-bold text-center mb-6">Termos e condições</h2>
-            <div className="space-y-4 text-gray-600">
-              <p>O uso da plataforma depende da criação de uma conta e do aceite dos termos aplicáveis ao perfil de candidato, empresa ou parceiro, apresentados durante o cadastro.</p>
-              <p>Vagas podem ser consultadas gratuitamente. Cursos extras, assinaturas e mentorias são opcionais. Para contratar uma mentoria, o candidato escolhe a oferta e horário, envia uma solicitação e aguarda a aprovação do mentor. Após a aprovação, o pagamento deve ser concluído para confirmar a sessão. O preço da mentoria é informado antes da solicitação.</p>
-              <p>Os preços e condições de serviços pagos são exibidos antes da confirmação da compra. Assinaturas e serviços empresariais seguem também os prazos, cobranças e regras de cancelamento descritos nos termos apresentados à empresa no cadastro.</p>
-              <p>A plataforma facilita o encontro entre candidatos e oportunidades; não garante contratação. Não existe cobrança do candidato por conseguir emprego. O tratamento de dados pessoais segue a legislação aplicável e as finalidades informadas no uso da plataforma.</p>
-              <p>Ao criar uma conta, cada usuário declara que leu e aceitou os termos aplicáveis ao seu perfil.</p>
-            </div>
-          </div>
-
           <div className="grid md:grid-cols-2 gap-6">
             <article className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-2xl font-bold mb-4">Identificação da empresa</h2>
@@ -271,12 +260,15 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="text-center text-gray-500 text-sm py-6 border-t bg-white flex items-center justify-center">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-center gap-2">
           <p>
             © {new Date().getFullYear()} Marketplace das oportunidades.
             Desenvolvido por{" "}
           </p>
           <Image src={logo} alt="Logo ncm" width={50} />
+          <a href="/br/termos-e-condicoes" className="text-blue-700 underline hover:text-blue-900">
+            Termos e condições
+          </a>
         </div>
       </footer>
     </main>

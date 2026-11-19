@@ -1,8 +1,8 @@
 import React from "react";
 
-export function TermsOfUseContent() {
+export function TermsOfUseContent({ fullPage = false }: { fullPage?: boolean }) {
   return (
-    <div className="space-y-4 text-sm text-gray-700 max-h-[60vh] overflow-y-auto p-2 pr-4 text-justify">
+    <div className={`space-y-4 text-sm text-gray-700 ${fullPage ? "p-2 text-justify" : "max-h-[60vh] overflow-y-auto p-2 pr-4 text-justify"}`}>
       <h2 className="font-bold text-lg text-center text-black mb-4">
         TERMOS E CONDIÇÕES DE USO DA PLATAFORMA MARKETPLACE DAS OPORTUNIDADES
       </h2>
